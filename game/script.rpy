@@ -89,6 +89,7 @@ label label_quiz:
 
 label label_new_day:
     "Неделя номер [game.time]"
+    call lbl_mom_manage
     $ txt = player.description()
     "[txt]"
     
@@ -96,3 +97,65 @@ label label_new_day:
     call expression gt
 
     return        
+
+
+label lbl_mom_manage:
+    menu:
+        "Питание":
+            call lbl_food_rules
+        "Конец недели":
+            $ pass
+    
+    return
+
+label lbl_food_rules:
+    menu:
+        "Тётя Срака читала - кушать надо сколько душа просит":
+            $ player.ration['amount'] = "unlimited" 
+        "Надо чтобы недораха!":
+            $ player.ration['amount'] = "limited" 
+            call lbl_food_limit
+        "У Сыченьки то фигуры нет совсем...":
+            $ player.ration['amount'] = "regime" 
+            call lbl_diet
+        "А ты вот посиди без етьбы, знать будешь как матери губить!":
+            $ player.ration['amount'] = "starvation"   
+            $ player.ration['food_type'] = "forage"   
+            $ player.ration['target'] = None           
+            $ player.ration['limit'] = None
+            jump lbl_mom_manage
+    
+    menu:
+        "Вот покушай ка Сычулька..."
+        "Совего, с огорода то. Витамины!":
+            $ player.ration['food_type'] = "sperm" 
+        "Тёпленького похлебай, домашнего. С хлебушком.":
+            $ player.ration['food_type'] = "caned" 
+        "Мивины с маянезиком.":
+            $ player.ration['food_type'] = "dry" 
+        "В столовой вашей, я денежку тебе дам.":
+            $ player.ration['food_type'] = "cosine"         
+           
+    call lbl_mom_manage
+
+    return
+
+    
+label lbl_food_limit:
+    $ player.ration['limit'] = int(renpy.input("Сколько раз за неделю мамка будет покупать еду?"))
+        
+    return
+
+label lbl_diet:
+    menu:
+        "Мы сейчас тебе диету будем делать."
+        "Чтоб здоровенький был у нас, как Ванька Ерохин":
+            $ player.ration['target'] = "healthy"
+        "А то отрастил себе мамонище, девок пугать.":
+            $ player.ration['target'] = "slim"
+        "Кожа да кости же, ухватиться не за что. Девки любить не будут!":
+            $ player.ration['target'] = "cubby"
+        
+    return
+    
+    

@@ -17,10 +17,7 @@ def features_lookup(person, stat):
     return value
 
 
-
 class Person(object):
-
-
 
     def __init__(self):
         self.firstname = u"Антон"
@@ -35,6 +32,13 @@ class Person(object):
         }
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.allowance = 0         # Sparks spend each turn on a lifestyle
+        self.ration = {
+            "amount": 'unlimited',   # 'unlimited', 'limited' by price, 'regime' for figure, 'starvation' no food
+            "food_type": "cosine",   # 'forage', 'sperm', 'dry', 'canned', 'cosine'
+            "target": None,           # target figure
+            "limit": 0,             # maximum resources spend to feed character each turn
+            "overfeed": 0,
+        }
         self.skills = {
             "training":  [],        # List of skills. Skills get +1 bonus
             "experience":  [],      # List of skills. Skills get +1 bonus
@@ -54,6 +58,7 @@ class Person(object):
             "ambition":  3,
 
         }
+
         self.attributes = {
         'physique': 3,
         'mind': 3,
@@ -61,6 +66,7 @@ class Person(object):
         'agility': 3,
         'sensitivity':3
         }
+
         self.inner_resources = {
         'max_stamina': self.physique,
         'max_acuracy': self.agility,
@@ -68,16 +74,13 @@ class Person(object):
         'max_willpower': self.spirit,
         'max_glamour': self.sensitivity
         }
+
         self.inner_resources['stamina'] = self.max_stamina
         self.inner_resources['acuracy'] = self.max_acuracy
         self.inner_resources['concentration'] = self.max_concentration
         self.inner_resources['willpower'] = self.max_willpower
         self.inner_resources['glamour'] = self.max_glamour
         self.appetite = 0
-
-    
-
-    
 
     def __getattr__(self, key):
         if key in self.attributes:
@@ -104,18 +107,13 @@ class Person(object):
             return value
         else:
             raise AttributeError
-    
 
-    
-
-    
-    def add_feature(self, name):#adds features to person, if mutually exclusive removes old feature
+    def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
         new_feature = deepcopy(features_data.person_features[name])
         for f in self.features:
             if new_feature.slot == f.slot:
                 self.features.remove(f)
         self.features.append(new_feature)
-    
 
     def description(self):
         txt = self.firstname + ' "' + self.nickname + '" ' + self.surname
@@ -125,9 +123,8 @@ class Person(object):
             txt += ','
 
         return txt
-    
 
-    def use_resource(self, resource, value=1, difficulty=0):#method for using our inner resources for some actions
+    def use_resource(self, resource, value=1, difficulty=0):    # method for using our inner resources for some actions
         """
         :return: True if we are able to do action
         """
@@ -138,7 +135,6 @@ class Person(object):
             self.__dict__['inner_resources'][resource] -= value
             return True
         return False
-
 
     def food_demand(self):
         """
@@ -168,8 +164,41 @@ class Person(object):
             desire = 1
 
         return desire
-    def find_optimal_food(self):
+
+    def consume_food(self):
+        food_consumed = self.food_desire()
+
+        if self.ration['amount'] == 'starvation':
+            food_consumed = 0
+
+        if self.ration['amount'] == 'limited':
+            if food_consumed > self.food["limit"]:
+                food_consumed = self.food["limit"]
+
+        if self.ration['amount'] == 'regime':
+            food_consumed = self.food_demand()
+            if 'chubby' not in self.features and 'obese' not in self.features:
+                if self.ration["target"] == 'chubby':
+                    food_consumed += 1 + self.appetite
+            if 'slim' not in self.features and 'emaciated' not in self.features:
+                if self.ration["target"] == 'slim':
+                    food_consumed -= 1
+
+        return food_consumed
+
+    def lose_weight(self):
+        if ''
+
         return
-    def consume_food(self, food):
-        consume = self.ration[1]
-        limitation = self.ration[0]
+
+    def nutrition(self, food_consumed):
+        if food_consumed < self.food_demand():
+            self.ration["overfeed"] -= 1
+            chance = randint(-10, -1)
+            if self.ration["overfeed"] <= chance:
+                self.ration["overfeed"] = 0
+
+
+        return
+
+
