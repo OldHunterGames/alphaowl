@@ -28,7 +28,7 @@ label label_quiz:
             $ player.gender = "female"     
             $ player.needs["care"] = {"level": 3, "status": "relevant"}
             $ player.firstname = "Тошка"
-            $ player.surname = "Свчева"
+            $ player.surname = "Сычева"
             
     menu:
         "Волосики уже везде выросли?"

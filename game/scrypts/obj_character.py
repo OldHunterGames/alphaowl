@@ -2,13 +2,30 @@
 from random import *
 import renpy.store as store
 import renpy.exports as renpy
+import features_data
+from copy import deepcopy
+from food import *
+
+
+def features_lookup(person, stat):
+    if not isinstance(person, Person):
+        raise "No features outside person"
+    value = 0
+    for f in person.features:
+        if stat in f.modifiers.keys():
+            value = f.modifiers[stat]
+    return value
+
+
 
 class Person(object):
 
+
+
     def __init__(self):
-        self.firstname = "Антон"
-        self.surname = "Сычов"
-        self.nickname = "Сычуля"
+        self.firstname = u"Антон"
+        self.surname = u"Сычов"
+        self.nickname = u"Сычуля"
         self.gender = "male"
         self.age = "junior"
         self.alignment = {
@@ -16,7 +33,7 @@ class Person(object):
             "Activity": "Reasonable",        # "Ardent", "Reasonable" or "Timid"
             "Morality": "Selfish",       # "Good", "Selfish" or "Evil"
         }
-        self.features = ["healthy_weight"]          # gets Feature() objects and their child's
+        self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.allowance = 0         # Sparks spend each turn on a lifestyle
         self.skills = {
             "training":  [],        # List of skills. Skills get +1 bonus
@@ -25,38 +42,112 @@ class Person(object):
             "talent": [],           # List of skills. Skills get +1 bonus
         }
         self.needs = {              # List of persons needs
-            "general":  {"level": 3, "status": "relevant"},        # Need {level(1-5), status (relevant, satisfied, overflow, tension, frustration)}
-            "nutrition":  {"level": 3, "status": "relevant"},
-            "wellness":  {"level": 3, "status": "relevant"},
-            "comfort":  {"level": 3, "status": "relevant"},
-            "activity":  {"level": 3, "status": "relevant"},
-            "communication":  {"level": 3, "status": "relevant"},
-            "amusement":  {"level": 3, "status": "relevant"},
-            "prosperity":  {"level": 3, "status": "relevant"},
-            "authority":  {"level": 3, "status": "relevant"},
-            "ambition":  {"level": 3, "status": "relevant"},
+            "general":  3,        # Need {level(1-5), status (relevant, satisfied, overflow, tension, frustration)}
+            "nutrition":  3,
+            "wellness":  3,
+            "comfort":  3,
+            "activity":  3,
+            "communication":  3,
+            "amusement":  3,
+            "prosperity":  3,
+            "authority":  3,
+            "ambition":  3,
 
         }
+        self.attributes = {
+        'physique': 3,
+        'mind': 3,
+        'spirit': 3,
+        'agility': 3,
+        'sensitivity':3
+        }
+        self.inner_resources = {
+        'max_stamina': self.physique,
+        'max_acuracy': self.agility,
+        'max_concentration': self.mind,
+        'max_willpower': self.spirit,
+        'max_glamour': self.sensitivity
+        }
+        self.inner_resources['stamina'] = self.max_stamina
+        self.inner_resources['acuracy'] = self.max_acuracy
+        self.inner_resources['concentration'] = self.max_concentration
+        self.inner_resources['willpower'] = self.max_willpower
+        self.inner_resources['glamour'] = self.max_glamour
         self.appetite = 0
+
+    
+
+    
+
+    def __getattr__(self, key):
+        if key in self.attributes:
+            value = self.attributes[key]
+            value += features_lookup(self, key)
+            if value < 1:
+                value = 1
+            if value > 5:
+                value = 5
+            return value
+        if key in self.needs:
+            value = self.needs[key]
+            value += features_lookup(self, key)
+            if value < 1:
+                value = 1
+            if value > 5:
+                value = 5
+            return value
+        if key in self.inner_resources:
+            value = self.__dict__['inner_resources'][key]
+            value += features_lookup(self, key)
+            if value < 0:
+                value = 0
+            return value
+        else:
+            raise AttributeError
+    
+
+    
+
+    
+    def add_feature(self, name):#adds features to person, if mutually exclusive removes old feature
+        new_feature = deepcopy(features_data.person_features[name])
+        for f in self.features:
+            if new_feature.slot == f.slot:
+                self.features.remove(f)
+        self.features.append(new_feature)
+    
 
     def description(self):
         txt = self.firstname + ' "' + self.nickname + '" ' + self.surname
         txt += '\n'
         for feature in self.features:
-            txt += feature
+            txt += feature.name
             txt += ','
 
         return txt
+    
+
+    def use_resource(self, resource, value=1, difficulty=0):#method for using our inner resources for some actions
+        """
+        :return: True if we are able to do action
+        """
+        res_to_use = self.__getattr__(resource)
+        if res_to_use < difficulty:
+            return False
+        if not res_to_use - value < 0:
+            self.__dict__['inner_resources'][resource] -= value
+            return True
+        return False
+
 
     def food_demand(self):
         """
         Evaluate optimal food consumption to maintain current weight.
         :return:
         """
-        demand = self.attribute("phy")
+        demand = self.physique
         demand += self.appetite
-        if "starving" in self.features:
-            demand += 1
+        demand += features_lookup(self, 'food_demand')
 
         if demand < 1:
             demand = 1
@@ -69,67 +160,16 @@ class Person(object):
         :return:
         """
         desire = self.food_demand()
-        nutrition_modifier = 3
-        if "nutrition" in self.needs:
-            nutrition_modifier = self.needs["nutrition"]["level"]
+        nutrition_modifier = self.nutrition
         desire += nutrition_modifier - 3
-
-        if "chubby" in self.features:
-            desire -= 1
-        if "obese" in self.features:
-            desire -= 1
-        if "slim" in self.features:
-            desire += 1
-        if "emaciated" in self.features:
-            desire += 2
+        desire += features_lookup(self, "food_desire")
 
         if desire < 1:
             desire = 1
 
         return desire
-
-    def attribute(self, attribute):
-        """
-        Evaluates base attribute value of person based on features, age, gender, etc.
-        :param attribute: physique, agility, spirit, mind, sensitivity.
-        :return: attribute value average is 3, no less than 1
-        """
-        value = 3
-        if self.age == "junior":
-            value -= 1
-        if attribute == "physique" or attribute == "phy":
-            if self.age == "mature":
-                value += 1
-            if self.gender == "male":
-                value += 1
-            elif self.gender == "female":
-                value -= 1
-
-        if attribute == "sensitivity" or attribute == "sns":
-            if self.age == "junior":
-                value += 2
-            if self.gender == "male":
-                value -= 1
-            elif self.gender == "female":
-                value += 1
-
-        if attribute == "agility" or attribute == "agi":
-            if self.age == "junior":
-                value += 1              # to be equally as high as mature and adolescent
-            elif self.age == "elder":
-                value -= 1
-
-        if attribute == "mind" or attribute == "mnd":
-            if self.age == "elder":
-                value += 1
-
-        for feature in self.features:
-            if feature.name == "blood":
-                for key in feature.modifiers:
-                    if attribute == key:
-                        value += feature.modifiers[key]
-
-        if value < 1:
-            value = 1
-        return value
-
+    def find_optimal_food(self):
+        return
+    def consume_food(self, food):
+        consume = self.ration[1]
+        limitation = self.ration[0]
