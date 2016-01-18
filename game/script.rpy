@@ -104,6 +104,7 @@ label lbl_mom_manage:
         "Питание":
             call lbl_food_rules
         "Конец недели":
+            $ player.rest()
             $ pass
     
     return
@@ -121,7 +122,7 @@ label lbl_food_rules:
         "А ты вот посиди без етьбы, знать будешь как матери губить!":
             $ player.ration['amount'] = "starvation"   
             $ player.ration['food_type'] = "forage"   
-            $ player.ration['target'] = None           
+            $ player.ration['target'] = 0           
             $ player.ration['limit'] = None
             jump lbl_mom_manage
     
@@ -150,11 +151,11 @@ label lbl_diet:
     menu:
         "Мы сейчас тебе диету будем делать."
         "Чтоб здоровенький был у нас, как Ванька Ерохин":
-            $ player.ration['target'] = "healthy"
+            $ player.ration['target'] = 0
         "А то отрастил себе мамонище, девок пугать.":
-            $ player.ration['target'] = "slim"
+            $ player.ration['target'] = -1
         "Кожа да кости же, ухватиться не за что. Девки любить не будут!":
-            $ player.ration['target'] = "cubby"
+            $ player.ration['target'] = 1
         
     return
     

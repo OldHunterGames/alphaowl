@@ -7,13 +7,12 @@ import features_data
 
 class Feature(object):
 
-    def __init__(self, name="generic", modifiers={}, slot=None):
+    def __init__(self, name="generic", modifiers={}, slot=None, value=0):
         self.name = name
         self.slot = slot        # There can be only one feature for every feature slot
         self.revealed = False   # true if the feature is revealed to player      # the Person() who owns this feature
-        
+        self.value = value    # value for feature-based actions
         self.modifiers = modifiers     # parameter in key will be modified by value. Example: "agility": -1
-
 
 class Blood(Feature):
     """

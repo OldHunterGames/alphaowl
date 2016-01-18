@@ -35,7 +35,7 @@ class Person(object):
         self.ration = {
             "amount": 'unlimited',   # 'unlimited', 'limited' by price, 'regime' for figure, 'starvation' no food
             "food_type": "cosine",   # 'forage', 'sperm', 'dry', 'canned', 'cosine'
-            "target": None,           # target figure
+            "target": 0,           # figures range -2:2
             "limit": 0,             # maximum resources spend to feed character each turn
             "overfeed": 0,
         }
@@ -81,6 +81,7 @@ class Person(object):
         self.inner_resources['willpower'] = self.max_willpower
         self.inner_resources['glamour'] = self.max_glamour
         self.appetite = 0
+        self.calorie_storage = 0
 
     def __getattr__(self, key):
         if key in self.attributes:
@@ -111,9 +112,21 @@ class Person(object):
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
         new_feature = deepcopy(features_data.person_features[name])
         for f in self.features:
-            if new_feature.slot == f.slot:
+            if f.name == name:
+                return
+            if new_feature.slot and new_feature.slot == f.slot:
                 self.features.remove(f)
         self.features.append(new_feature)
+    
+    def feature_by_slot(self, slot): #finds feature which hold needed slot
+        for f in self.features:
+            if f.slot == slot:
+                return f
+    def feature(self, name): #finds feature with needed name if exist
+        for f in self.features:
+            if f.name == name:
+                return f
+        return None
 
     def description(self):
         txt = self.firstname + ' "' + self.nickname + '" ' + self.surname
@@ -123,6 +136,9 @@ class Person(object):
             txt += ','
 
         return txt
+    
+    def rest(self):
+        self.fatness_change()
 
     def use_resource(self, resource, value=1, difficulty=0):    # method for using our inner resources for some actions
         """
@@ -167,7 +183,11 @@ class Person(object):
 
     def consume_food(self):
         food_consumed = self.food_desire()
-
+        fatness = self.feature_by_slot('shape')
+        if fatness:
+            fatness = fatness.value
+        else:
+            fatness = 0
         if self.ration['amount'] == 'starvation':
             food_consumed = 0
 
@@ -177,21 +197,58 @@ class Person(object):
 
         if self.ration['amount'] == 'regime':
             food_consumed = self.food_demand()
-            if 'chubby' not in self.features and 'obese' not in self.features:
-                if self.ration["target"] == 'chubby':
-                    food_consumed += 1 + self.appetite
-            if 'slim' not in self.features and 'emaciated' not in self.features:
-                if self.ration["target"] == 'slim':
-                    food_consumed -= 1
-
+            if self.ration['target'] > fatness:
+                food_consumed += 1+self.appetite
+            if self.ration['target'] < fatness:
+                food_consumed -= 1
         return food_consumed
 
-    def lose_weight(self):
-        if ''
+    #def lose_weight(self):
+     #   if ''
+#
+ #       return
+    def fatness_change(self):
+        calorie_difference = self.consume_food() - self.food_demand()
+        self.calorie_storage += calorie_difference
+        fatness = self.feature_by_slot('shape')
+        if fatness:
+            fatness = fatness.value
+        else:
+            fatness = 0
+        if self.calorie_storage < 0:
+            chance = randint(-10, -1)
+            if self.calorie_storage <= chance:
+                if self.feature('starving'):
+                    self.add_feature('dead')
+                else:
+                    fatness -= 1
+                    self.calorie_storage = 0
+                    if fatness >= -2:
+                        for f in features_data.person_features.values():
+                            if f.slot == 'shape' and f.value == fatness:
+                                self.add_feature(f.name)
+                    else:
+                        self.add_feature('starving')
+        if self.calorie_storage > 0:
+            chance = randint(1, 10)
+            if self.calorie_storage >= chance:
+                fatness += 1
+                self.calorie_storage = 0
+                if fatness <= 2:
+                    for f in features_data.person_features.values():
+                        if f.slot == 'shape' and f.value == fatness:
+                            self.add_feature(f.name)
+                else:
+                    if not self.feature("dyspnoea"):
+                        self.add_feature('dyspnoea')
+                    else:
+                        self.add_feature('diabets')
 
-        return
 
-    def nutrition(self, food_consumed):
+
+
+
+    def nutrition_change(self, food_consumed):
         if food_consumed < self.food_demand():
             self.ration["overfeed"] -= 1
             chance = randint(-10, -1)
