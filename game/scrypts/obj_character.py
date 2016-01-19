@@ -127,7 +127,14 @@ class Person(object):
             if f.name == name:
                 return f
         return None
-
+    def remove_feature(self, feature): #feature='str' or Fearutere()
+        if isinstance(feature, str):
+            r = self.feature(feature)
+            self.features.remove(r)
+            return
+        else:
+            self.features.remove(feature)
+            return
     def description(self):
         txt = self.firstname + ' "' + self.nickname + '" ' + self.surname
         txt += '\n'
@@ -223,6 +230,10 @@ class Person(object):
                 else:
                     fatness -= 1
                     self.calorie_storage = 0
+                    if fatness == 0:
+                        self.remove_feature(self.feature_by_slot('shape'))
+                    if self.feature('dyspnoea'):
+                        self.remove_feature('dyspnoea')
                     if fatness >= -2:
                         for f in features_data.person_features.values():
                             if f.slot == 'shape' and f.value == fatness:
@@ -234,7 +245,11 @@ class Person(object):
             if self.calorie_storage >= chance:
                 fatness += 1
                 self.calorie_storage = 0
+                if fatness == 0:
+                        self.remove_feature(self.feature_by_slot('shape'))
                 if fatness <= 2:
+                    if self.feature('starving'):
+                        self.remove_feature('starving')
                     for f in features_data.person_features.values():
                         if f.slot == 'shape' and f.value == fatness:
                             self.add_feature(f.name)
