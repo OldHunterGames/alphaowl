@@ -79,11 +79,11 @@ label label_quiz:
     menu:
         "Кем ты будешь управлять?"
         "Собой":
-            call label_new_day
-            
-        "Своей мамкой":
             "Низззя"
             jump label_quiz
+            
+        "Своей мамкой":
+            call label_new_day
 
     return
 
@@ -103,9 +103,19 @@ label lbl_mom_manage:
     menu:
         "Питание":
             call lbl_food_rules
+        "Бытовые условия":
+            call lbl_accomodation_rules
+        "После учебы":
+            call lbl_job_rules
+        "В выходные":
+            # call lbl_leisure_rules          
+            "Упс. Не готово"
+            $ pass
         "Конец недели":
             $ player.rest()
-            $ pass
+            jump label_new_day
+            
+    jump lbl_mom_manage
     
     return
 
@@ -124,7 +134,6 @@ label lbl_food_rules:
             $ player.ration['food_type'] = "forage"   
             $ player.ration['target'] = 0           
             $ player.ration['limit'] = None
-            jump lbl_mom_manage
     
     menu:
         "Вот покушай ка Сычулька..."
@@ -136,8 +145,6 @@ label lbl_food_rules:
             $ player.ration['food_type'] = "dry" 
         "В столовой вашей, я денежку тебе дам.":
             $ player.ration['food_type'] = "cosine"         
-           
-    call lbl_mom_manage
 
     return
 
@@ -158,5 +165,35 @@ label lbl_diet:
             $ player.ration['target'] = 1
         
     return
+
+label lbl_accomodation_rules:
+    menu:
+        'Вечно ты в комнате запираешься от матери! Как сыч.':
+            $ player.accommodation = "appartment"
+        'Комнату твою сдавать будем, поспишь у нас на диванчике.':
+            $ player.accommodation = "cot"
+        'Диванчик для тёти Сраки, а тебе вот раскладушечка дедова.':
+            $ player.accommodation = "mat"
+        'В ванной тебя запрём ночевать. Чтобы не воображал!':
+            $ player.accommodation = "confined"
+        'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
+            $ player.accommodation = "jailed"            
     
+    return
+                    
+
+label lbl_job_rules:
+    menu:
+        'Всё сидишь как сыч, за конпуктером. Иди пробзись.':
+            $ player.job = "idle"
+        'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?':
+            $ player.job = "study"
+        'Посудку помой. Мусор вынеси. С собакой погуляй. И за дедом прибери.':
+            $ player.job = "chores"
+        'Вон здоровый какой. Иди вагоны разгружать - семье копеечка.':
+            $ player.job = "work"
+        'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
+            $ player.job = "whore"            
+    
+    return
     

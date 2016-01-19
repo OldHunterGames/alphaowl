@@ -7,6 +7,6 @@ person_features = {
     'obese': Feature(name='obese', slot='shape', modifiers={'nutrition': -1}, value=2),
     'starving': Feature(name='starving', slot=None, modifiers={'physique': -1}),
     'dyspnoea': Feature(name='dyspnoea', slot=None),
-    'diabets': Feature(name='diabets', slot=None),
+    'diabetes': Feature(name='diabetes', slot=None),
     'dead': Feature(name='dead', slot=None)
 }

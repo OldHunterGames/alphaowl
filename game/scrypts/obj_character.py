@@ -39,6 +39,8 @@ class Person(object):
             "limit": 0,             # maximum resources spend to feed character each turn
             "overfeed": 0,
         }
+        self.accommodation = 'makeshift'
+        self.job = 'idle'
         self.skills = {
             "training":  [],        # List of skills. Skills get +1 bonus
             "experience":  [],      # List of skills. Skills get +1 bonus
@@ -82,6 +84,7 @@ class Person(object):
         self.inner_resources['glamour'] = self.max_glamour
         self.appetite = 0
         self.calorie_storage = 0
+        self.mood = 0       # Hidden mood-meter 0 is normal, - bad, + good
 
     def __getattr__(self, key):
         if key in self.attributes:
@@ -118,16 +121,16 @@ class Person(object):
                 self.features.remove(f)
         self.features.append(new_feature)
     
-    def feature_by_slot(self, slot): #finds feature which hold needed slot
+    def feature_by_slot(self, slot):        # finds feature which hold needed slot
         for f in self.features:
             if f.slot == slot:
                 return f
-    def feature(self, name): #finds feature with needed name if exist
+    def feature(self, name):                # finds feature with needed name if exist
         for f in self.features:
             if f.name == name:
                 return f
         return None
-    def remove_feature(self, feature): #feature='str' or Fearutere()
+    def remove_feature(self, feature):       # feature='str' or Fearutere()
         if isinstance(feature, str):
             r = self.feature(feature)
             self.features.remove(r)
@@ -210,10 +213,6 @@ class Person(object):
                 food_consumed -= 1
         return food_consumed
 
-    #def lose_weight(self):
-     #   if ''
-#
- #       return
     def fatness_change(self):
         calorie_difference = self.consume_food() - self.food_demand()
         self.calorie_storage += calorie_difference
@@ -257,7 +256,7 @@ class Person(object):
                     if not self.feature("dyspnoea"):
                         self.add_feature('dyspnoea')
                     else:
-                        self.add_feature('diabets')
+                        self.add_feature('diabetes')
 
 
 
