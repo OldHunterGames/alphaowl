@@ -192,8 +192,8 @@ class Person(object):
             food_consumed = 0
 
         if self.ration['amount'] == 'limited':
-            if food_consumed > self.food["limit"]:
-                food_consumed = self.food["limit"]
+            if food_consumed > self.ration["limit"]:
+                food_consumed = self.ration["limit"]
 
         if self.ration['amount'] == 'regime':
             food_consumed = self.food_demand()
