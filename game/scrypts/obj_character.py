@@ -31,6 +31,7 @@ class Person(object):
             "Morality": "Selfish",       # "Good", "Selfish" or "Evil"
         }
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
+        self.master = None          # If this person is a slave, the master will be set
         self.allowance = 0         # Sparks spend each turn on a lifestyle
         self.ration = {
             "amount": 'unlimited',   # 'unlimited', 'limited' by price, 'regime' for figure, 'starvation' no food
@@ -85,6 +86,16 @@ class Person(object):
         self.appetite = 0
         self.calorie_storage = 0
         self.mood = 0       # Hidden mood-meter 0 is normal, - bad, + good
+
+        # Other persons known and relations with them
+        self.relations = {
+            "Old friend": {                         # for example, actually a Person() object must be here
+                "connection": "unrelated",            # unrelated, slave, subordinate, supervisor or master
+                "consideration": "respectful",     # significant, respectful or miserable
+                "distance": "close",                # intimate, close or distant
+                "affection": "friend",              # friend, associate or foe
+            }
+        }
 
     def __getattr__(self, key):
         if key in self.attributes:

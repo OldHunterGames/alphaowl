@@ -7,6 +7,9 @@ init python:
     renpy.block_rollback()
     game = Engine()
     player = game.player
+    player.master = Person()
+    mother = player.master
+    
     
 # Игра начинается здесь.
 label start:
@@ -214,9 +217,7 @@ label lbl_shop:
     
     '[txt]'    
 
-    return
-            
-            
+    return                      
 
 label lbl_diet:
     menu:
