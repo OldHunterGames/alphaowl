@@ -42,10 +42,10 @@ class Person(object):
         self.accommodation = 'makeshift'
         self.job = 'idle'
         self.skills = {
-            "training":  [],        # List of skills. Skills get +1 bonus
-            "experience":  [],      # List of skills. Skills get +1 bonus
-            "specialisation": [],   # List of skills. Skills get +1 bonus
-            "talent": [],           # List of skills. Skills get +1 bonus
+            "training":  {'coding': 'mind'},        # List of skills. Skills get +1 bonus
+            "experience":  {},      # List of skills. Skills get +1 bonus
+            "specialisation": {},   # List of skills. Skills get +1 bonus
+            "talent": {},           # List of skills. Skills get +1 bonus
         }
         self.needs = {              # List of persons needs
             "general":  3,        # Need {level(1-5), status (relevant, satisfied, overflow, tension, frustration)}
@@ -68,23 +68,29 @@ class Person(object):
         'agility': 3,
         'sensitivity':3
         }
-
+        
+        self.attr_relations = {
+        'stamina': 'physique',
+        'concentration': 'mind',
+        'willpower': 'spirit',
+        'acuracy': 'agility',
+        'glamour': 'sensitivity'
+        }
+        
         self.inner_resources = {
-        'max_stamina': self.physique,
-        'max_acuracy': self.agility,
-        'max_concentration': self.mind,
-        'max_willpower': self.spirit,
-        'max_glamour': self.sensitivity
+        'stamina': self.physique,
+        'acuracy': self.agility,
+        'concentration': self.mind,
+        'willpower': self.spirit,
+        'glamour': self.sensitivity
         }
 
-        self.inner_resources['stamina'] = self.max_stamina
-        self.inner_resources['acuracy'] = self.max_acuracy
-        self.inner_resources['concentration'] = self.max_concentration
-        self.inner_resources['willpower'] = self.max_willpower
-        self.inner_resources['glamour'] = self.max_glamour
         self.appetite = 0
         self.calorie_storage = 0
         self.mood = 0       # Hidden mood-meter 0 is normal, - bad, + good
+        self.money = 0
+        self.money_income = 0
+        self.determination = 0
 
     def __getattr__(self, key):
         if key in self.attributes:
@@ -104,13 +110,67 @@ class Person(object):
                 value = 5
             return value
         if key in self.inner_resources:
-            value = self.__dict__['inner_resources'][key]
+            value = self.inner_resources[key]
             value += features_lookup(self, key)
-            if value < 0:
+            if value <= 0:
+                self.inner_resources[key] = 0
                 value = 0
+            max_value = getattr(self, self.attr_relations[key])
+            if value > max_value:
+                value = max_value
             return value
         else:
             raise AttributeError
+
+    
+
+    def skill_level(self, skillname):
+        value = 0
+        for key in self.skills.keys():
+            if skillname in self.skills[key]:
+                value += 1
+        return value
+    def skill_attribute(self, skillname):
+        for key in self.skills.keys():
+            if skillname in self.skills[key]:
+                skill_attr = self.skills[key][skillname]
+                break
+        val = getattr(self, skill_attr) if skill_attr else 0
+        return val
+
+    def use_resource(self, res):
+        value = getattr(self, res)
+        self.inner_resources[res] -= 1
+        return value
+
+    def use_skill(self, skill, resource=None, determination=False):
+        skill_lvl = self.skill_level(skill)
+        
+        if skill_lvl <= 0:
+            return 0 
+        check = skill_lvl + self.mood - 3
+        res = self.use_resource(resource) if resource else 0
+        if determination and self.determination > 0:
+            self.determination -= 1
+            if res <= 0:
+                check += self.skill_attribute(skill)
+                return check
+            else:
+                check += 1
+                check += res
+                return check
+        else:
+            if res <= 0:
+                return 0
+            else:
+                check += res
+                return check
+
+
+
+
+
+
 
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
         new_feature = deepcopy(features_data.person_features[name])
@@ -149,18 +209,9 @@ class Person(object):
     
     def rest(self):
         self.fatness_change()
+        self.money += self.money_income
 
-    def use_resource(self, resource, value=1, difficulty=0):    # method for using our inner resources for some actions
-        """
-        :return: True if we are able to do action
-        """
-        res_to_use = self.__getattr__(resource)
-        if res_to_use < difficulty:
-            return False
-        if not res_to_use - value < 0:
-            self.__dict__['inner_resources'][resource] -= value
-            return True
-        return False
+
 
     def food_demand(self):
         """
