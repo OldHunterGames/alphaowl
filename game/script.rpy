@@ -119,6 +119,8 @@ label lbl_mom_manage:
         "Конец недели":
             $ player.rest()
             jump label_new_day
+        "Проверка":
+            call lbl_skill_check(skill_to_use="coding", res_to_use="concentration")
             
     jump lbl_mom_manage
     
@@ -261,4 +263,26 @@ label lbl_job_rules:
             $ player.job = "whore"            
     
     return
-    
+
+label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, determination=False):
+    python:
+        if character.skill_level(skill_to_use) < 1:
+            result_text = "Проверка провалена"
+        resource = getattr(character, res_to_use) if res_to_use else 0
+    menu:
+        'Сделать спустя рукова':
+            $ result_text = "Плохо поработал"
+        'Работать хорошо' if resource > 0:
+            $ skill_result = character.use_skill(skill_to_use, res_to_use, determination)
+            $ result_text = "Поработал на: "
+            $ result_text += str(skill_result)
+        'Сделать волевым усилием' if character.determination > 0:
+            $ skill_result = character.use_skill(skill_to_use, res_to_use, determination=True)
+            $ result_text = "Волевое усилие прошло на: "
+            $ result_text += str(skill_result)
+        'Выложиться полностью' if resource > 0 and character.determination > 0:
+            $ skill_result = character.use_skill(skill_to_use, res_to_use, determination=True)
+            $ result_text = "Выложился на: "
+            $ result_text += str(skill_result)
+    "game" '[result_text]'
+    return
