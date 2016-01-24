@@ -9,6 +9,8 @@ class Engine(object):
     def __init__(self):
         self.player = Person()
         self.time = 1
+        self.tenge = 100
+        self.mom_stuff = []
 
     def new_turn(self):
         self.time += 1
