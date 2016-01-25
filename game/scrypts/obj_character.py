@@ -195,7 +195,9 @@ class Person(object):
         newval = value - 1
         setattr(self, resource, newval)
         return value
-    def use_skill(self, skill, resource=None, determination=False):
+    def use_skill(self, skill, resource=None, determination=False, sabotage=False):
+        if sabotage:
+            return 0
         skill_lvl = self.skill_level(skill)
         
         if skill_lvl <= 0:
@@ -209,17 +211,11 @@ class Person(object):
             else:
                 check += 1
                 check += res
-            if check < 0:
-                check = 0
-            return check
         else:
-            if res <= 0:
-                return 0
-            else:
-                check += res
-            if check < 0:
-                check = 0
-            return check
+            check += res
+        if check < 0:
+            check = 0
+        return check
 
 
 
