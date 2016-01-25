@@ -41,9 +41,9 @@ class Person(object):
             "overfeed": 0,
         }
         self.accommodation = 'makeshift'
-        self.job = 'idle'
+        self.job = {'name': 'idle', 'efficiency': 0,'skill': None, 'effort': "bad"} #effort can be "bad", "good", "will" or "full"
         self.skills = {
-            "training":  {'coding': 'mind'},        # List of skills. Skills get +1 bonus
+            "training":  {'coding': 'mind', 'communication': 'spirit', 'sex': 'sensitivity', 'sport': 'physique'},        # List of skills. Skills get +1 bonus
             "experience":  {},      # List of skills. Skills get +1 bonus
             "specialisation": {},   # List of skills. Skills get +1 bonus
             "talent": {},           # List of skills. Skills get +1 bonus
@@ -69,7 +69,7 @@ class Person(object):
         'agility': 3,
         'sensitivity':3
         }
-        
+        self.university = {'name': 'study', 'effort': 'bad', 'auto': False}
         self.attr_relations = {
         'stamina': 'physique',
         'concentration': 'mind',
@@ -90,7 +90,6 @@ class Person(object):
         self.calorie_storage = 0
         self.mood = 0       # Hidden mood-meter 0 is normal, - bad, + good
         self.money = 0
-        self.money_income = 0
         self.determination = 0
 
         # Other persons known and relations with them
@@ -134,6 +133,13 @@ class Person(object):
             raise AttributeError
 
     
+    def __setattr__(self, key, value):
+        if 'inner_resources' in self.__dict__:
+            if key in self.inner_resources:
+                self.inner_resources[key] = value
+                if self.inner_resources[key] < 0:
+                    self.inner_resources[key] = 0
+        super(Person, self).__setattr__(key, value)
 
     def skill_level(self, skillname):
         value = 0
@@ -141,19 +147,54 @@ class Person(object):
             if skillname in self.skills[key]:
                 value += 1
         return value
+   
+
     def skill_attribute(self, skillname):
+        skill_attr = None
         for key in self.skills.keys():
             if skillname in self.skills[key]:
                 skill_attr = self.skills[key][skillname]
                 break
-        val = getattr(self, skill_attr) if skill_attr else 0
-        return val
+        return skill_attr
+    
 
-    def use_resource(self, res):
-        value = getattr(self, res)
-        self.inner_resources[res] -= 1
+    def set_job(self, job='idle',skill='', efficiency=0, effort='bad', auto=False):
+        self.job['name'] = job
+        self.job['skill'] = skill
+        self.job['efficiency'] = efficiency
+        self.job['effort'] = effort
+        self.job['auto'] = auto
+    
+    def eval_job(self):
+        if self.job['name'] == 'idle' or self.job['effort'] == 0:
+            return 0
+        inverted = {v: k for k ,v in self.attr_relations.items()}
+        skillattr = self.skill_attribute(self.job['skill'])
+        resource = inverted[skillattr]
+        if self.job['effort'] == 'good':
+            value = self.use_skill(self.job['skill'], resource) * self.job['efficiency']
+        if self.job['effort'] == 'will':
+            value = self.use_skill(self.job['skill'], resource=None, determination=True) * self.job['efficiency']
+        if self.job['effort'] == 'full':
+            value = self.use_skill(self.job['skill'], resource, determination=True) * self.job['efficiency']
         return value
 
+    def eval_university(self):
+        determination = self.university['determination']
+        inverted = {v: k for k ,v in self.attr_relations.items()}
+        if self.university['name'] == 'study':
+            resource = inverted['coding']
+            return self.use_skill('coding', resource, self.university['determination'])
+        elif self.university['name'] == 'communicate':
+            resource = inverted['communication']
+            return self.use_skill('communication', resource, self.university['determination'])
+
+            
+    def use_resource(self, resource):
+        value = getattr(self, resource)
+        newval = value - 1
+        setattr(self, resource, newval)
+        return value
     def use_skill(self, skill, resource=None, determination=False):
         skill_lvl = self.skill_level(skill)
         
@@ -164,18 +205,21 @@ class Person(object):
         if determination and self.determination > 0:
             self.determination -= 1
             if res <= 0:
-                check += self.skill_attribute(skill)
-                return check
+                check += getattr(self, self.skill_attribute(skill))
             else:
                 check += 1
                 check += res
-                return check
+            if check < 0:
+                check = 0
+            return check
         else:
             if res <= 0:
                 return 0
             else:
                 check += res
-                return check
+            if check < 0:
+                check = 0
+            return check
 
 
 
@@ -220,8 +264,6 @@ class Person(object):
     
     def rest(self):
         self.fatness_change()
-        self.money += self.money_income
-
 
 
     def food_demand(self):
