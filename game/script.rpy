@@ -91,18 +91,19 @@ label label_quiz:
             jump label_quiz
             
         "Своей мамкой":
-            call label_new_day
+            jump label_new_day
 
     return
 
 label label_new_day:
     "Неделя номер [game.time]"
-    call lbl_mom_manage
     $ txt = player.description()
     "[txt]"
     
     $ gt = game.new_turn()
-    call expression gt
+    $ money = player.eval_job()
+    $ game.tenge += money
+    call lbl_mom_manage
 
     return        
 
@@ -257,16 +258,26 @@ label lbl_accomodation_rules:
 label lbl_job_rules:
     menu:
         'Всё сидишь как сыч, за конпуктером. Иди пробзись.':
-            $ player.job = "idle"
+            $ player.set_job('idle')
         'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?':
-            $ player.job = "study"
+            $ player.set_job("study")
         'Посудку помой. Мусор вынеси. С собакой погуляй. И за дедом прибери.':
-            $ player.job = "chores"
+            $ player.set_job('chores')
         'Вон здоровый какой. Иди вагоны разгружать - семье копеечка.':
-            $ player.job = "work"
+            $ player.set_job('work', 'sport', 10, auto=True)
         'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
-            $ player.job = "whore"            
+            $ player.set_job('whore', 'sex', 20, auto=True)
     
+    menu:           
+        'Как сильно ты будешь стараться на работе?'
+        'Спустя рукава':
+            $ player.job['effort'] = 'bad'
+        'Работать хорощо':
+            $ player.job['effort'] = 'good'
+        'Волевым усилием':
+            $ player.job['effort'] = 'will'
+        'Выкладываться полностью':
+            $ player.job['effort'] = 'full'
     return
 
 label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, determination=False):
@@ -275,7 +286,7 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
             result_text = "Проверка провалена"
         resource = getattr(character, res_to_use) if res_to_use else 0
     menu:
-        'Сделать спустя рукова':
+        'Сделать спустя рукава':
             $ result_text = "Плохо поработал"
         'Работать хорошо' if resource > 0:
             $ skill_result = character.use_skill(skill_to_use, res_to_use, determination)
@@ -291,3 +302,5 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
             $ result_text += str(skill_result)
     "game" '[result_text]'
     return
+
+
