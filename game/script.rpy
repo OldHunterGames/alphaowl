@@ -4,12 +4,17 @@
     from owl_engine import *
 
 init python:
+    default_relations = {"connection": "unrelated",          
+                "consideration": "respectful",     
+                "distance": "close",                
+                "affection": "associate",}
+    
     renpy.block_rollback()
     game = Engine()
     player = game.player
     player.master = Person()
     mother = player.master
-    
+    player.relations[mother] = deepcopy(default_relations)
     
 # Игра начинается здесь.
 label start:

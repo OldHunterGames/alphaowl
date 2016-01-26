@@ -48,18 +48,27 @@ class Person(object):
             "specialisation": {},   # List of skills. Skills get +1 bonus
             "talent": {},           # List of skills. Skills get +1 bonus
         }
-        self.needs = {              # List of persons needs
-            "general":  3,        # Need {level(1-5), status (relevant, satisfied, overflow, tension, frustration)}
-            "nutrition":  3,
-            "wellness":  3,
-            "comfort":  3,
-            "activity":  3,
-            "communication":  3,
-            "amusement":  3,
-            "prosperity":  3,
-            "authority":  3,
-            "ambition":  3,
+        self.needs = {              # List of persons actual needs, with levels and statuses
+            # Need {level(1-5), shift(-/+ N) status (relevant, satisfied, overflow, tense, frustrated)}
+            "general":  {"level": 3, "shift": 0, "status": "relevant"},
+            "nutrition":  {"level": 3, "shift": 0, "status": "relevant"},
+            "wellness":  {"level": 3, "shift": 0, "status": "relevant"},
+            "comfort":  {"level": 3, "shift": 0, "status": "relevant"},
+            "activity":  {"level": 3, "shift": 0, "status": "relevant"},
+            "communication":  {"level": 3, "shift": 0, "status": "relevant"},
+            "amusement":  {"level": 3, "shift": 0, "status": "relevant"},
+            "prosperity":  {"level": 3, "shift": 0, "status": "relevant"},
+            "authority":  {"level": 3, "shift": 0, "status": "relevant"},
+            "ambition":  {"level": 3, "shift": 0, "status": "relevant"},
 
+        }
+        self.taboo = {              # Persons moral code.
+            "submission":  3,
+            "sexplotation":  3,
+            "pain":  3,
+            "disgrace":  3,
+            "deprivation":  3,
+            "abuse":  3,
         }
 
         self.attributes = {
@@ -88,7 +97,6 @@ class Person(object):
 
         self.appetite = 0
         self.calorie_storage = 0
-        self.mood = 0       # Hidden mood-meter 0 is normal, - bad, + good
         self.money = 0
         self.money_income = 0
         self.determination = 0
@@ -159,7 +167,7 @@ class Person(object):
         
         if skill_lvl <= 0:
             return 0 
-        check = skill_lvl + self.mood - 3
+        check = skill_lvl + self.mood() - 3
         res = self.use_resource(resource) if resource else 0
         if determination and self.determination > 0:
             self.determination -= 1
@@ -177,10 +185,22 @@ class Person(object):
                 check += res
                 return check
 
+    def mood(self):
+        mood = 0
+        for need in self.needs:
+            if self.needs[need]["status"] == "tense":
+                mood -= 1
+            elif self.needs[need]["status"] == "frustrated":
+                mood -= 1
+            elif self.needs[need]["status"] == "satisfied":
+                mood += 1
 
+        if mood < 0:
+            return -1
+        elif mood > 0:
+            return 1
 
-
-
+        return 0
 
 
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
