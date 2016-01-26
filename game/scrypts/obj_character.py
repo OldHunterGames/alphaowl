@@ -48,6 +48,10 @@ class Person(object):
             "specialisation": {},   # List of skills. Skills get +1 bonus
             "talent": {},           # List of skills. Skills get +1 bonus
         }
+        self.focused_skill = None
+        self.focus = 0
+        self.skills_used = []
+
         self.needs = {              # List of persons actual needs, with levels and statuses
             # Need {level(1-5), shift(-/+ N) status (relevant, satisfied, overflow, tense, frustrated)}
             "general":  {"level": 3, "shift": 0, "status": "relevant"},
@@ -138,7 +142,7 @@ class Person(object):
                 value = max_value
             return value
         else:
-            raise AttributeError
+            raise AttributeError(key)
 
     
     def __setattr__(self, key, value):
@@ -155,7 +159,15 @@ class Person(object):
             if skillname in self.skills[key]:
                 value += 1
         return value
-   
+    def skill_resource(self, skillname):
+        res = None
+        inverted = {v: k for k,v in self.attr_relations.items()}
+        attr = self.skill_attribute(skillname)
+        for key in self.skills.keys():
+            if skillname in self.skills[key]:
+                res = inverted[attr]
+                break
+        return res
 
     def skill_attribute(self, skillname):
         skill_attr = None
@@ -166,44 +178,13 @@ class Person(object):
         return skill_attr
     
 
-    def set_job(self, job='idle',skill='', efficiency=0, effort='bad', auto=False):
-        self.job['name'] = job
-        self.job['skill'] = skill
-        self.job['efficiency'] = efficiency
-        self.job['effort'] = effort
-        self.job['auto'] = auto
-    
-    def eval_job(self):
-        if self.job['name'] == 'idle' or self.job['effort'] == 0:
-            return 0
-        inverted = {v: k for k ,v in self.attr_relations.items()}
-        skillattr = self.skill_attribute(self.job['skill'])
-        resource = inverted[skillattr]
-        if self.job['effort'] == 'good':
-            value = self.use_skill(self.job['skill'], resource) * self.job['efficiency']
-        if self.job['effort'] == 'will':
-            value = self.use_skill(self.job['skill'], resource=None, determination=True) * self.job['efficiency']
-        if self.job['effort'] == 'full':
-            value = self.use_skill(self.job['skill'], resource, determination=True) * self.job['efficiency']
-        return value
-
-    def eval_university(self):
-        determination = self.university['determination']
-        inverted = {v: k for k ,v in self.attr_relations.items()}
-        if self.university['name'] == 'study':
-            resource = inverted['coding']
-            return self.use_skill('coding', resource, self.university['determination'])
-        elif self.university['name'] == 'communicate':
-            resource = inverted['communication']
-            return self.use_skill('communication', resource, self.university['determination'])
-
             
     def use_resource(self, resource):
         value = getattr(self, resource)
         newval = value - 1
         setattr(self, resource, newval)
         return value
-    def use_skill(self, skill, resource=None, determination=False, sabotage=False):
+    def use_skill(self, skill, resource=False, determination=False, sabotage=False):
         if sabotage:
             return 0
         skill_lvl = self.skill_level(skill)
@@ -211,7 +192,7 @@ class Person(object):
         if skill_lvl <= 0:
             return 0 
         check = skill_lvl + self.mood() - 3
-        res = self.use_resource(resource) if resource else 0
+        res = self.use_resource(self.skill_resource(skill)) if resource else 0
         if determination and self.determination > 0:
             self.determination -= 1
             if res <= 0:
@@ -219,11 +200,35 @@ class Person(object):
             else:
                 check += 1
                 check += res
+                if skill == self.focused_skill:
+                    if check<self.focus:
+                        check = focus
         else:
             check += res
         if check < 0:
             check = 0
+        if check > 0:
+            self.skills_used.append(skill)
         return check
+    
+
+    def calc_focus(self):
+        if self.focused_skill in self.skills_used:
+            self.focus += 1
+        elif len(self.skills_used)>0:
+            from collections import Counter
+            counted = Counter()
+            for s in self.skills_used:
+                counted[s]+=1
+            maximum = max(counted.values())
+            result = []
+            for skill in counted:
+                if counted[skill] == maximum:
+                    result.append(skill)
+            self.focused_skill = random.choice(result)
+            self.focus += 1
+
+
 
     def mood(self):
         mood = 0
@@ -241,6 +246,35 @@ class Person(object):
             return 1
 
         return 0
+   
+
+    def motivation(self, skill, need=None, shift=0, orderer=None):
+        motiv = 0
+        motiv += self.mood()
+        if skill in self.skills['talent']:
+            motiv += self.spirit
+        if need:
+            status = self.needs[need]['status']
+            self.needs[need]['shift'] += shift
+            if shift > 0:
+                if status == 'frustrated' or status == 'tense':
+                    motiv += self.needs[need]['level']
+                elif status == 'overflow':
+                    motiv -= 1
+            if shift < 0:
+                if status == 'frustrated' or status == 'tense': 
+                    motiv -= self.needs[need]['level']
+                elif status == 'relevant':
+                    motiv -= 1
+        if orderer:
+            #self.calc_submission()
+            pass
+        return motiv
+
+
+
+
+
 
 
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature

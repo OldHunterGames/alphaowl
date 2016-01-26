@@ -16,3 +16,7 @@ class Engine(object):
         self.time += 1
         return "label_new_day"
 
+    def job_sex(self, person):
+    	skill = 'sex'
+    	efficiency = 20
+    	return person.use_skill(skill)

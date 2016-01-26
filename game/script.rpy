@@ -101,8 +101,6 @@ label label_new_day:
     "[txt]"
     
     $ gt = game.new_turn()
-    $ money = player.eval_job()
-    $ game.tenge += money
     call lbl_mom_manage
 
     return        
@@ -258,26 +256,26 @@ label lbl_accomodation_rules:
 label lbl_job_rules:
     menu:
         'Всё сидишь как сыч, за конпуктером. Иди пробзись.':
-            $ player.set_job('idle')
+            $ player.job = 'idle'
         'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?':
-            $ player.set_job("study")
+            $ player.job = 'study'
         'Посудку помой. Мусор вынеси. С собакой погуляй. И за дедом прибери.':
-            $ player.set_job('chores')
+            $ player.job = 'chores'
         'Вон здоровый какой. Иди вагоны разгружать - семье копеечка.':
-            $ player.set_job('work', 'sport', 10, auto=True)
+            $ player.job = 'work'
         'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
-            $ player.set_job('whore', 'sex', 20, auto=True)
+            $ player.job = 'whore'
     
     menu:           
         'Как сильно ты будешь стараться на работе?'
         'Спустя рукава':
-            $ player.job['effort'] = 'bad'
+            pass
         'Работать хорощо':
-            $ player.job['effort'] = 'good'
+            pass
         'Волевым усилием':
-            $ player.job['effort'] = 'will'
+            pass
         'Выкладываться полностью':
-            $ player.job['effort'] = 'full'
+            pass
     return
 
 label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, determination=False):
