@@ -326,7 +326,7 @@ class Person(object):
     
 
     def add_factor(self, factor, level):
-        self.factors.append((factro, level))
+        self.factors.append((factor, level))
 
 
 
