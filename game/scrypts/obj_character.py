@@ -124,12 +124,12 @@ class Person(object):
                 value = 5
             return value
         if key in self.needs:
-            value = self.needs[key]
+            value = self.get_need_as_int(key)
             value += features_lookup(self, key)
-            if value < 1:
-                value = 1
-            if value > 5:
-                value = 5
+            if value < -2:
+                value = -2
+            if value > 2:
+                value = 2
             return value
         if key in self.inner_resources:
             value = self.inner_resources[key]
@@ -152,6 +152,13 @@ class Person(object):
                 if self.inner_resources[key] < 0:
                     self.inner_resources[key] = 0
         super(Person, self).__setattr__(key, value)
+    
+
+    def get_need_as_int(self, need):
+        rel = {'relevant':0, 'satisfied':1, 'overflow':2, 'tense':-1, 'frustrated': -2}
+        status = self.needs[need]['status']
+        return rel[status]
+
 
     def skill_level(self, skillname):
         value = 0
@@ -181,8 +188,7 @@ class Person(object):
             
     def use_resource(self, resource):
         value = getattr(self, resource)
-        newval = value - 1
-        setattr(self, resource, newval)
+        self.inner_resources[resource] -= 1
         return value
     def use_skill(self, skill, resource=False, determination=False, sabotage=False):
         if sabotage:
@@ -303,7 +309,7 @@ class Person(object):
             max_d[k] = 0
         for i in max_d:
             for n in factors_dict.keys():
-                if i in factros_dict[n]:
+                if i in factors_dict[n]:
                     max_d[i] += 1
         for i in result:
             while not result.count(i) == needed[i]:
