@@ -51,7 +51,7 @@ class Person(object):
         self.focused_skill = None
         self.focus = 0
         self.skills_used = []
-
+        self.factors = []
         self.needs = {              # List of persons actual needs, with levels and statuses
             # Need {level(1-5), shift(-/+ N) status (relevant, satisfied, overflow, tense, frustrated)}
             "general":  {"level": 3, "shift": 0, "status": "relevant"},
@@ -87,13 +87,13 @@ class Person(object):
         'stamina': 'physique',
         'concentration': 'mind',
         'willpower': 'spirit',
-        'acuracy': 'agility',
+        'accuracy': 'agility',
         'glamour': 'sensitivity'
         }
         
         self.inner_resources = {
         'stamina': self.physique,
-        'acuracy': self.agility,
+        'accuracy': self.agility,
         'concentration': self.mind,
         'willpower': self.spirit,
         'glamour': self.sensitivity
@@ -257,7 +257,7 @@ class Person(object):
         return 0
    
 
-    def motivation(self, skill, need=None, shift=0, orderer=None):
+    def motivation(self, skill, need=None, shift=0, orderer=None, taboo=None):
         motiv = 0
         motiv += self.mood()
         if skill in self.skills['talent']:
@@ -278,14 +278,59 @@ class Person(object):
         if orderer:
             #self.calc_submission()
             pass
+        if taboo:
+            motiv += self.taboo[taboo]
         return motiv
 
 
 
+    def calc_needs_factor(self): #better change nothing here...
+        factors_dict = {}
+        for i in self.factors:
+            if i[1] in factors_dict.keys():
+                factors_dict[i[1]].append(i[0])
+            else:
+                factors_dict[i[1]] = [i[0]]
+        priority = {'stamina': 5, 'accuracy': 4, 'concentration': 3, 'willpower': 2, 'glamour': 1}
+        needed = {}
+        max_d = {}
+        result = []
+        for i in factors_dict.values():
+            for n in i:
+                result.append(n)
+        for k in priority:
+            needed[k] = getattr(self, self.attr_relations[k]) - self.inner_resources[k]
+            max_d[k] = 0
+        for i in max_d:
+            for n in factors_dict.keys():
+                if i in factros_dict[n]:
+                    max_d[i] += 1
+        for i in result:
+            while not result.count(i) == needed[i]:
+                result.remove(i)
+        for i in result:
+            if result.count(i) > max_d[i]:
+                result.remove(i)
+        rd = {k: v for v, k in priority.items()}
+        revresult = []
+        for i in result:
+            revresult.append(priority[i])
+        while len(revresult) != len(factors_dict.keys()):
+            revresult.remove(min(revresult))
+        result = []
+        for i in revresult:
+            result.append(rd[i])
+        for i in result:
+            self.inner_resources[i] += 1
+        self.factors = []
+    
+
+    def add_factor(self, factor, level):
+        self.factors.append((factro, level))
 
 
 
-
+        
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
         new_feature = deepcopy(features_data.person_features[name])
         for f in self.features:
