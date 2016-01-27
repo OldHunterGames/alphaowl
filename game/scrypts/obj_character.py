@@ -211,6 +211,14 @@ class Person(object):
             self.skills_used.append(skill)
         return check
     
+    def set_focus(self, skill):
+        if not skill == self.focused_skill:
+            self.focus = 0
+            self.focused_skill = skill
+        else:
+            self.focused_skill = skill
+
+
 
     def calc_focus(self):
         if self.focused_skill in self.skills_used:
@@ -225,8 +233,9 @@ class Person(object):
             for skill in counted:
                 if counted[skill] == maximum:
                     result.append(skill)
-            self.focused_skill = random.choice(result)
+            self.set_focues(random.choice(result))
             self.focus += 1
+        self.skills_used = []
 
 
 
