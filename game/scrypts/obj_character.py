@@ -319,11 +319,23 @@ class Person(object):
                 result.remove(i)
         rd = {k: v for v, k in priority.items()}
         revresult = []
+        m = len(factors_dict.keys())
         for i in result:
             revresult.append(priority[i])
-        while len(revresult) != len(factors_dict.keys()):
-            revresult.remove(min(revresult))
         result = []
+        for k in factors_dict:
+            for i in revresult:
+                if rd[i] in factors_dict[k] and len(factors_dict[k]) == 1:
+                    factors_dict[k].remove(rd[i])
+                    result.append(rd[i])
+                    revresult.remove(i)
+                    m -= 1
+            for n in factors_dict[k]:
+                if len(factors_dict[k]) == 1 and prior[n] not in revresult:
+                    m -= 1
+        while len(revresult) > m:
+            revresult.remove(min(revresult))
+        
         for i in revresult:
             result.append(rd[i])
         for i in result:
