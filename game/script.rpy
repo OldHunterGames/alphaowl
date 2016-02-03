@@ -2,6 +2,7 @@
     sys.path.append(renpy.loader.transfn("scrypts"))
     from obj_character import *
     from owl_engine import *
+    from events import *
 
 init python:
     default_relations = {"connection": "unrelated",          
@@ -21,6 +22,7 @@ label start:
     
     define gray = Solid("#ccc")
     show image gray as bg
+    call evn_init
     call label_quiz
     
     return
@@ -101,6 +103,8 @@ label label_new_day:
     "[txt]"
     
     $ gt = game.new_turn()
+    $ event = game.end_turn_event()
+    call expression event
     call lbl_mom_manage
 
     return        
