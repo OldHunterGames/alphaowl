@@ -28,7 +28,7 @@ class Engine(object):
         :return: the RenPu location with the choosen event
         """
         list_of_events = []
-        for event in self.event_list:
+        for event in self.events_list:
             if event.check():
                 if kind in event.natures:
                         list_of_events.append(event)
