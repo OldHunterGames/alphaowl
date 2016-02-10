@@ -11,6 +11,7 @@ class Engine(object):
         self.time = 1
         self.tenge = 100
         self.mom_stuff = []
+        self.events_list = []
 
     def new_turn(self):
         self.time += 1
