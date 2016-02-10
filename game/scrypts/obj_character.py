@@ -104,7 +104,7 @@ class Person(object):
         self.appetite = 0
         self.calorie_storage = 0
         self.money = 0
-        self.determination = 0
+        self._determination = 0
 
         # Other persons known and relations with them
         self.relations = {
@@ -126,12 +126,7 @@ class Person(object):
                 value = 5
             return value
         if key in self.needs:
-            value = self.get_need_as_int(key)
-            value += features_lookup(self, key)
-            if value < -2:
-                value = -2
-            if value > 2:
-                value = 2
+            value = self.needs[key]
             return value
         if key in self.inner_resources:
             value = self.inner_resources[key]
@@ -153,9 +148,19 @@ class Person(object):
                 if self.inner_resources[key] < 0:
                     self.inner_resources[key] = 0
         super(Person, self).__setattr__(key, value)
+
+    @property
+    def determination(self):
+        return self._determination
+    @determination.setter
+    def determination(self, value):
+        self._determination = value
+        if self._determination < 0:
+            self._determination = 0
+
     
     def get_need_as_int(self, need):
-        rel = {'relevant':0, 'satisfied':-1, 'overflow':-2, 'tense':1, 'frustrated':2}
+        rel = {'relevant':0, 'satisfied':1, 'overflow':0, 'tense':-1, 'frustrated':-1}
         status = self.needs[need]['status']
         return rel[status]
 
@@ -254,13 +259,69 @@ class Person(object):
             elif self.needs[need]["status"] == "satisfied":
                 mood += 1
 
-        if mood < 0:
+        if mood < (-self.determination-self.sensitivity):
             return -1
-        elif mood > 0:
+        elif mood > self.sensitivity:
             return 1
 
         return 0
-   
+    
+    
+
+    def set_shift(self, need, value):
+        self.needs[need]['shift'] += value
+    
+    def reduce_overflow(self):
+        max_level = 5
+        needs_list = []
+        for need in self.needs:
+            if self.needs[need]['status'] == 'overflow':
+                needs_list.append(need)
+        if self.determination > len(needs_list):
+            return
+        needs_list = []
+        while True:
+            for need in self.needs:
+                if self.needs[need]['level'] == max_level and self.needs[need]['status'] == 'overflow':
+                    needs_list.append(need)
+            if len(needs_list) > 0:
+                n = choice(needs_list)
+                self.needs[n]['status'] = 'relevant'
+                return
+            max_level -= 1
+            if max_level < 1:
+                return
+
+
+
+    def calc_needs_change(self):
+        for need in self.needs:
+            shift = self.needs[need]['shift']
+            level = self.needs[need]['level']
+            status = self.needs[need]['status']
+            high_treshold = 9-self.sensitivity-level
+            if high_treshold < 1:
+                high_treshold = 1
+            low_treshold = (6-self.sensitivity-level)*(-1)
+            if low_treshold > -1:
+                low_treshold = -1
+            if status == 'frustrated':
+                if self.mood() > 0:
+                    if shift > high_treshold:
+                        self.needs[need]['status'] = 'relevant'
+            elif status == 'overflow':
+                if shift < low_treshold:
+                    self.determination -= 1
+                    self.needs[need]['status'] = 'relevant'
+            else:
+                if shift > high_treshold:
+                   self.needs[need]['status'] = 'satisfied'
+                elif shift < low_treshold:
+                    self.needs[need]['status'] = 'tense'
+                else:
+                    self.needs[need]['status'] = 'relevant'
+            self.needs[need]['shift'] = 0
+
 
     def motivation(self, skill, need=None, shift=0, orderer=None, taboo=None):
         motiv = 0
@@ -289,7 +350,7 @@ class Person(object):
 
 
 
-    def calc_needs_factor(self): #method for choosing best setup of factors
+    def calc_resources_factor(self): #method for choosing best setup of factors
         factors_dict = {}
         for i in self.factors: #sets person's factors in dict format
             if i[1] in factors_dict.keys():
@@ -388,6 +449,8 @@ class Person(object):
     
     def rest(self):
         self.fatness_change()
+        self.reduce_overflow()
+        self.calc_needs_change()
 
 
     def food_demand(self):
@@ -410,8 +473,8 @@ class Person(object):
         :return:
         """
         desire = self.food_demand()
-        nutrition_modifier = self.nutrition
-        desire += nutrition_modifier
+        nutrition_modifier = self.nutrition['level']
+        desire += nutrition_modifier -3
         desire += features_lookup(self, "food_desire")
 
         if desire < 1:
