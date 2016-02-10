@@ -289,11 +289,12 @@ class Person(object):
 
 
 
-    def calc_needs_factor(self): #better change nothing here...
+    def calc_needs_factor(self): #method for choosing best setup of factors
         factors_dict = {}
-        for i in self.factors:
+        for i in self.factors: #sets person's factors in dict format
             if i[1] in factors_dict.keys():
-                factors_dict[i[1]].append(i[0])
+                if i[0] not in factors_dict[i[1]]:
+                    factors_dict[i[1]].append(i[0])
             else:
                 factors_dict[i[1]] = [i[0]]
         priority = {'stamina': 5, 'accuracy': 4, 'concentration': 3, 'willpower': 2, 'glamour': 1}
@@ -303,14 +304,14 @@ class Person(object):
         for i in factors_dict.values():
             for n in i:
                 result.append(n)
-        for k in priority:
+        for k in priority: #looks up for amount of needed resources
             needed[k] = getattr(self, self.attr_relations[k]) - self.inner_resources[k]
             max_d[k] = 0
-        for i in max_d:
+        for i in max_d: #maximum of a single factor available
             for n in factors_dict.keys():
                 if i in factors_dict[n]:
                     max_d[i] += 1
-        for i in result:
+        for i in result: #sets optimal amount of factors in result
             while not result.count(i) == needed[i]:
                 result.remove(i)
         for i in result:
@@ -322,7 +323,7 @@ class Person(object):
         for i in result:
             revresult.append(priority[i])
         result = []
-        for k in factors_dict:
+        for k in factors_dict: #removes mutually exclusive factor from result
             for i in revresult:
                 if rd[i] in factors_dict[k] and len(factors_dict[k]) == 1:
                     factors_dict[k].remove(rd[i])
@@ -330,6 +331,8 @@ class Person(object):
                     revresult.remove(i)
                     m -= 1
             for n in factors_dict[k]:
+                if needed[n] <= 0:
+                    factors_dict[k].remove(n)
                 if len(factors_dict[k]) == 1 and prior[n] not in revresult:
                     m -= 1
         while len(revresult) > m:
