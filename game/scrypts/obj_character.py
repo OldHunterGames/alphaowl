@@ -34,6 +34,11 @@ class Person(object):
         self.tokens = []             # Special resources to activate various events
         self.master = None          # If this person is a slave, the master will be set
         self.slave_stance = 'Rebellious'     # Rebellious, Forced, Accustomed or Willing
+        # Slave stats, for obedience:
+        self.dread = 0
+        self.discipline = 0
+        self.dependence = 0
+
         self.allowance = 0         # Sparks spend each turn on a lifestyle
         self.ration = {
             "amount": 'unlimited',   # 'unlimited', 'limited' by price, 'regime' for figure, 'starvation' no food
@@ -43,7 +48,7 @@ class Person(object):
             "overfeed": 0,
         }
         self.accommodation = 'makeshift'
-        self.job = {'name': 'idle', 'efficiency': 0,'skill': None, 'effort': "bad"} #effort can be "bad", "good", "will" or "full"
+        self.job = {'name': 'idle', 'efficiency': 0,'skill': None, 'effort': "bad"}     #effort can be "bad", "good", "will" or "full"
         self.skills = {
             "training":  {'coding': 'mind', 'communication': 'spirit', 'sex': 'sensitivity', 'sport': 'physique'},        # List of skills. Skills get +1 bonus
             "experience":  {},      # List of skills. Skills get +1 bonus
@@ -78,27 +83,27 @@ class Person(object):
         }
 
         self.attributes = {
-        'physique': 3,
-        'mind': 3,
-        'spirit': 3,
-        'agility': 3,
-        'sensitivity':3
+            'physique': 3,
+            'mind': 3,
+            'spirit': 3,
+            'agility': 3,
+            'sensitivity':3
         }
         self.university = {'name': 'study', 'effort': 'bad', 'auto': False}
         self.attr_relations = {
-        'stamina': 'physique',
-        'concentration': 'mind',
-        'willpower': 'spirit',
-        'accuracy': 'agility',
-        'glamour': 'sensitivity'
+            'stamina': 'physique',
+            'concentration': 'mind',
+            'willpower': 'spirit',
+            'accuracy': 'agility',
+            'glamour': 'sensitivity'
         }
         
         self.inner_resources = {
-        'stamina': self.physique,
-        'accuracy': self.agility,
-        'concentration': self.mind,
-        'willpower': self.spirit,
-        'glamour': self.sensitivity
+            'stamina': self.physique,
+            'accuracy': self.agility,
+            'concentration': self.mind,
+            'willpower': self.spirit,
+            'glamour': self.sensitivity
         }
 
         self.appetite = 0
@@ -183,9 +188,7 @@ class Person(object):
                 skill_attr = self.skills[key][skillname]
                 break
         return skill_attr
-    
 
-            
     def use_resource(self, resource):
         value = getattr(self, resource)
         self.inner_resources[resource] -= 1
@@ -225,7 +228,6 @@ class Person(object):
         else:
             self.focused_skill = skill
 
-
     def calc_focus(self):
         if self.focused_skill in self.skills_used:
             self.focus += 1
@@ -242,7 +244,6 @@ class Person(object):
             self.set_focues(random.choice(result))
             self.focus += 1
         self.skills_used = []
-
 
     def mood(self):
         mood = 0
@@ -261,6 +262,31 @@ class Person(object):
 
         return 0
    
+    def obedience(self):
+        obedience = 0
+
+        if self.alignment["Orderliness"] == "Lawful":
+            obedience += self.discipline*2
+        elif self.alignment["Orderliness"] == "Chaotic":
+            obedience += self.discipline/2
+        else:
+            obedience += self.discipline
+
+        if self.alignment["Activity"] == "Timid":
+            obedience += self.dependence*2
+        elif self.alignment["Activity"] == "Ardent":
+            obedience += self.dependence/2
+        else:
+            obedience += self.dependence
+
+        if self.alignment["Morality"] == "Evil":
+            obedience += self.dread*2
+        elif self.alignment["Morality"] == "Good":
+            obedience += self.dread/2
+        else:
+            obedience += self.dread
+
+        return obedience
 
     def motivation(self, skill, need=None, shift=0, orderer=None, taboo=None):
         motiv = 0
@@ -286,8 +312,6 @@ class Person(object):
         if taboo:
             motiv += self.taboo[taboo]
         return motiv
-
-
 
     def calc_needs_factor(self): #method for choosing best setup of factors
         factors_dict = {}
@@ -348,8 +372,6 @@ class Person(object):
     def add_factor(self, factor, level):
         self.factors.append((factor, level))
 
-
-
         
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
         new_feature = deepcopy(features_data.person_features[name])
@@ -364,11 +386,13 @@ class Person(object):
         for f in self.features:
             if f.slot == slot:
                 return f
+
     def feature(self, name):                # finds feature with needed name if exist
         for f in self.features:
             if f.name == name:
                 return f
         return None
+
     def remove_feature(self, feature):       # feature='str' or Fearutere()
         if isinstance(feature, str):
             r = self.feature(feature)
@@ -377,6 +401,7 @@ class Person(object):
         else:
             self.features.remove(feature)
             return
+
     def description(self):
         txt = self.firstname + ' "' + self.nickname + '" ' + self.surname
         txt += '\n'
@@ -496,7 +521,6 @@ class Person(object):
             chance = randint(-10, -1)
             if self.ration["overfeed"] <= chance:
                 self.ration["overfeed"] = 0
-
 
         return
 

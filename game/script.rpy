@@ -31,6 +31,15 @@ label label_quiz:
 
     menu:
         "Ты мальчик или девочка-внутри?"
+        "(я не человек уже, я разработчик нахуй)":
+            $ player.gender = "male"
+            $ player.needs["debauch"] = {"level": 3, "status": "relevant"}
+            $ player.age = "adolescent"
+            $ player.alignment['Orderliness'] = "Conformal"
+            $ player.alignment['Activity'] = "Resonable"
+            $ player.alignment['Morality'] = "Selfish"
+            $ player.slave_stance = 'Forced'    
+            jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ player.gender = "male"
             $ player.needs["debauch"] = {"level": 3, "status": "relevant"}
@@ -109,7 +118,7 @@ label label_quiz:
 
 label label_new_day:
     "Неделя номер [game.time]"
-    $ txt = player.description()
+    $ txt = player.description() + "\n Настроение:" + str(player.mood()) + "\n Подчинение:" + str(player.obedience())
     "[txt]"
     
     $ gt = game.new_turn()
