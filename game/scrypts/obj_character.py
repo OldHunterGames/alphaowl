@@ -31,7 +31,9 @@ class Person(object):
             "Morality": "Selfish",       # "Good", "Selfish" or "Evil"
         }
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
+        self.tokens = []             # Special resources to activate various events
         self.master = None          # If this person is a slave, the master will be set
+        self.slave_stance = 'Rebellious'     # Rebellious, Forced, Accustomed or Willing
         self.allowance = 0         # Sparks spend each turn on a lifestyle
         self.ration = {
             "amount": 'unlimited',   # 'unlimited', 'limited' by price, 'regime' for figure, 'starvation' no food
@@ -144,7 +146,6 @@ class Person(object):
         else:
             raise AttributeError(key)
 
-    
     def __setattr__(self, key, value):
         if 'inner_resources' in self.__dict__:
             if key in self.inner_resources:
@@ -153,12 +154,10 @@ class Person(object):
                     self.inner_resources[key] = 0
         super(Person, self).__setattr__(key, value)
     
-
     def get_need_as_int(self, need):
         rel = {'relevant':0, 'satisfied':-1, 'overflow':-2, 'tense':1, 'frustrated':2}
         status = self.needs[need]['status']
         return rel[status]
-
 
     def skill_level(self, skillname):
         value = 0
@@ -166,6 +165,7 @@ class Person(object):
             if skillname in self.skills[key]:
                 value += 1
         return value
+
     def skill_resource(self, skillname):
         res = None
         inverted = {v: k for k,v in self.attr_relations.items()}
@@ -190,6 +190,7 @@ class Person(object):
         value = getattr(self, resource)
         self.inner_resources[resource] -= 1
         return value
+
     def use_skill(self, skill, resource=False, determination=False, sabotage=False):
         if sabotage:
             return 0
@@ -225,11 +226,10 @@ class Person(object):
             self.focused_skill = skill
 
 
-
     def calc_focus(self):
         if self.focused_skill in self.skills_used:
             self.focus += 1
-        elif len(self.skills_used)>0:
+        elif len(self.skills_used) > 0:
             from collections import Counter
             counted = Counter()
             for s in self.skills_used:
@@ -242,7 +242,6 @@ class Person(object):
             self.set_focues(random.choice(result))
             self.focus += 1
         self.skills_used = []
-
 
 
     def mood(self):

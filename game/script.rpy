@@ -82,7 +82,17 @@ label label_quiz:
             $ player.alignment['Morality'] = "Good"
             $ player.needs["altruism"] = {"level": 3, "status": "relevant"}            
     
-    
+    menu:
+        "А что если мамка уроки делать заставит?"
+        "Конечно. Надо делать уроки чтобы мамуля мной гордилась.":
+            $ player.slave_stance = 'Willing'
+        "Конечно. Это - норма.":
+            $ player.slave_stance = 'Accustomed'        
+        "Ну что делать? Сяду. А то батя ремня всыпет.":
+            $ player.slave_stance = 'Forced'    
+        "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
+            $ player.slave_stance = 'Rebellious'
+            
     $ alignment = player.alignment['Orderliness'] + player.alignment['Activity'] + player.alignment['Morality'] 
     "Твой алаймент: [alignment]"
 
