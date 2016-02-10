@@ -155,7 +155,7 @@ class Person(object):
     
 
     def get_need_as_int(self, need):
-        rel = {'relevant':0, 'satisfied':1, 'overflow':2, 'tense':-1, 'frustrated': -2}
+        rel = {'relevant':0, 'satisfied':-1, 'overflow':-2, 'tense':1, 'frustrated':2}
         status = self.needs[need]['status']
         return rel[status]
 
@@ -409,7 +409,7 @@ class Person(object):
         """
         desire = self.food_demand()
         nutrition_modifier = self.nutrition
-        desire += nutrition_modifier - 3
+        desire += nutrition_modifier
         desire += features_lookup(self, "food_desire")
 
         if desire < 1:
