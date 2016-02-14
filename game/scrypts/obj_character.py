@@ -16,7 +16,6 @@ def features_lookup(person, stat):
             value = f.modifiers[stat]
     return value
 
-
 class Person(object):
 
     def __init__(self):
@@ -34,6 +33,10 @@ class Person(object):
         self.tokens = []             # Special resources to activate various events
         self.master = None          # If this person is a slave, the master will be set
         self.slave_stance = 'Rebellious'     # Rebellious, Forced, Accustomed or Willing
+        self.supervisor = None
+        self.slaves = []
+        self.subordinates = []
+
         # Slave stats, for obedience:
         self.dread = 0
         self.discipline = 0
@@ -111,15 +114,16 @@ class Person(object):
         self.money = 0
         self._determination = 0
 
-        # Other persons known and relations with them
+        # Other persons known and relations with them, value[1] = [needed points, current points]
         self.relations = {
-            "Old friend": {                         # for example, actually a Person() object must be here
-                "connection": "unrelated",            # unrelated, slave, subordinate, supervisor or master
-                "consideration": "respectful",     # significant, respectful or miserable
-                "distance": "close",                # intimate, close or distant
-                "affection": "friend",              # friend, associate or foe
+            "Old friend": {                                   # for example, actually a Person() object must be here
+                "connection": "unrelated",                    # unrelated, slave, subordinate, supervisor or master
+                "consideration": ["respectful", [0, 0]],      # significant, respectful or miserable
+                "distance": ["close", [0, 0]],                # intimate, close or distant
+                "affection": ["friend", [0, 0]],              # friend, associate or foe
             }
         }
+        
 
     def __getattr__(self, key):
         if key in self.attributes:
@@ -164,10 +168,7 @@ class Person(object):
             self._determination = 0
 
     
-    def get_need_as_int(self, need):
-        rel = {'relevant':0, 'satisfied':1, 'overflow':0, 'tense':-1, 'frustrated':-1}
-        status = self.needs[need]['status']
-        return rel[status]
+    
 
     def skill_level(self, skillname):
         value = 0
@@ -585,6 +586,60 @@ class Person(object):
             if self.ration["overfeed"] <= chance:
                 self.ration["overfeed"] = 0
 
+        return
+
+    
+    def relations_points(self, person=None, axis=None, value=1):    #axis = one of (consideration, distance, affection) 
+        if person in self.relations:
+            self.relations[person][axis][1][1] += value
+    def set_relations(self, person):
+        if person in self.relations:
+            return
+        else:
+            default = {
+                "connection": "unrelated",
+                "consideration": ["respectful", [0, 0]],
+                "distance": ["close", [0, 0]],
+                "affection": ["associate", [0, 0]],              
+            }
+            self.relations[person] = default
+        return
+    def rel_change_available(self, person, axis):
+        if person in self.relations:
+            needed = self.relations[person][axis][1][0]
+            current = self.relations[person][axis][1][1]
+            direction = True if current > 0 else False
+            if abs(current) > needed:
+                return (True, direction)
+            else:
+                return (False, False)
+    def get_relations(self, person, axis):
+        if person not in self.relations:
+            return 'You have no relations with character %s'%(person.description())
+        if axis == 'connection':
+            return self.relations[person][axis]
+        return self.relations[person][axis][0]
+    def change_relations(self, person, axis, direction=''):    #direction = '+' or '-'
+        if person in self.relations:
+            if axis == 'consideration':
+                l = ['miserable', 'respectful', 'significant']
+            if axis == 'distance':
+                l = ['distant', 'close', 'friend']
+            if axis == 'affection':
+                l = ['foe', 'associate', 'friend']
+            rel = self.relations[person][axis][0]
+            num = l.index(rel)
+            if direction == '+':
+                num += 1
+                if num > 2:
+                    num = 2
+            else:
+                num -= 1
+                if num < 0:
+                    num = 0
+            rel = l[num]
+            self.relations[person][axis][0] = rel
+            self.relations[person][axis][1][1] = 0
         return
 
 
