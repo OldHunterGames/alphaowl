@@ -44,5 +44,7 @@ class Engine(object):
     def job_sex(self, person):
         skill = 'sex'
         efficiency = 20
-        return person.use_skill(skill)
+        resource = True
+        quality = person.use_skill(skill, resource)
+        self.tenge += efficiency*quality
 

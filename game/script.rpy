@@ -3,6 +3,7 @@
     from obj_character import *
     from owl_engine import *
     from events import *
+    from schedule import *
 
 init python:
     default_relations = {"connection": "unrelated",          
@@ -124,6 +125,9 @@ label label_new_day:
     
     $ gt = game.new_turn()
     $ event = game.end_turn_event()
+    $ Schedule(player)
+    $ persons_schedules[player].add_action(game.job_sex, 'job', person=player)
+    $ persons_schedules[player].use_actions()
     call expression event
     
     if game.mode == 'son':
