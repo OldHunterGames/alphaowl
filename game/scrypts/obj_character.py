@@ -36,6 +36,7 @@ class Person(object):
         self.supervisor = None
         self.slaves = []
         self.subordinates = []
+        self.ap = 1
 
         # Slave stats, for obedience:
         self.dread = 0

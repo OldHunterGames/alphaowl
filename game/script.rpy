@@ -108,26 +108,42 @@ label label_quiz:
     menu:
         "Кем ты будешь управлять?"
         "Собой":
-            "Низззя"
-            jump label_quiz
+            $ game.mode = 'son'
+            jump label_new_day
             
         "Своей мамкой":
+            $ game.mode = 'mom'
             jump label_new_day
 
     return
 
 label label_new_day:
     "Неделя номер [game.time]"
-    $ txt = player.description() + "\n Настроение:" + str(player.mood()) + "\n Подчинение:" + str(player.obedience())
+    $ txt = player.description() + "\n Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
     "[txt]"
     
     $ gt = game.new_turn()
     $ event = game.end_turn_event()
     call expression event
-    call lbl_mom_manage
+    
+    if game.mode == 'son':
+        call lbl_son_manage
+    else:
+        call lbl_mom_manage
 
     return        
 
+label lbl_son_manage:
+    
+    menu:
+        "Сосредоточиться на..." if player.ap > 0:
+            $ player.ap -= 1
+            jump lbl_son_manage
+        "Конец недели":
+            $ player.rest()
+            jump label_new_day
+    
+    return
 
 label lbl_mom_manage:
     menu:
@@ -141,6 +157,8 @@ label lbl_mom_manage:
             # call lbl_leisure_rules          
             "Упс. Не готово"
             $ pass
+        "Воспитание":
+            call lbl_discipline
         "Магазин":
             call lbl_shop
         "Конец недели":
@@ -168,6 +186,7 @@ label lbl_food_rules:
             $ player.ration['food_type'] = "forage"   
             $ player.ration['target'] = 0           
             $ player.ration['limit'] = None
+            jump lbl_mom_manage
     
     menu:
         "Вот покушай ка Сычулька..."
@@ -248,6 +267,26 @@ label lbl_shop:
 
     return                      
 
+label lbl_discipline:
+    menu:
+        "Надо сконцентрироваться на чём то одном."
+        "Наказания":
+            menu:
+                "Отец, научи сычу уму-разуму то!":
+                    menu:
+                        "Подзатыльники":
+                            $ pass
+                "Назад":
+                    jump lbl_discipline
+        "Внушение":
+            $ pass
+        "Подкуп":
+            $ pass
+        "И так неплохо":
+            $ pass
+        
+    return
+    
 label lbl_diet:
     menu:
         "Мы сейчас тебе диету будем делать."
