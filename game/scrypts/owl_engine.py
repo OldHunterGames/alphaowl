@@ -7,7 +7,9 @@ from obj_character import *
 class Engine(object):
 
     def __init__(self):
-        self.player = Person()
+        self.mother = Person()
+        self.child = Person()
+        self.player = None
         self.time = 1
         self.tenge = 100
         self.mom_stuff = []

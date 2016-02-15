@@ -3,9 +3,10 @@ from random import *
 import renpy.store as store
 import renpy.exports as renpy
 import features_data
+from copy import copy
 from copy import deepcopy
 from food import *
-
+from schedule import *
 
 def features_lookup(person, stat):
     if not isinstance(person, Person):
@@ -19,6 +20,7 @@ def features_lookup(person, stat):
 class Person(object):
 
     def __init__(self):
+        self.player_controlled = False
         self.firstname = u"Антон"
         self.surname = u"Сычов"
         self.nickname = u"Сычуля"
@@ -175,17 +177,56 @@ class Person(object):
         return modifier
 
     def pain_effect_threshold(self, taboo):
-        threshold = 3 + self.attributes["spirit"] + self.ddd_mod(self.dread) - self.attributes["sensitivity"] - taboo
+        threshold = 3 + self.attributes["spirit"] + self.ddd_mod(self.dread) - self.attributes["sensitivity"] - self.taboo[taboo]
         return threshold
 
     def pain_tear_threshold(self, taboo):
-        threshold = 7 + self.attributes["spirit"] + - self.attributes["sensitivity"] - taboo
+        threshold = 7 + self.attributes["spirit"] + - self.attributes["sensitivity"] - self.taboo[taboo]
         return threshold
 
-    def torture(self, power, taboos):
-        taboo = max(taboos)
-        #TODO: make it work
+    def torture(self, power=0, taboos=[], target=None):
+        _taboos = copy(taboos)
+        taboo = _taboos.pop(0)
+        for i in _taboos:
+            if target.taboo[taboo] < target.taboo[i]:
+                taboo = i
+        effect = target.pain_effect_threshold(taboo)
+        tear = target.pain_tear_threshold(taboo)
+        tokens = []
+        if power > tear:
+            tokens.append('angst')
+            tokens.append('fear')
+        elif power > effect:
+            tokens.append('fear')
+        if len(tokens) < 1:
+            return
+        if not target.player_controlled:
+            if power - effect < target.willpower and target.willpower != 0:
+                 res = target.use_resource('willpower')
+                 if res > 0:
+                    tokens.remove('fear')
+            else:
+                if target.determination > 0:
+                    target.determination -= 1
+                    tokens.remove('fear')
+            for i in tokens:
+                target.tokens.append(i)
+
+        else:
+            for i in tokens:
+                decision = renpy.call_in_new_context('lbl_resist', i)
+                if decision:
+                    res = target.use_resource('willpower')
+                    if res > 0:
+                        res = True
+                    else:
+                        res = False
+                        target.tokens.append(i)
+                    renpy.call_in_new_context('lbl_resist_result', i, res)
+                else:
+                    target.tokens.append(i)
         return
+
 
     def skill_level(self, skillname):
         value = 0

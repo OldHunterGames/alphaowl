@@ -6,17 +6,17 @@
     from schedule import *
 
 init python:
-    default_relations = {"connection": "unrelated",          
-                "consideration": "respectful",     
-                "distance": "close",                
-                "affection": "associate",}
     
     renpy.block_rollback()
     game = Engine()
-    player = game.player
-    player.master = Person()
-    mother = player.master
-    player.relations[mother] = deepcopy(default_relations)
+    child = game.child
+    mother = game.mother
+    child.master = mother
+    
+    child.set_relations(mother)
+    mother.set_relations(child)
+    Schedule(mother)
+    Schedule(child)
     
 # Игра начинается здесь.
 label start:
@@ -33,101 +33,109 @@ label label_quiz:
     menu:
         "Ты мальчик или девочка-внутри?"
         "(я не человек уже, я разработчик нахуй)":
-            $ player.gender = "male"
-            $ player.needs["debauch"] = {"level": 3, 'shift': 0, "status": "relevant"}
-            $ player.age = "adolescent"
-            $ player.alignment['Orderliness'] = "Conformal"
-            $ player.alignment['Activity'] = "Resonable"
-            $ player.alignment['Morality'] = "Selfish"
-            $ player.slave_stance = 'Forced'    
+            $ child.gender = "male"
+            $ child.needs["debauch"] = {"level": 3, 'shift': 0, "status": "relevant"}
+            $ child.age = "adolescent"
+            $ child.alignment['Orderliness'] = "Conformal"
+            $ child.alignment['Activity'] = "Resonable"
+            $ child.alignment['Morality'] = "Selfish"
+            $ child.slave_stance = 'Forced'
+            $ game.player = child
+            $ player = game.player
+            $ player.player_controlled = True    
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
-            $ player.gender = "male"
-            $ player.needs["debauch"] = {"level": 3,'shift': 0, "status": "relevant"}
+            $ child.gender = "male"
+            $ child.needs["debauch"] = {"level": 3,'shift': 0, "status": "relevant"}
         "Раскусил, дай мне платице...":
-            $ player.gender = "female"     
-            $ player.needs["care"] = {"level": 3,'shift': 0, "status": "relevant"}
-            $ player.firstname = "Тошка"
-            $ player.surname = "Сычева"
+            $ child.gender = "female"     
+            $ child.needs["care"] = {"level": 3,'shift': 0, "status": "relevant"}
+            $ child.firstname = "Тошка"
+            $ child.surname = "Сычева"
             
     menu:
         "Волосики уже везде выросли?"
         "Маaaaм, меня комплюктор про странное спрашивает!":
-            $ player.age = "junior"
+            $ child.age = "junior"
         "Я не школота. Факт (правда)":
-            $ player.age = "adolescent"
+            $ child.age = "adolescent"
         "Я олдфаг. Мои муди седы как снега на склоне фудзи...":
-            $ player.age = "mature"        
+            $ child.age = "mature"        
             
     menu:
         "Давай вспомним твои школьные годы. Много двоек было за прогулы?"
         "Никаких прогулов. У меня расписание чёткое.":
-            $ player.alignment['Orderliness'] = "Lawful"
-            $ player.needs["care"] = {"level": 3,'shift': 0, "status": "relevant"}
+            $ child.alignment['Orderliness'] = "Lawful"
+            $ child.needs["care"] = {"level": 3,'shift': 0, "status": "relevant"}
         "А чё я? Все прогуливали и я прогуливал.":
-            $ player.alignment['Orderliness'] = "Conformal"
+            $ child.alignment['Orderliness'] = "Conformal"
         "Делаю что хочу. Я вообще не контролируемый!":
-            $ player.alignment['Orderliness'] = "Chaotic"
-            $ player.needs["independence"] = {"level": 3,'shift': 0, "status": "relevant"}
+            $ child.alignment['Orderliness'] = "Chaotic"
+            $ child.needs["independence"] = {"level": 3,'shift': 0, "status": "relevant"}
             
     menu:
         "Новая знакомая в скайпе предлагает тебе зависнуть с ней и ещё двумя подругами на ночь, на незнакомой хате в Медвеково. Твои действия?"
         "Пожаловаться на спам. Скрыть.":
-            $ player.alignment['Activity'] = "Timid"
-            $ player.needs["approval"] = {"level": 3,'shift': 0, "status": "relevant"}
+            $ child.alignment['Activity'] = "Timid"
+            $ child.needs["approval"] = {"level": 3,'shift': 0, "status": "relevant"}
         "В Медведково? Ну хрееееееен знает...":
-            $ player.alignment['Activity'] = "Resonable"
+            $ child.alignment['Activity'] = "Resonable"
         "Я за любой кипеш, кроме голодовки!":
-            $ player.alignment['Activity'] = "Ardent"
-            $ player.needs["trill"] = {"level": 3,'shift': 0, "status": "relevant"}
+            $ child.alignment['Activity'] = "Ardent"
+            $ child.needs["trill"] = {"level": 3,'shift': 0, "status": "relevant"}
             
     menu:
         "Идёшь по улице. Кушаешь вкусный бутер с колбаской. К тебе подбегает няшный котик и просит кусочек."
         "Пнуть блохастого. Это моя колбаса. Плохая киса!":
-            $ player.alignment['Morality'] = "Evil"
-            $ player.needs["power"] = {"level": 3,'shift': 0, "status": "relevant"}
+            $ child.alignment['Morality'] = "Evil"
+            $ child.needs["power"] = {"level": 3,'shift': 0, "status": "relevant"}
         "Пройти мимо. Пусть бабки подъездные его прикармливают.":
-            $ player.alignment['Morality'] = "Selfish"
+            $ child.alignment['Morality'] = "Selfish"
         "Конечно дать колбаски. Да я бы и собаке...":
-            $ player.alignment['Morality'] = "Good"
-            $ player.needs["altruism"] = {"level": 3,'shift': 0, "status": "relevant"}            
+            $ child.alignment['Morality'] = "Good"
+            $ child.needs["altruism"] = {"level": 3,'shift': 0, "status": "relevant"}            
     
     menu:
         "А что если мамка уроки делать заставит?"
         "Конечно. Надо делать уроки чтобы мамуля мной гордилась.":
-            $ player.slave_stance = 'Willing'
+            $ child.slave_stance = 'Willing'
         "Конечно. Это - норма.":
-            $ player.slave_stance = 'Accustomed'        
+            $ child.slave_stance = 'Accustomed'        
         "Ну что делать? Сяду. А то батя ремня всыпет.":
-            $ player.slave_stance = 'Forced'    
+            $ child.slave_stance = 'Forced'    
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
-            $ player.slave_stance = 'Rebellious'
+            $ child.slave_stance = 'Rebellious'
             
-    $ alignment = player.alignment['Orderliness'] + player.alignment['Activity'] + player.alignment['Morality'] 
+    $ alignment = child.alignment['Orderliness'] + child.alignment['Activity'] + child.alignment['Morality'] 
     "Твой алаймент: [alignment]"
 
     menu:
         "Кем ты будешь управлять?"
         "Собой":
             $ game.mode = 'son'
+            $ game.player = child
             jump label_new_day
             
         "Своей мамкой":
             $ game.mode = 'mom'
+            $ game.player = mother
             jump label_new_day
 
     return
 
 label label_new_day:
+    $ player = game.player
+    $ player.player_controlled = True 
     "Неделя номер [game.time]"
     $ txt = player.description() + "\n Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
     "[txt]"
     
     $ gt = game.new_turn()
     $ event = game.end_turn_event()
-    $ Schedule(player)
-    $ persons_schedules[player].add_action(game.job_sex, 'job', person=player)
-    $ persons_schedules[player].use_actions()
+    
+    python:
+        for s in persons_schedules:
+            persons_schedules[s].use_actions()
     call expression event
     
     if game.mode == 'son':
@@ -161,7 +169,7 @@ label lbl_mom_manage:
             # call lbl_leisure_rules          
             "Упс. Не готово"
             $ pass
-        "Воспитание":
+        "Воспитание" if game.mode == 'mom':
             call lbl_discipline
         "Магазин":
             call lbl_shop
@@ -279,7 +287,7 @@ label lbl_discipline:
                 "Отец, научи сычу уму-разуму то!":
                     menu:
                         "Подзатыльники":
-                            $ pass
+                            $ persons_schedules[mother].add_action(mother.torture, 'discipline', power=1, taboos=['pain'], target=child)
                 "Назад":
                     jump lbl_discipline
         "Внушение":
@@ -366,5 +374,17 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
             $ result_text += str(skill_result)
     "game" '[result_text]'
     return
-
+label lbl_resist(effect):
+    'Сопротивляться [effect]?'
+    menu:
+        'Да':
+            return True
+        'Нет':
+            return False
+label lbl_resist_result(effect, success):
+    if success:
+        'Вы справились с [effect]'
+    else:
+        'Вы попытались справиться с [effect] но вам не удалось'
+    return
 
