@@ -33,7 +33,7 @@ label label_quiz:
         "Ты мальчик или девочка-внутри?"
         "(я не человек уже, я разработчик нахуй)":
             $ player.gender = "male"
-            $ player.needs["debauch"] = {"level": 3, "status": "relevant"}
+            $ player.needs["debauch"] = {"level": 3, 'shift': 0, "status": "relevant"}
             $ player.age = "adolescent"
             $ player.alignment['Orderliness'] = "Conformal"
             $ player.alignment['Activity'] = "Resonable"
