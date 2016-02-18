@@ -116,6 +116,8 @@ class Person(object):
         self.calorie_storage = 0
         self.money = 0
         self._determination = 0
+        self.rewards = []
+        self.used_rewards = []
 
         # Other persons known and relations with them, value[1] = [needed points, current points]
         self.relations = {
@@ -171,7 +173,7 @@ class Person(object):
             self._determination = 0
 
     def ddd_mod(self, d):
-        modifier = d + self.dread + self.discipline + self.dread - 3
+        modifier = d + self.dread + self.discipline + self.dependence - 3
         if modifier < 0:
             modifier = 0
         return modifier
@@ -215,16 +217,25 @@ class Person(object):
         else:
             for i in tokens:
                 decision = renpy.call_in_new_context('lbl_resist', i)
-                if decision:
+                if decision=='willpower':
                     res = target.use_resource('willpower')
                     if res > 0:
                         res = True
                     else:
                         res = False
-                        target.tokens.append(i)
+                        target.tokens.append(i) 
+                    renpy.call_in_new_context('lbl_resist_result', i, res)  
+                elif decision == 'determination':
+                    if target.determination > 0:
+                        target.determination -= 1
+                        res = True
+                    else:
+                        res = False
                     renpy.call_in_new_context('lbl_resist_result', i, res)
                 else:
                     target.tokens.append(i)
+                    res = False
+                    renpy.call_in_new_context('lbl_notify', i)
         return
 
 
@@ -535,6 +546,7 @@ class Person(object):
         self.fatness_change()
         self.reduce_overflow()
         self.calc_needs_change()
+        self.bribe()
 
 
     def food_demand(self):
@@ -699,5 +711,91 @@ class Person(object):
             self.relations[person][axis][0] = rel
             self.relations[person][axis][1][1] = 0
         return
+
+
+    def add_reward(self, name, need):
+        self.rewards.append((name, need))
+    
+
+    def bribe_threshold(self):
+        threshold = 6 + self.ddd_mod(self.dependence) + self.spirit - self.sensitivity - self.comfort['level']
+        return threshold
+
+
+    def bribe(self):
+        tensed_needs = []
+        for need in self.needs:
+            status = self.needs[need]['status']
+            if status == 'frustrated' or status == 'tense':
+                tensed_needs.append(need)
+        tensed_num = len(tensed_needs)
+        if tensed_num < self.bribe_threshold():
+            return 
+        needed_rewards = []
+        needs = []
+        for reward in self.rewards:
+            need = reward[1]
+            if need in tensed_needs and need not in needs:
+                needed_rewards.append(reward)
+                needs.append(need)
+        if tensed_num - len(needed_rewards) <= self.bribe_threshold():
+            for reward in needed_rewards:
+                if reward not in self.used_rewards:
+                    refuse_threshold = self.bribe_threshold() - (tensed_num - len(needed_rewards))
+                    if self.slave_stance.lower() == 'rebellious' or self.alignment['Orderliness'].lower() == 'chaotic':
+                        if self.use_resource('willpower') > 0:
+                            return
+                        elif self.determination > 0:
+                            self.determination -= 1
+                            return
+                    elif self.willpower > refuse_threshold:
+                        if self.use_resource('willpower') > 0:
+                            return
+                    self.used_rewards += self.rewards
+                    self.rewards = []
+                    self.tokens.append('dependence')
+                    return
+    
+    
+    def training_resistance(self, master):
+        return 1 + (self.mind - master.mind) + (self.spirit - master.spirit) + self.ddd_mod(self.discipline)
+    
+
+    def train(self, target):
+        target_resistance = target.training_resistance(self)
+        training_power = self.use_skill('communication', True, True)
+        if target_resistance < training_power:
+            if target.player_controlled:
+                result = renpy.call_in_new_context('lbl_resist', 'discipline')
+                if result == 'determination':
+                    if target.determination > 0:
+                        target.determination -= 1
+                        result = True
+                    else:
+                        result = False
+                    renpy.call_in_new_context('lbl_resist_result', 'discipline', result)
+                elif result == 'willpower':
+                    r = target.use_resource('willpower')
+                    if r > 0:
+                        result = True
+                    else:
+                        result = False
+                    renpy.call_in_new_context('lbl_resist_result', 'discipline', result)
+                if result == False:
+                    renpy.call_in_new_context('lbl_notify', 'discipline')
+                    target.tokens.append('discipline')
+                return
+
+            if target.slave_stance.lower() == 'rebellious':
+                if target.use_resource('willpower') <= 0:
+                    if target.determination > 0:
+                        target.determination -= 1
+                        return
+                else:
+                    return
+            elif target.willpower > target.obedience():
+                if target.use_resource('willpower') > 0:
+                    return
+            target.tokens.append('discipline')
 
 

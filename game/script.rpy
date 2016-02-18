@@ -170,8 +170,11 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
 label lbl_resist(effect):
     'Сопротивляться [effect]?'
     menu:
-        'Да':
-            return True
+        'Сила воли: [player.willpower], Решимость: [player.determination]'
+        'Сила воли':
+            return 'willpower'
+        'Решимость' if player.determination > 0:
+            return 'determination'
         'Нет':
             return False
 label lbl_resist_result(effect, success):
@@ -180,4 +183,6 @@ label lbl_resist_result(effect, success):
     else:
         'Вы попытались справиться с [effect] но вам не удалось'
     return
+label lbl_notify(effect):
+    'Вы получили [effect]'
 

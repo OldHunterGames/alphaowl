@@ -6,7 +6,7 @@ import renpy.exports as renpy
 persons_schedules = {}
 class Schedule(object):
 	def __init__(self, person):
-		self.actions = {'other': []}
+		self.actions = {}
 		persons_schedules[person] = self
 	def add_action(self, func, action_type=None, *args, **kwargs):
 		l = [func, {}]
@@ -15,9 +15,14 @@ class Schedule(object):
 		if action_type:
 		    self.actions[action_type] = l
 		else:
-			self.actions['other'].append(l)
+			if 'other' in self.actions:
+			    self.actions['other'].append(l)
+			else:
+				self.actions['other'] = [l]
 
 	def use_actions(self):
+		if not self.actions:
+			return
 		for l in self.actions:
 			if l != 'other':
 				action = self.actions[l]
