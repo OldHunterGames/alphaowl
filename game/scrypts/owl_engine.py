@@ -15,6 +15,21 @@ class Engine(object):
         self.mom_stuff = []
         self.events_list = []
         self.mode = 'son'
+        self.studies = [
+            'major',
+            'military',
+            'gym',
+            'labs',
+            'practice',
+        ]
+
+    def choose_study(self):
+        if self.studies:
+            study = choice(self.studies)
+        else:
+            study = 'no_more_studies'
+
+        return study
 
     def new_turn(self):
         self.time += 1
