@@ -270,6 +270,8 @@ class Person(object):
         return value
 
     def use_skill(self, skill, resource=False, determination=False, sabotage=False):
+        if self.player_controlled:
+            resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill_resource(skill))
         if sabotage:
             return 0
         skill_lvl = self.skill_level(skill)
