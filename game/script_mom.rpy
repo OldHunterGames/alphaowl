@@ -128,7 +128,7 @@ label lbl_discipline:
         "Надо сконцентрироваться на чём то одном."
         "Наказания":
             menu:
-                "Отец, научи сычу уму-разуму то!":
+                "Отец, научи Cычу уму-разуму то!":
                     menu:
                         "Подзатыльники":
                             $ persons_schedules[mother].add_action(mother.torture, 'obedience', power=1, taboos=['pain'], target=child)

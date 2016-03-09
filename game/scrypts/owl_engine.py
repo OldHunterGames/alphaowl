@@ -27,7 +27,7 @@ class Engine(object):
         if self.studies:
             study = choice(self.studies)
         else:
-            study = 'no_more_studies'
+            study = False
 
         return study
 

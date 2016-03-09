@@ -23,6 +23,7 @@ label start:
     
     define gray = Solid("#ccc")
     show image gray as bg
+    $ player.player_controlled = True 
     call evn_init
     call label_quiz
     
@@ -114,18 +115,19 @@ label label_quiz:
         "Собой":
             $ game.mode = 'son'
             $ game.player = child
+            $ player = game.player
             jump label_new_day
             
         "Своей мамкой":
             $ game.mode = 'mom'
             $ game.player = mother
+            $ player = game.player
             jump label_new_day
 
     return
 
 label label_new_day:
-    $ player = game.player
-    $ player.player_controlled = True 
+    $ study = game.choose_study()
     "Неделя номер [game.time]"
     $ txt = player.description() + "\n Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
     "[txt]"
@@ -167,6 +169,7 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
             $ result_text += str(skill_result)
     "game" '[result_text]'
     return
+    
 label lbl_resist(effect):
     'Сопротивляться [effect]?'
     menu:
