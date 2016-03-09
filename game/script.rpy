@@ -149,6 +149,7 @@ label label_new_day:
 
 label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, determination=False):
     python:
+        sabotage = False
         if character.skill_level(skill_to_use) < 1:
             result_text = "Проверка провалена"
         resource = getattr(character, res_to_use) if res_to_use else 0
@@ -156,25 +157,37 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
         'Сделать спустя рукава':
             $ result_text = "Плохо поработал"
         'Работать хорошо' if resource > 0:
-            $ skill_result = character.use_skill(skill_to_use, res_to_use, determination)
+            $ resource = True
+            $ determination = False
             $ result_text = "Поработал на: "
             $ result_text += str(skill_result)
         'Сделать волевым усилием' if character.determination > 0:
+            $ resource = False
+            $ determination = True
             $ skill_result = character.use_skill(skill_to_use, res_to_use, determination=True)
             $ result_text = "Волевое усилие прошло на: "
             $ result_text += str(skill_result)
         'Выложиться полностью' if resource > 0 and character.determination > 0:
+            $ resource = True
+            $ determination = True
             $ skill_result = character.use_skill(skill_to_use, res_to_use, determination=True)
             $ result_text = "Выложился на: "
             $ result_text += str(skill_result)
-    "game" '[result_text]'
-    return
+        'Саботировать':
+            $ resource = True
     
+            $ sabotage = True
+            $ result_text = "Вы саботаровали задание"
+    '[result_text]'
+    return resource, determination, sabotage
 label lbl_resist(effect):
     'Сопротивляться [effect]?'
     menu:
-        'Да':
-            return True
+        'Сила воли: [player.willpower], Решимость: [player.determination]'
+        'Сила воли':
+            return 'willpower'
+        'Решимость' if player.determination > 0:
+            return 'determination'
         'Нет':
             return False
 label lbl_resist_result(effect, success):
@@ -183,4 +196,6 @@ label lbl_resist_result(effect, success):
     else:
         'Вы попытались справиться с [effect] но вам не удалось'
     return
+label lbl_notify(effect):
+    'Вы получили [effect]'
 
