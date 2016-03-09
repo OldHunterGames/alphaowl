@@ -40,3 +40,12 @@ label evn_1:
        pass
    
    return   
+
+label do_major:
+   "Хочешь написать курсач \n @ \n Забиваешь"
+   python:
+       pass
+   
+   return
+   
+   

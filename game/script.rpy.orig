@@ -23,9 +23,6 @@ label start:
     
     define gray = Solid("#ccc")
     show image gray as bg
-    $ game.mode = 'son'
-    $ game.player = mother
-    $ player = game.player
     $ player.player_controlled = True 
     call evn_init
     call label_quiz
@@ -123,6 +120,8 @@ label label_quiz:
             
         "Своей мамкой":
             $ game.mode = 'mom'
+            $ game.player = mother
+            $ player = game.player
             jump label_new_day
 
     return
@@ -174,13 +173,19 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
             $ skill_result = character.use_skill(skill_to_use, res_to_use, determination=True)
             $ result_text = "Выложился на: "
             $ result_text += str(skill_result)
+<<<<<<< HEAD
+    "game" '[result_text]'
+    return
+    
+=======
         'Саботировать':
             $ resource = True
-    
+            $ determination = True
             $ sabotage = True
             $ result_text = "Вы саботаровали задание"
     '[result_text]'
     return resource, determination, sabotage
+>>>>>>> 76c846c4950d4de306d842f272e01087d022e774
 label lbl_resist(effect):
     'Сопротивляться [effect]?'
     menu:
