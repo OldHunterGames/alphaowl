@@ -34,7 +34,7 @@ class Person(object):
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.tokens = []             # Special resources to activate various events
         self.master = None          # If this person is a slave, the master will be set
-        self.slave_stance = 'Rebellious'     # Rebellious, Forced, Accustomed or Willing
+        self.slave_stance = 'rebellious'     # rebellious, forced, accustomed or willing
         self.supervisor = None
         self.slaves = []
         self.subordinates = []
@@ -269,22 +269,41 @@ class Person(object):
         self.inner_resources[resource] -= 1
         return value
 
-    def use_skill(self, skill, resource=False, determination=False, sabotage=False):
+    def use_skill(self, skill, forced = False, need=None, shift='positive', taboo=None):
+        resource = False
+        determination = False
+        sabotage = False
+        res_to_use = self.skill_resource(skill)
         check = 0
         if self.player_controlled:
-            resource, determination, sabotage, text = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill_resource(skill))
+            resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill_resource(skill))
+        else:
+            if forced:
+                motivation = self.motivation(skill, need, shift, forced, taboo)
+                if motivation < 0:
+                    sabotage = True
+                if motivation > 0 and motivation < 5-getattr(self, res_to_use):
+                    pass
+                if motivation > 0 and motivation > 5-getattr(self, res_to_use):
+                    resource = True
+                if motivation > 5 and res_to_use < 1:
+                    resource = False
+                    determination = True
+                if motivation > 10:
+                    resource = True
+                    determination = True
         if sabotage:
             if self.player_controlled:
-                renpy.call_in_new_context('lbl_skill_check_result', skill, text, check)
+                renpy.call_in_new_context('lbl_skill_check_result', skill, check)
             return check
         skill_lvl = self.skill_level(skill)
         
         if skill_lvl <= 0:
             if self.player_controlled:
-                renpy.call_in_new_context('lbl_skill_check_result', skill, text, check)
+                renpy.call_in_new_context('lbl_skill_check_result', skill, check)
             return check
         check = skill_lvl + self.mood() - 3
-        res = self.use_resource(self.skill_resource(skill)) if resource else 0
+        res = self.use_resource(res_to_use) if resource else 0
         if determination and self.determination > 0:
             self.determination -= 1
             if res <= 0:
@@ -302,7 +321,7 @@ class Person(object):
         if check > 0:
             self.skills_used.append(skill)
         if self.player_controlled:
-            renpy.call_in_new_context('lbl_skill_check_result', skill, text, check)
+            renpy.call_in_new_context('lbl_skill_check_result', skill, check)
         return check
     
     def set_focus(self, skill):
@@ -425,29 +444,40 @@ class Person(object):
                     self.needs[need]['status'] = 'relevant'
             self.needs[need]['shift'] = 0
 
-    def motivation(self, skill, need=None, shift=0, orderer=None, taboo=None):
+    def motivation(self, skill, need=None, shift='positive',  forced=True, taboo=None):#shift = 'negative' or 'postive'
         motiv = 0
         motiv += self.mood()
         if skill in self.skills['talent']:
             motiv += self.spirit
         if need:
             status = self.needs[need]['status']
-            self.needs[need]['shift'] += shift
-            if shift > 0:
+            if shift == 'negative':
                 if status == 'frustrated' or status == 'tense':
-                    motiv += self.needs[need]['level']
+                    motiv -= self.needs[need]['level']
                 elif status == 'overflow':
                     motiv -= 1
-            if shift < 0:
+            if shift == 'positive':
                 if status == 'frustrated' or status == 'tense': 
-                    motiv -= self.needs[need]['level']
+                    motiv += self.needs[need]['level']
                 elif status == 'relevant':
                     motiv -= 1
-        if orderer:
-            #self.calc_submission()
-            pass
         if taboo:
             motiv += self.taboo[taboo]
+        if forced:
+            if self.slave_stance == 'rebellious':
+                if motiv > -1:
+                    motiv = -1
+            if self.slave_stance == 'forced':
+                if motiv < 0:
+                    motiv += self.obedience()
+                if motiv > 0:
+                    motiv = 0
+            if self.slave_stance == 'accustomed':
+                if motiv < 0:
+                    motiv += self.obedience()
+            if self.slave_stance == 'willing':
+                motiv += self.obedience()
+        
         return motiv
 
     def calc_resources_factor(self): #method for choosing best setup of factors

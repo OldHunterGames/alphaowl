@@ -163,37 +163,30 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
         determination = False
         failed = False
         if character.skill_level(skill_to_use) < 1:
-            result_text = "У вас нет навыка в [skill]"
             failed = True
         resource = getattr(character, res_to_use) if res_to_use else 0
     if failed:
-        return resource, determination, sabotage, result_text
+        return resource, determination, sabotage
     menu:
         'Сделать спустя рукава':
             $ resource = False
             $ determination = False
-            $ result_text = "Плохо поработал"
         'Работать хорошо' if resource > 0:
             $ resource = True
             $ determination = False
-            $ result_text = "Хорошо поработал "
         'Сделать волевым усилием' if character.determination > 0:
             $ resource = False
             $ determination = True
-            $ result_text = "Выполнил задание волевым усилием"
         'Выложиться полностью' if resource > 0 and character.determination > 0:
             $ resource = True
             $ determination = True
-            $ result_text = "Выложился на полную "
         'Саботировать':
             $ resource = False
             $ determination = False
             $ sabotage = True
-            $ result_text = "Вы саботаровали задание"
-    return resource, determination, sabotage, result_text
-label lbl_skill_check_result(skill=None, result_text=None, result=0):
+    return resource, determination, sabotage
+label lbl_skill_check_result(skill=None, result=0):
     'Вы использовали скил [skill]'
-    '[result_text]'
     'Результат проверки: [result]'
     return
 label lbl_resist(effect):
