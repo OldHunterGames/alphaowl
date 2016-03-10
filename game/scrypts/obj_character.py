@@ -270,14 +270,19 @@ class Person(object):
         return value
 
     def use_skill(self, skill, resource=False, determination=False, sabotage=False):
+        check = 0
         if self.player_controlled:
-            resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill_resource(skill))
+            resource, determination, sabotage, text = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill_resource(skill))
         if sabotage:
-            return 0
+            if self.player_controlled:
+                renpy.call_in_new_context('lbl_skill_check_result', skill, text, check)
+            return check
         skill_lvl = self.skill_level(skill)
         
         if skill_lvl <= 0:
-            return 0 
+            if self.player_controlled:
+                renpy.call_in_new_context('lbl_skill_check_result', skill, text, check)
+            return check
         check = skill_lvl + self.mood() - 3
         res = self.use_resource(self.skill_resource(skill)) if resource else 0
         if determination and self.determination > 0:
@@ -296,6 +301,8 @@ class Person(object):
             check = 0
         if check > 0:
             self.skills_used.append(skill)
+        if self.player_controlled:
+            renpy.call_in_new_context('lbl_skill_check_result', skill, text, check)
         return check
     
     def set_focus(self, skill):
