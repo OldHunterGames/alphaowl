@@ -41,8 +41,9 @@ label evn_1:
    
    return   
 
-label do_major:
-   "Хочешь написать курсач \n @ \n Забиваешь"
+label evn_do_major:
+   $ result = child.use_skill('coding')
+   'Оценка: [result]'
    python:
        pass
    

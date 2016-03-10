@@ -27,7 +27,6 @@ label start:
     $ game.player = mother
     $ player = game.player
     $ player.player_controlled = True 
-    #call evn_init
     call label_quiz
     
     return
@@ -134,12 +133,12 @@ label label_new_day:
     "[txt]"
     
     $ gt = game.new_turn()
+    $ event = game.end_turn_event()
     
     python:
         for s in persons_schedules:
             persons_schedules[s].use_actions()
-
-    $ game.end_turn_event()
+    call expression event
     
     if game.mode == 'son':
         call lbl_son_manage
@@ -151,42 +150,36 @@ label label_new_day:
 label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, determination=False):
     python:
         sabotage = False
-        determination = False
-        failed = False
         if character.skill_level(skill_to_use) < 1:
-            result_text = "У вас нет навыка в [skill]"
-            failed = True
+            result_text = "Проверка провалена"
         resource = getattr(character, res_to_use) if res_to_use else 0
-    if failed:
-        return resource, determination, sabotage, result_text
     menu:
         'Сделать спустя рукава':
-            $ resource = False
-            $ determination = False
             $ result_text = "Плохо поработал"
         'Работать хорошо' if resource > 0:
             $ resource = True
             $ determination = False
-            $ result_text = "Хорошо поработал "
+            $ result_text = "Поработал на: "
+            $ result_text += str(skill_result)
         'Сделать волевым усилием' if character.determination > 0:
             $ resource = False
             $ determination = True
-            $ result_text = "Выполнил задание волевым усилием"
+            $ skill_result = character.use_skill(skill_to_use, res_to_use, determination=True)
+            $ result_text = "Волевое усилие прошло на: "
+            $ result_text += str(skill_result)
         'Выложиться полностью' if resource > 0 and character.determination > 0:
             $ resource = True
             $ determination = True
-            $ result_text = "Выложился на полную "
+            $ skill_result = character.use_skill(skill_to_use, res_to_use, determination=True)
+            $ result_text = "Выложился на: "
+            $ result_text += str(skill_result)
         'Саботировать':
-            $ resource = False
-            $ determination = False
+            $ resource = True
+    
             $ sabotage = True
             $ result_text = "Вы саботаровали задание"
-    return resource, determination, sabotage, result_text
-label lbl_skill_check_result(skill=None, result_text=None, result=0):
-    'Вы использовали скил [skill]'
     '[result_text]'
-    'Результат проверки: [result]'
-    return
+    return resource, determination, sabotage
 label lbl_resist(effect):
     'Сопротивляться [effect]?'
     menu:
