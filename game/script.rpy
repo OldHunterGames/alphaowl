@@ -27,7 +27,7 @@ label start:
     $ game.player = mother
     $ player = game.player
     $ player.player_controlled = True 
-    call evn_init
+    #call evn_init
     call label_quiz
     
     return
@@ -134,12 +134,12 @@ label label_new_day:
     "[txt]"
     
     $ gt = game.new_turn()
-    $ event = game.end_turn_event()
     
     python:
         for s in persons_schedules:
             persons_schedules[s].use_actions()
-    call expression event
+
+    $ game.end_turn_event()
     
     if game.mode == 'son':
         call lbl_son_manage

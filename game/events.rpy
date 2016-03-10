@@ -3,14 +3,14 @@ python:
     sys.path.append(renpy.loader.transfn("scrypts"))
     from events import *
     
-label evn_init:
-    python:
-        # TODO: Тут надо будет сделать так чтобы список возможных эвентов генеировался динамически
-        for subclass in Event.__subclasses__():
+# label evn_init:
+#     python:
+#         # TODO: Тут надо будет сделать так чтобы список возможных эвентов генеировался динамически
+#         for subclass in Event.__subclasses__():
 
-            game.events_list.append(subclass(game))
+#             game.events_list.append(subclass(game))
 
-    return
+#     return
 
 
 label evn_template:

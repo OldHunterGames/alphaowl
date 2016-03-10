@@ -55,7 +55,14 @@ class Engine(object):
     
 
     def end_turn_event(self):
-        return choice(self.possible_events("turn_end")).trigger()
+        possible = self.possible_events('turn_end')
+        if len(possible) > 0:
+            choice(possible).trigger()
+            return
+        else:
+            return
+
+
     
 
     def job_sex(self, person):

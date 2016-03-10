@@ -1,8 +1,12 @@
+import renpy.store as store
+import renpy.exports as renpy
+
+
 class Event(object):
 
-    def __init__(self, env):
+    def __init__(self, env, location):
         self.env = env              # Enviroment. Instance of current game engive instance
-        self.goto = "evn_blank"     # RenPy location to start an event
+        self.goto = location     # RenPy location to start an event
         self.natures = []           # "triggered", "turn_end", "faction", "personal", "special"
         self.tags = []              # tags for filtering "gay", "lolicon", "bestiality", "futanari" etc
         self.unique = False         # Unique events shown once in a game instance
@@ -14,7 +18,8 @@ class Event(object):
         """
         if self.check():
             self.seen += 1
-            return self.goto
+            renpy.call_in_new_context(self.goto)
+        return
 
     def check(self):
         """
@@ -35,10 +40,9 @@ class EVUnique(Event):
     Unique event for test
     """
 
-    def __init__(self, env):
-        super(EVUnique, self).__init__(env)
+    def __init__(self, env, location):
+        super(EVUnique, self).__init__(env, location)
         self.natures = ["triggered", "turn_end", "faction"]
-        self.goto = "evn_unic"
         self.unique = True
 
 
@@ -47,7 +51,6 @@ class EVGeneric(Event):
     Generic event for test
     """
 
-    def __init__(self, env):
-        super(EVGeneric, self).__init__(env)
-        self.goto = "evn_1"
+    def __init__(self, env, location):
+        super(EVGeneric, self).__init__(env, location)
         self.natures = ["triggered", "turn_end", "faction"]
