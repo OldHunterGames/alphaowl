@@ -11,7 +11,7 @@ label lbl_son_manage:
                     menu:
                         'Запилить курсач' if study:
                             $ player.ap -= 1
-                            $ EVGeneric(game, "do_major").trigger()
+                            $ EVGeneric("do_major").trigger()
                             jump lbl_son_manage
                         'Забить':
                             jump lbl_son_manage
