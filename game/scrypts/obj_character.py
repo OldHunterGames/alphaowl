@@ -397,8 +397,6 @@ class Person(object):
             if max_level < 1:
                 return
 
-
-
     def calc_needs_change(self):
         for need in self.needs:
             shift = self.needs[need]['shift']
@@ -426,7 +424,6 @@ class Person(object):
                 else:
                     self.needs[need]['status'] = 'relevant'
             self.needs[need]['shift'] = 0
-
 
     def motivation(self, skill, need=None, shift=0, orderer=None, taboo=None):
         motiv = 0
@@ -508,11 +505,9 @@ class Person(object):
             self.inner_resources[i] += 1
         self.factors = []
     
-
     def add_factor(self, factor, level):
         self.factors.append((factor, level))
 
-        
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
         new_feature = deepcopy(features_data.person_features[name])
         for f in self.features:
@@ -654,10 +649,6 @@ class Person(object):
                     else:
                         self.add_feature('diabetes')
 
-
-
-
-
     def nutrition_change(self, food_consumed):
         if food_consumed < self.food_demand():
             self.ration["overfeed"] -= 1
@@ -667,7 +658,6 @@ class Person(object):
 
         return
 
-    
     def relations_points(self, person=None, axis=None, value=1):    #axis = one of (consideration, distance, affection) 
         if person in self.relations:
             self.relations[person][axis][1][1] += value
@@ -683,6 +673,7 @@ class Person(object):
             }
             self.relations[person] = default
         return
+
     def rel_change_available(self, person, axis):
         if person in self.relations:
             needed = self.relations[person][axis][1][0]
@@ -692,12 +683,14 @@ class Person(object):
                 return (True, direction)
             else:
                 return (False, False)
+
     def get_relations(self, person, axis):
         if person not in self.relations:
             return 'You have no relations with character %s'%(person.description())
         if axis == 'connection':
             return self.relations[person][axis]
         return self.relations[person][axis][0]
+
     def change_relations(self, person, axis, direction=''):    #direction = '+' or '-'
         if person in self.relations:
             if axis == 'consideration':
@@ -721,15 +714,12 @@ class Person(object):
             self.relations[person][axis][1][1] = 0
         return
 
-
     def add_reward(self, name, need):
         self.rewards.append((name, need))
-    
 
     def bribe_threshold(self):
         threshold = 6 + self.ddd_mod(self.dependence) + self.spirit - self.sensitivity - self.comfort['level']
         return threshold
-
 
     def bribe(self):
         tensed_needs = []
@@ -764,12 +754,10 @@ class Person(object):
                     self.rewards = []
                     self.tokens.append('dependence')
                     return
-    
-    
+
     def training_resistance(self, master):
         return 1 + (self.mind - master.mind) + (self.spirit - master.spirit) + self.ddd_mod(self.discipline)
     
-
     def train(self, target):
         target_resistance = target.training_resistance(self)
         training_power = self.use_skill('communication', True, True)
