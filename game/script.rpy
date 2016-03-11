@@ -23,7 +23,7 @@ label start:
     
     define gray = Solid("#ccc")
     show image gray as bg
-    $ game.mode = 'son'
+    $ game.mode = 'mom'
     $ game.player = mother
     $ player = game.player
     $ player.player_controlled = True 
@@ -130,8 +130,6 @@ label label_quiz:
 label label_new_day:
     $ study = game.choose_study()
     "Неделя номер [game.time]"
-    $ txt = player.description() + "\n Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
-    "[txt]"
     
     $ gt = game.new_turn()
     
@@ -150,9 +148,11 @@ label label_new_day:
 
 label lbl_owl_info:
     python:
+        job = player.job['name']
         txt = "Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
     "[txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
-     Условия сна: [player.accommodation]        \n
+     Тэнге: [game.tenge] \n
+     Условия сна: [player.accommodation]  |  Занятость: [job]       \n
      \n"
     
     return

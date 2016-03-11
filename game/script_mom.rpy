@@ -17,11 +17,12 @@ label lbl_mom_manage:
             call lbl_discipline
         "Магазин":
             call lbl_shop
+        "Информация":
+            call lbl_owl_info
+            jump lbl_mom_manage        
         "Конец недели":
             $ player.rest()
             jump label_new_day
-        "Проверка":
-            call lbl_skill_check(skill_to_use="coding", res_to_use="concentration")
             
     jump lbl_mom_manage
     
@@ -193,14 +194,14 @@ label lbl_accomodation_rules:
 label lbl_job_rules:
     menu:
         'Всё сидишь как сыч, за конпуктером. Иди пробзись.':
-            $ player.job = 'idle'
+            $ player.job['name'] = 'idle'
         'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?':
-            $ player.job = 'study'
+            $ player.job['name'] = 'study'
         'Посудку помой. Мусор вынеси. С собакой погуляй. И за дедом прибери.':
-            $ player.job = 'chores'
+            $ player.job['name'] = 'chores'
         'Вон здоровый какой. Иди вагоны разгружать - семье копеечка.':
-            $ player.job = 'work'
+            $ player.job['name'] = 'work'
         'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
-            $ player.job = 'whore'
+            $ player.job['name'] = 'whore'
     
     return

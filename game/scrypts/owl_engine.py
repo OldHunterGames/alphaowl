@@ -36,7 +36,6 @@ class Engine(object):
         self.player.ap = 1
         return "label_new_day"
     
-
     def possible_events(self, kind, who = None):
         """
         :param kind:
@@ -53,7 +52,6 @@ class Engine(object):
 
         return list_of_events
     
-
     def end_turn_event(self):
         possible = self.possible_events('turn_end')
         if len(possible) > 0:
@@ -61,9 +59,6 @@ class Engine(object):
             return
         else:
             return
-
-
-    
 
     def job_sex(self, person):
         skill = 'sex'
