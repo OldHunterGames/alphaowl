@@ -7,6 +7,8 @@ label lbl_mom_manage:
             call lbl_food_rules
         "Бытовые условия":
             call lbl_accomodation_rules
+        "Правила и запреты":
+            call lbl_rules            
         "После учебы":
             call lbl_job_rules
         "В выходные":
@@ -64,6 +66,92 @@ label lbl_food_limit:
         
     return
 
+label lbl_rules:
+    menu:
+        'Внешний вид':
+            call lbl_rules_clothes
+        'Вредные привычки':
+            call lbl_rules_drugs
+        'Правила поведения':
+            call lbl_rules_behavior
+        'Назад':
+            jump lbl_mom_manage
+            
+    jump lbl_rules
+    
+    return
+
+label lbl_rules_clothes:
+    menu:
+        'Мамина симпатяфка':
+            $ child.appearance = 'lame'
+            $ txt = 'Вот свитерочек бабушка связала \n @ \n Штанишки тетя Ёба нам со своего оболтуса дала \n @ \n Шапку не забудь надеть!'
+        'Да носи что хочешь':
+            $ child.appearance = 'normal'
+            $ txt = 'Залезаешь в шкаф чтобы найти приличную одежду \n @ \n Там какие-то обноски от Тёти Ёбы и Дяди Бафомета \n @ \n И мутантная моль размером с кошака доедает ушанку'    
+        'Купим тебе модное, выбирай (20 т/нед)':
+            $ child.appearance = 'cool'
+            $ txt = 'Ой Сыченька, сейчас купим тебе модного \n @ \n Затариваетесь на рынке у Ашота, турецкими подделками \n @ \n А ты и не против'
+            
+    "[txt]"
+    
+    return
+
+label lbl_rules_drugs:
+    menu:
+        'Запретить фапать' if 'masturbation' not in child.restrictions:
+            $ child.restrictions.append('masturbation')
+            $ txt = 'Сыночка то наш, всё пиструнчик свой тилибонькает \n @ \n Скоро волосы на руках расти начнут \n @ \n В антимастурбационном кресте будещь спать, по совету отца Агапия'
+        'Забить на дрочку' if 'masturbation' in child.restrictions:
+            $ child.restrictions.remove('masturbation')
+            $ txt = 'А что это ты в ванной столько времени сидишь, Сыча? \n @ \n И то хорошо \n @ \n Приучили к чистоте ребёнка то'            
+        'Запретить алкоголь' if 'alcohol' not in child.restrictions:
+            $ child.restrictions.append('alcohol')
+            $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ещё нос не дорос \n @ \n Я малолетних алкоголиков в доме не потерплю'
+        'Забить на алкоголь' if 'alcohol' in child.restrictions:
+            $ child.restrictions.remove('alcohol')
+            $ txt = 'За дидов рюмашечку надо обязательно \n @ \n Что значит "не буду стекломой пить" \n @ \n Традиции наши не уважаешь?'                 
+        'Запретить курить' if 'tobacco' not in child.restrictions:
+            $ child.restrictions.append('tobacco')
+            $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
+        'Забить на курение' if 'tobacco' in child.restrictions:
+            $ child.restrictions.remove('tobacco')
+            $ txt = 'Сыченька то бодрячком \n @ \n Каждые пять минут в падик бегает \n @ \n Наверное друзья у него там'         
+        'Запретить спайсы' if 'weed' not in child.restrictions:
+            $ child.restrictions.append('weed')
+            $ txt = 'Чтобы я тебя с этими наркоманами не видела больше \n @ \n Пообколются своей марихуанной \n @ \n А потом ябут друг-друга в жёппы'
+        'Забить на спайсы' if 'weed' in child.restrictions:
+            $ child.restrictions.remove('weed')
+            $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
+        'Назад':
+            jump lbl_rules
+    "[txt]"
+    
+    return
+
+
+label lbl_rules_behavior:
+    menu:
+        'Запретить общаться с девочками' if 'dates' not in child.restrictions:
+            $ child.restrictions.append('dates')
+            $ txt = ' \n @ \n \n @ \n '
+        'Разрешить общаться с девочками' if 'dates' in child.restrictions:
+            $ child.restrictions.remove('dates')
+            $ txt = ' \n @ \n \n @ \n '            
+        'Запретить общаться с мальчиками' if 'friends' not in child.restrictions:
+            $ child.restrictions.append('friends')
+            $ txt = ' \n @ \n \n @ \n '
+        'Разрешить общаться с мальчиками' if 'friends' in child.restrictions:
+            $ child.restrictions.remove('friends')
+            $ txt = ' \n @ \n \n @ \n '   
+        'Конплюхтерн для очобы!' if 'pc' not in child.restrictions:
+            $ child.restrictions.append('pc')
+            $ txt = ' \n @ \n \n @ \n '
+        'Ну и сиди за своим комплюктером' if 'pc' in child.restrictions:
+            $ child.restrictions.remove('pc')
+            $ txt = ' \n @ \n \n @ \n '   
+            
+    return
 
 label lbl_shop:
     menu:

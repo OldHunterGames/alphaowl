@@ -112,6 +112,8 @@ class Person(object):
             'glamour': self.sensitivity
         }
 
+        self.appearance = 'normal'
+        self.restrictions = ['masturbation', 'alcohol', 'tobacco', 'weed']
         self.appetite = 0
         self.calorie_storage = 0
         self.money = 0
