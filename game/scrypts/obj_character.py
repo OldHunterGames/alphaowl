@@ -39,6 +39,7 @@ class Person(object):
         self.slaves = []
         self.subordinates = []
         self.ap = 1
+        self.schedule = Schedule(self)
 
         # Slave stats, for obedience:
         self.dread = 0
@@ -186,7 +187,7 @@ class Person(object):
         threshold = 7 + self.attributes["spirit"] + - self.attributes["sensitivity"] - self.taboo[taboo]
         return threshold
 
-    def torture(self, power=0, taboos=[], target=None):
+    def torture(self, power=0, taboos=[], target=None):#should use at least one taboo
         _taboos = copy(taboos)
         taboo = _taboos.pop(0)
         for i in _taboos:
@@ -577,6 +578,7 @@ class Person(object):
         return txt
     
     def rest(self):
+        self.schedule.use_actions()
         self.fatness_change()
         self.reduce_overflow()
         self.calc_needs_change()

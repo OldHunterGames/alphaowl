@@ -15,8 +15,7 @@ init python:
     
     child.set_relations(mother)
     mother.set_relations(child)
-    Schedule(mother)
-    Schedule(child)
+
     
 # Игра начинается здесь.
 label start:
@@ -132,10 +131,6 @@ label label_new_day:
     "Неделя номер [game.time]"
     
     $ gt = game.new_turn()
-    
-    python:
-        for s in persons_schedules:
-            persons_schedules[s].use_actions()
 
     $ game.end_turn_event()
     
