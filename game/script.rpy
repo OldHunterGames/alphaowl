@@ -167,7 +167,7 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
         sabotage = False
         determination = False
         failed = False
-        if character.skill_level(skill_to_use) < 1:
+        if character.get_skill(skill_to_use).level() < 1:
             failed = True
         resource = getattr(character, res_to_use) if res_to_use else 0
     if failed:

@@ -3,7 +3,7 @@ from random import *
 import renpy.store as store
 import renpy.exports as renpy
 import features_data
-from skills import Skill
+from skills import Skill, skills_data
 from copy import copy
 from copy import deepcopy
 from food import *
@@ -109,8 +109,6 @@ class Person(object):
             'glamour': self.sensitivity
         }
 
-        self.appearance = 'normal'
-        self.restrictions = ['masturbation', 'alcohol', 'tobacco', 'weed']
         self.appetite = 0
         self.calorie_storage = 0
         self.money = 0
@@ -246,16 +244,13 @@ class Person(object):
         if skill:
             return skill
         else:
-            skill = Skill(skillname)
+            if skillname in skills_data:
+                skill = Skill(skillname, skills_data[skillname])
+            else:
+                skill = Skill(skillname)
             self.skills.append(skill)
             return skill
 
-    def skill_resource(self, skillname):
-        res = None
-        inverted = {v: k for k,v in self.attr_relations.items()}
-        attr = self.get_skill(skillname).attribute
-        res = inverted[attr]
-        return res
 
 
     def use_resource(self, resource):
@@ -267,10 +262,10 @@ class Person(object):
         resource = False
         determination = False
         sabotage = False
-        res_to_use = self.skill_resource(skill)
+        res_to_use = self.get_skill(skill).resource
         check = 0
         if self.player_controlled:
-            resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill_resource(skill))
+            resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.get_skill(skill).resource)
         else:
             if forced:
                 motivation = self.motivation(skill, need, shift, forced, taboo)
@@ -290,7 +285,7 @@ class Person(object):
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_skill_check_result', skill, check)
             return check
-        skill_lvl = self.skill_level(skill)
+        skill_lvl = self.get_skill(skill).level()
         
         if skill_lvl <= 0:
             if self.player_controlled:
