@@ -11,7 +11,7 @@ from schedule import *
 
 def features_lookup(person, stat):
     if not isinstance(person, Person):
-        raise "No features outside person"
+        raise ValueError('No features outside person')
     value = 0
     for f in person.features:
         if stat in f.modifiers.keys():
@@ -243,7 +243,7 @@ class Person(object):
         if skill:
             return skill
         else:
-            raise "%s has no %s"%(self.description(), skillname)
+            raise ValueError("%s has no skill %s"%(self, skillname))
 
     def skill_resource(self, skillname):
         res = None
