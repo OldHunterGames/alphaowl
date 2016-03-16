@@ -3,6 +3,7 @@ from random import *
 import renpy.store as store
 import renpy.exports as renpy
 import features_data
+from skills import Skill
 from copy import copy
 from copy import deepcopy
 from food import *
@@ -10,7 +11,7 @@ from schedule import *
 
 def features_lookup(person, stat):
     if not isinstance(person, Person):
-        raise "No features outside person"
+        raise ValueError('No features outside person')
     value = 0
     for f in person.features:
         if stat in f.modifiers.keys():
@@ -56,12 +57,7 @@ class Person(object):
         }
         self.accommodation = 'makeshift'
         self.job = {'name': 'idle', 'efficiency': 0,'skill': None, 'effort': "bad"}     #effort can be "bad", "good", "will" or "full"
-        self.skills = {
-            "training":  {'coding': 'mind', 'communication': 'spirit', 'sex': 'sensitivity', 'sport': 'physique'},        # List of skills. Skills get +1 bonus
-            "experience":  {},      # List of skills. Skills get +1 bonus
-            "specialisation": {},   # List of skills. Skills get +1 bonus
-            "talent": {},           # List of skills. Skills get +1 bonus
-        }
+        self.skills = []
         self.focused_skill = None
         self.focus = 0
         self.skills_used = []
@@ -241,31 +237,23 @@ class Person(object):
                     renpy.call_in_new_context('lbl_notify', i)
         return
 
-
-    def skill_level(self, skillname):
-        value = 0
-        for key in self.skills.keys():
-            if skillname in self.skills[key]:
-                value += 1
-        return value
+    def get_skill(self, skillname):
+        skill = None
+        for i in self.skills:
+            if i.name == skillname:
+                skill = i
+        if skill:
+            return skill
+        else:
+            raise ValueError("%s has no skill %s"%(self, skillname))
 
     def skill_resource(self, skillname):
         res = None
         inverted = {v: k for k,v in self.attr_relations.items()}
-        attr = self.skill_attribute(skillname)
-        for key in self.skills.keys():
-            if skillname in self.skills[key]:
-                res = inverted[attr]
-                break
+        attr = self.get_skill(skillname).attribute
+        res = inverted[attr]
         return res
 
-    def skill_attribute(self, skillname):
-        skill_attr = None
-        for key in self.skills.keys():
-            if skillname in self.skills[key]:
-                skill_attr = self.skills[key][skillname]
-                break
-        return skill_attr
 
     def use_resource(self, resource):
         value = getattr(self, resource)
@@ -310,7 +298,7 @@ class Person(object):
         if determination and self.determination > 0:
             self.determination -= 1
             if res <= 0:
-                check += getattr(self, self.skill_attribute(skill))
+                check += getattr(self, self.get_skill(skill).attribute)
             else:
                 check += 1
                 check += res
