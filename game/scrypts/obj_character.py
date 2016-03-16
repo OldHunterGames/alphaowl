@@ -240,10 +240,13 @@ class Person(object):
         for i in self.skills:
             if i.name == skillname:
                 skill = i
+                break
         if skill:
             return skill
         else:
-            raise ValueError("%s has no skill %s"%(self, skillname))
+            skill = Skill(skillname)
+            self.skills.append(skill)
+            return skill
 
     def skill_resource(self, skillname):
         res = None
