@@ -1,5 +1,13 @@
 # -*- coding: UTF-8 -*-
 
+skills_data = {
+    'coding': 'concentration',
+    'sports': 'physique',
+    'sex': 'glamour',
+    'conversation': 'willpower',
+}
+
+
 class Skill(object):
     def __init__(self, name, attribute='spirit'):
         self.name = name

@@ -34,6 +34,15 @@ label start:
 label label_quiz:
 
     menu:
+        "Какая твоя самая сильная сторона?"
+        "В компах разбираюсь с детства":
+            $ child.get_skill('coding').talent
+        "Я не школота. Факт (правда)":
+            $ child.age = "adolescent"
+        "Я олдфаг. Мои муди седы как снега на склоне фудзи...":
+            $ child.age = "mature" 
+            
+    menu:
         "Ты мальчик или девочка-внутри?"
         "(я не человек уже, я разработчик нахуй)":
             $ child.gender = "male"
@@ -147,7 +156,8 @@ label lbl_owl_info:
         txt = "Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
     "[txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
      Тэнге: [game.tenge] \n
-     Условия сна: [player.accommodation]  |  Занятость: [job]       \n
+     Условия сна: [child.accommodation]  |  Занятость: [job]       \n
+     Ограничения: [child.restrictions]      \n
      \n"
     
     return
