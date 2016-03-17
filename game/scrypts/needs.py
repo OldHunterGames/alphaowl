@@ -40,7 +40,7 @@ class Need(object):
                 else:
                     self.status = 'relevant'
             self.shift = 0
-    def overflow(self, need):
+    def overflow(self):
         threshold = 9-self.owner.sensitivity-self.level
         if self.status == 'satisfied' and self.level > threshold:
             self.status = 'overflow'
