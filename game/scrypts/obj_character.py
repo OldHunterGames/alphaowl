@@ -62,6 +62,7 @@ class Person(object):
         self.accommodation = 'makeshift'
         self.job = {'name': 'idle', 'efficiency': 0,'skill': None, 'effort': "bad"}     #effort can be "bad", "good", "will" or "full"
         self.skills = []
+        self.skills_expirience = {}
         self.focused_skill = None
         self.focus = 0
         self.skills_used = []
@@ -232,17 +233,13 @@ class Person(object):
         skill = None
         for i in self.skills:
             if i.name == skillname:
-                skill = i
-                break
-        if skill:
-            return skill
+                return skill
+        if skillname in skills_data:
+            skill = Skill(self, skillname, skills_data[skillname])
         else:
-            if skillname in skills_data:
-                skill = Skill(skillname, skills_data[skillname])
-            else:
-                skill = Skill(skillname)
-            self.skills.append(skill)
-            return skill
+            skill = Skill(self, skillname)
+        self.skills.append(skill)
+        return skill
 
     """def get_need(self, need):
         for need in self.needs:
@@ -565,7 +562,7 @@ class Person(object):
         :return:
         """
         desire = self.food_demand()
-        nutrition_modifier = self.nutrition['level']
+        nutrition_modifier = self.nutrition.level
         desire += nutrition_modifier -3
         desire += features_lookup(self, "food_desire")
 
@@ -710,7 +707,7 @@ class Person(object):
         self.rewards.append((name, need))
 
     def bribe_threshold(self):
-        threshold = 6 + self.ddd_mod(self.dependence) + self.spirit - self.sensitivity - self.comfort['level']
+        threshold = 6 + self.ddd_mod(self.dependence) + self.spirit - self.sensitivity - self.comfort.level
         return threshold
 
     def bribe(self):
