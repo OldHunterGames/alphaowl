@@ -47,7 +47,5 @@ class Skill(object):
             if skill.expirience_slot != power:
                 self.expirience_slot = power
                 self.expirience = True
-            if skill.expirience:
-                counter += 1
 
 
