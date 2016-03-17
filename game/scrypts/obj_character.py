@@ -4,10 +4,12 @@ import renpy.store as store
 import renpy.exports as renpy
 import features_data
 from skills import Skill, skills_data
+from needs import Need, needs_names
 from copy import copy
 from copy import deepcopy
 from food import *
 from schedule import *
+
 
 def features_lookup(person, stat):
     if not isinstance(person, Person):
@@ -17,6 +19,8 @@ def features_lookup(person, stat):
         if stat in f.modifiers.keys():
             value = f.modifiers[stat]
     return value
+
+
 
 class Person(object):
 
@@ -62,20 +66,8 @@ class Person(object):
         self.focus = 0
         self.skills_used = []
         self.factors = []
-        self.needs = {              # List of persons actual needs, with levels and statuses
-            # Need {level(1-5), shift(-/+ N) status (relevant, satisfied, overflow, tense, frustrated)}
-            "general":  {"level": 3, "shift": 0, "status": "relevant"},
-            "nutrition":  {"level": 3, "shift": 0, "status": "relevant"},
-            "wellness":  {"level": 3, "shift": 0, "status": "relevant"},
-            "comfort":  {"level": 3, "shift": 0, "status": "relevant"},
-            "activity":  {"level": 3, "shift": 0, "status": "relevant"},
-            "communication":  {"level": 3, "shift": 0, "status": "relevant"},
-            "amusement":  {"level": 3, "shift": 0, "status": "relevant"},
-            "prosperity":  {"level": 3, "shift": 0, "status": "relevant"},
-            "authority":  {"level": 3, "shift": 0, "status": "relevant"},
-            "ambition":  {"level": 3, "shift": 0, "status": "relevant"},
+        self.needs = [Need(self, name) for name in needs_names]
 
-        }
         self.taboo = {              # Persons moral code.
             "submission":  3,
             "sexplotation":  3,
@@ -136,9 +128,6 @@ class Person(object):
             if value > 5:
                 value = 5
             return value
-        if key in self.needs:
-            value = self.needs[key]
-            return value
         if key in self.inner_resources:
             value = self.inner_resources[key]
             value += features_lookup(self, key)
@@ -149,8 +138,12 @@ class Person(object):
             if value > max_value:
                 value = max_value
             return value
+        for need in self.needs:
+            if need.name == key:
+                return need
         else:
             raise AttributeError(key)
+
 
     def __setattr__(self, key, value):
         if 'inner_resources' in self.__dict__:
@@ -251,6 +244,13 @@ class Person(object):
             self.skills.append(skill)
             return skill
 
+    """def get_need(self, need):
+        for need in self.needs:
+            if need.name == need:
+                return need"""
+
+
+
 
 
     def use_resource(self, resource):
@@ -340,11 +340,11 @@ class Person(object):
     def mood(self):
         mood = 0
         for need in self.needs:
-            if self.needs[need]["status"] == "tense":
+            if need.status == "tense":
                 mood -= 1
-            elif self.needs[need]["status"] == "frustrated":
+            elif need.status == "frustrated":
                 mood -= 1
-            elif self.needs[need]["status"] == "satisfied":
+            elif need.status == "satisfied":
                 mood += 1
 
         if mood < (-self.determination-self.sensitivity):
@@ -381,57 +381,28 @@ class Person(object):
         return obedience
     
 
-    def set_shift(self, need, value):
-        self.needs[need]['shift'] += value
     
     def reduce_overflow(self):
         max_level = 5
         needs_list = []
         for need in self.needs:
-            if self.needs[need]['status'] == 'overflow':
+            if need.status == 'overflow':
                 needs_list.append(need)
         if self.determination > len(needs_list):
             return
         needs_list = []
         while True:
             for need in self.needs:
-                if self.needs[need]['level'] == max_level and self.needs[need]['status'] == 'overflow':
+                if need.level == max_level and need.status == 'overflow':
                     needs_list.append(need)
             if len(needs_list) > 0:
                 n = choice(needs_list)
-                self.needs[n]['status'] = 'relevant'
+                n.status = 'relevant'
                 return
             max_level -= 1
             if max_level < 1:
                 return
 
-    def calc_needs_change(self):
-        for need in self.needs:
-            shift = self.needs[need]['shift']
-            level = self.needs[need]['level']
-            status = self.needs[need]['status']
-            high_treshold = 9-self.sensitivity-level
-            if high_treshold < 1:
-                high_treshold = 1
-            low_treshold = (6-self.sensitivity-level)*(-1)
-            if low_treshold > -1:
-                low_treshold = -1
-            if status == 'frustrated':
-                if self.mood() > 0:
-                    if shift > high_treshold:
-                        self.needs[need]['status'] = 'relevant'
-            elif status == 'overflow':
-                if shift < low_treshold:
-                    self.determination -= 1
-                    self.needs[need]['status'] = 'relevant'
-            else:
-                if shift > high_treshold:
-                   self.needs[need]['status'] = 'satisfied'
-                elif shift < low_treshold:
-                    self.needs[need]['status'] = 'tense'
-                else:
-                    self.needs[need]['status'] = 'relevant'
-            self.needs[need]['shift'] = 0
 
     def motivation(self, skill, need=None, shift='positive',  forced=True, taboo=None):#shift = 'negative' or 'postive'
         motiv = 0
@@ -439,15 +410,15 @@ class Person(object):
         if skill in self.skills['talent']:
             motiv += self.spirit
         if need:
-            status = self.needs[need]['status']
+            status = getattr(self, need).status
             if shift == 'negative':
                 if status == 'frustrated' or status == 'tense':
-                    motiv -= self.needs[need]['level']
+                    motiv -= getattr(self, need.level)
                 elif status == 'overflow':
                     motiv -= 1
             if shift == 'positive':
                 if status == 'frustrated' or status == 'tense': 
-                    motiv += self.needs[need]['level']
+                    motiv += getattr(self, need).level
                 elif status == 'relevant':
                     motiv -= 1
         if taboo:
@@ -569,7 +540,8 @@ class Person(object):
         self.schedule.use_actions()
         self.fatness_change()
         self.reduce_overflow()
-        self.calc_needs_change()
+        for need in self.needs:
+            need.status_change()
         self.bribe()
 
 
@@ -744,7 +716,7 @@ class Person(object):
     def bribe(self):
         tensed_needs = []
         for need in self.needs:
-            status = self.needs[need]['status']
+            status = need.status
             if status == 'frustrated' or status == 'tense':
                 tensed_needs.append(need)
         tensed_num = len(tensed_needs)
