@@ -36,6 +36,4 @@ class Schedule(object):
                 for i in self.actions[l]:
                     action = i
                     action[0](**action[1])
-    
-
 

@@ -37,7 +37,6 @@ label label_quiz:
         "Ты мальчик или девочка-внутри?"
         "(я не человек уже, я разработчик нахуй)":
             $ child.gender = "male"
-            $ child.needs["debauch"] = {"level": 3, 'shift': 0, "status": "relevant"}
             $ child.age = "adolescent"
             $ child.alignment['Orderliness'] = "Conformal"
             $ child.alignment['Activity'] = "Resonable"
@@ -52,10 +51,8 @@ label label_quiz:
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.gender = "male"
-            $ child.needs["debauch"] = {"level": 3,'shift': 0, "status": "relevant"}
         "Раскусил, дай мне платице...":
             $ child.gender = "female"     
-            $ child.needs["care"] = {"level": 3,'shift': 0, "status": "relevant"}
             $ child.firstname = "Тошка"
             $ child.surname = "Сычева"
             
@@ -106,34 +103,28 @@ label label_quiz:
         "Давай вспомним твои школьные годы. Много двоек было за прогулы?"
         "Никаких прогулов. У меня расписание чёткое.":
             $ child.alignment['Orderliness'] = "Lawful"
-            $ child.needs["care"] = {"level": 3,'shift': 0, "status": "relevant"}
         "А чё я? Все прогуливали и я прогуливал.":
             $ child.alignment['Orderliness'] = "Conformal"
         "Делаю что хочу. Я вообще не контролируемый!":
             $ child.alignment['Orderliness'] = "Chaotic"
-            $ child.needs["independence"] = {"level": 3,'shift': 0, "status": "relevant"}
             
     menu:
         "Новая знакомая в скайпе предлагает тебе зависнуть с ней и ещё двумя подругами на ночь, на незнакомой хате в Медвеково. Твои действия?"
         "Пожаловаться на спам. Скрыть.":
             $ child.alignment['Activity'] = "Timid"
-            $ child.needs["approval"] = {"level": 3,'shift': 0, "status": "relevant"}
         "В Медведково? Ну хрееееееен знает...":
             $ child.alignment['Activity'] = "Resonable"
         "Я за любой кипеш, кроме голодовки!":
             $ child.alignment['Activity'] = "Ardent"
-            $ child.needs["trill"] = {"level": 3,'shift': 0, "status": "relevant"}
             
     menu:
         "Идёшь по улице. Кушаешь вкусный бутер с колбаской. К тебе подбегает няшный котик и просит кусочек."
         "Пнуть блохастого. Это моя колбаса. Плохая киса!":
             $ child.alignment['Morality'] = "Evil"
-            $ child.needs["power"] = {"level": 3,'shift': 0, "status": "relevant"}
         "Пройти мимо. Пусть бабки подъездные его прикармливают.":
             $ child.alignment['Morality'] = "Selfish"
         "Конечно дать колбаски. Да я бы и собаке...":
-            $ child.alignment['Morality'] = "Good"
-            $ child.needs["altruism"] = {"level": 3,'shift': 0, "status": "relevant"}            
+            $ child.alignment['Morality'] = "Good"          
     
     menu:
         "А что если мамка уроки делать заставит?"
