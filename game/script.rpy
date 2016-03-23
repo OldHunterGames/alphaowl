@@ -32,15 +32,6 @@ label start:
     return
     
 label label_quiz:
-
-    menu:
-        "Какая твоя самая сильная сторона?"
-        "В компах разбираюсь с детства":
-            $ child.get_skill('coding').talent
-        "Я не школота. Факт (правда)":
-            $ child.age = "adolescent"
-        "Я олдфаг. Мои муди седы как снега на склоне фудзи...":
-            $ child.age = "mature" 
             
     menu:
         "Ты мальчик или девочка-внутри?"
@@ -52,6 +43,9 @@ label label_quiz:
             $ child.alignment['Activity'] = "Resonable"
             $ child.alignment['Morality'] = "Selfish"
             $ child.slave_stance = 'Forced'
+            $ child.get_skill('coding').training
+            $ child.get_skill('coding').expirience
+            $ child.get_skill('coding').specialisation            
             $ game.player = child
             $ player = game.player
             $ player.player_controlled = True    
@@ -73,6 +67,40 @@ label label_quiz:
             $ child.age = "adolescent"
         "Я олдфаг. Мои муди седы как снега на склоне фудзи...":
             $ child.age = "mature"        
+
+    menu:
+        "Какая твоя самая сильная сторона?"
+        "В компах разбираюсь с детства":
+            $ child.get_skill('coding').talent
+        "Отменное здоровье и энергичность":
+            $ child.get_skill('sports').talent
+        "Я - душа компании":
+            $ child.get_skill('conversation').talent
+        "Гиперсексуальность":
+            $ child.get_skill('sex').talent
+        "Я эксперт по ВСЕМ вопросам. Диванный.":
+            $ pass
+
+    menu:
+        "Чем по жизни занимаешься?"
+        "Кодю, компилю, хакаю. Не палюсь.":
+            $ child.get_skill('coding').training
+            $ child.get_skill('coding').expirience
+            $ child.get_skill('coding').specialisation
+        "ЗОЖ. Брусья-брусья-турнички. Качалочка.":
+            $ child.get_skill('sports').training
+            $ child.get_skill('sports').expirience
+            $ child.get_skill('sports').specialisation
+        "Тусуюсь с друзьями.":
+            $ child.get_skill('conversation').training
+            $ child.get_skill('conversation').expirience
+            $ child.get_skill('conversation').specialisation
+        "Блядую по черному. Молодость всего одна.":
+            $ child.get_skill('sex').training
+            $ child.get_skill('sex').expirience
+            $ child.get_skill('sex').specialisation
+        "Капчую. В дотан шпилю. Всё такое...":
+            $ child.get_skill('coding').training
             
     menu:
         "Давай вспомним твои школьные годы. Много двоек было за прогулы?"
@@ -157,7 +185,6 @@ label lbl_owl_info:
     "[txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
      Тэнге: [game.tenge] \n
      Условия сна: [child.accommodation]  |  Занятость: [job]       \n
-     Ограничения: [child.restrictions]      \n
      \n"
     
     return
