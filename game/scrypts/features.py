@@ -3,16 +3,39 @@ __author__ = 'OldHuntsman'
 from random import *
 import renpy.store as store
 import renpy.exports as renpy
-import features_data
+from features_data import person_features
 
 class Feature(object):
 
-    def __init__(self, name="generic", modifiers={}, slot=None, value=0):
+    def __init__(self, owner=None, name="generic", *args, **kwargs):
+        stats = person_features[name] if name in person_features else None
+        if not stats:
+            return 
         self.name = name
-        self.slot = slot        # There can be only one feature for every feature slot
-        self.revealed = False   # true if the feature is revealed to player      # the Person() who owns this feature
-        self.value = value    # value for feature-based actions
-        self.modifiers = modifiers     # parameter in key will be modified by value. Example: "agility": -1
+        self.slot = stats['slot'] if 'slot' in stats else None        # There can be only one feature for every feature slot
+        self.revealed = False   # true if the feature is revealed to player      
+        self.owner = owner    # the Person() who owns this feature
+        self.value = stats['value'] if 'value' in stats else 0    # value for feature-based actions
+        self.modifiers = stats['modifiers'] if 'modifiers' in stats else {}     # parameter in key will be modified by value. Example: "agility": -1
+        self.add()
+
+    def remove(self):
+        for modifier in self.modifiers:
+            self.owner.modifiers.remove(modifier)
+        self.owner.features.remove(self)
+
+    def add(self):
+        if self.slot == None:
+            self.owner.features.append(self)
+            self.owner.modifiers.append(self.modifiers)
+            return
+        else:
+            for feature in self.owner.features:
+                if feature.slot == self.slot:
+                    feature.remove()
+            self.owner.features.append(self)
+            self.owner.modifiers.append(self.modifiers)
+
 
 class Blood(Feature):
     """

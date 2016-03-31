@@ -2,23 +2,14 @@
 from random import *
 import renpy.store as store
 import renpy.exports as renpy
-import features_data
+from features import Feature
 from skills import Skill, skills_data
-from needs import Need, needs_names
+from needs import init_needs
 from copy import copy
 from copy import deepcopy
 from food import *
 from schedule import *
 
-
-def features_lookup(person, stat):
-    if not isinstance(person, Person):
-        raise ValueError('No features outside person')
-    value = 0
-    for f in person.features:
-        if stat in f.modifiers.keys():
-            value = f.modifiers[stat]
-    return value
 
 
 
@@ -45,6 +36,7 @@ class Person(object):
         self.subordinates = []
         self.ap = 1
         self.schedule = Schedule(self)
+        self.modifiers = []
 
         # Slave stats, for obedience:
         self.dread = 0
@@ -62,12 +54,12 @@ class Person(object):
         self.accommodation = 'makeshift'
         self.job = {'name': 'idle', 'efficiency': 0,'skill': None, 'effort': "bad"}     #effort can be "bad", "good", "will" or "full"
         self.skills = []
-        self.skills_expirience = {}
+        self.specialized_skill = None
         self.focused_skill = None
         self.focus = 0
         self.skills_used = []
         self.factors = []
-        self.needs = [Need(self, name) for name in needs_names]
+        self.needs = init_needs(self)
 
         self.taboo = {              # Persons moral code.
             "submission":  3,
@@ -101,6 +93,7 @@ class Person(object):
             'willpower': self.spirit,
             'glamour': self.sensitivity
         }
+        
 
         self.appetite = 0
         self.calorie_storage = 0
@@ -118,12 +111,18 @@ class Person(object):
                 "affection": ["friend", [0, 0]],              # friend, associate or foe
             }
         }
-        
 
+    def count_modifiers(self, key):
+        val = 0
+        for mod in self.__dict__['modifiers']:
+            for k in mod:
+                if k==key:
+                    val += mod[k]
+        return val
     def __getattr__(self, key):
         if key in self.attributes:
             value = self.attributes[key]
-            value += features_lookup(self, key)
+            value += self.count_modifiers(key)
             if value < 1:
                 value = 1
             if value > 5:
@@ -131,7 +130,7 @@ class Person(object):
             return value
         if key in self.inner_resources:
             value = self.inner_resources[key]
-            value += features_lookup(self, key)
+            value += self.count_modifiers(key)
             if value <= 0:
                 self.inner_resources[key] = 0
                 value = 0
@@ -229,10 +228,11 @@ class Person(object):
                     renpy.call_in_new_context('lbl_notify', i)
         return
 
-    def get_skill(self, skillname):
+    def skill(self, skillname):
         skill = None
         for i in self.skills:
             if i.name == skillname:
+                skill = i
                 return skill
         if skillname in skills_data:
             skill = Skill(self, skillname, skills_data[skillname])
@@ -259,10 +259,10 @@ class Person(object):
         resource = False
         determination = False
         sabotage = False
-        res_to_use = self.get_skill(skill).resource
+        res_to_use = self.skill(skill).resource
         check = 0
         if self.player_controlled:
-            resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.get_skill(skill).resource)
+            resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill(skill).resource)
         else:
             if forced:
                 motivation = self.motivation(skill, need, shift, forced, taboo)
@@ -282,7 +282,7 @@ class Person(object):
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_skill_check_result', skill, check)
             return check
-        skill_lvl = self.get_skill(skill).level()
+        skill_lvl = self.skill(skill).level
         
         if skill_lvl <= 0:
             if self.player_controlled:
@@ -293,7 +293,7 @@ class Person(object):
         if determination and self.determination > 0:
             self.determination -= 1
             if res <= 0:
-                check += getattr(self, self.get_skill(skill).attribute)
+                check += getattr(self, self.skill(skill).attribute)
             else:
                 check += 1
                 check += res
@@ -496,13 +496,7 @@ class Person(object):
         self.factors.append((factor, level))
 
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
-        new_feature = deepcopy(features_data.person_features[name])
-        for f in self.features:
-            if f.name == name:
-                return
-            if new_feature.slot and new_feature.slot == f.slot:
-                self.features.remove(f)
-        self.features.append(new_feature)
+        Feature(self, name)
     
     def feature_by_slot(self, slot):        # finds feature which hold needed slot
         for f in self.features:
@@ -517,11 +511,12 @@ class Person(object):
 
     def remove_feature(self, feature):       # feature='str' or Fearutere()
         if isinstance(feature, str):
-            r = self.feature(feature)
-            self.features.remove(r)
-            return
+            for f in self.features:
+                if f.name == feature:
+                    f.remove()
         else:
-            self.features.remove(feature)
+            i = self.features.index(feature)
+            self.features[i].remove()
             return
 
     def description(self):
@@ -549,7 +544,7 @@ class Person(object):
         """
         demand = self.physique
         demand += self.appetite
-        demand += features_lookup(self, 'food_demand')
+        demand += count_modifiers('food_demand')
 
         if demand < 1:
             demand = 1
@@ -564,7 +559,7 @@ class Person(object):
         desire = self.food_demand()
         nutrition_modifier = self.nutrition.level
         desire += nutrition_modifier -3
-        desire += features_lookup(self, "food_desire")
+        desire += count_modifiers("food_desire")
 
         if desire < 1:
             desire = 1

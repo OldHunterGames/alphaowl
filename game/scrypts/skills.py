@@ -27,7 +27,7 @@ class Skill(object):
         self.talent = False
         self.expirience_slot = 0
 
-
+    @property
     def level(self):
         level = 0
         if self.training:
@@ -40,12 +40,24 @@ class Skill(object):
             level += 1
         return level
 
+    def make_talanted(self):
+        self.talent = True
+
     def get_expirience(self, power):
-        if power > 5 or power < 1:
-            return
+        available_slots = [n for n in range(power, 0, -1)]
         for skill in self.owner.skills:
-            if skill.expirience_slot != power:
-                self.expirience_slot = power
-                self.expirience = True
+            if skill.expirience_slot in available_slots:
+                available_slots.remove(skill.expirience_slot)
+        if len(available_slots) > 0:
+            self.expirience_slot = max(available_slots)
+            self.expirience = True
+        expirienced = {skill.expirience_slot: skill for skill in self.owner.skills if skill.expirience_slot != 0}
+        if len(expirienced.keys()) > 1:
+            max_skill = expirienced[max(expirienced.keys())]
+            ind = self.owner.skills.index(max_skill)
+            self.owner.skills[ind].specialization = True
+            self.owner.specialized_skill = max_skill
+
+
 
 

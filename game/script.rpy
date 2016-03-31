@@ -36,7 +36,7 @@ label label_quiz:
     menu:
         "Какая твоя самая сильная сторона?"
         "В компах разбираюсь с детства":
-            $ child.get_skill('coding').talent
+            $ child.skill('coding').make_talanted()
         "Я не школота. Факт (правда)":
             $ child.age = "adolescent"
         "Я олдфаг. Мои муди седы как снега на склоне фудзи...":
@@ -158,7 +158,7 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
         sabotage = False
         determination = False
         failed = False
-        if character.get_skill(skill_to_use).level() < 1:
+        if character.skill(skill_to_use).level < 1:
             failed = True
         resource = getattr(character, res_to_use) if res_to_use else 0
     if failed:
