@@ -251,12 +251,13 @@ class Person(object):
         self.inner_resources[resource] -= 1
         return value
 
-    def use_skill(self, skill, forced = False, need=None, shift='positive', taboo=None):
+    def use_skill(self, skill, forced = False, need=None, shift=0, taboo=None):
         resource = False
         determination = False
         sabotage = False
         res_to_use = self.skill(skill).resource
         check = 0
+        
         if self.player_controlled:
             resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill(skill).resource)
         else:
@@ -279,7 +280,7 @@ class Person(object):
                 renpy.call_in_new_context('lbl_skill_check_result', skill, check)
             return check
         skill_lvl = self.skill(skill).level
-        
+        self.skills_used.append(skill)
         if skill_lvl <= 0:
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_skill_check_result', skill, check)
@@ -301,7 +302,6 @@ class Person(object):
         if check < 0:
             check = 0
         if check > 0:
-            self.skills_used.append(skill)
         if self.player_controlled:
             renpy.call_in_new_context('lbl_skill_check_result', skill, check)
         return check
@@ -320,7 +320,12 @@ class Person(object):
             for skill in counted:
                 if counted[skill] == maximum:
                     result.append(skill)
+            if self.focused_skill in result:
+                self.focus += 1
+                self.skills_used = []
+                returnpl
             self.skill(random.choice(result)).set_focus()
+            self.focus = 1
         self.skills_used = []
 
     def mood(self):
@@ -390,19 +395,19 @@ class Person(object):
                 return
 
 
-    def motivation(self, skill, need=None, shift='positive',  forced=True, taboo=None):#shift = 'negative' or 'postive'
+    def motivation(self, skill, need=None, shift=0,  forced=True, taboo=None):
         motiv = 0
         motiv += self.mood()
         if skill in self.skills['talent']:
             motiv += self.spirit
         if need:
             status = getattr(self, need).status
-            if shift == 'negative':
+            if shift < 0:
                 if status == 'frustrated' or status == 'tense':
                     motiv -= getattr(self, need.level)
                 elif status == 'overflow':
                     motiv -= 1
-            if shift == 'positive':
+            if shift > 0:
                 if status == 'frustrated' or status == 'tense': 
                     motiv += getattr(self, need).level
                 elif status == 'relevant':
@@ -533,7 +538,7 @@ class Person(object):
         """
         demand = self.physique
         demand += self.appetite
-        demand += count_modifiers('food_demand')
+        demand += self.count_modifiers('food_demand')
 
         if demand < 1:
             demand = 1
@@ -548,7 +553,7 @@ class Person(object):
         desire = self.food_demand()
         nutrition_modifier = self.nutrition.level
         desire += nutrition_modifier -3
-        desire += count_modifiers("food_desire")
+        desire += self.count_modifiers("food_desire")
 
         if desire < 1:
             desire = 1

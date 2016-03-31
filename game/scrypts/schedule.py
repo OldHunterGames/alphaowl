@@ -2,6 +2,9 @@
 from random import *
 import renpy.store as store
 import renpy.exports as renpy
+actions = {}
+def register_action(name, lbl_name, atype=None):
+    actions[name] = (lbl_name, atype)
 
 class Schedule(object):
     def __init__(self, person):
@@ -9,31 +12,22 @@ class Schedule(object):
         self.owner = person
         self.add_torture = self.add_action(self.owner.torture, 'torture')
     
-    def add_action(self, action, a_type=None, *args, **kwargs):
-        def set_args(*args, **kwargs):
-            l = [action, {}]
-            for k, v in kwargs.items():
-                if k != self:
-                    l[1][k] = v
-            if a_type:
-                self.actions[a_type] = l
-            else:
-                if 'other' in self.actions:
-                    self.actions['other'].append(l)
-                else:
-                    self.actions['other'] = [l]
-            
-        return set_args
-
+    def add_action(self, action, target=None):
+        if action in actions:
+            act = actions[action]
+            for a in self.actions.keys():
+                if self.actions[a]['type'] == act[1]:
+                    self.actions.__delitem__(a)
+            self.actions[action] = {}
+            self.actions[action]['lbl'] = act[0]
+            self.actions[action]['type'] = act[1]
+            self.actions[action]['target'] = target
     def use_actions(self):
-        if not self.actions:
-            return
-        for l in self.actions:
-            if l != 'other':
-                action = self.actions[l]
-                action[0](**action[1])
+        for action in self.actions:
+            a = self.actions[action]
+            if a['target']:
+                renpy.call_in_new_context(a['lbl'], character=self.owner, target=a['target'])
             else:
-                for i in self.actions[l]:
-                    action = i
-                    action[0](**action[1])
+                renpy.call_in_new_context(a['lbl'], character=self.owner)
+
 

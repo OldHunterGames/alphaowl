@@ -153,7 +153,7 @@ label label_new_day:
     $ gt = game.new_turn()
 
     $ game.end_turn_event()
-    
+    $ player.schedule.add_action('homework')
     if game.mode == 'son':
         call lbl_son_manage
     else:
