@@ -301,7 +301,6 @@ class Person(object):
             check += res
         if check < 0:
             check = 0
-        if check > 0:
         if self.player_controlled:
             renpy.call_in_new_context('lbl_skill_check_result', skill, check)
         return check
