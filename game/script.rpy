@@ -32,15 +32,6 @@ label start:
     return
     
 label label_quiz:
-
-    menu:
-        "Какая твоя самая сильная сторона?"
-        "В компах разбираюсь с детства":
-            $ child.skill('coding').make_talanted()
-        "Я не школота. Факт (правда)":
-            $ child.age = "adolescent"
-        "Я олдфаг. Мои муди седы как снега на склоне фудзи...":
-            $ child.age = "mature" 
             
     menu:
         "Ты мальчик или девочка-внутри?"
@@ -51,6 +42,9 @@ label label_quiz:
             $ child.alignment['Activity'] = "Resonable"
             $ child.alignment['Morality'] = "Selfish"
             $ child.slave_stance = 'Forced'
+            $ child.skill('coding').training = True
+            $ child.skill('coding').expirience = True
+            $ child.skill('coding').specialisation = True           
             $ game.player = child
             $ player = game.player
             $ player.player_controlled = True    
@@ -70,6 +64,32 @@ label label_quiz:
             $ child.age = "adolescent"
         "Я олдфаг. Мои муди седы как снега на склоне фудзи...":
             $ child.age = "mature"        
+
+    menu:
+        "Какая твоя самая сильная сторона?"
+        "В компах разбираюсь с детства":
+            $ child.skill('coding').talent = True
+        "Отменное здоровье и энергичность":
+            $ child.skill('sports').talent = True
+        "Я - душа компании":
+            $ child.skill('conversation').talent = True
+        "Гиперсексуальность":
+            $ child.skill('sex').talent = True
+        "Я эксперт по ВСЕМ вопросам. Диванный.":
+            $ pass
+
+    menu:
+        "Чем по жизни занимаешься?"
+        "Кодю, компилю, хакаю. Не палюсь.":
+            $ pass
+        "ЗОЖ. Брусья-брусья-турнички. Качалочка.":
+            $ pass
+        "Тусуюсь с друзьями.":
+            $ pass
+        "Блядую по черному. Молодость всего одна.":
+            $ pass
+        "Капчую. В дотан шпилю. Всё такое...":
+            $ pass
             
     menu:
         "Давай вспомним твои школьные годы. Много двоек было за прогулы?"
@@ -148,7 +168,6 @@ label lbl_owl_info:
     "[txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
      Тэнге: [game.tenge] \n
      Условия сна: [child.accommodation]  |  Занятость: [job]       \n
-     Ограничения: [child.restrictions]      \n
      \n"
     
     return
@@ -203,4 +222,3 @@ label lbl_resist_result(effect, success):
     return
 label lbl_notify(effect):
     'Вы получили [effect]'
-

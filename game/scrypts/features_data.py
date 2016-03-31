@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-from features import *
 person_features = {
     'slim': {'slot': 'shape', 'modifiers': {'nutrition': 1}, 'value': 1},
     'emaciated': {'slot': 'shape', 'modifiers': {'nutrition': 2}, 'value': -2},

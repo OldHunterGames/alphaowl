@@ -40,9 +40,12 @@ class Skill(object):
             level += 1
         return level
 
-    def make_talanted(self):
-        self.talent = True
-
+    def set_focus(self):
+        if self != self.owner.focused_skill:
+            self.owner.focus = 0
+            self.owner.focused_skill = self
+        else:
+            self.owner.focused_skill = self
     def get_expirience(self, power):
         available_slots = [n for n in range(power, 0, -1)]
         for skill in self.owner.skills:

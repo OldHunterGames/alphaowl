@@ -241,10 +241,6 @@ class Person(object):
         self.skills.append(skill)
         return skill
 
-    """def get_need(self, need):
-        for need in self.needs:
-            if need.name == need:
-                return need"""
 
 
 
@@ -310,12 +306,6 @@ class Person(object):
             renpy.call_in_new_context('lbl_skill_check_result', skill, check)
         return check
     
-    def set_focus(self, skill):
-        if not skill == self.focused_skill:
-            self.focus = 0
-            self.focused_skill = skill
-        else:
-            self.focused_skill = skill
 
     def calc_focus(self):
         if self.focused_skill in self.skills_used:
@@ -330,8 +320,7 @@ class Person(object):
             for skill in counted:
                 if counted[skill] == maximum:
                     result.append(skill)
-            self.set_focues(random.choice(result))
-            self.focus += 1
+            self.skill(random.choice(result)).set_focus()
         self.skills_used = []
 
     def mood(self):
