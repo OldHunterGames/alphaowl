@@ -3,8 +3,17 @@ from random import *
 import renpy.store as store
 import renpy.exports as renpy
 actions = {}
-def register_action(name, lbl_name, atype=None):
-    actions[name] = (lbl_name, atype)
+def register_actions():
+    lbl_list = renpy.get_all_labels()
+    l = []
+    for label in lbl_list:
+        lb = label.split('_')
+        if lb[0] == 'shd':
+            l.append(lb)
+    for action in l:
+        z = '_'
+        z = z.join(action)
+        actions[action[2]] = (z, action[1])
 
 
 class ScheduledAction(object):
@@ -20,23 +29,36 @@ class ScheduledAction(object):
             renpy.call_in_new_context(self.lbl, self.owner, self.target)
         else:
             renpy.call_in_new_context(self.lbl, self.owner)
+        return
 
 
 class Schedule(object):
     def __init__(self, person):
         self.actions = []
         self.owner = person
-        self.add_torture = self.add_action(self.owner.torture, 'torture')
     
     def add_action(self, action, target=None):
-        if action in actions:
+        if action in actions.keys():
             act = ScheduledAction(self.owner, action, actions[action][0], actions[action][1], target)
-            for a in self.actions:
-                if a.slot == act.slot:
-                    self.actions.remove(a)
+            if act.slot != None:
+                for a in self.actions:
+                    if a.slot == act.slot:
+                        self.actions.remove(a)
+            if act in self.actions:
+                return
             self.actions.append(act)
     def use_actions(self):
         for action in self.actions:
             action.call()
+    def remove_action(self, action, target=None):
+        if target:
+            for a in self.actions:
+                if a.name == action and a.target == target:
+                    self.actions.remove(a)
+        else:
+            for a in self.actions:
+                if a.name == action:
+                    self.actions.remove(a)
+
 
 

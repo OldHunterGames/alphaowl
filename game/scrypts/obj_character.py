@@ -261,20 +261,19 @@ class Person(object):
         if self.player_controlled:
             resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill(skill).resource)
         else:
-            if forced:
-                motivation = self.motivation(skill, need, shift, forced, taboo)
-                if motivation < 0:
-                    sabotage = True
-                if motivation > 0 and motivation < 5-getattr(self, res_to_use):
-                    pass
-                if motivation > 0 and motivation > 5-getattr(self, res_to_use):
-                    resource = True
-                if motivation > 5 and res_to_use < 1:
-                    resource = False
-                    determination = True
-                if motivation > 10:
-                    resource = True
-                    determination = True
+            motivation = self.motivation(skill, need, shift, forced, taboo)
+            if motivation < 0:
+                sabotage = True
+            if motivation > 0 and motivation < 5-getattr(self, res_to_use):
+                pass
+            if motivation > 0 and motivation > 5-getattr(self, res_to_use):
+                resource = True
+            if motivation > 5 and res_to_use < 1:
+                resource = False
+                determination = True
+            if motivation > 10:
+                resource = True
+                determination = True
         if sabotage:
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_skill_check_result', skill, check)
@@ -394,7 +393,7 @@ class Person(object):
                 return
 
 
-    def motivation(self, skill, need=None, shift=0,  forced=True, taboo=None):
+    def motivation(self, skill, need=None, shift=0,  forced=False, taboo=None):
         motiv = 0
         motiv += self.mood()
         if skill in self.skills['talent']:
