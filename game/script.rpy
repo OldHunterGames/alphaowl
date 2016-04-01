@@ -12,7 +12,7 @@ init python:
     child = game.child
     mother = game.mother
     child.master = mother
-    
+    register_actions()
     child.set_relations(mother)
     mother.set_relations(child)
 
@@ -158,6 +158,7 @@ label label_new_day:
 
     $ game.end_turn_event()
     $ player.schedule.add_action('homework')
+    $ player.schedule.add_action('test')
     if game.mode == 'son':
         call lbl_son_manage
     else:
