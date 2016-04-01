@@ -81,13 +81,17 @@ label label_quiz:
     menu:
         "Чем по жизни занимаешься?"
         "Кодю, компилю, хакаю. Не палюсь.":
-            $ pass
+            $ child.skill('coding').training = True
+            $ child.skill('coding').expirience = True
         "ЗОЖ. Брусья-брусья-турнички. Качалочка.":
-            $ pass
+            $ child.skill('sports').training = True
+            $ child.skill('sports').expirience = True
         "Тусуюсь с друзьями.":
-            $ pass
+            $ child.skill('conversation').training = True
+            $ child.skill('conversation').expirience = True
         "Блядую по черному. Молодость всего одна.":
-            $ pass
+            $ child.skill('sex').training = True
+            $ child.skill('sex').expirience = True
         "Капчую. В дотан шпилю. Всё такое...":
             $ pass
             
