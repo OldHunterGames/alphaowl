@@ -13,7 +13,9 @@ class Relations(object):
         self.affection = 'associate'
         self._tokens = []
 
-
+    @property
+    def tokens(self):
+        return self.owner.relations_tokens(self.target)
     def add_token(self, token):
         self.owner.relations_tokens(self.target).append(token)
  
