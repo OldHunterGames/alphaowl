@@ -220,15 +220,15 @@ label lbl_discipline:
                 "Отец, научи Cычу уму-разуму то!":
                     menu:
                         "Подзатыльники":
-                            $ persons_schedules[mother].add_action(mother.torture, 'obedience', power=1, taboos=['pain'], target=child)
+                            $ pass
                         "Драть за уши":
-                            $ persons_schedules[mother].add_action(mother.torture, 'obedience', power=2, taboos=['pain'], target=child)
+                            $ pass
                         "Пороть ремнём":
-                            $ persons_schedules[mother].add_action(mother.torture, 'obedience', power=3, taboos=['pain'], target=child)                            
+                            $ pass                          
                         "Поздить":
-                            $ persons_schedules[mother].add_action(mother.torture, 'obedience', power=4, taboos=['pain'], target=child)
+                            $ pass
                         "Поздить ногами":
-                            $ persons_schedules[mother].add_action(mother.torture, 'obedience', power=5, taboos=['pain'], target=child)  
+                            $ pass  
                 "Назад":
                     jump lbl_discipline
         "Внушение":
