@@ -11,25 +11,22 @@ class Relations(object):
         self.consideration = 'respectful'
         self.distance = 'close'
         self.affection = 'associate'
-        self.tokens = []
+        self._tokens = []
 
 
     def add_token(self, token):
-        if self.owner.player_controlled:
-            if not token in self.tokens:
-                self.tokens.append(token)
-        elif self.target.player.controlled:
-            if not token in self.target.relation(self).tokens:
-                self.target.relation(self).tokens(token)
+        self.owner.relations_tokens(self.target).append(token)
  
     def has_token(self, token):
-        if token in self.tokens:
+        if token in self.owner.relations_tokens(self.target):
             return True
         return False
 
     def use_token(self, token):
-        if self.has_token(token):
-            self.tokens.remove(token)
+        if has_token(token):
+            self.owner.relations_tokens(self.target).remove(token)
+        else:
+            return "%s has no token named %s"%(self.owner.description, token)
     def change(self, axis, direction):
         z = '_%s'%(axis)
         ax = getattr(Relation, z)

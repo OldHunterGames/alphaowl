@@ -671,11 +671,11 @@ class Person(object):
         if self.player_controlled:
             for rel in self._relations:
                 if rel.target == person:
-                    return rel.tokens
+                    return rel._tokens
         else:
             for rel in self._relations:
                 if isinstance(rel, Relations):
-                    return rel.target.relations(self).tokens
+                    return rel.target.relations(self)._tokens
 
 
 
