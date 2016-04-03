@@ -10,6 +10,7 @@ from copy import deepcopy
 from food import *
 from schedule import *
 from taboos import init_taboos
+from relations import Relations
 
 
 
@@ -95,14 +96,7 @@ class Person(object):
         self.used_rewards = []
 
         # Other persons known and relations with them, value[1] = [needed points, current points]
-        self.relations = {
-            "Old friend": {                                   # for example, actually a Person() object must be here
-                "connection": "unrelated",                    # unrelated, slave, subordinate, supervisor or master
-                "consideration": ["respectful", [0, 0]],      # significant, respectful or miserable
-                "distance": ["close", [0, 0]],                # intimate, close or distant
-                "affection": ["friend", [0, 0]],              # friend, associate or foe
-            }
-        }
+        self._relations = []
 
     def count_modifiers(self, key):
         val = 0
@@ -654,61 +648,36 @@ class Person(object):
 
         return
 
-    def relations_points(self, person=None, axis=None, value=1):    #axis = one of (consideration, distance, affection) 
-        if person in self.relations:
-            self.relations[person][axis][1][1] += value
+
     def set_relations(self, person):
-        if person in self.relations:
-            return
+        for relation in self._relations:
+            if relation.target == person:
+                return
+        if self.player_controlled or person.player_controlled:
+            self._relations.append(Relations(self, person))
+            person._relations.append(Relations(person, self))
         else:
-            default = {
-                "connection": "unrelated",
-                "consideration": ["respectful", [0, 0]],
-                "distance": ["close", [0, 0]],
-                "affection": ["associate", [0, 0]],              
-            }
-            self.relations[person] = default
-        return
+            # simple relations model needed for npc-npc relations
+            return
 
-    def rel_change_available(self, person, axis):
-        if person in self.relations:
-            needed = self.relations[person][axis][1][0]
-            current = self.relations[person][axis][1][1]
-            direction = True if current > 0 else False
-            if abs(current) > needed:
-                return (True, direction)
-            else:
-                return (False, False)
 
-    def get_relations(self, person, axis):
-        if person not in self.relations:
-            return 'You have no relations with character %s'%(person.description())
-        if axis == 'connection':
-            return self.relations[person][axis]
-        return self.relations[person][axis][0]
+    def relations(self, person):
+        for relation in self._relations:
+            if relation.target == person:
+                return relation
+        self.set_relations(person)
 
-    def change_relations(self, person, axis, direction=''):    #direction = '+' or '-'
-        if person in self.relations:
-            if axis == 'consideration':
-                l = ['miserable', 'respectful', 'significant']
-            if axis == 'distance':
-                l = ['distant', 'close', 'friend']
-            if axis == 'affection':
-                l = ['foe', 'associate', 'friend']
-            rel = self.relations[person][axis][0]
-            num = l.index(rel)
-            if direction == '+':
-                num += 1
-                if num > 2:
-                    num = 2
-            else:
-                num -= 1
-                if num < 0:
-                    num = 0
-            rel = l[num]
-            self.relations[person][axis][0] = rel
-            self.relations[person][axis][1][1] = 0
-        return
+    def relations_tokens(self, person):
+        if self.player_controlled:
+            for rel in self._relations:
+                if rel.target == person:
+                    return rel.tokens
+        else:
+            for rel in self._relations:
+                if isinstance(rel, Relations):
+                    return rel.target.relations(self).tokens
+
+
 
     def add_reward(self, name, need):
         self.rewards.append((name, need))

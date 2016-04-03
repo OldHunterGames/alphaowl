@@ -13,8 +13,7 @@ init python:
     mother = game.mother
     child.master = mother
     register_actions()
-    child.set_relations(mother)
-    mother.set_relations(child)
+    
 
     
 # Игра начинается здесь.
@@ -153,7 +152,8 @@ label label_quiz:
 label label_new_day:
     $ study = game.choose_study()
     "Неделя номер [game.time]"
-    
+    $ child.set_relations(mother)
+    $ mother.set_relations(child)
     $ gt = game.new_turn()
 
     $ game.end_turn_event()
