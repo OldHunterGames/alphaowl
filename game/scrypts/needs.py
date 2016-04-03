@@ -16,10 +16,22 @@ class Need(object):
         self.name = name
         self.level = _default_need['level']
         self.shift = _default_need['shift']
-        self.status = _default_need['status']
+        self._status = _default_need['status']
 
 
+    @property
+    def status(self):
+        s = self._status
+        if self.level == 0:
+            s = 'relevant'
+        return s
     
+
+    @status.setter
+    def status(self, value):
+        self._status = value
+    
+
     def set_shift(self, value):
         n = value*self.shift
         if n < 0:
@@ -53,6 +65,8 @@ class Need(object):
     def overflow(self):
         threshold = 9-self.owner.sensitivity-self.level
         if self.status == 'satisfied' and self.level > threshold:
+            if self.owner.mood() > 0:
+                owner.determination += 1
             self.status = 'overflow'
 
 

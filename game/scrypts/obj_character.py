@@ -9,6 +9,7 @@ from copy import copy
 from copy import deepcopy
 from food import *
 from schedule import *
+from taboos import init_taboos
 
 
 
@@ -61,14 +62,6 @@ class Person(object):
         self.factors = []
         self.needs = init_needs(self)
 
-        self.taboo = {              # Persons moral code.
-            "submission":  3,
-            "sexplotation":  3,
-            "pain":  3,
-            "disgrace":  3,
-            "deprivation":  3,
-            "abuse":  3,
-        }
 
         self.attributes = {
             'physique': 3,
@@ -93,8 +86,7 @@ class Person(object):
             'willpower': self.spirit,
             'glamour': self.sensitivity
         }
-        
-
+        self.taboos = init_taboos(self)
         self.appetite = 0
         self.calorie_storage = 0
         self.money = 0
@@ -161,6 +153,12 @@ class Person(object):
         self._determination = value
         if self._determination < 0:
             self._determination = 0
+    
+    def taboo(self, name):
+        for t in self.taboos:
+            if t.name == name:
+                return t
+        return "No taboo named %s"%(name)
 
     def ddd_mod(self, d):
         modifier = d + self.dread + self.discipline + self.dependence - 3
@@ -169,18 +167,18 @@ class Person(object):
         return modifier
 
     def pain_effect_threshold(self, taboo):
-        threshold = 3 + self.attributes["spirit"] + self.ddd_mod(self.dread) - self.attributes["sensitivity"] - self.taboo[taboo]
+        threshold = 3 + self.attributes["spirit"] + self.ddd_mod(self.dread) - self.attributes["sensitivity"] - self.taboo(taboo)
         return threshold
 
     def pain_tear_threshold(self, taboo):
-        threshold = 7 + self.attributes["spirit"] + - self.attributes["sensitivity"] - self.taboo[taboo]
+        threshold = 7 + self.attributes["spirit"] + - self.attributes["sensitivity"] - self.taboo(taboo)
         return threshold
 
     def torture(self, power=0, taboos=[], target=None):#should use at least one taboo
         _taboos = copy(taboos)
         taboo = _taboos.pop(0)
         for i in _taboos:
-            if target.taboo[taboo] < target.taboo[i]:
+            if target.taboo(taboo) < target.taboo(i):
                 taboo = i
         effect = target.pain_effect_threshold(taboo)
         tear = target.pain_tear_threshold(taboo)
@@ -251,7 +249,7 @@ class Person(object):
         self.inner_resources[resource] -= 1
         return value
 
-    def use_skill(self, skill, forced = False, need=None, shift=0, taboo=None):
+    def use_skill(self, skill, forced = False, needs=[], taboos=[]):
         resource = False
         determination = False
         sabotage = False
@@ -261,7 +259,7 @@ class Person(object):
         if self.player_controlled:
             resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill(skill).resource)
         else:
-            motivation = self.motivation(skill, need, shift, forced, taboo)
+            motivation = self.motivation(skill, needs, shift, forced, taboos)
             if motivation < 0:
                 sabotage = True
             if motivation > 0 and motivation < 5-getattr(self, res_to_use):
@@ -342,6 +340,24 @@ class Person(object):
             return 1
 
         return 0
+
+    def frustrate_need(self):
+        if self.mood < 0:
+            min_lvl = 1
+            l = []
+            for n in self.needs:
+                if n.level == min_lvl:
+                    min_lvl = n.level
+                    l.append(n)
+                elif n.level > min_lvl:
+                    min_lvl = n.level
+                    l = []
+                    l.append(n)
+            need = choice(l)
+            need.status = 'frustrated'
+        return
+
+
     
     def obedience(self):
         obedience = 0
@@ -393,13 +409,15 @@ class Person(object):
                 return
 
 
-    def motivation(self, skill, need=None, shift=0,  forced=False, taboo=None):
+    def motivation(self, skill=None, needs=[], forced=False, taboos=[]):# needs should be a list of tuples[(need, shift)]
         motiv = 0
         motiv += self.mood()
-        if skill in self.skills['talent']:
-            motiv += self.spirit
-        if need:
-            status = getattr(self, need).status
+        if skill:
+            if self.skill(skill).talent:
+                motiv += self.spirit
+        for need in needs:
+            status = getattr(self, need[0]).status
+            shift = need[1]
             if shift < 0:
                 if status == 'frustrated' or status == 'tense':
                     motiv -= getattr(self, need.level)
@@ -410,8 +428,9 @@ class Person(object):
                     motiv += getattr(self, need).level
                 elif status == 'relevant':
                     motiv -= 1
-        if taboo:
-            motiv += self.taboo[taboo]
+        if len(taboos)>0:
+            for taboo in taboos:
+                motiv -= self.taboo(taboo).value
         if forced:
             if self.slave_stance == 'rebellious':
                 if motiv > -1:
@@ -526,6 +545,7 @@ class Person(object):
         self.reduce_overflow()
         for need in self.needs:
             need.status_change()
+        self.frustrate_need()
         self.bribe()
 
 
