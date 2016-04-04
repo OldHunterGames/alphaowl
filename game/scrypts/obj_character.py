@@ -249,6 +249,7 @@ class Person(object):
         sabotage = False
         res_to_use = self.skill(skill).resource if skill else None
         check = 0
+        skill_lvl = 0
         
         if self.player_controlled:
             resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill(skill).resource)

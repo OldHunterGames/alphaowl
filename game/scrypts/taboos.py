@@ -23,7 +23,7 @@ class Taboo(object):
         return self._value
     @value.setter
     def value(self, value):
-        self._value += value
+        self._value = value
         if self._value < 0:
             self._value = 0
         if self._value > 5:
