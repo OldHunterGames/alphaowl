@@ -182,8 +182,9 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
         sabotage = False
         determination = False
         failed = False
-        if character.skill(skill_to_use).level < 1:
-            failed = True
+        if skill_to_use:
+            if character.skill(skill_to_use).level < 1:
+                failed = True
         resource = getattr(character, res_to_use) if res_to_use else 0
     if failed:
         return resource, determination, sabotage
@@ -205,8 +206,7 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
             $ determination = False
             $ sabotage = True
     return resource, determination, sabotage
-label lbl_skill_check_result(skill=None, result=0):
-    'Вы использовали скил [skill]'
+label lbl_check_result(result=0):
     'Результат проверки: [result]'
     return
 label lbl_resist(effect):

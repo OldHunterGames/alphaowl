@@ -243,11 +243,11 @@ class Person(object):
         self.inner_resources[resource] -= 1
         return value
 
-    def use_skill(self, skill, forced = False, needs=[], taboos=[]):
+    def skillcheck(self, skill=None, forced = False, needs=[], taboos=[]):
         resource = False
         determination = False
         sabotage = False
-        res_to_use = self.skill(skill).resource
+        res_to_use = self.skill(skill).resource if skill else None
         check = 0
         
         if self.player_controlled:
@@ -267,14 +267,20 @@ class Person(object):
                 resource = True
                 determination = True
         if sabotage:
+            check = -1
             if self.player_controlled:
-                renpy.call_in_new_context('lbl_skill_check_result', skill, check)
+                renpy.call_in_new_context('lbl_check_result', check)
             return check
-        skill_lvl = self.skill(skill).level
-        self.skills_used.append(skill)
+        if skill:
+            skill_lvl = self.skill(skill).level
+            self.skills_used.append(skill)
+        for need in needs:
+            getattr(self, need[0]).set_shift(need[1])
+        for taboo in taboos:
+            self.taboo(taboo[0]).use(taboo[1])
         if skill_lvl <= 0:
             if self.player_controlled:
-                renpy.call_in_new_context('lbl_skill_check_result', skill, check)
+                renpy.call_in_new_context('lbl_check_result', check)
             return check
         check = skill_lvl + self.mood() - 3
         res = self.use_resource(res_to_use) if resource else 0
@@ -293,7 +299,7 @@ class Person(object):
         if check < 0:
             check = 0
         if self.player_controlled:
-            renpy.call_in_new_context('lbl_skill_check_result', skill, check)
+            renpy.call_in_new_context('lbl_check_result', check)
         return check
     
 
@@ -424,7 +430,7 @@ class Person(object):
                     motiv -= 1
         if len(taboos)>0:
             for taboo in taboos:
-                motiv -= self.taboo(taboo).value
+                motiv -= self.taboo(taboo[0]).value
         if forced:
             if self.slave_stance == 'rebellious':
                 if motiv > -1:
@@ -725,7 +731,7 @@ class Person(object):
     
     def train(self, target):
         target_resistance = target.training_resistance(self)
-        training_power = self.use_skill('communication', True, True)
+        training_power = self.skillcheck('communication', True, True)
         if target_resistance < training_power:
             if target.player_controlled:
                 result = renpy.call_in_new_context('lbl_resist', 'discipline')
