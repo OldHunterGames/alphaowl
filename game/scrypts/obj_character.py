@@ -275,6 +275,8 @@ class Person(object):
         if skill:
             skill_lvl = self.skill(skill).level
             self.skills_used.append(skill)
+        else:
+            check += self.discipline
         for need in needs:
             getattr(self, need[0]).set_shift(need[1])
         for taboo in taboos:
@@ -283,7 +285,7 @@ class Person(object):
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_check_result', check)
             return check
-        check = skill_lvl + self.mood() - 3
+        check = check + skill_lvl + self.mood() - 3
         res = self.use_resource(res_to_use) if resource else 0
         if determination and self.determination > 0:
             self.determination -= 1
