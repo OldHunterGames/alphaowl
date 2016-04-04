@@ -286,11 +286,12 @@ label lbl_job_rules:
         'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?':
             $ player.job['name'] = 'study'
             $ child.schedule.add_action('homework')
-            $ child.schedule.add_action('test')
         'Посудку помой. Мусор вынеси. С собакой погуляй. И за дедом прибери.':
             $ player.job['name'] = 'chores'
+            $ child.schedule.add_action('chores')            
         'Вон здоровый какой. Иди вагоны разгружать - семье копеечка.':
             $ player.job['name'] = 'work'
+            $ child.schedule.add_action('work')                   
         'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
             $ player.job['name'] = 'whore'
     

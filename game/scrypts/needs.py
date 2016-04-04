@@ -2,9 +2,11 @@
 from copy import deepcopy
 
 
-needs_names = ["general", "nutrition", "wellness", "comfort", "activity","amusement", "prosperity",
-            "authority", "ambition", "debauch", "care", "independence", "approval", "trill", "altruism", "power"] 
+needs_names = ["general", "nutrition", "wellness", "comfort", "activity", "amusement", "prosperity",
+            "authority", "ambition", "debauch", "care", "independence", "approval", "trill", "altruism", "power"]
+
 _default_need = {"level": 3, "shift": 0, "status": "relevant"}
+
 def init_needs(owner):
     l = []
     for name in needs_names:
@@ -62,9 +64,10 @@ class Need(object):
                 else:
                     self.status = 'relevant'
             self.shift = 0
+
     def overflow(self):
         threshold = 9-self.owner.sensitivity-self.level
-        if self.status == 'satisfied' and self.level > threshold:
+        if self.status == 'satisfied' and self.shift > threshold:
             if self.owner.mood() > 0:
                 owner.determination += 1
             self.status = 'overflow'
