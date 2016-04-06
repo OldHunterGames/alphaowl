@@ -2,7 +2,7 @@
 from copy import deepcopy
 
 
-needs_names = ["general", "nutrition", "wellness", "comfort", "activity", "amusement", "prosperity",
+needs_names = ["general", "nutrition", "wellness", "comfort", "activity", "communication", "amusement", "prosperity",
             "authority", "ambition", "debauch", "care", "independence", "approval", "trill", "altruism", "power"]
 
 _default_need = {"level": 3, "shift": 0, "status": "relevant"}

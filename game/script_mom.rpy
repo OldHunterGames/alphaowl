@@ -219,25 +219,33 @@ label lbl_discipline:
                 "Отец, научи Cычу уму-разуму то!":
                     menu:
                         "Подзатыльники":
-                            $ pass
+                            $ batya_force = 1
+                            $ child.schedule.add_action('batya')
                         "Драть за уши":
-                            $ pass
+                            $ batya_force = 2
+                            $ child.schedule.add_action('batya')
                         "Пороть ремнём":
-                            $ pass                          
+                            $ batya_force = 3
+                            $ child.schedule.add_action('batya')                    
                         "Поздить":
-                            $ pass
+                            $ batya_force = 4
+                            $ child.schedule.add_action('batya')
                         "Поздить ногами":
-                            $ pass  
+                            $ batya_force = 5
+                            $ child.schedule.add_action('batya')
                 "Назад":
                     jump lbl_discipline
         "Внушение":
             menu:
                 'Привечать батюшку Павсикакия (10 тенге)' if game.tenge > 9:
                     $ game.tenge -= 10
+                    $ child.schedule.add_action('pavsykakiy')
                 'Организовать "Кохана ми вбиваємо дітей" (100 тенге)' if game.tenge > 99:
-                    $ game.tenge -= 10
+                    $ game.tenge -= 100
+                    $ child.schedule.add_action('kohana')
                 'Ежедневыне истерики (бесценно)':
-                    $ pass
+                    $ mom_power = 1
+                    $ child.schedule.add_action('hystery')
 
         "Подкуп":
             menu:
@@ -293,5 +301,6 @@ label lbl_job_rules:
             $ child.schedule.add_action('work')                   
         'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
             $ player.job['name'] = 'whore'
+            $ child.schedule.add_action('whore') 
     
     return
