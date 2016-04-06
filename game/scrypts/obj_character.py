@@ -254,7 +254,7 @@ class Person(object):
         if self.player_controlled:
             resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill(skill).resource)
         else:
-            motivation = self.motivation(skill, needs, shift, forced, taboos)
+            motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos)
             if motivation < 0:
                 sabotage = True
             if motivation > 0 and motivation < 5-getattr(self, res_to_use):
