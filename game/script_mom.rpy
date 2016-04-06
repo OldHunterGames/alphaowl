@@ -23,7 +23,6 @@ label lbl_mom_manage:
             call lbl_owl_info
             jump lbl_mom_manage        
         "Конец недели":
-            $ player.rest()
             jump label_new_day
             
     jump lbl_mom_manage

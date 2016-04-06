@@ -21,10 +21,6 @@ label start:
     
     define gray = Solid("#ccc")
     show image gray as bg
-    $ game.mode = 'mom'
-    $ game.player = mother
-    $ player = game.player
-    $ player.player_controlled = True 
     #call evn_init
     call label_quiz
     
@@ -141,25 +137,29 @@ label label_quiz:
             $ game.mode = 'son'
             $ game.player = child
             $ player = game.player
+            $ player.player_controlled = True
             jump label_new_day
             
         "Своей мамкой":
             $ game.mode = 'mom'
             $ game.player = mother
-            $ player = game.player            
+            $ player = game.player
+            $ player.player_controlled = True            
             jump label_new_day
 
     return
 
 label label_new_day:
     $ study = game.choose_study()
+    $ game.child.rest()
+    $ game.mother.rest()
     "Неделя номер [game.time]"
     $ child.set_relations(mother)
     $ mother.set_relations(child)
     $ gt = game.new_turn()
 
     $ game.end_turn_event()
-    if game.mode == 'son':
+    if player == game.child:
         call lbl_son_manage
     else:
         call lbl_mom_manage

@@ -66,7 +66,6 @@ label lbl_son_manage:
             jump lbl_son_manage
         
         "Конец недели":
-            $ player.rest()
             jump label_new_day
     
     return
