@@ -44,7 +44,7 @@ label label_quiz:
             $ child.skill('coding').training = True
             $ child.skill('coding').expirience = True
             $ child.skill('coding').specialisation = True           
-            $ game.player = child
+            $ game.player = mother
             $ player = game.player
             $ player.player_controlled = True    
             jump label_new_day
@@ -145,6 +145,8 @@ label label_quiz:
             
         "Своей мамкой":
             $ game.mode = 'mom'
+            $ game.player = mother
+            $ player = game.player            
             jump label_new_day
 
     return
@@ -157,8 +159,6 @@ label label_new_day:
     $ gt = game.new_turn()
 
     $ game.end_turn_event()
-    $ game.child.rest()
-    $ game.mother.rest()
     if game.mode == 'son':
         call lbl_son_manage
     else:
