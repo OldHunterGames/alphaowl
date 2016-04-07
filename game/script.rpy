@@ -31,8 +31,8 @@ label label_quiz:
     menu:
         "Ты мальчик или девочка-внутри?"
         "(я не человек уже, я разработчик нахуй)":
-            $ child.gender = "male"
-            $ child.age = "adolescent"
+            $ child.add_feature('male')
+            $ child.add_feature('adolescent')
             $ child.alignment['Orderliness'] = "Conformal"
             $ child.alignment['Activity'] = "Resonable"
             $ child.alignment['Morality'] = "Selfish"
@@ -45,20 +45,20 @@ label label_quiz:
             $ player.player_controlled = True    
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
-            $ child.gender = "male"
+            $ child.add_feature('male')
         "Раскусил, дай мне платице...":
-            $ child.gender = "female"     
+            $ child.add_feature('female')     
             $ child.firstname = "Тошка"
             $ child.surname = "Сычева"
             
     menu:
         "Волосики уже везде выросли?"
         "Маaaaм, меня комплюктор про странное спрашивает!":
-            $ child.age = "junior"
+            $ child.add_feature('junior')
         "Я не школота. Факт (правда)":
-            $ child.age = "adolescent"
+            $ child.add_feature('adolescent')
         "Я олдфаг. Мои муди седы как снега на склоне фудзи...":
-            $ child.age = "mature"        
+            $ child.add_feature('mature')       
 
     menu:
         "Какая твоя самая сильная сторона?"

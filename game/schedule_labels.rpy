@@ -6,16 +6,16 @@ label shd_None_template(character):
     
 label shd_batya_batya(character):
     python:
-        game.torture(power=3, taboos=['pain'], child)
-        'BATYA гандошит Cычу. Pain = [batya_force].'
+        game.torture(child, power=3, taboos=['pain'])
         game.train(child, power=3)
+    'BATYA гандошит Cычу. Pain = [batya_force].'
     return   
 
     
 label shd_discipline_pavsykakiy(character):
     python:
         game.train(child, power=3)
-        'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n Весь борщ сожрал, падла'
+    'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n Весь борщ сожрал, падла'
 
     return   
     
@@ -23,14 +23,14 @@ label shd_discipline_pavsykakiy(character):
 label shd_discipline_kohana(character):
     python:
         game.train(child, power=5)
-        'Славик Сычов до сих пор писает в кровать\n @\nМы всё исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
+    'Славик Сычов до сих пор писает в кровать\n @\nМы всё исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
 
     return   
     
 label shd_discipline_hystery(character):
     python:
         game.train(child, power=mom_power)
-        'Дисциплинарная эффекктивность мамкиной истерики [mom_power].'
+    'Дисциплинарная эффекктивность мамкиной истерики [mom_power].'
 
     return   
     
@@ -82,7 +82,7 @@ label subloc_work_perform:
 
 label shd_job_whore(character):
     python:
-        result = character.skillcheck('sex', taboos=[('sexplotation', 3)], needs=[('communication', 2),,('ambition', -4),('authority', -2)])
+        result = character.skillcheck('sex', taboos=[('sexplotation', 3)], needs=[('communication', 2),('ambition', -4),('authority', -2)])
         if result >= 0:
             renpy.call('subloc_whore_perform')   
         else:
