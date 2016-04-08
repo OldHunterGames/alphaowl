@@ -17,17 +17,15 @@ from relations import Relations
 
 class Person(object):
 
-    def __init__(self):
+    def __init__(self, age='adolescent', gender='male'):
         self.player_controlled = False
         self.firstname = u"Антон"
         self.surname = u"Сычов"
         self.nickname = u"Сычуля"
-        self.gender = "male"
-        self.age = "junior"
         self.alignment = {
-            "Orderliness": "Conformal",   # "Lawful", "Conformal" or "Chaotic"
-            "Activity": "Reasonable",        # "Ardent", "Reasonable" or "Timid"
-            "Morality": "Selfish",       # "Good", "Selfish" or "Evil"
+            "orderliness": "conformal",   # "Lawful", "Conformal" or "Chaotic"
+            "activity": "reasonable",        # "Ardent", "Reasonable" or "Timid"
+            "morality": "selfish",       # "Good", "Selfish" or "Evil"
         }
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.tokens = []             # Special resources to activate various events
@@ -39,6 +37,9 @@ class Person(object):
         self.ap = 1
         self.schedule = Schedule(self)
         self.modifiers = []
+        # init starting features
+        self.add_feature(age)
+        self.add_feature(gender)
 
         # Slave stats, for obedience:
         self.dread = 0
@@ -97,6 +98,8 @@ class Person(object):
 
         # Other persons known and relations with them, value[1] = [needed points, current points]
         self._relations = []
+        self.tokens_difficulty = {'fear': 0, 'dependence': 0, 'discipline': 0}
+        self.selfesteem = 0
 
     def count_modifiers(self, key):
         val = 0
@@ -134,9 +137,16 @@ class Person(object):
     def __setattr__(self, key, value):
         if 'inner_resources' in self.__dict__:
             if key in self.inner_resources:
+                value -= self.count_modifiers(key)
                 self.inner_resources[key] = value
                 if self.inner_resources[key] < 0:
                     self.inner_resources[key] = 0
+        if 'attributes' in self.__dict__:
+            if key in self.attributes:
+                value -= self.count_modifiers(key)
+                self.attributes[key] = value
+                if self.attributes[key] < 0:
+                    self.attributes[key] = 0
         super(Person, self).__setattr__(key, value)
 
     @property
@@ -147,12 +157,48 @@ class Person(object):
         self._determination = value
         if self._determination < 0:
             self._determination = 0
-    
+
+
+    @property
+    def gender(self):
+        return self.feature_by_slot('gender').name
+    @property
+    def age(self):
+        return self.feature_by_slot('age').name
+
+    def show_taboos(self):
+        d = {}
+        for taboo in self.taboos:
+            if taboo.value != 0:
+                d[taboo.name] = taboo.value
+        return d
+
+
+    def show_needs(self, key=None):
+        d = {}
+        if not key:
+            for need in self.needs:
+                d[need.name] = {'status': need.status, 'level': need.level}
+        elif key:
+            for need in self.needs:
+                if need.status == key:
+                    d[need.name] = {'status': need.status, 'level': need.level}
+        return d
+
+    def show_features(self):
+        d = {}
+        for feature in self.features:
+            if feature.visible:
+                d[feature.name] = feature.modifiers
+        return d
+
+
     def taboo(self, name):
         for t in self.taboos:
             if t.name == name:
                 return t
         return "No taboo named %s"%(name)
+
 
     def ddd_mod(self, d):
         modifier = d + self.dread + self.discipline + self.dependence - 3
@@ -161,64 +207,15 @@ class Person(object):
         return modifier
 
     def pain_effect_threshold(self, taboo):
-        threshold = 3 + self.attributes["spirit"] + self.ddd_mod(self.dread) - self.attributes["sensitivity"] - self.taboo(taboo)
+        threshold = 3 + self.attributes["spirit"] + self.ddd_mod(self.dread) - self.attributes["sensitivity"] - self.taboo(taboo).value
+        threshold += self.tokens_difficulty['fear']
         return threshold
 
     def pain_tear_threshold(self, taboo):
-        threshold = 7 + self.attributes["spirit"] + - self.attributes["sensitivity"] - self.taboo(taboo)
+        threshold = 7 + self.attributes["spirit"] + - self.attributes["sensitivity"] - self.taboo(taboo).value
         return threshold
 
-    def torture(self, power=0, taboos=[], target=None):#should use at least one taboo
-        _taboos = copy(taboos)
-        taboo = _taboos.pop(0)
-        for i in _taboos:
-            if target.taboo(taboo) < target.taboo(i):
-                taboo = i
-        effect = target.pain_effect_threshold(taboo)
-        tear = target.pain_tear_threshold(taboo)
-        tokens = []
-        if power > tear:
-            tokens.append('angst')
-            tokens.append('fear')
-        elif power > effect:
-            tokens.append('fear')
-        if len(tokens) < 1:
-            return
-        if not target.player_controlled:
-            if power - effect < target.willpower and target.willpower != 0:
-                 res = target.use_resource('willpower')
-                 if res > 0:
-                    tokens.remove('fear')
-            else:
-                if target.determination > 0:
-                    target.determination -= 1
-                    tokens.remove('fear')
-            for i in tokens:
-                target.tokens.append(i)
-
-        else:
-            for i in tokens:
-                decision = renpy.call_in_new_context('lbl_resist', i)
-                if decision=='willpower':
-                    res = target.use_resource('willpower')
-                    if res > 0:
-                        res = True
-                    else:
-                        res = False
-                        target.tokens.append(i) 
-                    renpy.call_in_new_context('lbl_resist_result', i, res)  
-                elif decision == 'determination':
-                    if target.determination > 0:
-                        target.determination -= 1
-                        res = True
-                    else:
-                        res = False
-                    renpy.call_in_new_context('lbl_resist_result', i, res)
-                else:
-                    target.tokens.append(i)
-                    res = False
-                    renpy.call_in_new_context('lbl_notify', i)
-        return
+    
 
     def skill(self, skillname):
         skill = None
@@ -336,7 +333,10 @@ class Person(object):
                 mood -= 1
             elif need.status == "satisfied":
                 mood += 1
-
+        if self.esteem > 0:
+            mood += 1
+        elif self.esteem < 0:
+            mood -= 1
         if mood < (-self.determination-self.sensitivity):
             return -1
         elif mood > self.sensitivity:
@@ -550,6 +550,7 @@ class Person(object):
             need.status_change()
         self.frustrate_need()
         self.bribe()
+        self.reduce_esteem()
 
 
     def food_demand(self):
@@ -671,10 +672,11 @@ class Person(object):
 
 
     def relations(self, person):
+        self.set_relations(person)
         for relation in self._relations:
             if relation.target == person:
                 return relation
-        self.set_relations(person)
+        
 
     def relations_tokens(self, person):
         if self.player_controlled:
@@ -693,6 +695,7 @@ class Person(object):
 
     def bribe_threshold(self):
         threshold = 6 + self.ddd_mod(self.dependence) + self.spirit - self.sensitivity - self.comfort.level
+        threshold += self.tokens_difficulty['dependence']
         return threshold
 
     def bribe(self):
@@ -726,47 +729,102 @@ class Person(object):
                             return
                     self.used_rewards += self.rewards
                     self.rewards = []
-                    self.tokens.append('dependence')
+                    self.add_token('dependence')
                     return
 
-    def training_resistance(self, master):
-        return 1 + (self.mind - master.mind) + (self.spirit - master.spirit) + self.ddd_mod(self.discipline)
+    def training_resistance(self):
+        return 1 + (self.mind - self.master.mind) + (self.spirit - self.master.spirit) + self.ddd_mod(self.discipline) + self.tokens_difficulty['discipline']
     
-    def train(self, target):
-        target_resistance = target.training_resistance(self)
-        training_power = self.skillcheck('communication', True, True)
-        if target_resistance < training_power:
-            if target.player_controlled:
-                result = renpy.call_in_new_context('lbl_resist', 'discipline')
-                if result == 'determination':
-                    if target.determination > 0:
-                        target.determination -= 1
-                        result = True
-                    else:
-                        result = False
-                    renpy.call_in_new_context('lbl_resist_result', 'discipline', result)
-                elif result == 'willpower':
-                    r = target.use_resource('willpower')
-                    if r > 0:
-                        result = True
-                    else:
-                        result = False
-                    renpy.call_in_new_context('lbl_resist_result', 'discipline', result)
-                if result == False:
-                    renpy.call_in_new_context('lbl_notify', 'discipline')
-                    target.tokens.append('discipline')
-                return
 
-            if target.slave_stance.lower() == 'rebellious':
-                if target.use_resource('willpower') <= 0:
-                    if target.determination > 0:
-                        target.determination -= 1
-                        return
-                else:
-                    return
-            elif target.willpower > target.obedience():
-                if target.use_resource('willpower') > 0:
-                    return
-            target.tokens.append('discipline')
+    def add_token(self, token):
+        if not token in self.tokens or token=='angst':
+            self.tokens.append(token)
 
+
+    def use_token(self, token):
+        if self.has_token(token):
+            self.tokens.remove(token)
+            if token in self.tokens_difficulty:
+                self.tokens_difficulty[token] += 1
+            else:
+                self.tokens_difficulty[token] = 1
+
+    def has_token(self, token):
+        if token in self.tokens:
+            return True
+        return False
+
+
+    def moral_action(self, target=None, orderliness=None, activity=None, morality=None):
+        result = 0
+        act = {'ardent': 1, 'reasonable': 0, 'timid': -1}
+        moral = {'good': 1, 'selfish': 0, 'evil': -1}
+        order = {'lawful': 1, 'conformal': 0, 'chaotic': -1}
+        if orderliness:
+            valself = order[self.alignment['orderliness']]
+            valact = order[orderliness]
+            if valself != 0:
+                if valself + valact == 0:
+                    result -= 1
+                elif abs(valself + valact) == 2:
+                    result += 1
+            elif target:
+                if valact == 1:
+                    if self.relations(target).distance == 'formal':
+                        result += 1
+                    elif self.relations(target).distance == 'intimate':
+                        result -= 1
+                elif valact == -1:
+                    if self.relations(target).distance == 'formal':
+                        result -= 1
+                    elif self.relations(target).distance == 'intimate':
+                        result += 1
+        if activity:
+            valself = act[self.alignment['activity']]
+            valact = act[activity]
+            if valself != 0:
+                if valself + valact == 0:
+                    result -= 1
+                elif abs(valself + valact) == 2:
+                    result += 1
+            elif target:
+                if valact == 1:
+                    if self.relations(target).consideration == 'significant':
+                        result += 1
+                    elif self.relations(target).consideration == 'miserable':
+                        result -= 1
+                elif valact == -1:
+                    if self.relations(target).consideration == 'miserable':
+                        result -= 1
+                    elif self.relations(target).consideration == 'significant':
+                        result += 1
+        if morality:
+            valself = moral[self.alignment['morality']]
+            valact = moral[morality]
+            if valself != 0:
+                if valself + valact == 0:
+                    result -= 1
+                elif abs(valself + valact) == 2:
+                    result += 1
+            elif target:
+                if valact == 1:
+                    if self.relations(target).affection == 'friend':
+                        result += 1
+                    elif self.relations(target).consideration == 'foe':
+                        result -= 1
+                elif valact == -1:
+                    if self.relations(target).consideration == 'foe':
+                        result -= 1
+                    elif self.relations(target).consideration == 'friend':
+                        result += 1
+        self.selfesteem += result
+
+    def reduce_esteem(self):
+        if self.selfesteem == 0:
+            return
+        val = 5-self.sensitivity
+        if self.selfesteem > 0:
+            self.selfesteem -= val
+        elif self.esteem < 0:
+            self.selfesteem += val
 

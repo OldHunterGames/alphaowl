@@ -13,6 +13,8 @@ init python:
     mother = game.mother
     child.master = mother
     register_actions()
+    child.set_relations(mother)
+    child.master = mother
     
 
     
@@ -154,8 +156,6 @@ label label_new_day:
     $ game.child.rest()
     $ game.mother.rest()
     "Неделя номер [game.time]"
-    $ child.set_relations(mother)
-    $ mother.set_relations(child)
     $ gt = game.new_turn()
 
     $ game.end_turn_event()
