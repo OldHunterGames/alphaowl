@@ -16,25 +16,30 @@ class Feature(object):
         self.revealed = False   # true if the feature is revealed to player      
         self.owner = owner    # the Person() who owns this feature
         self.value = stats['value'] if 'value' in stats else 0    # value for feature-based actions
-        self.modifiers = stats['modifiers'] if 'modifiers' in stats else {}     # parameter in key will be modified by value. Example: "agility": -1
+        self.modifiers = stats['modifiers'] if 'modifiers' in stats else None     # parameter in key will be modified by value. Example: "agility": -1
+        self.visible = stats['visible'] if 'visible' in stats else False
         self.add()
 
     def remove(self):
         for modifier in self.modifiers:
-            self.owner.modifiers.remove(modifier)
+            if modifier in self.owner.modifiers:
+                self.owner.modifiers.remove(modifier)
         self.owner.features.remove(self)
 
     def add(self):
         if self.slot == None:
             self.owner.features.append(self)
-            self.owner.modifiers.append(self.modifiers)
+            if self.modifiers:
+                self.owner.modifiers.append(self.modifiers)
             return
         else:
             for feature in self.owner.features:
                 if feature.slot == self.slot:
                     feature.remove()
+            if self.modifiers:
+                self.owner.modifiers.append(self.modifiers)
             self.owner.features.append(self)
-            self.owner.modifiers.append(self.modifiers)
+            
 
 
 class Blood(Feature):

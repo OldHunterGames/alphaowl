@@ -71,3 +71,94 @@ class Engine(object):
         quality = person.use_skill(skill, forced)
         self.tenge += efficiency*quality
 
+    def torture(self, target=None, taboos=[]):#should use at least one taboo
+        _taboos = [t[0] for t in taboos]
+        taboo = _taboos.pop(0)
+        for i in _taboos:
+            if target.taboo(taboo).value < target.taboo(i).value:
+                taboo = i
+        effect = target.pain_effect_threshold(taboo)
+        tear = target.pain_tear_threshold(taboo)
+        power = target.taboo(taboo).value
+        tokens = []
+        if power > tear:
+            tokens.append('angst')
+            tokens.append('fear')
+        elif power > effect:
+            tokens.append('fear')
+        if len(tokens) < 1:
+            return
+        for t in taboos:
+            target.taboo(t[0]).use(t[1])
+        if not target.player_controlled:
+            if power - effect < target.willpower and target.willpower != 0:
+                 res = target.use_resource('willpower')
+                 if res > 0:
+                    tokens.remove('fear')
+            else:
+                if target.determination > 0:
+                    target.determination -= 1
+                    tokens.remove('fear')
+            for i in tokens:
+                target.add_token.append(i)
+
+        else:
+            for i in tokens:
+                decision = renpy.call_in_new_context('lbl_resist', i)
+                if decision=='willpower':
+                    res = target.use_resource('willpower')
+                    if res > 0:
+                        res = True
+                    else:
+                        res = False
+                        target.tokens.append(i) 
+                    renpy.call_in_new_context('lbl_resist_result', i, res)  
+                elif decision == 'determination':
+                    if target.determination > 0:
+                        target.determination -= 1
+                        res = True
+                    else:
+                        res = False
+                    renpy.call_in_new_context('lbl_resist_result', i, res)
+                else:
+                    target.add_token(i)
+                    res = False
+                    renpy.call_in_new_context('lbl_notify', i)
+        return
+
+
+    def train(self, target, power=0):
+        target_resistance = target.training_resistance()
+        if target_resistance < power:
+            if target.player_controlled:
+                result = renpy.call_in_new_context('lbl_resist', 'discipline')
+                if result == 'determination':
+                    if target.determination > 0:
+                        target.determination -= 1
+                        result = True
+                    else:
+                        result = False
+                    renpy.call_in_new_context('lbl_resist_result', 'discipline', result)
+                elif result == 'willpower':
+                    r = target.use_resource('willpower')
+                    if r > 0:
+                        result = True
+                    else:
+                        result = False
+                    renpy.call_in_new_context('lbl_resist_result', 'discipline', result)
+                if result == False:
+                    renpy.call_in_new_context('lbl_notify', 'discipline')
+                    target.add_token('discipline')
+                return
+
+            if target.slave_stance.lower() == 'rebellious':
+                if target.use_resource('willpower') <= 0:
+                    if target.determination > 0:
+                        target.determination -= 1
+                        return
+                else:
+                    return
+            elif target.willpower > target.obedience():
+                if target.use_resource('willpower') > 0:
+                    return
+            target.add_token('discipline')

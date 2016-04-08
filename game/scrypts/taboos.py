@@ -20,28 +20,31 @@ class Taboo(object):
 
     @property
     def value(self):
-        return self._value
-    @value.setter
-    def value(self, value):
-        self._value = value
-        if self._value < 0:
-            self._value = 0
-        if self._value > 5:
-            self._value = 5
+        v = self._value
+        for mod in self.owner.modifiers:
+            for k in mod:
+                if k == self.name:
+                    v *= (-1)
+                    break
+        return v
     
     def use(self, power):
-        if self.value == 0:
+        if self._value == 0:
             return
-        summ = self.value + power
+        mod = 1 if self.value > 0 else -1
+        summ = self._value + power
         if summ == 6:
-            self.value -= 1
+            if self.value > 0:
+                self._value += mod
         elif summ > 6:
+            if mod < 0:
+                return
             self.counter -= 1
             if self.counter == 0:
                 if self.value < self.owner.spirit:
-                    self.value += 1
+                    self._value += mod
                 else:
-                    self.value -= 1
+                    self._value -= mod
                 self.max_counter += 1
                 self.counter = self.max_counter
                 self.owner.tokens.append('angst')
