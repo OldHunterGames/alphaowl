@@ -54,10 +54,41 @@ label lbl_son_manage:
                             
                         'Забить':
                             jump lbl_son_manage                            
-                        
+                
+                "Капчевание":
+                    menu:
+                        'Вкатиться в /pr/' if not child.skill('coding').training:
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_dvach_coding").trigger()
+                            jump lbl_son_manage
+                        'Создать ЕОТ тред. Просить помощи.' if not child.skill('conversation').training:
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_dvach_conversation").trigger()
+                            jump lbl_son_manage
+                        'Создать тред как дольше не кончать' if not child.skill('sex').training:
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_dvach_sex").trigger()
+                            jump lbl_son_manage
+                        'Вкатиться в /fiz/' if not child.skill('coding').training:
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_dvach_coding").trigger()
+                            jump lbl_son_manage
+                        'Засмеялся-обосрался. Рулеточки. ЦУИНЬ.':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_dvach_b").trigger()
+                            jump lbl_son_manage
+                        'Не найти фап-тред. Создать.':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_dvach_fap").trigger()
+                            jump lbl_son_manage                            
+                        'Работать на Ольгино за 15 тенгэ':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_dvach_olgino").trigger()
+                            jump lbl_son_manage
+
                 "Социоблядство":
-                    $ player.ap -= 1
-                    jump lbl_son_manage                
+                    jump lbl_son_manage
+                    
                 "Потом подумаю":
                     jump lbl_son_manage
         

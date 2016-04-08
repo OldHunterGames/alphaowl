@@ -128,7 +128,7 @@ label label_quiz:
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
             $ child.slave_stance = 'Rebellious'
             
-    $ alignment = child.alignment['Orderliness'] + child.alignment['Activity'] + child.alignment['Morality'] 
+    $ alignment = child.alignment['Orderliness'] +' '+ child.alignment['Activity'] +' '+ child.alignment['Morality'] 
     "Твой алаймент: [alignment]"
 
     menu:
@@ -168,11 +168,14 @@ label label_new_day:
 
 label lbl_owl_info:
     python:
+        alignment = child.alignment['Orderliness'] +' '+ child.alignment['Activity'] +' '+ child.alignment['Morality'] 
         job = player.job['name']
+        desu = child.description()
         txt = "Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
-    "[txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
+    "[desu] \n [txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
      Тэнге: [game.tenge] \n
      Условия сна: [child.accommodation]  |  Занятость: [job]       \n
+     Характер: [alignment]\n
      \n"
     
     return

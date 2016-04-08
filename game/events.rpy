@@ -20,7 +20,48 @@ label evn_template:
    
    return
 
+label evn_dvach_coding:
+    python:
+        child.skill('coding').training = True
+    'Двач = образовательный! Получен базовый навык программирования.'
+    return
 
+label evn_dvach_conversation:
+    python:
+        child.skill('conversation').training = True
+    'Двач = образовательный! Получен базовый навык социоблядства.'
+    return
+
+label evn_dvach_sex:
+    python:
+        child.skill('sex').training = True
+    'Двач = образовательный! Получена базовая сексуальная грамотность.'
+    return
+
+label evn_dvach_sports:
+    python:
+        child.skill('sports').training = True
+    'Двач = образовательный! Получены базовые знания о ЗОЖ.'
+    return
+
+label evn_dvach_b:
+    python:
+        child.amusement.set_shift(2)
+        child.communication.set_shift(2)        
+    'Развлечение (2) \n @ \nОбщение (2).'
+    return
+
+label evn_dvach_fap:
+    $ child.debauch.set_shift(1)
+    'Обмалафился. Удовлетворение потребности в дебоше (1)'
+    return
+
+label evn_dvach_olgino:
+    python:
+        game.tenge += 15
+    'Понадусёровые швайнокараси порвались. +15!'
+    return
+    
 label evn_bugurt_gazeta:
    "К НАМ СКОРО ЕРОХИНЫ ПРИДУТ \n @ \nГАЗЕТКИ ИЗ ТУАЛЕТА УБЕРИ \n @ \nПОЛОЖИ БУМАГУ ТУАЛЕТНУЮ \n @ \n И САМ В ТУАЛЕТЕ ОСТАВАЙСЯ\n @ \n ЧТОБЫ МАТЕРИ ЗА ТЕБЯ НЕ СТЫДИТЬСЯ"
    python:
