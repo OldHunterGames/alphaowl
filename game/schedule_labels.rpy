@@ -8,7 +8,8 @@ label shd_batya_batya(character):
     python:
         game.torture(child, power=3, taboos=['pain'])
         game.train(child, power=3)
-    'BATYA гандошит Cычу. Pain = [batya_force].'
+        mom.moral_action(child, morality='good')
+    'BATYA гандошит Cычу. Pain = [batya_force]. Злой постпок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
     return   
 
     
