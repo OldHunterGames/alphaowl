@@ -15,7 +15,7 @@ label lbl_mom_manage:
             # call lbl_leisure_rules          
             "Упс. Не готово"
             $ pass
-        "Воспитание" if game.mode == 'mom':
+        "Воспитание":
             call lbl_discipline
         "Магазин":
             call lbl_shop
