@@ -71,15 +71,14 @@ class Engine(object):
         quality = person.use_skill(skill, forced)
         self.tenge += efficiency*quality
 
-    def torture(self, target=None, taboos=[]):#should use at least one taboo
-        _taboos = [t[0] for t in taboos]
+    def torture(self, target=None, taboos=[], power=0):#should use at least one taboo
+        _taboos = [t for t in taboos]
         taboo = _taboos.pop(0)
         for i in _taboos:
             if target.taboo(taboo).value < target.taboo(i).value:
                 taboo = i
         effect = target.pain_effect_threshold(taboo)
         tear = target.pain_tear_threshold(taboo)
-        power = target.taboo(taboo).value
         tokens = []
         if power > tear:
             tokens.append('angst')
@@ -88,8 +87,7 @@ class Engine(object):
             tokens.append('fear')
         if len(tokens) < 1:
             return
-        for t in taboos:
-            target.taboo(t[0]).use(t[1])
+        target.taboo(taboo).use(power)
         if not target.player_controlled:
             if power - effect < target.willpower and target.willpower != 0:
                  res = target.use_resource('willpower')

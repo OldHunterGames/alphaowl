@@ -31,7 +31,7 @@ class Taboo(object):
     def use(self, power):
         if self._value == 0:
             return
-        mod = 1 if self.value > 0 else -1
+        mod = -1 if self.value > 0 else 1
         summ = self._value + power
         if summ == 6:
             if self.value > 0:
