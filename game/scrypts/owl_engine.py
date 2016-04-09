@@ -98,7 +98,7 @@ class Engine(object):
                     target.determination -= 1
                     tokens.remove('fear')
             for i in tokens:
-                target.add_token.append(i)
+                target.add_token(i)
 
         else:
             for i in tokens:
