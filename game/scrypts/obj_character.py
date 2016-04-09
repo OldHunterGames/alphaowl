@@ -333,9 +333,9 @@ class Person(object):
                 mood -= 1
             elif need.status == "satisfied":
                 mood += 1
-        if self.esteem > 0:
+        if self.selfesteem > 0:
             mood += 1
-        elif self.esteem < 0:
+        elif self.selfesteem < 0:
             mood -= 1
         if mood < (-self.determination-self.sensitivity):
             return -1
@@ -365,23 +365,23 @@ class Person(object):
     def obedience(self):
         obedience = 0
 
-        if self.alignment["Orderliness"] == "Lawful":
+        if self.alignment["orderliness"] == "Lawful":
             obedience += self.discipline*2
-        elif self.alignment["Orderliness"] == "Chaotic":
+        elif self.alignment["orderliness"] == "Chaotic":
             obedience += self.discipline/2
         else:
             obedience += self.discipline
 
-        if self.alignment["Activity"] == "Timid":
+        if self.alignment["activity"] == "Timid":
             obedience += self.dependence*2
-        elif self.alignment["Activity"] == "Ardent":
+        elif self.alignment["activity"] == "Ardent":
             obedience += self.dependence/2
         else:
             obedience += self.dependence
 
-        if self.alignment["Morality"] == "Evil":
+        if self.alignment["morality"] == "Evil":
             obedience += self.dread*2
-        elif self.alignment["Morality"] == "Good":
+        elif self.alignment["morality"] == "Good":
             obedience += self.dread/2
         else:
             obedience += self.dread
