@@ -167,30 +167,33 @@ class Person(object):
         return self.feature_by_slot('age').name
 
     def show_taboos(self):
+        s = ""
+        for taboo in self.taboos:
+            s += "{taboo.name}: {taboo.value} \n".format(taboo=taboo)
         d = {}
         for taboo in self.taboos:
             if taboo.value != 0:
                 d[taboo.name] = taboo.value
-        return d
+        return s
 
 
     def show_needs(self, key=None):
-        d = {}
+        s = ""
         if not key:
             for need in self.needs:
-                d[need.name] = {'status': need.status, 'level': need.level}
+                s += "{need.name}: (status: {need.status}, 'level': {need.level} \n".format(need=need)
         elif key:
             for need in self.needs:
                 if need.status == key:
-                    d[need.name] = {'status': need.status, 'level': need.level}
-        return d
+                    s += "{need.name}: (status: {need.status}, 'level': {need.level} \n".format(need=need)
+        return s
 
     def show_features(self):
-        d = {}
+        s = ""
         for feature in self.features:
             if feature.visible:
-                d[feature.name] = feature.modifiers
-        return d
+                s += "{feature.name}: {p}{feature.modifiers}".format(feature=feature, p='{')
+        return s
 
 
     def taboo(self, name):
