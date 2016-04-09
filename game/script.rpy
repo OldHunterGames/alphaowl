@@ -171,11 +171,18 @@ label lbl_owl_info:
         alignment = child.alignment['Orderliness'] +' '+ child.alignment['Activity'] +' '+ child.alignment['Morality'] 
         job = player.job['name']
         desu = child.description()
-        txt = "Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
+        needs = child.show_needs()
+        taboos = child.show_taboos()
+        features = child.show_features()
+        # txt = "Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
+        txt = 'a'
     "[desu] \n [txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
      Тэнге: [game.tenge] \n
      Условия сна: [child.accommodation]  |  Занятость: [job]       \n
      Характер: [alignment]\n
+     Нужды: [needs]\n
+     Табу: [taboos]\n
+     Особенности: [features]\n 
      \n"
     
     return
