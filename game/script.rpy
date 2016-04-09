@@ -33,18 +33,21 @@ label label_quiz:
     menu:
         "Ты мальчик или девочка-внутри?"
         "(я не человек уже, я разработчик нахуй)":
-            $ child.add_feature('male')
-            $ child.add_feature('adolescent')
-            $ child.alignment['Orderliness'] = "Conformal"
-            $ child.alignment['Activity'] = "Resonable"
-            $ child.alignment['Morality'] = "Selfish"
-            $ child.slave_stance = 'Forced'
-            $ child.skill('coding').training = True
-            $ child.skill('coding').expirience = True
-            $ child.skill('coding').specialisation = True           
-            $ game.player = mother
-            $ player = game.player
-            $ player.player_controlled = True    
+            python:
+                child.add_feature('male')
+                child.add_feature('adolescent')
+                child.alignment['Orderliness'] = "Conformal"
+                child.alignment['Activity'] = "Resonable"
+                child.alignment['Morality'] = "Selfish"
+                child.slave_stance = 'Forced'
+                child.skill('coding').training = True
+                child.skill('coding').expirience = True
+                child.skill('coding').specialisation = True           
+                game.player = mother
+                player = game.player
+                mom = game.mother
+                mom.alignment['morality'] = 'evil'
+                player.player_controlled = True    
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
