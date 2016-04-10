@@ -220,19 +220,21 @@ label lbl_discipline:
                     menu:
                         "Подзатыльники":
                             $ batya_force = 1
-                            $ child.schedule.add_action('batya')
+                            $ child.schedule.add_action('batya', single)
                         "Драть за уши":
                             $ batya_force = 2
-                            $ child.schedule.add_action('batya')
+                            $ child.schedule.add_action('batya', single)
                         "Пороть ремнём":
                             $ batya_force = 3
-                            $ child.schedule.add_action('batya')                    
+                            $ child.schedule.add_action('batya', single)                    
                         "Поздить":
                             $ batya_force = 4
-                            $ child.schedule.add_action('batya')
+                            $ child.schedule.add_action('batya', single)
                         "Поздить ногами":
                             $ batya_force = 5
-                            $ child.schedule.add_action('batya')
+                            $ child.schedule.add_action('batya', single)
+                        "Ой-всё. Хватит. ОНЖИРИБЁНОК!":
+                            $ child.schedule.remove_action('batya')
                 "Назад":
                     jump lbl_discipline
         "Внушение":

@@ -172,13 +172,13 @@ label label_new_day:
 label lbl_owl_info:
     python:
         alignment = child.alignment['Orderliness'] +' '+ child.alignment['Activity'] +' '+ child.alignment['Morality'] 
-        job = player.job['name']
+        job = child.job['name']
         desu = child.description()
         needs = child.show_needs()
         taboos = child.show_taboos()
         features = child.show_features()
-        txt = "Настроение: " + str(player.mood()) + "\n Подчинение: " + str(player.obedience())
-    "[desu] \n [txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
+        txt = "Настроение: " + str(child.mood()) + "| Подчинение: " + str(child.obedience())
+    "[txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
      Тэнге: [game.tenge] \n
      Условия сна: [child.accommodation]  |  Занятость: [job]       \n
      Характер: [alignment]\n
