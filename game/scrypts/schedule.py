@@ -17,12 +17,13 @@ def register_actions():
 
 
 class ScheduledAction(object):
-    def __init__(self, owner, name, lbl, slot, target=None):
+    def __init__(self, owner, name, lbl, slot, target=None, use_once=False):
         self.owner = owner
         self.slot = slot
         self.name = name
         self.lbl = lbl
         self.target = target
+        self.use_once = use_once
 
     def call(self):
         if self.target:
@@ -37,9 +38,9 @@ class Schedule(object):
         self.actions = []
         self.owner = person
     
-    def add_action(self, action, target=None):
+    def add_action(self, action, target=None, use_once=False):
         if action in actions.keys():
-            act = ScheduledAction(self.owner, action, actions[action][0], actions[action][1], target)
+            act = ScheduledAction(self.owner, action, actions[action][0], actions[action][1], target, use_once)
             if act.slot != None:
                 for a in self.actions:
                     if a.slot == act.slot:
@@ -50,6 +51,8 @@ class Schedule(object):
     def use_actions(self):
         for action in self.actions:
             action.call()
+            if action.use_once:
+                self.actions.remove(action)
     def remove_action(self, action, target=None):
         if target:
             for a in self.actions:
