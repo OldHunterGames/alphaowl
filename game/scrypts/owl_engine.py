@@ -3,17 +3,19 @@ from random import *
 import renpy.store as store
 import renpy.exports as renpy
 from obj_character import *
+from events import events_list
 
 class Engine(object):
 
     def __init__(self):
         self.mother = Person()
         self.child = Person()
+        self.characters = [self.child, self.mother]
         self.player = None
         self.time = 1
         self.tenge = 100
         self.mom_stuff = []
-        self.events_list = []
+        self.events_list = events_list
         self.mode = 'son'
         self.studies = [
             'major',
@@ -47,21 +49,20 @@ class Engine(object):
         """
         list_of_events = []
         for event in self.events_list:
-            if event.check():
-                if kind in event.natures:
-                        list_of_events.append(event)
+            if kind in event.natures:
+                    list_of_events.append(event)
 
         return list_of_events
     
 
     def end_turn_event(self):
         possible = self.possible_events('turn_end')
-        if len(possible) > 0:
-            choice(possible).trigger()
-            return
-        else:
-            return
-
+        char = choice(self.characters)
+        for ev in possible:
+            r = ev.trigger(char)
+            if r:
+                break
+        return
 
     
 
