@@ -828,6 +828,6 @@ class Person(object):
         val = 5-self.sensitivity
         if self.selfesteem > 0:
             self.selfesteem -= val
-        elif self.esteem < 0:
+        elif self.selfesteem < 0:
             self.selfesteem += val
 
