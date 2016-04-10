@@ -82,9 +82,9 @@ class Engine(object):
         tokens = []
         if power > tear:
             tokens.append('angst')
-            tokens.append('fear')
+            tokens.append('dread')
         elif power > effect:
-            tokens.append('fear')
+            tokens.append('dread')
         if len(tokens) < 1:
             return
         target.taboo(taboo).use(power)

@@ -169,11 +169,8 @@ class Person(object):
     def show_taboos(self):
         s = ""
         for taboo in self.taboos:
-            s += "{taboo.name}: {taboo.value} \n".format(taboo=taboo)
-        d = {}
-        for taboo in self.taboos:
             if taboo.value != 0:
-                d[taboo.name] = taboo.value
+                s += "{taboo.name}({taboo.value}), ".format(taboo=taboo)
         return s
 
 
@@ -181,18 +178,18 @@ class Person(object):
         s = ""
         if not key:
             for need in self.needs:
-                s += "{need.name}: (status: {need.status}, 'level': {need.level} \n".format(need=need)
+                s += "{need.name}({need.level}), ".format(need=need)
         elif key:
             for need in self.needs:
                 if need.status == key:
-                    s += "{need.name}: (status: {need.status}, 'level': {need.level} \n".format(need=need)
+                    s += "{need.name}({need.level}), ".format(need=need)
         return s
 
     def show_features(self):
         s = ""
         for feature in self.features:
             if feature.visible:
-                s += "{feature.name}: {p}{feature.modifiers}".format(feature=feature, p='{')
+                s += "{feature.name}, ".format(feature=feature)
         return s
 
 
