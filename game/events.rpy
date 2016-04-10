@@ -2,17 +2,21 @@ python:
     import sys
     sys.path.append(renpy.loader.transfn("scrypts"))
     from events import *
+label init_events:
+    $ register_event(game, 'test_event', 'evn_test', natures=['turn_end'])
+    return
     
-# label evn_init:
-#     python:
-#         # TODO: Тут надо будет сделать так чтобы список возможных эвентов генеировался динамически
-#         for subclass in Event.__subclasses__():
-
-#             game.events_list.append(subclass(game))
-
-#     return
-
-
+# 
+label evn_test(character):
+    $ d = character.description()
+    if character.stamina < 4:
+        # если персонаж не прошел проверку, будет вызван другой эвент, обязательно возвращаем False
+        '[d] has not enough stamina'
+        return False
+    else:
+        # все что происходит если персонаж прошел проверку будет здесь, обязательно возвращаем True
+        '[d] has enough stamina'
+        return True
 label evn_template:
    "Event №"
    python:

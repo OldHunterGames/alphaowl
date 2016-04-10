@@ -20,7 +20,7 @@ init python:
     
 # Игра начинается здесь.
 label start:
-    
+    call init_events
     define gray = Solid("#ccc")
     show image gray as bg
     #call evn_init

@@ -100,6 +100,7 @@ class Person(object):
         self._relations = []
         self.tokens_difficulty = {'fear': 0, 'dependence': 0, 'discipline': 0}
         self.selfesteem = 0
+        self.conditions = []
 
     def count_modifiers(self, key):
         val = 0
@@ -827,4 +828,9 @@ class Person(object):
             self.selfesteem -= val
         elif self.selfesteem < 0:
             self.selfesteem += val
+    
 
+    def add_condition(self, name):
+        if not name in self.conditions:
+            self.conditions.append(name)
+        return
