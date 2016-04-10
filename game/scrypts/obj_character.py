@@ -365,23 +365,23 @@ class Person(object):
     def obedience(self):
         obedience = 0
 
-        if self.alignment["orderliness"] == "Lawful":
+        if self.alignment["orderliness"] == "lawful":
             obedience += self.discipline*2
-        elif self.alignment["orderliness"] == "Chaotic":
+        elif self.alignment["orderliness"] == "chaotic":
             obedience += self.discipline/2
         else:
             obedience += self.discipline
 
-        if self.alignment["activity"] == "Timid":
+        if self.alignment["activity"] == "timid":
             obedience += self.dependence*2
-        elif self.alignment["activity"] == "Ardent":
+        elif self.alignment["activity"] == "ardent":
             obedience += self.dependence/2
         else:
             obedience += self.dependence
 
-        if self.alignment["morality"] == "Evil":
+        if self.alignment["morality"] == "evil":
             obedience += self.dread*2
-        elif self.alignment["morality"] == "Good":
+        elif self.alignment["morality"] == "good":
             obedience += self.dread/2
         else:
             obedience += self.dread

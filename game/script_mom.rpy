@@ -249,15 +249,22 @@ label lbl_discipline:
 
         "Подкуп":
             menu:
-                'Можно активировать/деактивировать любое количество обещаний.'
+                'Можно активировать/деактивировать любое количество обещаний. Если будешь вести себя хорошо то...'
+                'Ешь свои чипсы сколько влезет' if not ('pringles', "nutrition") in child.used_rewards:
+                    $ child.add_reward('pringles', "nutrition")
                 'Закончить':
                     $ pass
         
-        "Отношение":
+        "Отношение" if player.ap > 0:
             menu:
                 'Выбрать используемый жетон.'
                 'Dread' if child.has_token("dread"):
-                    'ей!'
+                    menu:
+                        'Повысить уровень страха':
+                            $ player.ap -= 1
+                            $ child.use_token('dread')
+                            $ child.dread += 1
+                                                        
                 "Назад":
                     jump lbl_discipline                
         
