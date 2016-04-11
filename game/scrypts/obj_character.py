@@ -227,7 +227,7 @@ class Person(object):
 
     def pain_effect_threshold(self, taboo):
         threshold = 3 + self.attributes["spirit"] + self.ddd_mod(self.dread) - self.attributes["sensitivity"] - self.taboo(taboo).value
-        threshold += self.tokens_difficulty['fear']
+        threshold += self.tokens_difficulty['dread']
         return threshold
 
     def pain_tear_threshold(self, taboo):
