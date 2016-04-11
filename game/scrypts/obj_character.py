@@ -98,7 +98,7 @@ class Person(object):
 
         # Other persons known and relations with them, value[1] = [needed points, current points]
         self._relations = []
-        self.tokens_difficulty = {'fear': 0, 'dependence': 0, 'discipline': 0}
+        self.tokens_difficulty = {'dread': 0, 'dependence': 0, 'discipline': 0}
         self.selfesteem = 0
         self.conditions = []
 

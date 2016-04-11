@@ -12,13 +12,19 @@ class Relations(object):
         self.distance = 'close'
         self.affection = 'associate'
         self._tokens = []
+        self._tokens_difficulty = {'power': 0, 'feebleness': 0, 'reliance': 0, 'fondness': 0, 'hatered': 0}
 
     @property
     def tokens(self):
         return self.owner.relations_tokens(self.target)
-    def add_token(self, token):
-        if not token in self._tokens:
-            self.owner.relations_tokens(self.target).append(token)
+    def add_token(self, token, power=None):
+        if not self.has_token(token):
+            if power:
+                if power > self._tokens_difficulty[token]:
+                    self.owner.relations_tokens(self.target).append(token)
+            else:
+                self.owner.relations_tokens(self.target).append(token)
+
  
     def has_token(self, token):
         if token in self.owner.relations_tokens(self.target):
@@ -28,6 +34,8 @@ class Relations(object):
     def use_token(self, token):
         if has_token(token):
             self.owner.relations_tokens(self.target).remove(token)
+            self._tokens_difficulty[token] += 1
+            self.target.relations(self)._tokens_difficulty[token] += 1
         else:
             return "%s has no token named %s"%(self.owner.name(), token)
     def change(self, axis, direction):
