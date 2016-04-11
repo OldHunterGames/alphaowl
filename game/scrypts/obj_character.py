@@ -204,12 +204,6 @@ class Person(object):
         for skill in self.skills:
             s += "{skill.name}({skill.level})".format(skill=skill)
         return s
-    def show_relations(self):
-        s = ""
-        for relation in self._relations:
-            s += relation.target.name()
-            s += ":({relation.affection}, {relation.distance}, {relation.consideration}), ".format(relation=relation)
-        return s
 
 
 
