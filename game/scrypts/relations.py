@@ -17,7 +17,8 @@ class Relations(object):
     def tokens(self):
         return self.owner.relations_tokens(self.target)
     def add_token(self, token):
-        self.owner.relations_tokens(self.target).append(token)
+        if not token in self._tokens:
+            self.owner.relations_tokens(self.target).append(token)
  
     def has_token(self, token):
         if token in self.owner.relations_tokens(self.target):
@@ -28,7 +29,7 @@ class Relations(object):
         if has_token(token):
             self.owner.relations_tokens(self.target).remove(token)
         else:
-            return "%s has no token named %s"%(self.owner.description, token)
+            return "%s has no token named %s"%(self.owner.name(), token)
     def change(self, axis, direction):
         z = '_%s'%(axis)
         ax = getattr(Relations, z)
@@ -37,10 +38,40 @@ class Relations(object):
         if direction == "+":
             ind += 1
             if ind > 2:
+                if axis == 'distance':
+                    if self.owner.alignment['orderliness'] == 'chaotic':
+                        self.add_token('accordance')
+                    elif self.owner.alignment['orderliness'] == 'lawful':
+                        self.add_token('antagonism')
+                if axis == 'consideration':
+                    if self.owner.alignment['activity'] == 'timid':
+                        self.add_token('accordance')
+                    elif self.owner.alignment['activity'] == 'ardent':
+                        self.add_token('antagonism')
+                if axis == 'affection':
+                    if self.owner.alignment['morality'] == 'good':
+                        self.add_token('accordance')
+                    elif self.owner.alignment['morality'] == 'evil':
+                        self.add_token('antagonism')
                 ind = 2
         elif direction == '-':
             ind -= 1
             if ind < 0:
+                if axis == 'distance':
+                    if self.owner.alignment['orderliness'] == 'chaotic':
+                        self.add_token('antagonism')
+                    elif self.owner.alignment['orderliness'] == 'lawful':
+                        self.add_token('accordance')
+                if axis == 'consideration':
+                    if self.owner.alignment['activity'] == 'timid':
+                        self.add_token('antagonism')
+                    elif self.owner.alignment['activity'] == 'ardent':
+                        self.add_token('accordance')
+                if axis == 'affection':
+                    if self.owner.alignment['morality'] == 'good':
+                        self.add_token('antagonism')
+                    elif self.owner.alignment['morality'] == 'evil':
+                        self.add_token('accordance')
                 ind = 0
         rel = ax[ind]
         self.__dict__[axis] = rel
