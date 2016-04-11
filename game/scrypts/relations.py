@@ -31,7 +31,7 @@ class Relations(object):
             return "%s has no token named %s"%(self.owner.description, token)
     def change(self, axis, direction):
         z = '_%s'%(axis)
-        ax = getattr(Relation, z)
+        ax = getattr(Relations, z)
         rel = getattr(self, axis)
         ind = ax.index(rel)
         if direction == "+":
