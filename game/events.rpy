@@ -2,6 +2,7 @@ python:
     import sys
     sys.path.append(renpy.loader.transfn("scrypts"))
     from events import *
+    
 label init_events:
     $ register_event(game, 'test_event', 'evn_test', natures=['turn_end'])
     return
@@ -17,6 +18,7 @@ label evn_test(character):
         # все что происходит если персонаж прошел проверку будет здесь, обязательно возвращаем True
         '[d] has enough stamina'
         return True
+        
 label evn_template:
    "Event №"
    python:

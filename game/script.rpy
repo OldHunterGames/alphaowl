@@ -186,7 +186,8 @@ label lbl_owl_info:
      Табу: \n[taboos]\n
      Особенности: \n[features]\n
      \n"
-    
+     # Фокус: [child.focused_skill.name]\n
+
     return
 
 label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, determination=False):
