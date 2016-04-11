@@ -194,7 +194,7 @@ class Person(object):
         return s
 
     def show_focus(self):
-        if isinstance(Skill, self.focused_skill):
+        if isinstance(self.focused_skill, Skill):
             return self.focused_skill.name
         else:
             return "No focused skill"

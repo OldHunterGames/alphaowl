@@ -179,13 +179,15 @@ label lbl_owl_info:
         needs = child.show_needs()
         taboos = child.show_taboos()
         features = child.show_features()
+        focus = child.show_focus()
+        rel = child.relations(mom).description()
         txt = "Настроение: " + str(child.mood()) + "| Подчинение: " + str(child.obedience())
     "[txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
      Тэнге: [game.tenge] \n
      Условия сна: [child.accommodation]  |  Занятость: [job]       \n
      Характер: [alignment]\n
-     Отношение: [child.relations(mom).description()]\n
-     Фокус: [child.focused_skill.name]\n
+     Отношение: [rel]\n
+     Фокус: [focus]\n
      Нужды: \n[needs]\n
      Табу: \n[taboos]\n
      Особенности: \n[features]\n
