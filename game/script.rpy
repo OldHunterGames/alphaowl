@@ -13,7 +13,6 @@ init python:
     mother = game.mother
     child.master = mother
     register_actions()
-    child.set_relations(mother)
     child.master = mother
     
 
@@ -47,7 +46,8 @@ label label_quiz:
                 player = game.player
                 mom = game.mother
                 mom.alignment['morality'] = 'evil'
-                player.player_controlled = True    
+                player.player_controlled = True
+                child.set_relations(mother)    
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
@@ -143,13 +143,15 @@ label label_quiz:
             $ game.player = child
             $ player = game.player
             $ player.player_controlled = True
+            $ child.set_relations(mother)
             jump label_new_day
             
         "Своей мамкой":
             $ game.mode = 'mom'
             $ game.player = mother
             $ player = game.player
-            $ player.player_controlled = True            
+            $ player.player_controlled = True
+            $ child.set_relations(mother)           
             jump label_new_day
 
     return
@@ -177,6 +179,7 @@ label lbl_owl_info:
         needs = child.show_needs()
         taboos = child.show_taboos()
         features = child.show_features()
+        relations = child.show_relations()
         txt = "Настроение: " + str(child.mood()) + "| Подчинение: " + str(child.obedience())
     "[txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
      Тэнге: [game.tenge] \n
@@ -185,6 +188,7 @@ label lbl_owl_info:
      Нужды: \n[needs]\n
      Табу: \n[taboos]\n
      Особенности: \n[features]\n
+     Отношения: \n[relations]\n
      \n"
     
     return
