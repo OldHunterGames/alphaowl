@@ -220,34 +220,34 @@ label lbl_discipline:
                     menu:
                         "Подзатыльники":
                             $ batya_force = 1
-                            $ child.schedule.add_action('batya', single)
+                            $ child.schedule.add_action('batya_batya', 'single')
                         "Драть за уши":
                             $ batya_force = 2
-                            $ child.schedule.add_action('batya', single)
+                            $ child.schedule.add_action('batya_batya', 'single')
                         "Пороть ремнём":
                             $ batya_force = 3
-                            $ child.schedule.add_action('batya', single)                    
+                            $ child.schedule.add_action('batya_batya', 'single')                    
                         "Поздить":
                             $ batya_force = 4
-                            $ child.schedule.add_action('batya', single)
+                            $ child.schedule.add_action('batya_batya', 'single')
                         "Поздить ногами":
                             $ batya_force = 5
-                            $ child.schedule.add_action('batya', single)
+                            $ child.schedule.add_action('batya_batya', 'single')
                         "Ой-всё. Хватит. ОНЖИРИБЁНОК!":
-                            $ child.schedule.remove_action('batya')
+                            $ child.schedule.remove_action('batya_batya')
                 "Назад":
                     jump lbl_discipline
         "Внушение":
             menu:
                 'Привечать батюшку Павсикакия (10 тенге)' if game.tenge > 9:
                     $ game.tenge -= 10
-                    $ child.schedule.add_action('pavsykakiy')
+                    $ child.schedule.add_action('discipline_pavsykakiy', 'single')
                 'Организовать "Кохана ми вбиваємо дітей" (100 тенге)' if game.tenge > 99:
                     $ game.tenge -= 100
-                    $ child.schedule.add_action('kohana')
+                    $ child.schedule.add_action('discipline_kohana', 'single')
                 'Ежедневыне истерики (бесценно)':
                     $ mom_power = 1
-                    $ child.schedule.add_action('hystery')
+                    $ child.schedule.add_action('discipline_hystery', 'single')
 
         "Подкуп":
             menu:

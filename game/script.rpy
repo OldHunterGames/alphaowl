@@ -184,11 +184,13 @@ label lbl_owl_info:
      Тэнге: [game.tenge] \n
      Условия сна: [child.accommodation]  |  Занятость: [job]       \n
      Характер: [alignment]\n
+     Отношение: [child.relations(mom).description()]\n
+     Фокус: [child.focused_skill.name]\n
      Нужды: \n[needs]\n
      Табу: \n[taboos]\n
      Особенности: \n[features]\n
      \n"
-     # Фокус: [child.focused_skill.name]\n
+     # 
 
     return
 
