@@ -193,6 +193,24 @@ class Person(object):
                 s += "{feature.name}, ".format(feature=feature)
         return s
 
+    def show_focus(self):
+        if isinstance(Skill, self.focused_skill):
+            return self.focused_skill.name
+        else:
+            return "No focused skill"
+
+    def show_skills(self):
+        s = ""
+        for skill in self.skills:
+            s += "{skill.name}({skill.level})".format(skill=skill)
+        return s
+
+
+
+    def name(self):
+        s = self.firstname + " " + self.surname
+        return s
+
 
     def taboo(self, name):
         for t in self.taboos:

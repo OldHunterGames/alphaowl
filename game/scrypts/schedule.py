@@ -11,9 +11,10 @@ def register_actions():
         if lb[0] == 'shd':
             l.append(lb)
     for action in l:
+        key = '{slot}_{name}'.format(slot=action[1], name=action[2])
         z = '_'
         z = z.join(action)
-        actions[action[2]] = (z, action[1])
+        actions[key] = (z, action[1])
 
 
 class ScheduledAction(object):
@@ -38,7 +39,7 @@ class Schedule(object):
         self.actions = []
         self.owner = person
     
-    def add_action(self, action, target=None, single=False):
+    def add_action(self, action, single=None, target=None):
         if action in actions.keys():
             act = ScheduledAction(self.owner, action, actions[action][0], actions[action][1], target, single)
             if act.slot != None:
@@ -51,7 +52,7 @@ class Schedule(object):
     def use_actions(self):
         for action in self.actions:
             action.call()
-            if action.single:
+            if action.single == 'single':
                 self.actions.remove(action)
     def remove_action(self, action, target=None):
         if target:

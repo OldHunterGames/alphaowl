@@ -45,3 +45,6 @@ class Relations(object):
         rel = ax[ind]
         self.__dict__[axis] = rel
 
+    def description(self):
+        return (self.consideration, self.distance, self.affection)
+
