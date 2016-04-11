@@ -266,7 +266,50 @@ label lbl_discipline:
                             $ player.ap -= 1
                             $ child.use_token('dread')
                             $ child.dread += 1
-                                                        
+                        'Внушить уважение':
+                            $ player.ap -= 1
+                            $ child.use_token('dread')
+                            $ child.relations(mom).change('consideration', '+')
+                        'Усилить вражду':
+                            $ player.ap -= 1
+                            $ child.use_token('dread')
+                            $ child.relations(mom).change('affection', '-')
+                        'Назад':
+                            jump lbl_discipline  
+                'Discipline' if child.has_token("discipline"):
+                    menu:
+                        'Повысить уровень дмсциплины':
+                            $ player.ap -= 1
+                            $ child.use_token('discipline')
+                            $ child.discipline += 1
+                        'Внушить уважение':
+                            $ player.ap -= 1
+                            $ child.use_token('discipline')
+                            $ child.relations(mom).change('consideration', '+')
+                        'Формализовать отношения':
+                            $ player.ap -= 1
+                            $ child.use_token('discipline')
+                            $ child.relations(mom).change('distance', '-')
+                        'Назад':
+                            jump lbl_discipline  
+                'Dependance' if child.has_token("dependance"):
+                    menu:
+                        'Повысить уровень зависимости':
+                            $ player.ap -= 1
+                            $ child.use_token('dependance')
+                            $ child.dependance += 1
+                        'Внушить уважение':
+                            $ player.ap -= 1
+                            $ child.use_token('dependance')
+                            $ child.relations(mom).change('consideration', '+')
+                        'Сблизиться':
+                            $ player.ap -= 1
+                            $ child.use_token('dependance')
+                            $ child.relations(mom).change('distance', '+')
+                        'Назад':
+                            jump lbl_discipline  
+                            
+                            
                 "Назад":
                     jump lbl_discipline                
         
