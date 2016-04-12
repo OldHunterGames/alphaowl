@@ -57,12 +57,13 @@ class Engine(object):
     
 
     def end_turn_event(self):
+        shuffle(self.events_list)
         possible = self.events_list
         char = choice(self.characters)
         for ev in possible:
             r = ev.trigger(char)
             if r:
-                return
+                return  
 
     
 
