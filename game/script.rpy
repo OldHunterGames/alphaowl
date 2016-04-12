@@ -163,6 +163,7 @@ label label_new_day:
     "Неделя номер [game.time]"
     $ gt = game.new_turn()
     $ game.permission = False
+    $ evn_skipchek = game.permission
 
     $ game.end_turn_event()
     $ game.permission = True

@@ -5,7 +5,8 @@ python:
     
 # !!!!!! REGISTER EACH EVENT HERE !!!!
 label init_events:
-    $ register_event('evn_test')
+    $ register_event('evn_dvach_coding')
+    $ register_event('evn_bugurt_gazeta')    
     return True
     
 #TESTS & TEMPLATES 
@@ -16,54 +17,115 @@ label evn_blank:
   
 label evn_template(character):
     
-    if True:
-        #тело эвента
-        return True
-    else:
-        #этот эвент не доступен, возвращаемся к выбору эвентов
-        return False   
+    #Проверка для турн энда
+    if not evn_skipchek:
+        if True:
+            $ evn_skipchek = True
+    
+    # Отсечка
+    if not evn_skipchek:
+        return False
+        
+    #тело эвента
+    return True
 
 
 ######################################################## 
 
 
-label evn_dvach_coding:
+label evn_dvach_coding(character):
+    
+    if not evn_skipchek:
+        if not character.skill('coding').training and character == child and 'pc' not in child.restrictions:
+            $ evn_skipchek = True
+
+    if not evn_skipchek:
+        return False
+        
     python:
-        child.skill('coding').training = True
+        character.skill('coding').training = True
     'Двач = образовательный! Получен базовый навык программирования.'
     return
 
-label evn_dvach_conversation:
+label evn_dvach_conversation(character):
+    
+    if not evn_skipchek:
+        if not child.skill('conversation').training and 'pc' not in child.restrictions:
+            $ evn_skipchek = True
+
+    if not evn_skipchek:
+        return False
+        
     python:
         child.skill('conversation').training = True
     'Двач = образовательный! Получен базовый навык социоблядства.'
     return
 
-label evn_dvach_sex:
+label evn_dvach_sex(character):
+    
+    if not evn_skipchek:
+        if not child.skill('sex').training and 'pc' not in child.restrictions:
+            $ evn_skipchek = True
+
+    if not evn_skipchek:
+        return False
+        
     python:
         child.skill('sex').training = True
     'Двач = образовательный! Получена базовая сексуальная грамотность.'
     return
 
-label evn_dvach_sports:
+label evn_dvach_sports(character):
+    
+    if not evn_skipchek:
+        if not child.skill('sports').training and 'pc' not in child.restrictions:
+            $ evn_skipchek = True
+
+    if not evn_skipchek:
+        return False
+        
     python:
         child.skill('sports').training = True
     'Двач = образовательный! Получены базовые знания о ЗОЖ.'
     return
 
-label evn_dvach_b:
+label evn_dvach_b(character):
+    
+    if not evn_skipchek:
+        if 'pc' not in child.restrictions:
+            $ evn_skipchek = True
+
+    if not evn_skipchek:
+        return False
+        
     python:
         child.amusement.set_shift(2)
         child.communication.set_shift(2)        
-    'Развлечение (2) \n @ \nОбщение (2).'
+    'Сосач \n @ \nРазвлечение (2) \n @ \nОбщение (2).'
     return
 
-label evn_dvach_fap:
+label evn_dvach_fap(character):
+    
+    if not evn_skipchek:
+        if 'pc' not in child.restrictions:
+            $ evn_skipchek = True
+
+    if not evn_skipchek:
+        return False
+        
     $ child.debauch.set_shift(1)
     'Обмалафился. Удовлетворение потребности в дебоше (1)'
     return
 
-label evn_dvach_olgino:
+label evn_dvach_olgino(character):
+    
+    if not evn_skipchek:
+        if 'pc' not in child.restrictions:
+            $ evn_skipchek = True
+
+    if not evn_skipchek:
+        return False
+        
     python:
         game.tenge += 15
     'Понадусёровые швайнокараси порвались. +15!'
@@ -213,7 +275,7 @@ label evn_do_practice_programm_chat:
    
    
    
-label evn_bugurt_gazeta:
+label evn_bugurt_gazeta(character):
    "К НАМ СКОРО ЕРОХИНЫ ПРИДУТ \n @ \nГАЗЕТКИ ИЗ ТУАЛЕТА УБЕРИ \n @ \nПОЛОЖИ БУМАГУ ТУАЛЕТНУЮ \n @ \n И САМ В ТУАЛЕТЕ ОСТАВАЙСЯ\n @ \n ЧТОБЫ МАТЕРИ ЗА ТЕБЯ НЕ СТЫДИТЬСЯ"
    python:
        pass
