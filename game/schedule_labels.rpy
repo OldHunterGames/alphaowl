@@ -35,11 +35,13 @@ label shd_discipline_hystery(character):
 
     return   
     
-label shd_job_homework(character):
+label shd_job_study(character):
     python:
         character.skills_used.append('coding')
+        'Домашка сделана.'
+        
     return    
-
+    
 label shd_job_chores(character):
     python:
         result = character.skillcheck(taboos=[('submission', 1)], needs=[('altruism', 2),('amusement', -1)])

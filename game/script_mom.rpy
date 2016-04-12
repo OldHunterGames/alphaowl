@@ -251,9 +251,25 @@ label lbl_discipline:
 
         "Подкуп":
             menu:
-                'Можно активировать/деактивировать любое количество обещаний. Если будешь вести себя хорошо то...'
+                'Можно активировать любое количество обещаний. Если будешь вести себя хорошо то...'
                 'Ешь свои чипсы сколько влезет' if not ('pringles', "nutrition") in child.used_rewards:
                     $ child.add_reward('pringles', "nutrition")
+                'Разрешим тебе кофе по утрам' if not ('coffe', "wellness") in child.used_rewards:
+                    $ child.add_reward('coffe', "wellness")
+                'Отдам тебе пледик клетчатый' if not ('pledik', "comfort") in child.used_rewards:
+                    $ child.add_reward('pledik', "comfort")
+                'И тогда можешь записываться в споротклуб' if not ('sportklub', "activity") in child.used_rewards:
+                    $ child.add_reward('sportklub', "activity")
+                'Не будем тебе запрещать с друзьями по телефону болтать' if not ('telefon', "communication") in child.used_rewards:
+                    $ child.add_reward('telefon', "communication")                    
+                'Разрешим на комплюктере игрушки играть' if not ('pcgames', "amusement") in child.used_rewards:
+                    $ child.add_reward('pcgames', "amusement")
+                'Будем тебе на карманные давать, немного' if not ('poketmoney', "prosperity") in child.used_rewards:
+                    $ child.add_reward('poketmoney', "prosperity")
+                'Сам себе будешь расписание составлять' if not ('shedule_power', "authority") in child.used_rewards:
+                    $ child.add_reward('shedule_power', "authority")
+                'Мы с батей будем тобой гордиться!' if not ('mom_aprove', "ambition") in child.used_rewards:
+                    $ child.add_reward('mom_aprove', "ambition")                                   
                 'Закончить':
                     $ pass
         
@@ -278,7 +294,7 @@ label lbl_discipline:
                             jump lbl_discipline  
                 'Discipline' if child.has_token("discipline"):
                     menu:
-                        'Повысить уровень дмсциплины':
+                        'Повысить уровень дисциплины':
                             $ player.ap -= 1
                             $ child.use_token('discipline')
                             $ child.discipline += 1
@@ -349,18 +365,18 @@ label lbl_accomodation_rules:
 label lbl_job_rules:
     menu:
         'Всё сидишь как сыч, за конпуктером. Иди пробзись.':
-            $ player.job['name'] = 'idle'
+            $ child.job['name'] = 'idle'
         'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?':
-            $ player.job['name'] = 'study'
-            $ child.schedule.add_action('homework')
+            $ child.job['name'] = 'study'
+            $ child.schedule.add_action('job_study')  
         'Посудку помой. Мусор вынеси. С собакой погуляй. И за дедом прибери.':
-            $ player.job['name'] = 'chores'
-            $ child.schedule.add_action('chores')            
+            $ child.job['name'] = 'chores'
+            $ child.schedule.add_action('job_chores')            
         'Вон здоровый какой. Иди вагоны разгружать - семье копеечка.':
-            $ player.job['name'] = 'work'
-            $ child.schedule.add_action('work')                   
+            $ child.job['name'] = 'work'
+            $ child.schedule.add_action('job_work')                   
         'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
-            $ player.job['name'] = 'whore'
-            $ child.schedule.add_action('whore') 
+            $ child.job['name'] = 'whore'
+            $ child.schedule.add_action('job_whore') 
     
     return
