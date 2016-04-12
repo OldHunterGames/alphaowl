@@ -62,8 +62,7 @@ class Engine(object):
         for ev in possible:
             r = ev.trigger(char)
             if r:
-                break
-        return
+                return
 
     
 
