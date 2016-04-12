@@ -162,8 +162,10 @@ label label_new_day:
     $ game.mother.rest()
     "Неделя номер [game.time]"
     $ gt = game.new_turn()
+    $ game.permission = False
 
     $ game.end_turn_event()
+    $ game.permission = True
     if player == game.child:
         call lbl_son_manage
     else:

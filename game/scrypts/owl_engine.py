@@ -24,6 +24,7 @@ class Engine(object):
             'labs',
             'practice',
         ]
+        self.permission = True
 
     def choose_study(self):
         if self.studies:
