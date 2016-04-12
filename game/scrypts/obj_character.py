@@ -59,6 +59,7 @@ class Person(object):
         self.focus = 0
         self.skills_used = []
         self.factors = []
+        self.restrictions = []
         self.needs = init_needs(self)
 
 
