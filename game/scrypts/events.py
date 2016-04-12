@@ -7,8 +7,6 @@ events_list = []
 def register_event(location, *args, **kwargs):
     event = Event( location, location)
     for key in kwargs.keys():
-        if key == 'natures':
-            event.natures = kwargs['natures']
         if key == 'tags':
             event.tags = kwargs['tags']
         if key == 'unique':
@@ -24,7 +22,6 @@ class Event(object):
     def __init__(self, name, location):
         self.name = name
         self.goto = location     # RenPy location to start an event
-        self.natures = []           # "triggered", "turn_end", "faction", "personal", "special"
         self.tags = []              # tags for filtering "gay", "lolicon", "bestiality", "futanari" etc
         self.unique = False         # Unique events shown once in a game instance
         self.seen = 0               # Number of times this event seen
