@@ -6,48 +6,22 @@ python:
 # !!!!!! REGISTER EACH EVENT HERE !!!!
 label init_events:
     $ register_event('evn_test')
-    return
+    return True
     
 #TESTS & TEMPLATES 
-label evn_test(character):
-    $ d = character.description()
-    if character.stamina < 4:
-        # если персонаж не прошел проверку, будет вызван другой эвент, обязательно возвращаем False
-        '[d] has not enough stamina'
-        return False
-    else:
-        # все что происходит если персонаж прошел проверку будет здесь, обязательно возвращаем True
-        '[d] has enough stamina'
-        return True
 
 label evn_blank:
    $pass   
-   return
-
-   
-label evn_unic:
-   "Event Unic"
-   python:
-       pass
-   
-   return
-   
+   return True
+  
 label evn_template(character):
     
-    python:
-        #БЛОК ПРОВЕРКИ ВОЗМОЖНОСТИ ЭВЕНТА
-        result = None
-        # условия при которых эвент сработает
-        if True:
-             result = True
-        else:
-            result = False
-    if result:
+    if True:
         #тело эвента
-        return result
+        return True
     else:
         #этот эвент не доступен, возвращаемся к выбору эвентов
-        return result   
+        return False   
 
 
 ######################################################## 
