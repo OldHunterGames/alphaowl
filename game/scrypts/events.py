@@ -4,8 +4,8 @@ from copy import copy
 
 events_list = []
 
-def register_event(env, location, *args, **kwargs):
-    event = Event(env, location, location)
+def register_event(location, *args, **kwargs):
+    event = Event( location, location)
     for key in kwargs.keys():
         if key == 'natures':
             event.natures = kwargs['natures']
@@ -21,8 +21,7 @@ def get_event(name):
             return event
 class Event(object):
 
-    def __init__(self, env, name, location):
-        self.env = env              # Enviroment. Instance of current game engive instance
+    def __init__(self, name, location):
         self.name = name
         self.goto = location     # RenPy location to start an event
         self.natures = []           # "triggered", "turn_end", "faction", "personal", "special"
