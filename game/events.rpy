@@ -6,6 +6,13 @@ python:
 # !!!!!! REGISTER EACH EVENT HERE !!!!
 label init_events:
     $ register_event('evn_dvach_coding')
+    $ register_event('evn_dvach_conversation')
+    $ register_event('evn_dvach_sex')
+    $ register_event('evn_dvach_sports')
+    $ register_event('evn_dvach_b')
+    $ register_event('evn_dvach_fap')
+    $ register_event('evn_dvach_olgino')
+ 
     $ register_event('evn_bugurt_gazeta')    
     return True
     
