@@ -4,8 +4,8 @@ from copy import copy
 
 events_list = []
 
-def register_event(env, name, location, *args, **kwargs):
-    event = Event(env, name, location)
+def register_event(env, location, *args, **kwargs):
+    event = Event(env, location, location)
     for key in kwargs.keys():
         if key == 'natures':
             event.natures = kwargs['natures']
