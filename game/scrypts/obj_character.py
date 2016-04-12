@@ -339,7 +339,7 @@ class Person(object):
                 self.focus += 1
                 self.skills_used = []
                 returnpl
-            self.skill(random.choice(result)).set_focus()
+            self.skill(choice(result)).set_focus()
             self.focus = 1
         self.skills_used = []
 
