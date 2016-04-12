@@ -39,24 +39,24 @@ class Engine(object):
         return "label_new_day"
     
 
-    def possible_events(self, kind, who = None):
-        """
-        :param kind:
-        "turn" - end-of-turn event
-        "char" - event with one of player faction main characters
-        "faction" - event for one of active factions beside player faction
-        :return: the RenPu location with the choosen event
-        """
-        list_of_events = []
-        for event in self.events_list:
-            if kind in event.natures:
-                    list_of_events.append(event)
+    #def possible_events(self, kind, who = None):
+    #   """
+    #    :param kind:
+    #    "turn" - end-of-turn event
+    #    "char" - event with one of player faction main characters
+    #    "faction" - event for one of active factions beside player faction
+    #    :return: the RenPu location with the choosen event
+    #    """
+    #    list_of_events = []
+    #    for event in self.events_list:
+    #        if kind in event.natures:
+    #                list_of_events.append(event)
 
-        return list_of_events
+    #    return list_of_events
     
 
     def end_turn_event(self):
-        possible = self.possible_events('turn_end')
+        possible = self.events_list
         char = choice(self.characters)
         for ev in possible:
             r = ev.trigger(char)

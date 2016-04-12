@@ -754,7 +754,7 @@ class Person(object):
                     return
 
     def training_resistance(self):
-        return 1 + (self.mind - self.master.mind) + (self.spirit - self.master.spirit + self.tokens_difficulty['discipline']
+        return 1 + (self.mind - self.master.mind) + (self.spirit - self.master.spirit) + self.tokens_difficulty['discipline']
     
 
     def add_token(self, token):

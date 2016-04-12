@@ -5,7 +5,7 @@ python:
     
 # !!!!!! REGISTER EACH EVENT HERE !!!!
 label init_events:
-    $ register_event(game, 'test_event', 'evn_test', natures=['turn_end'])
+    $ register_event('evn_test')
     return
     
 #TESTS & TEMPLATES 
@@ -32,19 +32,22 @@ label evn_unic:
    
    return
    
-label evn_template:
+label evn_template(character):
     
     python:
         #БЛОК ПРОВЕРКИ ВОЗМОЖНОСТИ ЭВЕНТА
+        result = None
+        # условия при которых эвент сработает
         if True:
-             code here
-             return True
+             result = True
         else:
-            return False   
-       
-   "Event №"
-   
-   return
+            result = False
+    if result:
+        #тело эвента
+        return result
+    else:
+        #этот эвент не доступен, возвращаемся к выбору эвентов
+        return result   
 
 
 ######################################################## 
