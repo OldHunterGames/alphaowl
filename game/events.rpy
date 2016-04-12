@@ -52,7 +52,7 @@ label evn_dvach_coding(character):
     python:
         character.skill('coding').training = True
     'Двач = образовательный! Получен базовый навык программирования.'
-    return
+    return True
 
 label evn_dvach_conversation(character):
     
@@ -66,7 +66,7 @@ label evn_dvach_conversation(character):
     python:
         child.skill('conversation').training = True
     'Двач = образовательный! Получен базовый навык социоблядства.'
-    return
+    return True
 
 label evn_dvach_sex(character):
     
@@ -80,7 +80,7 @@ label evn_dvach_sex(character):
     python:
         child.skill('sex').training = True
     'Двач = образовательный! Получена базовая сексуальная грамотность.'
-    return
+    return True
 
 label evn_dvach_sports(character):
     
@@ -94,7 +94,7 @@ label evn_dvach_sports(character):
     python:
         child.skill('sports').training = True
     'Двач = образовательный! Получены базовые знания о ЗОЖ.'
-    return
+    return True
 
 label evn_dvach_b(character):
     
@@ -109,7 +109,7 @@ label evn_dvach_b(character):
         child.amusement.set_shift(2)
         child.communication.set_shift(2)        
     'Сосач \n @ \nРазвлечение (2) \n @ \nОбщение (2).'
-    return
+    return True
 
 label evn_dvach_fap(character):
     
@@ -122,7 +122,7 @@ label evn_dvach_fap(character):
         
     $ child.debauch.set_shift(1)
     'Обмалафился. Удовлетворение потребности в дебоше (1)'
-    return
+    return True
 
 label evn_dvach_olgino(character):
     
@@ -136,7 +136,7 @@ label evn_dvach_olgino(character):
     python:
         game.tenge += 15
     'Понадусёровые швайнокараси порвались. +15!'
-    return
+    return True
 
 label evn_do_major:
    $ result = child.use_skill('coding')
@@ -150,7 +150,7 @@ label evn_do_major:
    
    '[txt]'
    
-   return
+   return True
 
 label evn_do_gym:
    $ result = child.use_skill('sport')
@@ -164,7 +164,7 @@ label evn_do_gym:
    
    '[txt]'
    
-   return
+   return True
 
 label evn_do_practice_military:
    $ result = child.use_skill('sport')
@@ -178,7 +178,7 @@ label evn_do_practice_military:
    
    '[txt]'
    
-   return
+   return True
 
 label evn_do_practice_military_chat:
    $ result = child.use_skill('communication')
@@ -192,7 +192,7 @@ label evn_do_practice_military_chat:
    
    '[txt]'
    
-   return
+   return True
    
 label evn_do_practice_labs:
    $ result = child.use_skill('coding')
@@ -206,7 +206,7 @@ label evn_do_practice_labs:
    
    '[txt]'
    
-   return
+   return True
 
 label evn_do_practice_labs_chat:
    $ result = child.use_skill('communication')
@@ -220,7 +220,7 @@ label evn_do_practice_labs_chat:
    
    '[txt]'
    
-   return
+   return True
 
 label evn_do_practice_programm:
    $ result = child.use_skill('coding')
@@ -234,7 +234,7 @@ label evn_do_practice_programm:
    
    '[txt]'
    
-   return   
+   return True 
 
 label evn_do_practice_programm_chat:
    $ result = child.use_skill('communication')
@@ -248,7 +248,7 @@ label evn_do_practice_programm_chat:
    
    '[txt]'
    
-   return   
+   return True   
    
    
    
@@ -287,83 +287,83 @@ label evn_bugurt_gazeta(character):
    python:
        pass
    
-   return
+   return True
 
 label evn_bugurt_dildak:
    "СЫНА, Я У ТЕБЯ В ШКАФУ НАШЕЛ КОЕ-ЧТО\n @ \nЗАЧЕМ ТЕБЕ ЭТО?\n @ \n  ТЫ ЧТО ГОМОСЕК? ЗАЧЕМ ТЕБЕ ЧЛЕН РЕЗИНОВЫЙ? \n @ \nМАТЕРИ НЕ СКАЖУ, НО ЗАБИРАЮ!"
    python:
        pass
    
-   return
+   return True
 
 label evn_bugurt_dindin:
    "У ТЕБЯ ХОТЬ С ДЕВОЧКОЙ-ТО БЫЛО \n @ \nНУ ЭТО, ДИНЬ-ДИНЬ ТАМ \n @ \nИЛИ ТОЛЬКО С ЛОШАДЬМИ ЦВЕТНЫМИ?"
    python:
        pass
    
-   return
+   return True
    
 label evn_bugurt_topor:
    "ОТКРОЙ! НЕМЕДЛЕННО ОТКРОЙ!\n @ \n Я ДОЛЖНА ЗНАТЬ, МОЙ СЫН ДЕЛОМ ЗАНЯТ ИЛИ ОПЯТЬ БАЛДУ ПИНАЕШЬ!\n @ \n ТАК, НУ ВСЕ, ОТЕЦ ЗА ТОПОРОМ ПОШЕЛ\n @ \n СЕЙЧАС ДВЕРЬ ВЫНОСИТЬ БУДЕМ!"
    python:
        pass
    
-   return
+   return True
    
 label evn_bugurt_kafe:
    "ЗАЧЕМ ТЕБЕ С ДЕВУШКОЙ В КАФЕ ИДТИ?\n @ \n ТОЛЬКО ДЕНЬГИ ПЕРЕВОДИТЬ.\n @ \n Я ВАС И ДОМА ПРЕКРАСНО НАКОРМЛЮ!\n @ \n КИДАЕТ В КИПЯТОК КУПЛЕННУЮ В МАГАЗИНЕ ПАЧКУ ПЕЛЬМЕНЕЙ"
    python:
        pass
    
-   return
+   return True
    
 label evn_bugurt_church:
    "ЗАВТРА ИДЕШЬ В ЦЕРКОВЬ ИСПОВЕДЫВАТЬСЯ\n @ \nРАСКАЖЕШЬ БАТЮШКЕ ПРО ВСЕ СВОИ ТЕМНЫЕ ДЕЛА\n @ \nИ КАК ЧЕРТЕЙ ПО ЭКРАНУ ГОНЯЕШЬ\n @ \nИ КАК ТИЛИБОНЬКАЕШЬ\n @ \nИ КАК У ДЕДА ПОСЛЕДНИЙ КУСОК ХЛЕБА ОТОБРАЛ!"
    python:
        pass
    
-   return
+   return True
    
 label evn_bugurt_build:
    "СВОЙ ДОМ ОН ХОЧЕТ\n @ \n ЧТО ТЫ ПОСТРОИШЬ?! НИЧЕГО ТЫ НЕ ПОСТРОИШЬ!\n @ \n ПОСТРОИТ ОН\n @ \n ТЫ ХОТЬ КОПЕЕЧКУ ТО В ДОМ ПРИНЁС?"
    python:
        pass
    
-   return
+   return True
    
 label evn_bugurt_stulchak:
    "ОПЯТЬ СТУЛЬЧАК ОБОССАЛ\n @ \nНЕ ТЫ КОНЕЧНО!ОТЕЦ СИДЯ СИКАЕТ\n @ \nА ТЫ ВСЁ ОБОССЫВАЕШЬ В ТУАЛЕТЕ \n @ \nЯ ВЫТИРАТЬ ЗА ТОБОЙ ДОЛЖНА?!"
    python:
        pass
    
-   return
+   return True
    
 label evn_bugurt_b:
    "ЗАЩЕЛ В /b \n @ \nПОСТЯТ ОДНО РАКОВОЕ ГОВНО\n @ \n ВЫШЕЛ \n @ \nЧЕРЕЗ ПЯТЬ МИНУТ СНОВА ЗАХОДИШЬ\n @ \n О! РУЛЕТОЧКА!!!"
    python:
        pass
    
-   return
+   return True
    
 label evn_bugurt_pasta:
    "ИДЕШЬ ПО УЛИЦЕ\n @ \nВСПОМИНАЕШЬ СМЕШНУЮ ПАСТУ ИЛИ ПИКЧУ С ДВОЩИКА\n @ \nПРОИГРЫВАЕШЬ НА ВСЮ УЛИЦУ\n @ \nЛЮДИ ВОКРУГ СМОТРЯТ КАК НА ИДИОТА"
    python:
        pass
    
-   return
+   return True
    
 label evn_bugurt_sol:
    "МАМКА ПРОСИТ ПЕРЕДАТЬ СОЛЬ\n @ \nСЛУЧАЙНО РОНЯЕШЬ И РАССЫПАЕШЬ \n @ \nНУ ВОТ....ОПЯТЬ....КРИВОРУКИЙ \n @ \nПОТИХОНЬКУ НАЧИНАЕТ НАГНЕТАТЬ ОБСТАНОВКУ \n @ \n ЧЕРЕЗ ПЯТЬ МИНУТ УЖЕ ВОВСЮ ОРЁТ И ПРИЧИТАЕТ ПОЧЕМУ ТЫ НЕ КАК ЕРОХИН, ПОЧЕМУ ТЫ ТАКОЙ ТУПОЙ\n @ \nЗАЯВЛЯЕТ, ЧТО В ОДИН ПРЕКРАСНЫЙ МОМЕНТ НЕ ВЫДЕРЖИТ И ВЫКИНЕТ ТЕБЯ ИЗ КВАРТИРЫ"
    python:
        pass
    
-   return
+   return True
    
 label evn_bugurt_pozdno:
    "КУДА СОБРАЛСЯ ТАК ПОЗДНО?\n @ \n КТО ТАМ БУДЕТ?\n @ \n ПРОДИКТУЙ ТЕЛЕФОН И КАК ЗОВУТ\n @ \nА ДЕВОЧКИ БУДУТ? \n @ \n СМОТРИ У МЕНЯ, ЕСЛИ ЧТО НАТВОРИШЬ МЫ ТЕБЯ ОТМАЗЫВАТЬ ОТ ТЮРЬМЫ НЕ БУДЕМ"
    python:
        pass
    
-   return
+   return True
       
    
