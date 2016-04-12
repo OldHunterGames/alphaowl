@@ -42,9 +42,6 @@ class Person(object):
         self.add_feature(gender)
 
         # Slave stats, for obedience:
-        self.dread = 0
-        self.discipline = 0
-        self.dependence = 0
 
         self.allowance = 0         # Sparks spend each turn on a lifestyle
         self.ration = {
@@ -166,6 +163,15 @@ class Person(object):
     @property
     def age(self):
         return self.feature_by_slot('age').name
+    @property
+    def dread(self):
+        return self.tokens_difficulty['dread']
+    @property
+    def discipline(self):
+        return self.tokens_difficulty['discipline']
+    @property
+    def dependence(self):
+        return self.tokens_difficulty['dependence']
 
     def show_taboos(self):
         s = ""
@@ -219,14 +225,14 @@ class Person(object):
         return "No taboo named %s"%(name)
 
 
-    def ddd_mod(self, d):
+    def ddd_mod(self):
         modifier = self.dread + self.discipline + self.dependence - 3
         if modifier < 0:
             modifier = 0
         return modifier
 
     def pain_effect_threshold(self, taboo):
-        threshold = 3 + self.attributes["spirit"] + self.ddd_mod(self.dread) - self.attributes["sensitivity"] - self.taboo(taboo).value
+        threshold = 3 + self.attributes["spirit"] + self.ddd_mod() - self.attributes["sensitivity"] - self.taboo(taboo).value
         threshold += self.tokens_difficulty['dread']
         return threshold
 
@@ -714,7 +720,7 @@ class Person(object):
         self.rewards.append((name, need))
 
     def bribe_threshold(self):
-        threshold = 6 + self.ddd_mod(self.dependence) + self.spirit - self.sensitivity - self.comfort.level
+        threshold = 6 + self.ddd_mod() + self.spirit - self.sensitivity - self.comfort.level
         threshold += self.tokens_difficulty['dependence']
         return threshold
 
@@ -753,7 +759,7 @@ class Person(object):
                     return
 
     def training_resistance(self):
-        return 1 + (self.mind - self.master.mind) + (self.spirit - self.master.spirit) + self.ddd_mod(self.discipline) + self.tokens_difficulty['discipline']
+        return 1 + (self.mind - self.master.mind) + (self.spirit - self.master.spirit) + self.ddd_mod() + self.tokens_difficulty['discipline']
     
 
     def add_token(self, token):
