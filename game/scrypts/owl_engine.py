@@ -24,7 +24,7 @@ class Engine(object):
             'labs',
             'practice',
         ]
-        self.permission = True
+        self.evn_skipcheck = True
 
     def choose_study(self):
         if self.studies:

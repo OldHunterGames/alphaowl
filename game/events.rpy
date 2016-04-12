@@ -44,9 +44,9 @@ label evn_dvach_coding(character):
     
     if not evn_skipchek:
         if not character.skill('coding').training and character == child and 'pc' not in child.restrictions:
-            $ evn_skipchek = True
+            $ game.skipcheck = True
 
-    if not evn_skipchek:
+    if not game.skipcheck:
         return False
         
     python:
@@ -56,11 +56,11 @@ label evn_dvach_coding(character):
 
 label evn_dvach_conversation(character):
     
-    if not evn_skipchek:
+    if not game.skipcheck:
         if not child.skill('conversation').training and 'pc' not in child.restrictions:
             $ evn_skipchek = True
 
-    if not evn_skipchek:
+    if not game.skipcheck:
         return False
         
     python:
@@ -70,11 +70,11 @@ label evn_dvach_conversation(character):
 
 label evn_dvach_sex(character):
     
-    if not evn_skipchek:
+    if not game.skipcheck:
         if not child.skill('sex').training and 'pc' not in child.restrictions:
             $ evn_skipchek = True
 
-    if not evn_skipchek:
+    if not game.skipcheck:
         return False
         
     python:
@@ -84,11 +84,11 @@ label evn_dvach_sex(character):
 
 label evn_dvach_sports(character):
     
-    if not evn_skipchek:
+    if not game.skipcheck:
         if not child.skill('sports').training and 'pc' not in child.restrictions:
             $ evn_skipchek = True
 
-    if not evn_skipchek:
+    if not game.skipcheck:
         return False
         
     python:
@@ -98,11 +98,11 @@ label evn_dvach_sports(character):
 
 label evn_dvach_b(character):
     
-    if not evn_skipchek:
+    if not game.skipcheck:
         if 'pc' not in child.restrictions:
             $ evn_skipchek = True
 
-    if not evn_skipchek:
+    if not game.skipcheck:
         return False
         
     python:
@@ -113,11 +113,11 @@ label evn_dvach_b(character):
 
 label evn_dvach_fap(character):
     
-    if not evn_skipchek:
+    if not game.skipcheck:
         if 'pc' not in child.restrictions:
             $ evn_skipchek = True
 
-    if not evn_skipchek:
+    if not game.skipcheck:
         return False
         
     $ child.debauch.set_shift(1)
@@ -126,11 +126,11 @@ label evn_dvach_fap(character):
 
 label evn_dvach_olgino(character):
     
-    if not evn_skipchek:
+    if not game.skipcheck:
         if 'pc' not in child.restrictions:
             $ evn_skipchek = True
 
-    if not evn_skipchek:
+    if not game.skipcheck:
         return False
         
     python:
