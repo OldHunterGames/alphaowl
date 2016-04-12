@@ -220,7 +220,7 @@ class Person(object):
 
 
     def ddd_mod(self, d):
-        modifier = d + self.dread + self.discipline + self.dependence - 3
+        modifier = self.dread + self.discipline + self.dependence - 3
         if modifier < 0:
             modifier = 0
         return modifier
@@ -565,6 +565,7 @@ class Person(object):
         self.schedule.use_actions()
         self.fatness_change()
         self.reduce_overflow()
+        self.calc_focus()
         for need in self.needs:
             need.status_change()
         self.frustrate_need()
@@ -844,8 +845,12 @@ class Person(object):
         val = 5-self.sensitivity
         if self.selfesteem > 0:
             self.selfesteem -= val
+            if val < 0:
+                val = 0
         elif self.selfesteem < 0:
             self.selfesteem += val
+            if val > 0:
+                val = 0
     
 
     def add_condition(self, name):
