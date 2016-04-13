@@ -772,7 +772,7 @@ class Person(object):
         return False
 
 
-    def moral_action(self, target=None, *args, **kwargs):
+    def moral_action(self, *args, **kwargs):
         result = 0
         act = {'ardent': 1, 'reasonable': 0, 'timid': -1}
         moral = {'good': 1, 'selfish': 0, 'evil': -1}
@@ -780,6 +780,9 @@ class Person(object):
         activity = None
         morality = None
         orderliness = None
+        target = None
+        if 'target' in kwargs:
+            target = kwargs['target']
         for arg in args:
             if arg in act.keys():
                 activity = arg
