@@ -156,8 +156,9 @@ label evn_do_major(character):
     if not game.evn_skipcheck:
         return False 
     'Надо делать курсовю'
-    $ result = child.use_skill('coding')
-   
+    $ moral = child.moral_action('lawful') 
+    $ result = child.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2),('activity', -1)])    
+    
     python:
        if result < 5:
            txt = "Твёрдо решаешь засесть за курсовую \n @ \n Что-то сложновато  \n @ \n Завтра сделаю  \n @ \n За неделю - два параграфа..."
@@ -179,7 +180,8 @@ label evn_do_gym(character):
         return False
         
     'Зачёт по физре'
-    $ result = child.use_skill('sport')
+    $ moral = child.moral_action('ardent') 
+    $ result = child.skillcheck(skill='sport', moral = moral, needs=[('ambition', 2),('comfort', -1),('activity', 3)])    
    
     python:
        if result < 5:
@@ -202,7 +204,8 @@ label evn_do_practice_military(character):
         return False
    
     'Зачёт на военной кафедре (строевая)'
-    $ result = child.use_skill('sport')
+    $ moral = child.moral_action('lawful') 
+    $ result = child.skillcheck(skill='sport', moral = moral, needs=[('activity', 2),('amusement', -2),('comfort', -1)]) 
    
     python:
        if result < 5:
@@ -225,7 +228,8 @@ label evn_do_practice_military_chat(character):
         return False
    
     'Зачёт на военной кафедре (общение)'
-    $ result = child.use_skill('communication')
+    $ moral = child.moral_action('chaotic') 
+    $ result = child.skillcheck(skill='communication', moral = moral, needs=[('communication', 1)])
    
     python:
        if result < 5:
@@ -248,7 +252,8 @@ label evn_do_practice_labs(character):
         return False
         
     'Лабораторная по программированию (брутфорс)'
-    $ result = child.use_skill('coding')
+    $ moral = child.moral_action('lawful', 'timid') 
+    $ result = child.skillcheck(skill='coding', moral = moral, needs=[('ambition', 3),('amusement', -2)]) 
    
     python:
        if result < 5:
@@ -271,7 +276,8 @@ label evn_do_practice_labs_chat(character):
         return False
         
     'Лабораторная по программированию (попытка списать)'
-    $ result = child.use_skill('communication')
+    $ moral = child.moral_action('chaotic', 'ardent') 
+    $ result = child.skillcheck(skill='communication', moral = moral, needs=[('communication', 2), ('ambition', -1)])
    
     python:
        if result < 5:
@@ -294,7 +300,8 @@ label evn_do_practice_programm(character):
         return False
         
     'Производственная практика'
-    $ result = child.use_skill('coding')
+    $ moral = child.moral_action('lawful', 'timid') 
+    $ result = child.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2)])    
    
     python:
        if result < 5:
@@ -317,7 +324,8 @@ label evn_do_practice_programm_chat(character):
         return False
         
     'Производственная практика (общение)'
-    $ result = child.use_skill('communication')
+    $ moral = child.moral_action('chaotic', 'ardent') 
+    $ result = child.skillcheck(skill='communication', moral = moral, needs=[('communication', 3)])
    
     python:
        if result < 5:
