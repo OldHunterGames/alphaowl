@@ -255,7 +255,7 @@ class Person(object):
         self.inner_resources[resource] -= 1
         return value
 
-    def skillcheck(self, skill=None, forced = False, needs=[], taboos=[]):
+    def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0):
         resource = False
         determination = False
         sabotage = False
@@ -266,7 +266,7 @@ class Person(object):
         if self.player_controlled:
             resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill(skill).resource)
         else:
-            motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos)
+            motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos, moral=moral)
             if motivation < 0:
                 sabotage = True
             if motivation > 0 and motivation < 5-getattr(self, res_to_use):
@@ -427,9 +427,10 @@ class Person(object):
                 return
 
 
-    def motivation(self, skill=None, needs=[], forced=False, taboos=[]):# needs should be a list of tuples[(need, shift)]
+    def motivation(self, skill=None, needs=[], forced=False, taboos=[], moral=0):# needs should be a list of tuples[(need, shift)]
         motiv = 0
         motiv += self.mood()
+        motiv += moral
         if skill:
             if self.skill(skill).talent:
                 motiv += self.spirit
@@ -834,6 +835,7 @@ class Person(object):
                     elif self.relations(target).consideration == 'friend':
                         result += 1
         self.selfesteem += result
+        return result
 
     def reduce_esteem(self):
         if self.selfesteem == 0:
