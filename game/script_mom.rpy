@@ -133,22 +133,17 @@ label lbl_rules_behavior:
     menu:
         'Запретить общаться с девочками' if 'dates' not in child.restrictions:
             $ child.restrictions.append('dates')
-            $ txt = ' \n @ \n \n @ \n '
         'Разрешить общаться с девочками' if 'dates' in child.restrictions:
             $ child.restrictions.remove('dates')
             $ txt = ' \n @ \n \n @ \n '            
         'Запретить общаться с мальчиками' if 'friends' not in child.restrictions:
             $ child.restrictions.append('friends')
-            $ txt = ' \n @ \n \n @ \n '
         'Разрешить общаться с мальчиками' if 'friends' in child.restrictions:
             $ child.restrictions.remove('friends')
-            $ txt = ' \n @ \n \n @ \n '   
-        'Конплюхтерн для очобы!' if 'pc' not in child.restrictions:
+        'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in child.restrictions:
             $ child.restrictions.append('pc')
-            $ txt = ' \n @ \n \n @ \n '
         'Ну и сиди за своим комплюктером' if 'pc' in child.restrictions:
             $ child.restrictions.remove('pc')
-            $ txt = ' \n @ \n \n @ \n '   
             
     return
 
