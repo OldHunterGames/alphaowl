@@ -42,6 +42,9 @@ class Person(object):
         self.add_feature(gender)
 
         # Slave stats, for obedience:
+        self.dread = 0
+        self.dependence = 0
+        self.discipline = 0
 
         self.allowance = 0         # Sparks spend each turn on a lifestyle
         self.ration = {
@@ -164,15 +167,6 @@ class Person(object):
     @property
     def age(self):
         return self.feature_by_slot('age').name
-    @property
-    def dread(self):
-        return self.tokens_difficulty['dread']
-    @property
-    def discipline(self):
-        return self.tokens_difficulty['discipline']
-    @property
-    def dependence(self):
-        return self.tokens_difficulty['dependence']
 
     def show_taboos(self):
         s = ""
