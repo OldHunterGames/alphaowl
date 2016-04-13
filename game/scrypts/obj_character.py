@@ -772,11 +772,21 @@ class Person(object):
         return False
 
 
-    def moral_action(self, target=None, orderliness=None, activity=None, morality=None):
+    def moral_action(self, target=None, *args, **kwargs):
         result = 0
         act = {'ardent': 1, 'reasonable': 0, 'timid': -1}
         moral = {'good': 1, 'selfish': 0, 'evil': -1}
         order = {'lawful': 1, 'conformal': 0, 'chaotic': -1}
+        activity = None
+        morality = None
+        orderliness = None
+        for arg in args:
+            if arg in act.keys():
+                activity = arg
+            if arg in moral.keys():
+                morality = arg
+            if arg in order.keys():
+                orderliness = arg
         if orderliness:
             valself = order[self.alignment['orderliness']]
             valact = order[orderliness]
