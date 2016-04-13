@@ -42,6 +42,9 @@ class Person(object):
         self.add_feature(gender)
 
         # Slave stats, for obedience:
+        self.dread = 0
+        self.dependence = 0
+        self.discipline = 0
 
         self.allowance = 0         # Sparks spend each turn on a lifestyle
         self.ration = {
@@ -164,15 +167,6 @@ class Person(object):
     @property
     def age(self):
         return self.feature_by_slot('age').name
-    @property
-    def dread(self):
-        return self.tokens_difficulty['dread']
-    @property
-    def discipline(self):
-        return self.tokens_difficulty['discipline']
-    @property
-    def dependence(self):
-        return self.tokens_difficulty['dependence']
 
     def show_taboos(self):
         s = ""
@@ -261,7 +255,7 @@ class Person(object):
         self.inner_resources[resource] -= 1
         return value
 
-    def skillcheck(self, skill=None, forced = False, needs=[], taboos=[]):
+    def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0):
         resource = False
         determination = False
         sabotage = False
@@ -272,7 +266,7 @@ class Person(object):
         if self.player_controlled:
             resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill(skill).resource)
         else:
-            motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos)
+            motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos, moral=moral)
             if motivation < 0:
                 sabotage = True
             if motivation > 0 and motivation < 5-getattr(self, res_to_use):
@@ -433,9 +427,10 @@ class Person(object):
                 return
 
 
-    def motivation(self, skill=None, needs=[], forced=False, taboos=[]):# needs should be a list of tuples[(need, shift)]
+    def motivation(self, skill=None, needs=[], forced=False, taboos=[], moral=0):# needs should be a list of tuples[(need, shift)]
         motiv = 0
         motiv += self.mood()
+        motiv += moral
         if skill:
             if self.skill(skill).talent:
                 motiv += self.spirit
@@ -777,11 +772,21 @@ class Person(object):
         return False
 
 
-    def moral_action(self, target=None, orderliness=None, activity=None, morality=None):
+    def moral_action(self, target=None, *args, **kwargs):
         result = 0
         act = {'ardent': 1, 'reasonable': 0, 'timid': -1}
         moral = {'good': 1, 'selfish': 0, 'evil': -1}
         order = {'lawful': 1, 'conformal': 0, 'chaotic': -1}
+        activity = None
+        morality = None
+        orderliness = None
+        for arg in args:
+            if arg in act.keys():
+                activity = arg
+            if arg in moral.keys():
+                morality = arg
+            if arg in order.keys():
+                orderliness = arg
         if orderliness:
             valself = order[self.alignment['orderliness']]
             valact = order[orderliness]
@@ -840,6 +845,7 @@ class Person(object):
                     elif self.relations(target).consideration == 'friend':
                         result += 1
         self.selfesteem += result
+        return result
 
     def reduce_esteem(self):
         if self.selfesteem == 0:
