@@ -8,14 +8,14 @@ label shd_batya_batya(character):
     python:
         game.torture(target = child, power=3, taboos=['pain'])
         game.train(child, power=3)
-        mom.moral_action(child, 'evil')
+        mom.moral_action('evil', target = child)
     'BATYA гандошит Cычу. Pain = [batya_force]. Злой постпок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
     return   
 
     
 label shd_discipline_pavsykakiy(character):
     python:
-        mom.moral_action(target = child, 'lawful')         
+        mom.moral_action('lawful', target = child)         
         game.train(child, power=3)
     'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n Весь борщ сожрал, падла'
 
@@ -31,7 +31,7 @@ label shd_discipline_kohana(character):
     
 label shd_discipline_hystery(character):
     python:
-        mom.moral_action(target = child, 'ardent')        
+        mom.moral_action('ardent', target = child)        
         game.train(child, power=mom_power)
     'Дисциплинарная эффекктивность мамкиной истерики [mom_power].'
 
@@ -46,7 +46,7 @@ label shd_job_study(character):
     
 label shd_job_chores(character):
     python:
-        mom.moral_action(target = child, 'lawful')        
+        mom.moral_action('lawful', target = child)        
         result = character.skillcheck(taboos=[('submission', 1)], needs=[('altruism', 2),('amusement', -1)], forced = True)
         if result >= 0:
             renpy.call('subloc_chores_perform')   
@@ -66,7 +66,7 @@ label subloc_chores_perform:
 
 label shd_job_work(character):
     python:
-        mom.moral_action(target = child, 'lawful')
+        mom.moral_action('lawful', target = child)
         result = character.skillcheck('sport', taboos=[('submission', 2)], needs=[('activity', 2),('amusement', -3)], forced = True)
         if result >= 0:
             renpy.call('subloc_work_perform')   
@@ -89,7 +89,7 @@ label subloc_work_perform:
 
 label shd_job_whore(character):
     python:
-        mom.moral_action(target = child, 'evil')
+        mom.moral_action('evil', target = child)
         result = character.skillcheck('sex', taboos=[('sexplotation', 3)], needs=[('communication', 2),('ambition', -4),('authority', -2)], forced = True)
         if result >= 0:
             renpy.call('subloc_whore_perform')   
