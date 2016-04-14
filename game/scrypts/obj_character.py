@@ -442,12 +442,12 @@ class Person(object):
             shift = need[1]
             if shift < 0:
                 if status == 'frustrated' or status == 'tense':
-                    motiv -= getattr(self, need.level)
+                    motiv -= getattr(self, need[0]).level
                 elif status == 'overflow':
                     motiv -= 1
             if shift > 0:
                 if status == 'frustrated' or status == 'tense': 
-                    motiv += getattr(self, need).level
+                    motiv += getattr(self, need[0]).level
                 elif status == 'relevant':
                     motiv -= 1
         if len(taboos)>0:
