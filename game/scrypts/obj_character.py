@@ -321,7 +321,8 @@ class Person(object):
     def calc_focus(self):
         if self.focused_skill in self.skills_used:
             self.focus += 1
-        elif len(self.skills_used) > 0:
+            return
+        if len(self.skills_used) > 0:
             from collections import Counter
             counted = Counter()
             for s in self.skills_used:
@@ -334,9 +335,11 @@ class Person(object):
             if self.focused_skill in result:
                 self.focus += 1
                 self.skills_used = []
-                returnpl
+                return
             self.skill(choice(result)).set_focus()
             self.focus = 1
+        else:
+            self.focused_skill = None
         self.skills_used = []
 
     def mood(self):
@@ -462,6 +465,8 @@ class Person(object):
             if self.slave_stance == 'accustomed':
                 if motiv < 0:
                     motiv += self.obedience()
+                if motiv < 5:
+                    motiv = self.obedience()
             if self.slave_stance == 'willing':
                 motiv += self.obedience()
         
