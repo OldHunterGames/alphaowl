@@ -63,6 +63,15 @@ class Schedule(object):
             for a in self.actions:
                 if a.name == action:
                     self.actions.remove(a)
+    def remove_by_slot(self, slot, taget=None):
+        if target:
+            for a in self.actions:
+                if a.slot == slot and a.target == target:
+                    self.actions.remove(a)
+        else:
+            for a in self.actions:
+                if a.slot == slot:
+                    self.actions.remove(a)
 
 
 
