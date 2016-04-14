@@ -467,6 +467,8 @@ class Person(object):
                     motiv += self.obedience()
                 if motiv < 5:
                     motiv = self.obedience()
+                if motiv > 5:
+                    motiv = 5
             if self.slave_stance == 'willing':
                 motiv += self.obedience()
         
