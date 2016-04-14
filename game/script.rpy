@@ -37,7 +37,7 @@ label label_quiz:
                 child.alignment['Orderliness'] = "Conformal"
                 child.alignment['Activity'] = "Resonable"
                 child.alignment['Morality'] = "Selfish"
-                child.slave_stance = 'Forced'
+                child.slave_stance = 'forced'
                 child.skill('coding').training = True
                 child.skill('coding').expirience = True
                 child.skill('coding').specialisation = True           
@@ -123,14 +123,12 @@ label label_quiz:
     
     menu:
         "А что если мамка уроки делать заставит?"
-        "Конечно. Надо делать уроки чтобы мамуля мной гордилась.":
-            $ child.slave_stance = 'Willing'
         "Конечно. Это - норма.":
-            $ child.slave_stance = 'Accustomed'        
+            $ child.slave_stance = 'accustomed'        
         "Ну что делать? Сяду. А то батя ремня всыпет.":
-            $ child.slave_stance = 'Forced'    
+            $ child.slave_stance = 'forced'    
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
-            $ child.slave_stance = 'Rebellious'
+            $ child.slave_stance = 'rebellious'
             
     $ alignment = child.alignment['Orderliness'] +' '+ child.alignment['Activity'] +' '+ child.alignment['Morality'] 
     "Твой алаймент: [alignment]"

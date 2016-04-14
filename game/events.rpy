@@ -338,6 +338,7 @@ label evn_do_practice_programm_chat(character):
    
     return True   
    
+#################### ИЗМЕНЕНИЯ ОТНОШЕНИЙ   
    
    
    
@@ -367,8 +368,7 @@ label evn_do_practice_programm_chat(character):
    
    
    
-   
-   
+####################### ФИЛЛЕРЫ   
    
 label evn_bugurt_gazeta(character):
    "К НАМ СКОРО ЕРОХИНЫ ПРИДУТ \n @ \nГАЗЕТКИ ИЗ ТУАЛЕТА УБЕРИ \n @ \nПОЛОЖИ БУМАГУ ТУАЛЕТНУЮ \n @ \n И САМ В ТУАЛЕТЕ ОСТАВАЙСЯ\n @ \n ЧТОБЫ МАТЕРИ ЗА ТЕБЯ НЕ СТЫДИТЬСЯ"

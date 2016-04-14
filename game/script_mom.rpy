@@ -271,8 +271,52 @@ label lbl_discipline:
         "Отношение" if player.ap > 0:
             menu:
                 'Выбрать используемый жетон.'
+                'Accordance' if child.has_token("accordance"):
+                    menu:
+                        'Закрепить привычку подчиняться' if child.slave_stance == 'forced':
+                            $ player.ap -= 1
+                            $ child.use_token('accordance')
+                            $ child.slave_stance = 'accustomed'  
+                            'Глобальное отношение ребёнка к подчинению изменилось с вынужденного подчинения на привычное подчинение'   
+                        'Улучшить отношения':
+                            $ player.ap -= 1
+                            $ child.use_token('accordance')
+                            $ child.relations(mom).change('affection', '+')
+                        'Внушить уважение':
+                            $ player.ap -= 1
+                            $ child.use_token('accordance')
+                            $ child.relations(mom).change('consideration', '+')                            
+                        'Сблизиться':
+                            $ player.ap -= 1
+                            $ child.use_token('accordance')
+                            $ child.relations(mom).change('distance', '+')
+                        'Формализовать отношения':
+                            $ player.ap -= 1
+                            $ child.use_token('accordance')
+                            $ child.relations(mom).change('distance', '-')
+                            
+                'Antagonism' if child.has_token("antagonism"):
+                    menu:
+                        'Усилить вражду':
+                            $ player.ap -= 1
+                            $ child.use_token('antagonism')
+                            $ child.relations(mom).change('affection', '-')
+                        'Формализовать отношения':
+                            $ player.ap -= 1
+                            $ child.use_token('antagonism')
+                            $ child.relations(mom).change('distance', '-')
+                        'Внушить презрение':
+                            $ player.ap -= 1
+                            $ child.use_token('antagonism')
+                            $ child.relations(mom).change('consideration', '-')
+                            
                 'Dread' if child.has_token("dread"):
                     menu:
+                        'Привести к вынужденной покорности' if child.slave_stance == 'rebellious' and child.obedience() > 3:
+                            $ player.ap -= 1
+                            $ child.use_token('dread')
+                            $ child.slave_stance = 'forced'         
+                            'Глобальное отношение ребёнка к подчинению изменилось с сопротивления на вынужденное подчинение'
                         'Повысить уровень страха':
                             $ player.ap -= 1
                             $ child.use_token('dread')
@@ -287,8 +331,14 @@ label lbl_discipline:
                             $ child.relations(mom).change('affection', '-')
                         'Назад':
                             jump lbl_discipline  
+                            
                 'Discipline' if child.has_token("discipline"):
                     menu:
+                        'Закрепить привычку подчиняться' if child.slave_stance == 'forced':
+                            $ player.ap -= 1
+                            $ child.use_token('discipline')
+                            $ child.slave_stance = 'accustomed'         
+                            'Глобальное отношение ребёнка к подчинению изменилось с вынужденного подчинения на привычное подчинение'                        
                         'Повысить уровень дисциплины':
                             $ player.ap -= 1
                             $ child.use_token('discipline')
@@ -303,8 +353,14 @@ label lbl_discipline:
                             $ child.relations(mom).change('distance', '-')
                         'Назад':
                             jump lbl_discipline  
+                            
                 'Dependance' if child.has_token("dependance"):
                     menu:
+                        'Привести к вынужденной покорности' if child.slave_stance == 'rebellious' and child.obedience() > 3:
+                            $ player.ap -= 1
+                            $ child.use_token('dependance')
+                            $ child.slave_stance = 'forced'         
+                            'Глобальное отношение ребёнка к подчинению изменилось с сопротивления на вынужденное подчинение'                        
                         'Повысить уровень зависимости':
                             $ player.ap -= 1
                             $ child.use_token('dependance')
