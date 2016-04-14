@@ -50,10 +50,13 @@ class Schedule(object):
                 return
             self.actions.append(act)
     def use_actions(self):
+        to_remove = []
         for action in self.actions:
             action.call()
             if action.single == 'single':
-                self.actions.remove(action)
+                to_remove.append(action)
+        for a in to_remove:
+            self.actions.remove(a)
     def remove_action(self, action, target=None):
         if target:
             for a in self.actions:
