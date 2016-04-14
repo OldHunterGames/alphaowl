@@ -94,11 +94,11 @@ class Engine(object):
             if power - effect < target.willpower and target.willpower != 0:
                  res = target.use_resource('willpower')
                  if res > 0:
-                    tokens.remove('fear')
+                    tokens.remove('dread')
             else:
                 if target.determination > 0:
                     target.determination -= 1
-                    tokens.remove('fear')
+                    tokens.remove('dread')
             for i in tokens:
                 target.add_token(i)
 
