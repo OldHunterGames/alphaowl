@@ -206,6 +206,10 @@ class Person(object):
             s += "{skill.name}({skill.level})".format(skill=skill)
         return s
 
+    def show_mood(self):
+        m = {-1: 'gloomy', 0: 'content', 1: 'happy'}
+        mood = self.mood()
+        return "{mood}({val})".format(mood=m[mood[0]], val=mood[1])
 
 
     def name(self):
@@ -297,7 +301,7 @@ class Person(object):
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_check_result', check)
             return check
-        check = check + skill_lvl + self.mood() - 3
+        check = check + skill_lvl + self.mood()[0] - 3
         res = self.use_resource(res_to_use) if resource else 0
         if determination and self.determination > 0:
             self.determination -= 1
@@ -356,14 +360,14 @@ class Person(object):
         elif self.selfesteem < 0:
             mood -= 1
         if mood < (-self.determination-self.sensitivity):
-            return -1
+            return (-1, mood)
         elif mood > self.sensitivity:
-            return 1
+            return (1, mood)
 
-        return 0
+        return (0, mood)
 
     def frustrate_need(self):
-        if self.mood < 0:
+        if self.mood()[0] < 0:
             min_lvl = 1
             l = []
             for n in self.needs:
@@ -432,7 +436,7 @@ class Person(object):
 
     def motivation(self, skill=None, needs=[], forced=False, taboos=[], moral=0):# needs should be a list of tuples[(need, shift)]
         motiv = 0
-        motiv += self.mood()
+        motiv += self.mood()[0]
         motiv += moral
         if skill:
             if self.skill(skill).talent:
