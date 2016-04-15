@@ -42,7 +42,7 @@ class Need(object):
             self.shift = value
 
     def status_change(self):
-            high_treshold = 9-self.owner.sensitivity-self.level
+            high_treshold = 8-self.owner.sensitivity-self.level
             if high_treshold < 1:
                 high_treshold = 1
             low_treshold = (6-self.owner.sensitivity-self.level)*(-1)
@@ -66,7 +66,7 @@ class Need(object):
             self.shift = 0
 
     def overflow(self):
-        threshold = 9-self.owner.sensitivity-self.level
+        threshold = 8-self.owner.sensitivity-self.level
         l = ['frustrated', 'tense', 'relevant', 'satisfied', 'overflow']
         ind = l.index(self.status)
         if self.shift > threshold:

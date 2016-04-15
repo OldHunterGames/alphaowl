@@ -60,7 +60,23 @@ class Skill(object):
             ind = self.owner.skills.index(max_skill)
             self.owner.skills[ind].specialization = True
             self.owner.specialized_skill = max_skill
+    
 
+    def profession(self, power=5):
+        self.expirience = True
+        self.specialization = True
+        self.expirience_slot = power
+    def expert(self):
+        slots = []
+        self.training = True
+        for skill in self.owner.skills:
+            if skill.expirience:
+                slots.append(skill.expirince_slot)
+        minimum = 1
+        while minimum in slots:
+            minimum += 1
+        self.expirience = True
+        self.expirience_slot = minimum
 
 
 

@@ -21,9 +21,8 @@ class Feature(object):
         self.add()
 
     def remove(self):
-        for modifier in self.modifiers:
-            if modifier in self.owner.modifiers:
-                self.owner.modifiers.remove(modifier)
+        if self.modifiers in self.owner.modifiers:
+            self.owner.modifiers.remove(self.modifiers)
         self.owner.features.remove(self)
 
     def add(self):
