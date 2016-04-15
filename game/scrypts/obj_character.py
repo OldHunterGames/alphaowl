@@ -731,7 +731,7 @@ class Person(object):
         for need in self.needs:
             status = need.status
             if status == 'frustrated' or status == 'tense':
-                tensed_needs.append(need)
+                tensed_needs.append(need.name)
         tensed_num = len(tensed_needs)
         if tensed_num < self.bribe_threshold():
             return 
@@ -746,18 +746,32 @@ class Person(object):
             for reward in needed_rewards:
                 if reward not in self.used_rewards:
                     refuse_threshold = self.bribe_threshold() - (tensed_num - len(needed_rewards))
-                    if self.slave_stance.lower() == 'rebellious' or self.alignment['Orderliness'].lower() == 'chaotic':
-                        if self.use_resource('willpower') > 0:
-                            return
-                        elif self.determination > 0:
-                            self.determination -= 1
-                            return
-                    elif self.willpower > refuse_threshold:
-                        if self.use_resource('willpower') > 0:
-                            return
+                    if not self.player_controlled:
+                        if self.slave_stance.lower() == 'rebellious' or self.alignment['orderliness'] == 'chaotic':
+                            if self.use_resource('willpower') > 0:
+                                return
+                            elif self.determination > 0:
+                                self.determination -= 1
+                                return
+                        elif self.willpower > refuse_threshold:
+                            if self.use_resource('willpower') > 0:
+                                return
+                    else:
+                        result = renpy.call_in_new_context('lbl_resist', 'discipline')
+                        if result == 'willpower':
+                            if self.use_resource('willpower') > 0:
+                                renpy.call_in_new_context('lbl_resist_result', 'discipline', True)
+                                return
+                        elif result == 'determination':
+                            if self.determination > 0:
+                                self.determination -= 1
+                                renpy.call_in_new_context('lbl_resist_result', 'discipline', True)
+                                return
+
                     self.used_rewards += self.rewards
                     self.rewards = []
                     self.add_token('dependence')
+                    renpy.call_in_new_context('lbl_notify', 'discipline')
                     return
 
     def training_resistance(self):
