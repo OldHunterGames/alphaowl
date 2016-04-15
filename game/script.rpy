@@ -38,9 +38,8 @@ label label_quiz:
                 child.alignment['Activity'] = "Resonable"
                 child.alignment['Morality'] = "Selfish"
                 child.slave_stance = 'forced'
-                child.skill('coding').training = True
-                child.skill('coding').expirience = True
-                child.skill('coding').specialisation = True           
+                child.skill('coding').profession()
+                child.skill('sex').expert()
                 game.player = mother
                 player = game.player
                 mom = game.mother
@@ -80,17 +79,13 @@ label label_quiz:
     menu:
         "Чем по жизни занимаешься?"
         "Кодю, компилю, хакаю. Не палюсь.":
-            $ child.skill('coding').training = True
-            $ child.skill('coding').expirience = True
+            $ child.skill('coding').expert()
         "ЗОЖ. Брусья-брусья-турнички. Качалочка.":
-            $ child.skill('sports').training = True
-            $ child.skill('sports').expirience = True
+            $ child.skill('sports').expert()
         "Тусуюсь с друзьями.":
-            $ child.skill('conversation').training = True
-            $ child.skill('conversation').expirience = True
+            $ child.skill('conversation').expert()
         "Блядую по черному. Молодость всего одна.":
-            $ child.skill('sex').training = True
-            $ child.skill('sex').expirience = True
+            $ child.skill('sex').expert()
         "Капчую. В дотан шпилю. Всё такое...":
             $ pass
             
@@ -175,7 +170,11 @@ label lbl_owl_info:
         alignment = child.alignment['Orderliness'] +' '+ child.alignment['Activity'] +' '+ child.alignment['Morality'] 
         job = child.job['name']
         desu = child.description()
-        needs = child.show_needs()
+        needs_overflow = child.show_needs('overflow')
+        needs_frustrated = child.show_needs('frustrated')        
+        needs_tense = child.show_needs('tense')
+        needs_relevant = child.show_needs('relevant')
+        needs_statisfied = child.show_needs('satisfied')
         taboos = child.show_taboos()
         features = child.show_features()
         focus = child.show_focus()
@@ -187,7 +186,11 @@ label lbl_owl_info:
      Характер: [alignment]\n
      Отношение: [rel]\n
      Фокус: [focus]\n
-     Нужды: \n[needs]\n
+     Фрустрации: [needs_frustrated]\n
+     Напряжения: [needs_tense]\n
+     Актуальные нужды: [needs_relevant]\n
+     Удовлетворённые: [needs_statisfied]\n          
+     Пресыщения: [needs_overflow]\n     
      Табу: \n[taboos]\n
      Особенности: \n[features]\n
      \n"

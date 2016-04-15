@@ -100,27 +100,35 @@ label lbl_rules_drugs:
     menu:
         'Запретить фапать' if 'masturbation' not in child.restrictions:
             $ child.restrictions.append('masturbation')
+            $ child.schedule.add_action('fap_no')
             $ txt = 'Сыночка то наш, всё пиструнчик свой тилибонькает \n @ \n Скоро волосы на руках расти начнут \n @ \n В антимастурбационном кресте будещь спать, по совету отца Агапия'
-        'Забить на дрочку' if 'masturbation' in child.restrictions:
+        'Игнорировать дрочку' if 'masturbation' in child.restrictions:
             $ child.restrictions.remove('masturbation')
+            $ child.schedule.add_action('fap_yes')
             $ txt = 'А что это ты в ванной столько времени сидишь, Сыча? \n @ \n И то хорошо \n @ \n Приучили к чистоте ребёнка то'            
         'Запретить алкоголь' if 'alcohol' not in child.restrictions:
             $ child.restrictions.append('alcohol')
+            $ child.schedule.add_action('alcohol_no')
             $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ещё нос не дорос \n @ \n Я малолетних алкоголиков в доме не потерплю'
-        'Забить на алкоголь' if 'alcohol' in child.restrictions:
+        'Игнорировать алкоголь' if 'alcohol' in child.restrictions:
             $ child.restrictions.remove('alcohol')
+            $ child.schedule.add_action('alcohol_yes')
             $ txt = 'За дидов рюмашечку надо обязательно \n @ \n Что значит "не буду стекломой пить" \n @ \n Традиции наши не уважаешь?'                 
         'Запретить курить' if 'tobacco' not in child.restrictions:
             $ child.restrictions.append('tobacco')
+            $ child.schedule.add_action('smoke_no')
             $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
-        'Забить на курение' if 'tobacco' in child.restrictions:
+        'Игнорировать курение' if 'tobacco' in child.restrictions:
             $ child.restrictions.remove('tobacco')
+            $ child.schedule.add_action('smoke_yes')
             $ txt = 'Сыченька то бодрячком \n @ \n Каждые пять минут в падик бегает \n @ \n Наверное друзья у него там'         
         'Запретить спайсы' if 'weed' not in child.restrictions:
             $ child.restrictions.append('weed')
+            $ child.schedule.add_action('weed_no')
             $ txt = 'Чтобы я тебя с этими наркоманами не видела больше \n @ \n Пообколются своей марихуанной \n @ \n А потом ябут друг-друга в жёппы'
-        'Забить на спайсы' if 'weed' in child.restrictions:
+        'Игнорировать спайсы' if 'weed' in child.restrictions:
             $ child.restrictions.remove('weed')
+            $ child.schedule.add_action('weed_yes')
             $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
         'Назад':
             jump lbl_rules
@@ -231,6 +239,7 @@ label lbl_discipline:
                         "Ой-всё. Хватит. ОНЖИРИБЁНОК!":
                             $ child.schedule.remove_action('batya_batya')
                 "Назад":
+                    
                     jump lbl_discipline
         "Внушение":
             menu:
@@ -245,28 +254,8 @@ label lbl_discipline:
                     $ child.schedule.add_action('discipline_hystery', 'single')
 
         "Подкуп":
-            menu:
-                'Можно активировать любое количество обещаний. Если будешь вести себя хорошо то...'
-                'Ешь свои чипсы сколько влезет' if not ('pringles', "nutrition") in child.used_rewards:
-                    $ child.add_reward('pringles', "nutrition")
-                'Разрешим тебе кофе по утрам' if not ('coffe', "wellness") in child.used_rewards:
-                    $ child.add_reward('coffe', "wellness")
-                'Отдам тебе пледик клетчатый' if not ('pledik', "comfort") in child.used_rewards:
-                    $ child.add_reward('pledik', "comfort")
-                'И тогда можешь записываться в споротклуб' if not ('sportklub', "activity") in child.used_rewards:
-                    $ child.add_reward('sportklub', "activity")
-                'Не будем тебе запрещать с друзьями по телефону болтать' if not ('telefon', "communication") in child.used_rewards:
-                    $ child.add_reward('telefon', "communication")                    
-                'Разрешим на комплюктере игрушки играть' if not ('pcgames', "amusement") in child.used_rewards:
-                    $ child.add_reward('pcgames', "amusement")
-                'Будем тебе на карманные давать, немного' if not ('poketmoney', "prosperity") in child.used_rewards:
-                    $ child.add_reward('poketmoney', "prosperity")
-                'Сам себе будешь расписание составлять' if not ('shedule_power', "authority") in child.used_rewards:
-                    $ child.add_reward('shedule_power', "authority")
-                'Мы с батей будем тобой гордиться!' if not ('mom_aprove', "ambition") in child.used_rewards:
-                    $ child.add_reward('mom_aprove', "ambition")                                   
-                'Закончить':
-                    $ pass
+            $ bribes = 0
+            call lbl_bribe
         
         "Отношение" if player.ap > 0:
             menu:
@@ -384,7 +373,33 @@ label lbl_discipline:
             $ pass
         
     return
-    
+
+label lbl_bribe:
+    menu:
+        '[bribes] Можно активировать любое количество обещаний. Если будешь вести себя хорошо то...'
+        'Ешь свои чипсы сколько влезет' if not ('pringles', "nutrition") in child.used_rewards:
+            $ child.add_reward('pringles', "nutrition")
+        'Разрешим тебе кофе по утрам' if not ('coffe', "wellness") in child.used_rewards:
+            $ child.add_reward('coffe', "wellness")
+        'Отдам тебе пледик клетчатый' if not ('pledik', "comfort") in child.used_rewards:
+            $ child.add_reward('pledik', "comfort")
+        'И тогда можешь записываться в споротклуб' if not ('sportklub', "activity") in child.used_rewards:
+            $ child.add_reward('sportklub', "activity")
+        'Не будем тебе запрещать с друзьями по телефону болтать' if not ('telefon', "communication") in child.used_rewards:
+            $ child.add_reward('telefon', "communication")                    
+        'Разрешим на комплюктере игрушки играть' if not ('pcgames', "amusement") in child.used_rewards:
+            $ child.add_reward('pcgames', "amusement")
+        'Будем тебе на карманные давать, немного' if not ('poketmoney', "prosperity") in child.used_rewards:
+            $ child.add_reward('poketmoney', "prosperity")
+        'Сам себе будешь расписание составлять' if not ('shedule_power', "authority") in child.used_rewards:
+            $ child.add_reward('shedule_power', "authority")
+        'Мы с батей будем тобой гордиться!' if not ('mom_aprove', "ambition") in child.used_rewards:
+            $ child.add_reward('mom_aprove', "ambition")                                   
+        'Закончить':
+            jump lbl_discipline    
+    $ bribes += 1
+    jump lbl_bribe
+
 label lbl_diet:
     menu:
         "Мы сейчас тебе диету будем делать."
