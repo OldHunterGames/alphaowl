@@ -830,14 +830,14 @@ class Person(object):
                     result += 1
             elif target:
                 if valact == 1:
-                    if self.relations(target).consideration == 'significant':
+                    if self.relations(target).fervor == 'intense':
                         result += 1
-                    elif self.relations(target).consideration == 'miserable':
+                    elif self.relations(target).fervor == 'delicate':
                         result -= 1
                 elif valact == -1:
-                    if self.relations(target).consideration == 'miserable':
+                    if self.relations(target).fervor == 'delicate':
                         result -= 1
-                    elif self.relations(target).consideration == 'significant':
+                    elif self.relations(target).fervor == 'intense':
                         result += 1
         if morality:
             valself = moral[self.alignment['morality']]
@@ -851,12 +851,12 @@ class Person(object):
                 if valact == 1:
                     if self.relations(target).affection == 'friend':
                         result += 1
-                    elif self.relations(target).consideration == 'foe':
+                    elif self.relations(target).affection == 'foe':
                         result -= 1
                 elif valact == -1:
-                    if self.relations(target).consideration == 'foe':
+                    if self.relations(target).affection == 'foe':
                         result -= 1
-                    elif self.relations(target).consideration == 'friend':
+                    elif self.relations(target).affection == 'friend':
                         result += 1
         self.selfesteem += result
         return result
