@@ -6,7 +6,7 @@ label shd_None_template(character):
     
 label shd_batya_batya(character):
     python:
-        game.torture(target = child, power=3, taboos=['pain'])
+        game.torture(target = child, power=batya_force, taboos=['pain'])
         mom.moral_action('evil', target = child)
     'BATYA гандошит Cычу. Pain = [batya_force]. Злой постпок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
     return   
