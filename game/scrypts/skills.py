@@ -71,7 +71,7 @@ class Skill(object):
         self.training = True
         for skill in self.owner.skills:
             if skill.expirience:
-                slots.append(skill.expirince_slot)
+                slots.append(skill.expirience_slot)
         minimum = 1
         while minimum in slots:
             minimum += 1
