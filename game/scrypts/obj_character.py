@@ -206,6 +206,10 @@ class Person(object):
             s += "{skill.name}({skill.level})".format(skill=skill)
         return s
 
+    def show_mood(self):
+        m = {-1: 'gloomy', 0: 'content', 1: 'happy'}
+        mood = self.mood()
+        return "{mood}({val})".format(mood=m[mood[0]], val=mood[1])
 
 
     def name(self):
@@ -297,7 +301,7 @@ class Person(object):
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_check_result', check)
             return check
-        check = check + skill_lvl + self.mood() - 3
+        check = check + skill_lvl + self.mood()[0] - 3
         res = self.use_resource(res_to_use) if resource else 0
         if determination and self.determination > 0:
             self.determination -= 1
@@ -356,14 +360,14 @@ class Person(object):
         elif self.selfesteem < 0:
             mood -= 1
         if mood < (-self.determination-self.sensitivity):
-            return -1
+            return (-1, mood)
         elif mood > self.sensitivity:
-            return 1
+            return (1, mood)
 
-        return 0
+        return (0, mood)
 
     def frustrate_need(self):
-        if self.mood < 0:
+        if self.mood()[0] < 0:
             min_lvl = 1
             l = []
             for n in self.needs:
@@ -432,7 +436,7 @@ class Person(object):
 
     def motivation(self, skill=None, needs=[], forced=False, taboos=[], moral=0):# needs should be a list of tuples[(need, shift)]
         motiv = 0
-        motiv += self.mood()
+        motiv += self.mood()[0]
         motiv += moral
         if skill:
             if self.skill(skill).talent:
@@ -727,7 +731,7 @@ class Person(object):
         for need in self.needs:
             status = need.status
             if status == 'frustrated' or status == 'tense':
-                tensed_needs.append(need)
+                tensed_needs.append(need.name)
         tensed_num = len(tensed_needs)
         if tensed_num < self.bribe_threshold():
             return 
@@ -742,18 +746,32 @@ class Person(object):
             for reward in needed_rewards:
                 if reward not in self.used_rewards:
                     refuse_threshold = self.bribe_threshold() - (tensed_num - len(needed_rewards))
-                    if self.slave_stance.lower() == 'rebellious' or self.alignment['Orderliness'].lower() == 'chaotic':
-                        if self.use_resource('willpower') > 0:
-                            return
-                        elif self.determination > 0:
-                            self.determination -= 1
-                            return
-                    elif self.willpower > refuse_threshold:
-                        if self.use_resource('willpower') > 0:
-                            return
+                    if not self.player_controlled:
+                        if self.slave_stance.lower() == 'rebellious' or self.alignment['orderliness'] == 'chaotic':
+                            if self.use_resource('willpower') > 0:
+                                return
+                            elif self.determination > 0:
+                                self.determination -= 1
+                                return
+                        elif self.willpower > refuse_threshold:
+                            if self.use_resource('willpower') > 0:
+                                return
+                    else:
+                        result = renpy.call_in_new_context('lbl_resist', 'discipline')
+                        if result == 'willpower':
+                            if self.use_resource('willpower') > 0:
+                                renpy.call_in_new_context('lbl_resist_result', 'discipline', True)
+                                return
+                        elif result == 'determination':
+                            if self.determination > 0:
+                                self.determination -= 1
+                                renpy.call_in_new_context('lbl_resist_result', 'discipline', True)
+                                return
+
                     self.used_rewards += self.rewards
                     self.rewards = []
                     self.add_token('dependence')
+                    renpy.call_in_new_context('lbl_notify', 'discipline')
                     return
 
     def training_resistance(self):
@@ -826,14 +844,14 @@ class Person(object):
                     result += 1
             elif target:
                 if valact == 1:
-                    if self.relations(target).consideration == 'significant':
+                    if self.relations(target).fervor == 'intense':
                         result += 1
-                    elif self.relations(target).consideration == 'miserable':
+                    elif self.relations(target).fervor == 'delicate':
                         result -= 1
                 elif valact == -1:
-                    if self.relations(target).consideration == 'miserable':
+                    if self.relations(target).fervor == 'delicate':
                         result -= 1
-                    elif self.relations(target).consideration == 'significant':
+                    elif self.relations(target).fervor == 'intense':
                         result += 1
         if morality:
             valself = moral[self.alignment['morality']]
@@ -847,12 +865,12 @@ class Person(object):
                 if valact == 1:
                     if self.relations(target).affection == 'friend':
                         result += 1
-                    elif self.relations(target).consideration == 'foe':
+                    elif self.relations(target).affection == 'foe':
                         result -= 1
                 elif valact == -1:
-                    if self.relations(target).consideration == 'foe':
+                    if self.relations(target).affection == 'foe':
                         result -= 1
-                    elif self.relations(target).consideration == 'friend':
+                    elif self.relations(target).affection == 'friend':
                         result += 1
         self.selfesteem += result
         return result

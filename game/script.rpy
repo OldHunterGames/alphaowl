@@ -248,3 +248,4 @@ label lbl_resist_result(effect, success):
     return
 label lbl_notify(effect):
     'Вы получили [effect]'
+    return

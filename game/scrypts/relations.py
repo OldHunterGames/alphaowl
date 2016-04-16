@@ -2,13 +2,13 @@
 
 
 class Relations(object):
-    _consideration = ['miserable', 'respectful', 'significant']
+    _fervor = ['delicate', 'plain', 'intense']
     _distance = ['formal', 'close', 'intimate']
     _affection = ['foe', 'associate', 'friend']
     def __init__(self, owner, target):
         self.owner = owner
         self.target = target
-        self.consideration = 'respectful'
+        self.fervor = 'plain'
         self.distance = 'close'
         self.affection = 'associate'
         self._tokens = []
@@ -51,7 +51,7 @@ class Relations(object):
                         self.add_token('accordance')
                     elif self.owner.alignment['orderliness'] == 'lawful':
                         self.add_token('antagonism')
-                if axis == 'consideration':
+                if axis == 'fervor':
                     if self.owner.alignment['activity'] == 'timid':
                         self.add_token('accordance')
                     elif self.owner.alignment['activity'] == 'ardent':
@@ -70,7 +70,7 @@ class Relations(object):
                         self.add_token('antagonism')
                     elif self.owner.alignment['orderliness'] == 'lawful':
                         self.add_token('accordance')
-                if axis == 'consideration':
+                if axis == 'fervor':
                     if self.owner.alignment['activity'] == 'timid':
                         self.add_token('antagonism')
                     elif self.owner.alignment['activity'] == 'ardent':
@@ -85,5 +85,5 @@ class Relations(object):
         self.__dict__[axis] = rel
 
     def description(self):
-        return (self.consideration, self.distance, self.affection)
+        return (self.fervor, self.distance, self.affection)
 
