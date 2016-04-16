@@ -274,7 +274,11 @@ label lbl_discipline:
                         'Внушить уважение':
                             $ player.ap -= 1
                             $ child.use_token('accordance')
-                            $ child.relations(mom).change('consideration', '+')                            
+                            $ child.relations(mom).change('fervor', '+')                            
+                        'Внушить уверенность':
+                            $ player.ap -= 1
+                            $ child.use_token('accordance')
+                            $ child.relations(mom).change('fervor', '-')  
                         'Сблизиться':
                             $ player.ap -= 1
                             $ child.use_token('accordance')
@@ -294,10 +298,7 @@ label lbl_discipline:
                             $ player.ap -= 1
                             $ child.use_token('antagonism')
                             $ child.relations(mom).change('distance', '-')
-                        'Внушить презрение':
-                            $ player.ap -= 1
-                            $ child.use_token('antagonism')
-                            $ child.relations(mom).change('consideration', '-')
+
                             
                 'Dread' if child.has_token("dread"):
                     menu:
@@ -313,7 +314,7 @@ label lbl_discipline:
                         'Внушить уважение':
                             $ player.ap -= 1
                             $ child.use_token('dread')
-                            $ child.relations(mom).change('consideration', '+')
+                            $ child.relations(mom).change('fervor', '+')
                         'Усилить вражду':
                             $ player.ap -= 1
                             $ child.use_token('dread')
@@ -335,7 +336,7 @@ label lbl_discipline:
                         'Внушить уважение':
                             $ player.ap -= 1
                             $ child.use_token('discipline')
-                            $ child.relations(mom).change('consideration', '+')
+                            $ child.relations(mom).change('fervor', '+')
                         'Формализовать отношения':
                             $ player.ap -= 1
                             $ child.use_token('discipline')
@@ -357,7 +358,7 @@ label lbl_discipline:
                         'Внушить уважение':
                             $ player.ap -= 1
                             $ child.use_token('dependance')
-                            $ child.relations(mom).change('consideration', '+')
+                            $ child.relations(mom).change('fervor', '+')
                         'Сблизиться':
                             $ player.ap -= 1
                             $ child.use_token('dependance')
