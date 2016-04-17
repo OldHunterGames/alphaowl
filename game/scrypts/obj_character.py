@@ -261,14 +261,22 @@ class Person(object):
 
 
 
-
-
+    def action(self, forced = False, needs=[], taboos=[], moral=0):
+        if self.player_controlled:
+            result = renpy.call_in_new_context('lbl_action_check', self)
+        else:
+            result = self.motivation(forced=forced, needs=needs, taboos=taboos, moral=moral)
+        if result > 0:
+            for need in needs:
+                getattr(self, need[0]).set_shift(need[1])
+            for taboo in taboos:
+                self.taboo(taboo[0]).use(taboo[1])
+        return result
     def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0):
         vigor = False
         determination = False
         sabotage = False
         check = 0
-        skill_lvl = 0
         
         if self.player_controlled:
             vigor, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill)
@@ -291,16 +299,12 @@ class Person(object):
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_check_result', check)
             return check
-        if skill:
-            check += self.skill(skill).level
-            self.skills_used.append(skill)
-        else:
-            check += self.discipline
         for need in needs:
             getattr(self, need[0]).set_shift(need[1])
         for taboo in taboos:
             self.taboo(taboo[0]).use(taboo[1])
-        check = check + self.mood()[0] - 3
+        self.skills_used.append(skill)
+        check = check + self.mood()[0] - 3 + self.skill(skill).level
         if determination and self.determination > 0:
             self.determination -= 1
             if self.vigor < 1 or not vigor:

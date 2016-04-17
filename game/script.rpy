@@ -229,6 +229,12 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
 label lbl_check_result(result=0):
     'Результат проверки: [result]'
     return
+label lbl_action_check(character=player):
+    menu:
+        'Выполнить действие':
+            return 1
+        'Саботировать':
+            return -1
 label lbl_resist(effect):
     if player.vigor < 1 and player.determination < 1:
         return
