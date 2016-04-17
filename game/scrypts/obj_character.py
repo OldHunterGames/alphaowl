@@ -277,12 +277,9 @@ class Person(object):
             if motivation < 0:
                 sabotage = True
             if motivation > 0 and motivation < 6-self.vigor:
-                if vigor < 1:
-                    self.fatigue += 1
+                pass
             if motivation > 6-self.vigor and motivation < 5:
                 vigor = True
-                if vigor < 1:
-                    self.fatigue += 1
             if motivation > 5 and res_to_use < 1:
                 vigor = False
                 determination = True
@@ -295,7 +292,7 @@ class Person(object):
                 renpy.call_in_new_context('lbl_check_result', check)
             return check
         if skill:
-            skill_lvl = self.skill(skill).level
+            check += self.skill(skill).level
             self.skills_used.append(skill)
         else:
             check += self.discipline
@@ -303,21 +300,18 @@ class Person(object):
             getattr(self, need[0]).set_shift(need[1])
         for taboo in taboos:
             self.taboo(taboo[0]).use(taboo[1])
-        if skill_lvl <= 0:
-            if self.player_controlled:
-                renpy.call_in_new_context('lbl_check_result', check)
-            return check
-        check = check + skill_lvl + self.mood()[0] - 3
+        check = check + self.mood()[0] - 3
         if determination and self.determination > 0:
             self.determination -= 1
-            if self.vigor <= 0:
+            if self.vigor < 1 or not vigor:
                 check += getattr(self, self.skill(skill).attribute)
             else:
                 check += 1
                 check += getattr(self, self.skill(skill).attribute)
         else:
-            val = max(self.drain_vigor(), getattr(self, self.skill(skill).attribute))
+            val = max(self.vigor, getattr(self, self.skill(skill).attribute))
             check += val
+        self.drain_vigor()
         if check < self.focus and skill == self.focused_skill.name:
             check += 1
         if check < 0:
@@ -506,13 +500,14 @@ class Person(object):
         return txt
     
     def rest(self):
-        self.schedule.use_actions()
-        self.fatness_change()
-        self.reduce_overflow()
-        self.calc_focus()
         for need in self.needs:
             need.status_change()
         self.bribe()
+        self.schedule.use_actions()
+        self.fatness_change()
+        self.calc_vigor()
+        self.reduce_overflow()
+        self.calc_focus()
         self.reduce_esteem()
 
 
