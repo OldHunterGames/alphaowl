@@ -90,75 +90,12 @@ class Engine(object):
         if len(tokens) < 1:
             return
         target.taboo(taboo).use(power)
-        if not target.player_controlled:
-            if power - effect < target.willpower and target.willpower != 0:
-                 res = target.use_resource('willpower')
-                 if res > 0:
-                    tokens.remove('dread')
-            else:
-                if target.determination > 0:
-                    target.determination -= 1
-                    tokens.remove('dread')
-            for i in tokens:
-                target.add_token(i)
-
-        else:
-            for i in tokens:
-                decision = renpy.call_in_new_context('lbl_resist', i)
-                if decision=='willpower':
-                    res = target.use_resource('willpower')
-                    if res > 0:
-                        res = True
-                    else:
-                        res = False
-                        target.tokens.append(i) 
-                    renpy.call_in_new_context('lbl_resist_result', i, res)  
-                elif decision == 'determination':
-                    if target.determination > 0:
-                        target.determination -= 1
-                        res = True
-                    else:
-                        res = False
-                    renpy.call_in_new_context('lbl_resist_result', i, res)
-                else:
-                    target.add_token(i)
-                    res = False
-                    renpy.call_in_new_context('lbl_notify', i)
+        for i in tokens:
+            target.add_token(i)
         return
 
 
     def train(self, target, power=0):
         target_resistance = target.training_resistance()
         if target_resistance < power:
-            if target.player_controlled:
-                result = renpy.call_in_new_context('lbl_resist', 'discipline')
-                if result == 'determination':
-                    if target.determination > 0:
-                        target.determination -= 1
-                        result = True
-                    else:
-                        result = False
-                    renpy.call_in_new_context('lbl_resist_result', 'discipline', result)
-                elif result == 'willpower':
-                    r = target.use_resource('willpower')
-                    if r > 0:
-                        result = True
-                    else:
-                        result = False
-                    renpy.call_in_new_context('lbl_resist_result', 'discipline', result)
-                if result == False:
-                    renpy.call_in_new_context('lbl_notify', 'discipline')
-                    target.add_token('discipline')
-                return
-
-            if target.slave_stance.lower() == 'rebellious':
-                if target.use_resource('willpower') <= 0:
-                    if target.determination > 0:
-                        target.determination -= 1
-                        return
-                else:
-                    return
-            elif target.willpower > target.obedience():
-                if target.use_resource('willpower') > 0:
-                    return
             target.add_token('discipline')

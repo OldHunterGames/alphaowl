@@ -49,10 +49,6 @@ class Need(object):
             low_treshold = (6-self.owner.sensitivity-self.level)*(-1)
             if low_treshold > -1:
                 low_treshold = -1
-            if self.status == 'frustrated':
-                if self.owner.mood() > 0:
-                    if self.shift > high_treshold:
-                        self.status = 'relevant'
             elif self.status == 'overflow':
                 if self.shift < low_treshold:
                     self.owner.determination -= 1
@@ -68,16 +64,15 @@ class Need(object):
 
     def overflow(self):
         threshold = 8-self.owner.sensitivity-self.level
-        l = ['frustrated', 'tense', 'relevant', 'satisfied', 'overflow']
+        l = ['tense', 'relevant', 'satisfied', 'overflow']
         ind = l.index(self.status)
         if self.shift > threshold:
-            if ind != 0:
-                ind += 1
-                if ind == 4:
-                    if self.owner.mood() > 0:
-                        owner.determination += 1
-                    else:
-                        ind -= 1
-                self.status = l[ind]
+            ind += 1
+            if ind == 4:
+                if self.owner.mood() > 0:
+                    owner.determination += 1
+                else:
+                    ind -= 1
+            self.status = l[ind]
 
 

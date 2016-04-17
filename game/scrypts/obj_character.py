@@ -74,21 +74,8 @@ class Person(object):
             'sensitivity':3
         }
         self.university = {'name': 'study', 'effort': 'bad', 'auto': False}
-        self.attr_relations = {
-            'stamina': 'physique',
-            'concentration': 'mind',
-            'willpower': 'spirit',
-            'accuracy': 'agility',
-            'glamour': 'sensitivity'
-        }
-        
-        self.inner_resources = {
-            'stamina': self.physique,
-            'accuracy': self.agility,
-            'concentration': self.mind,
-            'willpower': self.spirit,
-            'glamour': self.sensitivity
-        }
+        self.vigor = 0
+        self.fatigue = 0
         self.taboos = init_taboos(self)
         self.appetite = 0
         self.calorie_storage = 0
@@ -119,16 +106,6 @@ class Person(object):
             if value > 5:
                 value = 5
             return value
-        if key in self.inner_resources:
-            value = self.inner_resources[key]
-            value += self.count_modifiers(key)
-            if value <= 0:
-                self.inner_resources[key] = 0
-                value = 0
-            max_value = getattr(self, self.attr_relations[key])
-            if value > max_value:
-                value = max_value
-            return value
         for need in self.needs:
             if need.name == key:
                 return need
@@ -137,12 +114,6 @@ class Person(object):
 
 
     def __setattr__(self, key, value):
-        if 'inner_resources' in self.__dict__:
-            if key in self.inner_resources:
-                value -= self.count_modifiers(key)
-                self.inner_resources[key] = value
-                if self.inner_resources[key] < 0:
-                    self.inner_resources[key] = 0
         if 'attributes' in self.__dict__:
             if key in self.attributes:
                 value -= self.count_modifiers(key)
@@ -167,6 +138,38 @@ class Person(object):
     @property
     def age(self):
         return self.feature_by_slot('age').name
+
+    def gain_vigor(self, power):
+        if power > self.vigor:
+            self.vigor += 1
+    def drain_vigor(self):
+        v = self.vigor
+        if self.vigor > 0:
+            self.vigor -= 1
+        else:
+            self.fatigue += 1
+        return v
+    def calc_vigor(self):
+        mood = self.mood()
+        vigor_left = self.vigor
+        self.vigor = 0
+        if mood[0] < 0:
+            self.vigor -= 1
+        if self.fatigue > 0:
+            self.fatigue = 0
+            self.vigor -= 1
+        if mood[0] > 0:
+            self.gain_vigor(mood[1])
+        if vigor_left > 0:
+            self.gain_vigor(vigor_left)
+        self.gain_vigor(self.physique)
+        self.gain_vigor(self.spirit)
+        if self.vigor < 0:
+            self.fatigue = self.vigor
+            self.vigor = 0
+
+
+
 
     def show_taboos(self):
         s = ""
@@ -254,21 +257,16 @@ class Person(object):
 
 
 
-    def use_resource(self, resource):
-        value = getattr(self, resource)
-        self.inner_resources[resource] -= 1
-        return value
 
     def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0):
-        resource = False
+        vigor = False
         determination = False
         sabotage = False
-        res_to_use = self.skill(skill).resource if skill else None
         check = 0
         skill_lvl = 0
         
         if self.player_controlled:
-            resource, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill, self.skill(skill).resource)
+            vigor, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill)
         else:
             motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos, moral=moral)
             if motivation < 0:
@@ -276,12 +274,12 @@ class Person(object):
             if motivation > 0 and motivation < 5-getattr(self, res_to_use):
                 pass
             if motivation > 0 and motivation > 5-getattr(self, res_to_use):
-                resource = True
+                vigor = True
             if motivation > 5 and res_to_use < 1:
-                resource = False
+                vigor = False
                 determination = True
             if motivation > 10:
-                resource = True
+                vigor = True
                 determination = True
         if sabotage:
             check = -1
@@ -302,19 +300,18 @@ class Person(object):
                 renpy.call_in_new_context('lbl_check_result', check)
             return check
         check = check + skill_lvl + self.mood()[0] - 3
-        res = self.use_resource(res_to_use) if resource else 0
         if determination and self.determination > 0:
             self.determination -= 1
-            if res <= 0:
+            if self.vigor <= 0:
                 check += getattr(self, self.skill(skill).attribute)
             else:
                 check += 1
-                check += res
-                if skill == self.focused_skill:
-                    if check<self.focus:
-                        check = focus
+                check += getattr(self, self.skill(skill).attribute)
         else:
-            check += res
+            val = max(self.drain_vigor(), getattr(self, self.skill(skill).attribute))
+            check += val
+        if check < self.focus and skill == self.focused_skill.name:
+            check += 1
         if check < 0:
             check = 0
         if self.player_controlled:
@@ -351,8 +348,6 @@ class Person(object):
         for need in self.needs:
             if need.status == "tense":
                 mood -= 1
-            elif need.status == "frustrated":
-                mood -= 1
             elif need.status == "satisfied":
                 mood += 1
         if self.selfesteem > 0:
@@ -366,21 +361,6 @@ class Person(object):
 
         return (0, mood)
 
-    def frustrate_need(self):
-        if self.mood()[0] < 0:
-            min_lvl = 1
-            l = []
-            for n in self.needs:
-                if n.level == min_lvl:
-                    min_lvl = n.level
-                    l.append(n)
-                elif n.level > min_lvl:
-                    min_lvl = n.level
-                    l = []
-                    l.append(n)
-            need = choice(l)
-            need.status = 'frustrated'
-        return
 
 
     
@@ -445,12 +425,12 @@ class Person(object):
             status = getattr(self, need[0]).status
             shift = need[1]
             if shift < 0:
-                if status == 'frustrated' or status == 'tense':
+                if status == 'tense':
                     motiv -= getattr(self, need[0]).level
                 elif status == 'overflow':
                     motiv -= 1
             if shift > 0:
-                if status == 'frustrated' or status == 'tense': 
+                if status == 'tense': 
                     motiv += getattr(self, need[0]).level
                 elif status == 'relevant':
                     motiv -= 1
@@ -478,63 +458,7 @@ class Person(object):
         
         return motiv
 
-    def calc_resources_factor(self): #method for choosing best setup of factors
-        factors_dict = {}
-        for i in self.factors: #sets person's factors in dict format
-            if i[1] in factors_dict.keys():
-                if i[0] not in factors_dict[i[1]]:
-                    factors_dict[i[1]].append(i[0])
-            else:
-                factors_dict[i[1]] = [i[0]]
-        priority = {'stamina': 5, 'accuracy': 4, 'concentration': 3, 'willpower': 2, 'glamour': 1}
-        needed = {}
-        max_d = {}
-        result = []
-        for i in factors_dict.values():
-            for n in i:
-                result.append(n)
-        for k in priority: #looks up for amount of needed resources
-            needed[k] = getattr(self, self.attr_relations[k]) - self.inner_resources[k]
-            max_d[k] = 0
-        for i in max_d: #maximum of a single factor available
-            for n in factors_dict.keys():
-                if i in factors_dict[n]:
-                    max_d[i] += 1
-        for i in result: #sets optimal amount of factors in result
-            while not result.count(i) == needed[i]:
-                result.remove(i)
-        for i in result:
-            if result.count(i) > max_d[i]:
-                result.remove(i)
-        rd = {k: v for v, k in priority.items()}
-        revresult = []
-        m = len(factors_dict.keys())
-        for i in result:
-            revresult.append(priority[i])
-        result = []
-        for k in factors_dict: #removes mutually exclusive factor from result
-            for i in revresult:
-                if rd[i] in factors_dict[k] and len(factors_dict[k]) == 1:
-                    factors_dict[k].remove(rd[i])
-                    result.append(rd[i])
-                    revresult.remove(i)
-                    m -= 1
-            for n in factors_dict[k]:
-                if needed[n] <= 0:
-                    factors_dict[k].remove(n)
-                if len(factors_dict[k]) == 1 and prior[n] not in revresult:
-                    m -= 1
-        while len(revresult) > m:
-            revresult.remove(min(revresult))
-        
-        for i in revresult:
-            result.append(rd[i])
-        for i in result:
-            self.inner_resources[i] += 1
-        self.factors = []
     
-    def add_factor(self, factor, level):
-        self.factors.append((factor, level))
 
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
         Feature(self, name)
@@ -576,7 +500,6 @@ class Person(object):
         self.calc_focus()
         for need in self.needs:
             need.status_change()
-        self.frustrate_need()
         self.bribe()
         self.reduce_esteem()
 
@@ -601,8 +524,6 @@ class Person(object):
         :return:
         """
         desire = self.food_demand()
-        nutrition_modifier = self.nutrition.level
-        desire += nutrition_modifier -3
         desire += self.count_modifiers("food_desire")
 
         if desire < 1:
@@ -730,7 +651,7 @@ class Person(object):
         tensed_needs = []
         for need in self.needs:
             status = need.status
-            if status == 'frustrated' or status == 'tense':
+            if status == 'tense':
                 tensed_needs.append(need.name)
         tensed_num = len(tensed_needs)
         if tensed_num < self.bribe_threshold():
@@ -744,35 +665,10 @@ class Person(object):
                 needs.append(need)
         if tensed_num - len(needed_rewards) <= self.bribe_threshold():
             for reward in needed_rewards:
-                if reward not in self.used_rewards:
-                    refuse_threshold = self.bribe_threshold() - (tensed_num - len(needed_rewards))
-                    if not self.player_controlled:
-                        if self.slave_stance.lower() == 'rebellious' or self.alignment['orderliness'] == 'chaotic':
-                            if self.use_resource('willpower') > 0:
-                                return
-                            elif self.determination > 0:
-                                self.determination -= 1
-                                return
-                        elif self.willpower > refuse_threshold:
-                            if self.use_resource('willpower') > 0:
-                                return
-                    else:
-                        result = renpy.call_in_new_context('lbl_resist', 'discipline')
-                        if result == 'willpower':
-                            if self.use_resource('willpower') > 0:
-                                renpy.call_in_new_context('lbl_resist_result', 'discipline', True)
-                                return
-                        elif result == 'determination':
-                            if self.determination > 0:
-                                self.determination -= 1
-                                renpy.call_in_new_context('lbl_resist_result', 'discipline', True)
-                                return
-
-                    self.used_rewards += self.rewards
-                    self.rewards = []
-                    self.add_token('dependence')
-                    renpy.call_in_new_context('lbl_notify', 'discipline')
-                    return
+                self.used_rewards += self.rewards
+                self.rewards = []
+                self.add_token('dependence')
+                return
 
     def training_resistance(self):
         return 1 + (self.mind - self.master.mind) + (self.spirit - self.master.spirit) + self.tokens_difficulty['discipline']
@@ -780,6 +676,8 @@ class Person(object):
 
     def add_token(self, token):
         if not token in self.tokens or token=='angst':
+            if self.player_controlled:
+                renpy.call_in_new_context('lbl_notify', token)
             self.tokens.append(token)
 
 

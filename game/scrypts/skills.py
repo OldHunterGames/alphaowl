@@ -1,26 +1,18 @@
 # -*- coding: UTF-8 -*-
 
 skills_data = {
-    'coding': 'concentration',
-    'sports': 'stamina',
-    'sex': 'glamour',
-    'conversation': 'willpower',
+    'coding': 'mind',
+    'sports': 'physique',
+    'sex': 'sensitivity',
+    'conversation': 'spirit',
 }
-attr_relations = {
-            'stamina': 'physique',
-            'concentration': 'mind',
-            'willpower': 'spirit',
-            'accuracy': 'agility',
-            'glamour': 'sensitivity'
-        }
 
 
 class Skill(object):
-    def __init__(self, owner, name, resource='willpower'):
+    def __init__(self, owner, name, attribute='spirit'):
         self.owner = owner
         self.name = name
-        self.resource = resource
-        self.attribute = attr_relations[resource]
+        self.attribute = attribute
         self.training = False
         self.expirience = False
         self.specialization = False

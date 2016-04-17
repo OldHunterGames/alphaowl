@@ -206,36 +206,37 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
         if skill_to_use:
             if character.skill(skill_to_use).level < 1:
                 failed = True
-        resource = getattr(character, res_to_use) if res_to_use else 0
     if failed:
-        return resource, determination, sabotage
+        return vigor, determination, sabotage
     menu:
         'Сделать спустя рукава':
-            $ resource = False
+            $ vigor = False
             $ determination = False
-        'Работать хорошо' if resource > 0:
-            $ resource = True
+        'Работать хорошо' if character.vigor > 0:
+            $ vigor = True
             $ determination = False
         'Сделать волевым усилием' if character.determination > 0:
-            $ resource = False
+            $ vigor = False
             $ determination = True
-        'Выложиться полностью' if resource > 0 and character.determination > 0:
-            $ resource = True
+        'Выложиться полностью' if character.vigor > 0 and character.determination > 0:
+            $ vigor = True
             $ determination = True
         'Саботировать':
-            $ resource = False
+            $ vigor = False
             $ determination = False
             $ sabotage = True
-    return resource, determination, sabotage
+    return vigor, determination, sabotage
 label lbl_check_result(result=0):
     'Результат проверки: [result]'
     return
 label lbl_resist(effect):
+    if player.vigor < 1 and player.determination < 1:
+        return
     'Сопротивляться [effect]?'
     menu:
-        'Сила воли: [player.willpower], Решимость: [player.determination]'
-        'Сила воли':
-            return 'willpower'
+        'Энергия: [player.vigor], Решимость: [player.determination]'
+        'Энергия' if player.vigor > 0:
+            return 'vigor'
         'Решимость' if player.determination > 0:
             return 'determination'
         'Нет':
