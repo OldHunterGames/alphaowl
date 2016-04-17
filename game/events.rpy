@@ -129,8 +129,8 @@ label evn_dvach_fap(character):
     if not game.evn_skipcheck:
         return False
         
-    $ child.debauch.set_shift(1)
-    'Обмалафился. Удовлетворение потребности в дебоше (1)'
+    $ child.eros.set_shift(1)
+    'Обмалафился. Половое удовлетворение (1)'
     return True
 
 label evn_dvach_olgino(character):

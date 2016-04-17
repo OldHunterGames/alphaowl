@@ -11,10 +11,6 @@ label lbl_mom_manage:
             call lbl_rules            
         "После учебы":
             call lbl_job_rules
-        "В выходные":
-            # call lbl_leisure_rules          
-            "Упс. Не готово"
-            $ pass
         "Воспитание":
             call lbl_discipline
         "Магазин":

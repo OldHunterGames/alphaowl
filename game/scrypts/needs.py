@@ -2,8 +2,8 @@
 from copy import deepcopy
 
 
-needs_names = ["general", "nutrition", "wellness", "comfort", "activity", "communication", "amusement", "prosperity",
-            "authority", "ambition", "debauch", "care", "order", "independence", "approval", "trill", "altruism", "power"]
+needs_names = ["general", 'purpose', "nutrition", "wellness", "comfort", "activity", "communication", "amusement",
+             "prosperity", "authority", "ambition", "eros", "order", "independence", "approval", "trill", "altruism", "power"]
 
 _default_need = {"level": 3, "shift": 0, "status": "relevant"}
 
@@ -12,6 +12,7 @@ def init_needs(owner):
     for name in needs_names:
         l.append(Need(owner, name))
     return l
+
 class Need(object):
     def __init__(self, owner, name):
         self.owner = owner

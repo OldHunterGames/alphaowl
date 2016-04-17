@@ -39,45 +39,46 @@ label shd_discipline_hystery(character):
     
 label shd_fap_no(character):
     python:
-        child.debauch.set_shift(-3)
+        child.eros.set_shift(-1)
     'Нофапофон'
     return  
     
 label shd_fap_yes(character):
     python:
-        child.debauch.set_shift(5)
-    'Фапофон'
+        child.eros.set_shift(1)
     return  
     
 label shd_alcohol_no(character):
     python:
-        child.debauch.set_shift(-3)
+        pass
     return  
     
 label shd_alcohol_yes(character):
     python:
-        child.debauch.set_shift(5)
+        child.general.set_shift(3)
+        child.wellness.set_shift(-1)
     return  
     
 label shd_smoke_no(character):
     python:
-        child.debauch.set_shift(-3)
+        pass
     return  
     
 label shd_smoke_yes(character):
     python:
-        child.debauch.set_shift(5)
+        child.comfort.set_shift(3)
+        child.wellness.set_shift(-1)
     return  
-
 
 label shd_weed_no(character):
     python:
-        child.debauch.set_shift(-3)
+        pass
     return  
     
 label shd_weed_yes(character):
     python:
-        child.debauch.set_shift(5)
+        
+        child.wellness.set_shift(-2)
     return  
 
 
