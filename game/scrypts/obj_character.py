@@ -139,6 +139,12 @@ class Person(object):
     def age(self):
         return self.feature_by_slot('age').name
 
+    def insurgensy(self):
+        val = self.vigor - self.obedience()
+        if val < 0:
+            val = 0
+        return val
+
     def gain_vigor(self, power):
         if power > self.vigor:
             self.vigor += 1
@@ -229,12 +235,11 @@ class Person(object):
 
 
     def pain_effect_threshold(self, taboo):
-        threshold = 3 + self.attributes["spirit"] - self.attributes["sensitivity"] - self.taboo(taboo).value
-        threshold += self.tokens_difficulty['dread']
+        threshold = self.vigor + self.spirit + self.tokens_difficulty['dread'] - self.taboo(taboo).value
         return threshold
 
     def pain_tear_threshold(self, taboo):
-        threshold = 7 + self.attributes["spirit"] + - self.attributes["sensitivity"] - self.taboo(taboo).value
+        threshold = self.vigor*2 + 6 - self.sensitivity - self.taboo(taboo).value
         return threshold
 
     
@@ -643,8 +648,7 @@ class Person(object):
         self.rewards.append((name, need))
 
     def bribe_threshold(self):
-        threshold = 6 + self.spirit - self.sensitivity - self.comfort.level
-        threshold += self.tokens_difficulty['dependence']
+        threshold = 3 + self.spirit - self.sensitivity - self.tokens_difficulty['dependence']
         return threshold
 
     def bribe(self):
@@ -671,7 +675,7 @@ class Person(object):
                 return
 
     def training_resistance(self):
-        return 1 + (self.mind - self.master.mind) + (self.spirit - self.master.spirit) + self.tokens_difficulty['discipline']
+        return self.insurgensy + self.mind - 1 + self.tokens_difficulty['discipline']
     
 
     def add_token(self, token):
