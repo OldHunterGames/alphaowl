@@ -276,10 +276,13 @@ class Person(object):
             motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos, moral=moral)
             if motivation < 0:
                 sabotage = True
-            if motivation > 0 and motivation < 5-getattr(self, res_to_use):
-                pass
-            if motivation > 0 and motivation > 5-getattr(self, res_to_use):
+            if motivation > 0 and motivation < 6-self.vigor:
+                if vigor < 1:
+                    self.fatigue += 1
+            if motivation > 6-self.vigor and motivation < 5:
                 vigor = True
+                if vigor < 1:
+                    self.fatigue += 1
             if motivation > 5 and res_to_use < 1:
                 vigor = False
                 determination = True
@@ -425,7 +428,11 @@ class Person(object):
         motiv += moral
         if skill:
             if self.skill(skill).talent:
-                motiv += self.spirit
+                motiv += self.vigor
+        if self.vigor < 1:
+            motiv -= 1
+            motiv -= self.fatigue
+
         for need in needs:
             status = getattr(self, need[0]).status
             shift = need[1]
