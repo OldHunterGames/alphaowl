@@ -681,7 +681,7 @@ class Person(object):
                 return
 
     def training_resistance(self):
-        return self.insurgensy + self.mind - 1 + self.tokens_difficulty['discipline']
+        return self.insurgensy() + self.mind - 1 + self.tokens_difficulty['discipline']
     
 
     def add_token(self, token):
