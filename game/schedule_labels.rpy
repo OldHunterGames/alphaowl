@@ -92,7 +92,7 @@ label shd_job_study(character):
 label shd_job_chores(character):
     python:
         mom.moral_action('lawful', target = child)        
-        result = character.skillcheck(taboos=[('submission', 1)], needs=[('altruism', 2),('amusement', -1)], forced = True)
+        result = character.action(taboos=[('submission', 1)], needs=[('altruism', 2),('amusement', -1)], forced = True)
         if result >= 0:
             renpy.call('subloc_chores_perform')   
         else:
