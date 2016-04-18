@@ -170,6 +170,14 @@ class Person(object):
             self.gain_vigor(vigor_left)
         self.gain_vigor(self.physique)
         self.gain_vigor(self.spirit)
+        to_remove = []
+        for cond in self.conditions:
+            if isinstance(cond, tuple):
+                if cond[0] == 'vigor':
+                    self.gain_vigor(cond[1])
+                    to_remove.append(cond)
+        for cond in to_remove:
+            self.conditions.remove(cond)
         if self.vigor < 0:
             self.fatigue = self.vigor
             self.vigor = 0
@@ -513,6 +521,10 @@ class Person(object):
         self.reduce_overflow()
         self.calc_focus()
         self.reduce_esteem()
+        if not self.player_controlled and self.mood()[0] > 0:
+            if self.determination < 1:
+                self.determination = 1
+
 
 
     def food_demand(self):

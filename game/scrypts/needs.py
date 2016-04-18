@@ -43,24 +43,34 @@ class Need(object):
             self.shift = value
 
     def status_change(self):
-            high_treshold = 8-self.owner.sensitivity-self.level
-            if high_treshold < 1:
-                high_treshold = 1
-            low_treshold = (6-self.owner.sensitivity-self.level)*(-1)
-            if low_treshold > -1:
-                low_treshold = -1
-            elif self.status == 'overflow':
-                if self.shift < low_treshold:
-                    self.owner.determination -= 1
-                    self.status = 'relevant'
-            else:
-                if self.shift > high_treshold:
-                   self.status = 'satisfied'
-                elif self.shift < low_treshold:
-                    self.status = 'tense'
-                else:
-                    self.status = 'relevant'
-            self.shift = 0
+        high_treshold = 8-self.owner.sensitivity-self.level
+        if high_treshold < 1:
+            high_treshold = 1
+        low_treshold = (6-self.owner.sensitivity-self.level)*(-1)
+        if low_treshold > -1:
+            low_treshold = -1
+        l = ['tense', 'relevant', 'satisfied', 'overflow']
+        ind = l.index(self.status)
+        if ind == 3:
+            if self.shift < low_treshold:
+                self.owner.determination -= 1
+                ind = 1
+                self.status = l[ind]
+                return
+        if self.level == 5:
+            if ind == 1:
+                ind = 0
+        else:
+            if self.shift > hight_threshold:
+                ind += 1
+            elif self.shift < low_treshold:
+                ind -= 1
+        if ind > 2:
+            ind = 2
+        if ind < 0:
+            ind = 0
+        self.status = l[ind]
+        return
 
     def overflow(self):
         threshold = 8-self.owner.sensitivity-self.level
@@ -68,7 +78,7 @@ class Need(object):
         ind = l.index(self.status)
         if self.shift > threshold:
             ind += 1
-            if ind == 4:
+            if ind == 3:
                 if self.owner.mood() > 0:
                     owner.determination += 1
                 else:
