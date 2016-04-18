@@ -135,7 +135,7 @@ label subloc_work_perform:
 label shd_job_whore(character):
     python:
         mom.moral_action('evil', target = child)
-        result = character.skillcheck('sex', taboos=[('sexplotation', 3)], needs=[('communication', 2),('ambition', -4),('authority', -2)], forced = True)
+        result = character.skillcheck('sex', taboos=[('sexplotation', 4)], needs=[('communication', 2),('ambition', -4),('authority', -2)], forced = True)
         if result >= 0:
             renpy.call('subloc_whore_perform')   
         else:

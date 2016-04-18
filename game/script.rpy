@@ -180,7 +180,7 @@ label lbl_owl_info:
         focus = child.show_focus()
         rel = child.relations(mom).description()
         txt = "Настроение: " + str(child.mood()) + " | Подчинение: " + str(child.obedience())
-    "[txt] \n Выносливость: [child.stamina]   |   Воля: [child.willpower]  |  Концентрация: [child.concentration]  |  Очарование: [child.glamour] \n
+    "[txt] | Энергия: [child.vigor] \n
      Тэнге: [game.tenge] \n
      Условия сна: [child.accommodation]  |  Занятость: [job]       \n
      Характер: [alignment]\n

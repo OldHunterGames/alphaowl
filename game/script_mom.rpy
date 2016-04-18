@@ -139,7 +139,6 @@ label lbl_rules_behavior:
             $ child.restrictions.append('dates')
         'Разрешить общаться с девочками' if 'dates' in child.restrictions:
             $ child.restrictions.remove('dates')
-            $ txt = ' \n @ \n \n @ \n '            
         'Запретить общаться с мальчиками' if 'friends' not in child.restrictions:
             $ child.restrictions.append('friends')
         'Разрешить общаться с мальчиками' if 'friends' in child.restrictions:
