@@ -150,6 +150,7 @@ class Person(object):
             self.vigor += 1
     def drain_vigor(self):
         v = self.vigor
+        self.appetite += 1
         if self.vigor > 0:
             self.vigor -= 1
         else:
