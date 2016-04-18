@@ -548,6 +548,7 @@ class Person(object):
         :return:
         """
         desire = self.food_demand()
+        desire += self.nutrition.level
         desire += self.count_modifiers("food_desire")
 
         if desire < 1:
