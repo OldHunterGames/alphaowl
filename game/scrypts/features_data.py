@@ -12,10 +12,10 @@ person_features = {
     'shemale': {'slot': 'gender', 'modifiers': {}, 'visible': True},
 
     # nutrition
-    'slim': {'slot': 'shape', 'modifiers': {'nutrition': 1}, 'visible': True},
-    'emaciated': {'slot': 'shape', 'modifiers': {'nutrition': 2}, 'visible': True},
-    'chubby': {'slot': 'shape', 'modifiers': {'nutrition': -1}, 'visible': True},
-    'obese': {'slot': 'shape', 'modifiers': {'nutrition': -1}, 'visible': True},
+    'slim': {'slot': 'shape', 'modifiers': {'nutrition': 1}, 'visible': True, 'value': 1},
+    'emaciated': {'slot': 'shape', 'modifiers': {'nutrition': 2}, 'visible': True, 'value': 2},
+    'chubby': {'slot': 'shape', 'modifiers': {'nutrition': -1}, 'visible': True, 'value': -1},
+    'obese': {'slot': 'shape', 'modifiers': {'nutrition': -1}, 'visible': True, 'value': -1},
     'starving': {'slot': None, 'modifiers': {'physique': -1}, 'visible': True},
     'dyspnoea': {'visible': True},
     'diabetes': {'visible': False},

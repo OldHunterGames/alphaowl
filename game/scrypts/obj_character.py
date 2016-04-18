@@ -2,7 +2,7 @@
 from random import *
 import renpy.store as store
 import renpy.exports as renpy
-from features import Feature
+from features import Feature, person_features
 from skills import Skill, skills_data
 from needs import init_needs
 from copy import copy
@@ -49,7 +49,7 @@ class Person(object):
         self.allowance = 0         # Sparks spend each turn on a lifestyle
         self.ration = {
             "amount": 'unlimited',   # 'unlimited', 'limited' by price, 'regime' for figure, 'starvation' no food
-            "food_type": "cosine",   # 'forage', 'sperm', 'dry', 'canned', 'cosine'
+            "food_type": "cousine",   # 'forage', 'sperm', 'dry', 'canned', 'cousine'
             "target": 0,           # figures range -2:2
             "limit": 0,             # maximum resources spend to feed character each turn
             "overfeed": 0,
@@ -580,6 +580,16 @@ class Person(object):
 
     def fatness_change(self):
         calorie_difference = self.consume_food() - self.food_demand()
+        if calorie_difference > self.food_demand():
+            power = 5 - calorie_difference
+            if power < 1:
+                power = 1
+            self.gain_vigor(power)
+        if calorie_difference < self.food_desire():
+            self.nutrition.set_shift(calorie_difference-self.food_desire())
+        if self.ration['amount'] != 'starvation':
+            d = {'spawn': -4, 'forage': -1, 'dry': -2, 'canned': 0, 'cousine': 3}
+            self.nutrition.set_shift(d[self.ration['food_type']])
         self.calorie_storage += calorie_difference
         fatness = self.feature_by_slot('shape')
         if fatness:
@@ -599,9 +609,10 @@ class Person(object):
                     if self.feature('dyspnoea'):
                         self.remove_feature('dyspnoea')
                     if fatness >= -2:
-                        for f in features_data.person_features.values():
-                            if f.slot == 'shape' and f.value == fatness:
-                                self.add_feature(f.name)
+                        for f in person_features:
+                            if person_features[f].has_key('slot') and person_features[f].has_key('value'):
+                                if person_features[f]['slot'] == 'shape' and person_features[f]['value'] == fatness:
+                                    self.add_feature(f)
                     else:
                         self.add_feature('starving')
         if self.calorie_storage > 0:
@@ -614,14 +625,17 @@ class Person(object):
                 if fatness <= 2:
                     if self.feature('starving'):
                         self.remove_feature('starving')
-                    for f in features_data.person_features.values():
-                        if f.slot == 'shape' and f.value == fatness:
-                            self.add_feature(f.name)
+                    for f in person_features:
+                        if person_features[f].has_key('slot') and person_features[f].has_key('value'):
+                            if person_features[f]['slot'] == 'shape' and person_features[f]['value'] == fatness:
+                                self.add_feature(f)
                 else:
                     if not self.feature("dyspnoea"):
                         self.add_feature('dyspnoea')
                     else:
-                        self.add_feature('diabetes')
+                        chance = randint(1, self.physique*3)
+                        if chance == 1:
+                            self.add_feature('diabetes')
 
     def nutrition_change(self, food_consumed):
         if food_consumed < self.food_demand():
