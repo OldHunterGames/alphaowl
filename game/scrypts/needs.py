@@ -61,7 +61,7 @@ class Need(object):
             if ind == 1:
                 ind = 0
         else:
-            if self.shift > hight_threshold:
+            if self.shift > high_treshold:
                 ind += 1
             elif self.shift < low_treshold:
                 ind -= 1
