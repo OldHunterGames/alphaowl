@@ -365,24 +365,24 @@ label lbl_discipline:
                         'Назад':
                             jump lbl_discipline  
                             
-                'Dependance' if child.has_token("dependance"):
+                'Dependance' if child.has_token("dependence"):
                     menu:
                         'Привести к вынужденной покорности' if child.slave_stance == 'rebellious' and child.obedience() > 3:
                             $ player.ap -= 1
-                            $ child.use_token('dependance')
+                            $ child.use_token('dependence')
                             $ child.slave_stance = 'forced'         
                             'Глобальное отношение ребёнка к подчинению изменилось с сопротивления на вынужденное подчинение'                        
                         'Повысить уровень зависимости':
                             $ player.ap -= 1
-                            $ child.use_token('dependance')
+                            $ child.use_token('dependence')
                             $ child.dependance += 1
                         'Внушить уважение':
                             $ player.ap -= 1
-                            $ child.use_token('dependance')
+                            $ child.use_token('dependence')
                             $ child.relations(mom).change('fervor', '+')
                         'Сблизиться':
                             $ player.ap -= 1
-                            $ child.use_token('dependance')
+                            $ child.use_token('dependence')
                             $ child.relations(mom).change('distance', '+')
                         'Назад':
                             jump lbl_discipline  
@@ -426,30 +426,30 @@ label lbl_diet:
     menu:
         "Мы сейчас тебе диету будем делать."
         "Чтоб здоровенький был у нас, как Ванька Ерохин":
-            $ child.ration['target'] = 0
+            $ child.ration['target'] = 2
         "А то отрастил себе мамонище, девок пугать.":
-            $ child.ration['target'] = -1
-        "Кожа да кости же, ухватиться не за что. Девки любить не будут!":
             $ child.ration['target'] = 1
+        "Кожа да кости же, ухватиться не за что. Девки любить не будут!":
+            $ child.ration['target'] = 3
         
     return
 
 label lbl_accomodation_rules:
     menu:
         'Вечно ты в комнате запираешься от матери! Как сыч.':
-            $ player.accommodation = "appartment"
+            $ child.accommodation = "appartment"
             $ child.schedule.add_action('living_appartment')  
         'Комнату твою сдавать будем, поспишь у нас на диванчике.':
-            $ player.accommodation = "cot"
+            $ child.accommodation = "cot"
             $ child.schedule.add_action('living_cot')  
         'Диванчик для тёти Сраки, а тебе вот раскладушечка дедова.':
-            $ player.accommodation = "mat"
+            $ child.accommodation = "mat"
             $ child.schedule.add_action('living_mat')  
         'В ванной тебя запрём ночевать. Чтобы не воображал!':
-            $ player.accommodation = "jailed"      
+            $ child.accommodation = "jailed"      
             $ child.schedule.add_action('living_jailed')    
         'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
-            $ player.accommodation = "confined"
+            $ child.accommodation = "confined"
             $ child.schedule.add_action('living_confined')
     
     return
