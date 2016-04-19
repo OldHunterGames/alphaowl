@@ -3,14 +3,33 @@ label shd_None_template(character):
     '[d] TOASTED!'
     return
 
+label shd_general_accounting:
+    # Allways active. Calculates minor issues.
+    'Мать получает зарплату (+50 тенгэ)'
+    $ game.tenge += 50
+    if 'dates' in child.restrictions:
+        $ child.eros.set_shift(-1)
+        $ child.activity.set_shift(-1)
+    if 'friends' in child.restrictions:
+        $ child.communication.set_shift(-2)
+        
+    return
     
 label shd_batya_batya(character):
     python:
         game.torture(target = child, power=batya_force, taboos=['pain'])
+        child.wellness.set_shift(-batya_force)
         mom.moral_action('evil', target = child)
     'BATYA гандошит Cычу. Pain = [batya_force]. Злой постпок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
     return   
-
+    
+label shd_mom_abuse(character):
+    python:
+        game.torture(target = child, power=abuse_force, taboos=['abuse'])
+        child.ambition.set_shift(-abuse_force)
+        mom.moral_action('ardent', target = child)
+    'Мамка хуесосит Cычу. Abuse = [abuse_force]. Пылкий постпок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
+    return   
     
 label shd_discipline_pavsykakiy(character):
     python:
@@ -24,7 +43,7 @@ label shd_discipline_pavsykakiy(character):
 label shd_discipline_kohana(character):
     python:
         game.train(child, power=5)
-    'Славик Сычов до сих пор писает в кровать\n @\nМы всё исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
+    'Антоша Сычов до сих пор писает в кровать\n @\nМы всё исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
 
     return   
     
@@ -36,6 +55,56 @@ label shd_discipline_hystery(character):
 
     return   
 
+    
+label shd_outfit_lame(character):
+    python:
+        child.authority.set_shift(-3)
+    return  
+    
+label shd_outfit_normal(character):
+    python:
+        child.prosperity.set_shift(-2)
+    return  
+    
+label shd_outfit_cool(character):
+    python:
+        child.prosperity.set_shift(4)
+    return  
+    
+label shd_living_appartment(character):
+    python:
+        child.comfort.set_shift(5)
+        child.prosperity.set_shift(2)
+        child.conditions.append(('vigor', 5))
+    return  
+    
+label shd_living_cot(character):
+    python:
+        child.conditions.append(('vigor', 4))
+    return  
+    
+label shd_living_mat(character):
+    python:
+        child.comfort.set_shift(-2)
+        child.prosperity.set_shift(-1)
+        child.wellness.set_shift(-1)
+        child.conditions.append(('vigor', 2))
+    return  
+    
+label shd_living_confined(character):
+    python:
+        child.comfort.set_shift(-3)
+        child.activity.set_shift(-3)
+        child.wellness.set_shift(-2)
+        child.conditions.append(('vigor', -1))
+    return  
+    
+label shd_living_jailed(character):
+    python:
+        child.comfort.set_shift(-5)
+        child.activity.set_shift(-4)
+        child.wellness.set_shift(-3)
+    return  
     
 label shd_fap_no(character):
     python:
@@ -111,7 +180,8 @@ label subloc_chores_sabotage:
     return
 
 label subloc_chores_perform:
-    'Сычуля убирается в доме. ([result])\n Нарушается табу на подчинение матери (1), удовлетворяется альтруизм (2), подавляется развлечение (-1).'
+    'Сычуля убирается в доме. ([result])\n Нарушается табу на подчинение матери (1), удовлетворяется альтруизм (2), подавляется развлечение (-1), усталость.'
+    $ child.conditions.append(('vigor', -1))
     return
 
 

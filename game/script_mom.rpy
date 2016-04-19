@@ -84,13 +84,16 @@ label lbl_rules_clothes:
     menu:
         'Мамина симпатяфка':
             $ child.appearance = 'lame'
-            $ txt = 'Вот свитерочек бабушка связала \n @ \n Штанишки тетя Ёба нам со своего оболтуса дала \n @ \n Шапку не забудь надеть!'
+            $ child.schedule.add_action('outfit_lame')
+            $ txt = 'Вот свитерочек бабушка связала \n @ \n Штанишки тетя Ёба нам со своего оболтуса дала \n @ \n Шапку не забудь надеть! (autority -3)'
         'Да носи что хочешь':
             $ child.appearance = 'normal'
-            $ txt = 'Залезаешь в шкаф чтобы найти приличную одежду \n @ \n Там какие-то обноски от Тёти Ёбы и Дяди Бафомета \n @ \n И мутантная моль размером с кошака доедает ушанку'    
+            $ child.schedule.add_action('outfit_normal')
+            $ txt = 'Залезаешь в шкаф чтобы найти приличную одежду \n @ \n Там какие-то обноски от Тёти Ёбы и Дяди Бафомета \n @ \n И мутантная моль размером с кошака доедает ушанку (prosperity -2)'    
         'Купим тебе модное, выбирай (20 т/нед)':
             $ child.appearance = 'cool'
-            $ txt = 'Ой Сыченька, сейчас купим тебе модного \n @ \n Затариваетесь на рынке у Ашота, турецкими подделками \n @ \n А ты и не против'
+            $ child.schedule.add_action('outfit_cool')
+            $ txt = 'Ой Сыченька, сейчас купим тебе модного \n @ \n Затариваетесь на рынке у Ашота, турецкими подделками \n @ \n А ты и не против (prosperity 4)'
             
     "[txt]"
     
@@ -139,13 +142,13 @@ label lbl_rules_drugs:
 
 label lbl_rules_behavior:
     menu:
-        'Запретить общаться с девочками' if 'dates' not in child.restrictions:
+        'Запретить гулять' if 'dates' not in child.restrictions:
             $ child.restrictions.append('dates')
-        'Разрешить общаться с девочками' if 'dates' in child.restrictions:
+        'Разрешить гулять до поздна' if 'dates' in child.restrictions:
             $ child.restrictions.remove('dates')
-        'Запретить общаться с мальчиками' if 'friends' not in child.restrictions:
+        'Запретить общаться с друзьями' if 'friends' not in child.restrictions:
             $ child.restrictions.append('friends')
-        'Разрешить общаться с мальчиками' if 'friends' in child.restrictions:
+        'Разрешить общаться с друзьями' if 'friends' in child.restrictions:
             $ child.restrictions.remove('friends')
         'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in child.restrictions:
             $ child.restrictions.append('pc')
@@ -237,6 +240,25 @@ label lbl_discipline:
                             $ child.schedule.add_action('batya_batya', 'single')
                         "Ой-всё. Хватит. ОНЖИРИБЁНОК!":
                             $ child.schedule.remove_action('batya_batya')
+                "Ругань и скандалы.":
+                    menu:
+                        "Ехидные комментарии":
+                            $ abuse_force = 1
+                            $ child.schedule.add_action('mom_abuse', 'single')
+                        "Надуманные обвинения":
+                            $ abuse_force = 2
+                            $ child.schedule.add_action('mom_abuse', 'single')
+                        "Нудные лекции":
+                            $ abuse_force = 3
+                            $ child.schedule.add_action('mom_abuse', 'single')                    
+                        "Крики и угрозы":
+                            $ abuse_force = 4
+                            $ child.schedule.add_action('mom_abuse', 'single')
+                        "Визги, слюни и сопли":
+                            $ abuse_force = 5
+                            $ child.schedule.add_action('mom_abuse', 'single')
+                        "Смотрите на него! Ноль внимания, фунт презрения. Пф.":
+                            $ child.schedule.remove_action('mom_abuse')                    
                 "Назад":
                     
                     jump lbl_discipline
@@ -424,11 +446,11 @@ label lbl_accomodation_rules:
             $ player.accommodation = "mat"
             $ child.schedule.add_action('living_mat')  
         'В ванной тебя запрём ночевать. Чтобы не воображал!':
-            $ player.accommodation = "confined"
-            $ child.schedule.add_action('living_confined')  
-        'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
             $ player.accommodation = "jailed"      
-            $ child.schedule.add_action('living_jailed')  
+            $ child.schedule.add_action('living_jailed')    
+        'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
+            $ player.accommodation = "confined"
+            $ child.schedule.add_action('living_confined')
     
     return
                     
