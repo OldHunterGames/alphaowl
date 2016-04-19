@@ -517,9 +517,9 @@ class Person(object):
             need.status_change()
         self.bribe()
         self.schedule.use_actions()
-        self.fatness_change()
         self.calc_vigor()
         self.reduce_overflow()
+        self.fatness_change()
         self.calc_focus()
         self.reduce_esteem()
         if not self.player_controlled and self.mood()[0] > 0:
