@@ -28,33 +28,33 @@ label lbl_mom_manage:
 label lbl_food_rules:
     menu:
         "Тётя Срака читала - кушать надо сколько душа просит":
-            $ player.ration['amount'] = "unlimited" 
+            $ child.ration['amount'] = "unlimited" 
         "Надо чтобы недораха!":
-            $ player.ration['amount'] = "limited" 
+            $ child.ration['amount'] = "limited" 
             call lbl_food_limit
         "У Сыченьки то фигуры нет совсем...":
-            $ player.ration['amount'] = "regime" 
+            $ child.ration['amount'] = "regime" 
             call lbl_diet
         "А ты вот посиди без етьбы, знать будешь как матери губить!":
-            $ player.ration['amount'] = "starvation"   
-            $ player.ration['food_type'] = "forage"   
-            $ player.ration['target'] = 0           
-            $ player.ration['limit'] = None
+            $ child.ration['amount'] = "starvation"   
+            $ child.ration['food_type'] = "forage"   
+            $ child.ration['target'] = 0           
+            $ child.ration['limit'] = None
             jump lbl_mom_manage
     
     menu:
         "Вот покушай ка Сычулька..."
         "Совего, с огорода то. Витамины!":
-            $ player.ration['food_type'] = "sperm" 
+            $ child.ration['food_type'] = "sperm" 
             'Как говна навернул... невкусно (-3)'
         "Мивины с маянезиком.":
-            $ player.ration['food_type'] = "dry" 
+            $ child.ration['food_type'] = "dry" 
             'Бичпакет... невкусно (-1)'
         "Тёпленького похлебай, домашнего. С хлебушком.":
-            $ player.ration['food_type'] = "canned" 
+            $ child.ration['food_type'] = "canned" 
             'Хрючево... нормальный вкус'
         "В столовой вашей, я денежку тебе дам. (10/нед)":
-            $ player.ration['food_type'] = "cosine"   
+            $ child.ration['food_type'] = "cosine"   
             'Пища белых людей... вкусно (3)'
 
     return
@@ -426,11 +426,11 @@ label lbl_diet:
     menu:
         "Мы сейчас тебе диету будем делать."
         "Чтоб здоровенький был у нас, как Ванька Ерохин":
-            $ player.ration['target'] = 0
+            $ child.ration['target'] = 0
         "А то отрастил себе мамонище, девок пугать.":
-            $ player.ration['target'] = -1
+            $ child.ration['target'] = -1
         "Кожа да кости же, ухватиться не за что. Девки любить не будут!":
-            $ player.ration['target'] = 1
+            $ child.ration['target'] = 1
         
     return
 

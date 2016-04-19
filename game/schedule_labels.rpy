@@ -3,7 +3,7 @@ label shd_None_template(character):
     '[d] TOASTED!'
     return
 
-label shd_general_accounting:
+label shd_general_accounting(character):
     # Allways active. Calculates minor issues.
     'Мать получает зарплату (+50 тенгэ)'
     $ game.tenge += 50
@@ -181,7 +181,7 @@ label subloc_chores_sabotage:
 
 label subloc_chores_perform:
     'Сычуля убирается в доме. ([result])\n Нарушается табу на подчинение матери (1), удовлетворяется альтруизм (2), подавляется развлечение (-1), усталость.'
-    $ child.conditions.append(('vigor', -1))
+    $ child.drain_vigor()
     return
 
 
