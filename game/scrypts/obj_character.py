@@ -591,7 +591,7 @@ class Person(object):
         if calorie_difference < self.food_desire():
             self.nutrition.set_shift(calorie_difference-self.food_desire())
         if self.ration['amount'] != 'starvation':
-            d = {'spawn': -4, 'forage': -1, 'dry': -2, 'canned': 0, 'cousine': 3}
+            d = {'sperm': -4, 'forage': -1, 'dry': -2, 'canned': 0, 'cousine': 3}
             self.nutrition.set_shift(d[self.ration['food_type']])
         self.calorie_storage += calorie_difference
         fatness = self.feature_by_slot('shape')
