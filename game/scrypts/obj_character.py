@@ -489,6 +489,8 @@ class Person(object):
         for f in self.features:
             if f.slot == slot:
                 return f
+            else:
+                return None
 
     def feature(self, name):                # finds feature with needed name if exist
         for f in self.features:
@@ -595,50 +597,36 @@ class Person(object):
             self.nutrition.set_shift(d[self.ration['food_type']])
         self.calorie_storage += calorie_difference
         fatness = self.feature_by_slot('shape')
-        if fatness:
-            fatness = fatness.value
-        else:
-            fatness = 0
+        if fatness != None:
+            fatness = fatness.name
+        flist = ['emaciated' ,'slim', None, 'chubby', 'obese']
+        ind = flist.index(fatness)
         if self.calorie_storage < 0:
             chance = randint(-10, -1)
             if self.calorie_storage <= chance:
-                if self.feature('starving'):
-                    self.add_feature('dead')
-                else:
-                    fatness -= 1
-                    self.calorie_storage = 0
-                    if fatness == 0:
-                        self.remove_feature(self.feature_by_slot('shape'))
-                    if self.feature('dyspnoea'):
-                        self.remove_feature('dyspnoea')
-                    if fatness >= -2:
-                        for f in person_features:
-                            if person_features[f].has_key('slot') and person_features[f].has_key('value'):
-                                if person_features[f]['slot'] == 'shape' and person_features[f]['value'] == fatness:
-                                    self.add_feature(f)
+                ind -= 1
+                if ind < 0:
+                    ind = 0
+                    if self.feature('starving'):
+                        self.add_feature('dead')
                     else:
                         self.add_feature('starving')
+                f = flist[ind]
+                if f:
+                    self.add_feature(flist[ind])
         if self.calorie_storage > 0:
             chance = randint(1, 10)
             if self.calorie_storage >= chance:
-                fatness += 1
-                self.calorie_storage = 0
-                if fatness == 0:
-                        self.remove_feature(self.feature_by_slot('shape'))
-                if fatness <= 2:
-                    if self.feature('starving'):
-                        self.remove_feature('starving')
-                    for f in person_features:
-                        if person_features[f].has_key('slot') and person_features[f].has_key('value'):
-                            if person_features[f]['slot'] == 'shape' and person_features[f]['value'] == fatness:
-                                self.add_feature(f)
-                else:
-                    if not self.feature("dyspnoea"):
-                        self.add_feature('dyspnoea')
+                ind += 1
+                if ind > 4:
+                    ind = 4
+                    if self.feature('dyspnoea'):
+                        self.add_feature('diabetes')
                     else:
-                        chance = randint(1, self.physique*3)
-                        if chance == 1:
-                            self.add_feature('diabetes')
+                        self.add_feature('dyspnoea')
+                f = flist[ind]
+                if f:
+                    self.add_feature(f)
 
     def nutrition_change(self, food_consumed):
         if food_consumed < self.food_demand():
@@ -696,6 +684,7 @@ class Person(object):
                 tensed_needs.append(need.name)
         tensed_num = len(tensed_needs)
         if tensed_num < self.bribe_threshold():
+            self.rewards = []
             return 
         needed_rewards = []
         needs = []
