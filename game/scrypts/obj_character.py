@@ -328,8 +328,9 @@ class Person(object):
             val = max(self.vigor, getattr(self, self.skill(skill).attribute))
             check += val
         self.drain_vigor()
-        if check < self.focus and skill == self.focused_skill.name:
-            check += 1
+        if self.focused_skill != None:
+            if check < self.focus and skill == self.focused_skill.name:
+                check += 1
         if check < 0:
             check = 0
         if self.player_controlled:
