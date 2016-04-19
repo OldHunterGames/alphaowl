@@ -53,24 +53,32 @@ class Need(object):
             low_treshold = -1
         l = ['tense', 'relevant', 'satisfied', 'overflow']
         ind = l.index(self.status)
+        if ind == 0:
+            ind += 1
         if ind == 3:
             if self.shift < low_treshold:
                 self.owner.determination -= 1
                 ind = 1
                 self.status = l[ind]
+                self.shift = 0
                 return
         if self.level == 5:
             if ind == 1:
                 ind = 0
         else:
-            if self.shift > high_treshold:
+            if ind == 0:
                 ind += 1
-            elif self.shift < low_treshold:
+            elif ind == 2:
+                ind -= 1
+        if self.shift > high_treshold:
+                ind += 1
+        elif self.shift < low_treshold:
                 ind -= 1
         if ind > 2:
             ind = 2
         if ind < 0:
             ind = 0
+        self.shift = 0
         self.status = l[ind]
         return
 

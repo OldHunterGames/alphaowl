@@ -521,10 +521,10 @@ class Person(object):
     def rest(self):
         self.schedule.use_actions()
         self.bribe()
+        self.fatness_change()
         for need in self.needs:
             need.status_change()
         self.reduce_overflow()
-        self.fatness_change()
         self.calc_focus()
         self.calc_vigor()
         self.reduce_esteem()
