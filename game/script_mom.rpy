@@ -51,7 +51,7 @@ label lbl_food_rules:
             $ player.ration['food_type'] = "dry" 
             'Бичпакет... невкусно (-1)'
         "Тёпленького похлебай, домашнего. С хлебушком.":
-            $ player.ration['food_type'] = "caned" 
+            $ player.ration['food_type'] = "canned" 
             'Хрючево... нормальный вкус'
         "В столовой вашей, я денежку тебе дам. (10/нед)":
             $ player.ration['food_type'] = "cosine"   
