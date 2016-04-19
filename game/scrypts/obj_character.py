@@ -178,7 +178,7 @@ class Person(object):
                     if cond[1] > 0:
                         self.gain_vigor(cond[1])
                     elif cond[1] < 0:
-                        self.vigor -= cond[1]
+                        self.vigor += cond[1]
                     to_remove.append(cond)
         for cond in to_remove:
             self.conditions.remove(cond)
@@ -522,10 +522,10 @@ class Person(object):
         for need in self.needs:
             need.status_change()
         self.bribe()
-        self.calc_vigor()
         self.reduce_overflow()
         self.fatness_change()
         self.calc_focus()
+        self.calc_vigor()
         self.reduce_esteem()
         if not self.player_controlled and self.mood()[0] > 0:
             if self.determination < 1:
@@ -591,7 +591,7 @@ class Person(object):
             power = 5 - calorie_difference
             if power < 1:
                 power = 1
-            self.gain_vigor(power)
+            self.conditions.append(('vigor', power))
         if calorie_difference < self.food_desire():
             self.nutrition.set_shift(calorie_difference-self.food_desire())
         if self.ration['amount'] != 'starvation':
@@ -605,6 +605,7 @@ class Person(object):
         ind = flist.index(fatness)
         if self.calorie_storage < 0:
             chance = randint(-10, -1)
+            self.conditions.append(('vigor', -1))
             if self.calorie_storage <= chance:
                 ind -= 1
                 if ind < 0:
