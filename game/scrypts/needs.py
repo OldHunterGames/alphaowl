@@ -89,4 +89,23 @@ class Need(object):
                     ind -= 1
             self.status = l[ind]
 
+    def increase(self):
+        l = ['tense', 'relevant', 'satisfied', 'overflow']
+        ind = l.index(self.status)
+        ind += 1
+        if ind > 2:
+            ind = 2
+        self.status = l[ind]
+        return
+
+    def reduce(self):
+        l = ['tense', 'relevant', 'satisfied', 'overflow']
+        ind = l.index(self.status)
+        ind -= 1
+        if ind < 0:
+            ind = 0
+        self.status = l[ind]
+        return
+
+
 

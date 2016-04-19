@@ -516,10 +516,10 @@ class Person(object):
         return txt
     
     def rest(self):
+        self.schedule.use_actions()
         for need in self.needs:
             need.status_change()
         self.bribe()
-        self.schedule.use_actions()
         self.calc_vigor()
         self.reduce_overflow()
         self.fatness_change()
@@ -707,9 +707,14 @@ class Person(object):
         if tensed_num - len(needed_rewards) <= self.bribe_threshold():
             for reward in needed_rewards:
                 self.used_rewards += self.rewards
+                for reward in self.rewards:
+                    getattr(self, reward[1]).increase()
                 self.rewards = []
                 self.add_token('dependence')
                 return
+        else:
+            self.rewards = []
+            return
 
     def training_resistance(self):
         return self.insurgensy() + self.mind - 1 + self.tokens_difficulty['discipline']
