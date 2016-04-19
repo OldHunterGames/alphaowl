@@ -27,6 +27,7 @@ label start:
     return
     
 label label_quiz:
+    $ child.schedule.add_action('general_accounting')
             
     menu:
         "Ты мальчик или девочка-внутри?"
