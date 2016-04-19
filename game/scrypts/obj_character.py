@@ -530,6 +530,8 @@ class Person(object):
         if not self.player_controlled and self.mood()[0] > 0:
             if self.determination < 1:
                 self.determination = 1
+        if self.feature('obese') or self.feature('emaciated'):
+            self.vigor -= 1
 
 
 
