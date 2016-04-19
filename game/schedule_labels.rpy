@@ -82,6 +82,12 @@ label shd_weed_yes(character):
     return  
 
 
+label shd_job_idle(character):
+    python:
+        child.conditions.append(('vigor', 3))
+        
+    return    
+    
 label shd_job_study(character):
     python:
         character.skills_used.append('coding')

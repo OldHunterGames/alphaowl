@@ -412,14 +412,19 @@ label lbl_accomodation_rules:
     menu:
         'Вечно ты в комнате запираешься от матери! Как сыч.':
             $ player.accommodation = "appartment"
+            $ child.schedule.add_action('living_appartment')  
         'Комнату твою сдавать будем, поспишь у нас на диванчике.':
             $ player.accommodation = "cot"
+            $ child.schedule.add_action('living_cot')  
         'Диванчик для тёти Сраки, а тебе вот раскладушечка дедова.':
             $ player.accommodation = "mat"
+            $ child.schedule.add_action('living_mat')  
         'В ванной тебя запрём ночевать. Чтобы не воображал!':
             $ player.accommodation = "confined"
+            $ child.schedule.add_action('living_confined')  
         'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
-            $ player.accommodation = "jailed"            
+            $ player.accommodation = "jailed"      
+            $ child.schedule.add_action('living_jailed')  
     
     return
                     
@@ -428,6 +433,7 @@ label lbl_job_rules:
     menu:
         'Всё сидишь как сыч, за конпуктером. Иди пробзись.':
             $ child.job['name'] = 'idle'
+            $ child.schedule.add_action('job_idle')  
         'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?':
             $ child.job['name'] = 'study'
             $ child.schedule.add_action('job_study')  
