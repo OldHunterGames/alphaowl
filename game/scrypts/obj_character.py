@@ -175,7 +175,10 @@ class Person(object):
         for cond in self.conditions:
             if isinstance(cond, tuple):
                 if cond[0] == 'vigor':
-                    self.gain_vigor(cond[1])
+                    if cond[1] > 0:
+                        self.gain_vigor(cond[1])
+                    elif cond[1] < 0:
+                        self.vigor -= cond[1]
                     to_remove.append(cond)
         for cond in to_remove:
             self.conditions.remove(cond)
