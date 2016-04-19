@@ -365,7 +365,7 @@ label lbl_discipline:
                         'Назад':
                             jump lbl_discipline  
                             
-                'Dependance' if child.has_token("dependence"):
+                'Dependence' if child.has_token("dependence"):
                     menu:
                         'Привести к вынужденной покорности' if child.slave_stance == 'rebellious' and child.obedience() > 3:
                             $ player.ap -= 1
@@ -375,7 +375,7 @@ label lbl_discipline:
                         'Повысить уровень зависимости':
                             $ player.ap -= 1
                             $ child.use_token('dependence')
-                            $ child.dependance += 1
+                            $ child.dependence += 1
                         'Внушить уважение':
                             $ player.ap -= 1
                             $ child.use_token('dependence')
