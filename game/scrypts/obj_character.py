@@ -519,9 +519,9 @@ class Person(object):
     
     def rest(self):
         self.schedule.use_actions()
+        self.bribe()
         for need in self.needs:
             need.status_change()
-        self.bribe()
         self.reduce_overflow()
         self.fatness_change()
         self.calc_focus()
@@ -567,9 +567,9 @@ class Person(object):
         food_consumed = self.food_desire()
         fatness = self.feature_by_slot('shape')
         if fatness:
-            fatness = fatness.value
-        else:
-            fatness = 0
+            fatness = fatness.name
+        flist = ['emaciated' ,'slim', None, 'chubby', 'obese']
+        val = flist.index(fatness)
         if self.ration['amount'] == 'starvation':
             food_consumed = 0
 
@@ -579,10 +579,12 @@ class Person(object):
 
         if self.ration['amount'] == 'regime':
             food_consumed = self.food_demand()
-            if self.ration['target'] > fatness:
+            if self.ration['target'] > val:
                 food_consumed += 1+self.appetite
-            if self.ration['target'] < fatness:
-                food_consumed -= 1
+            if self.ration['target'] < val:
+                food_consumed = self.food_demand() - 1
+            if self.ration['target'] == val:
+                food_consumed = self.food_demand()
         return food_consumed
 
     def fatness_change(self):
