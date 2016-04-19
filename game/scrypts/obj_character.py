@@ -587,7 +587,7 @@ class Person(object):
 
     def fatness_change(self):
         calorie_difference = self.consume_food() - self.food_demand()
-        if calorie_difference > self.food_demand():
+        if calorie_difference > 0:
             power = 5 - calorie_difference
             if power < 1:
                 power = 1
