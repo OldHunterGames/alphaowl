@@ -327,7 +327,10 @@ class Person(object):
         else:
             val = max(self.vigor, getattr(self, self.skill(skill).attribute))
             check += val
-        self.drain_vigor()
+        if vigor:
+            self.drain_vigor()
+        elif self.vigor < 1:
+            self.drain_vigor()
         if self.focused_skill != None:
             if check < self.focus and skill == self.focused_skill.name:
                 check += 1
