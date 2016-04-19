@@ -706,7 +706,7 @@ class Person(object):
                 if reward not in self.used_rewards:
                     self.used_rewards += self.rewards
                     for reward in self.rewards:
-                        getattr(self, reward[1]).increase()
+                        getattr(self, reward[1]).set_shift(100)
                     self.rewards = []
                     self.add_token('dependence')
                     return
