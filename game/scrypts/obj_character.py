@@ -704,14 +704,18 @@ class Person(object):
             if need in tensed_needs and need not in needs:
                 needed_rewards.append(reward)
                 needs.append(need)
+        if len(needed_rewards) < 1:
+            self.rewards = []
+            return
         if tensed_num - len(needed_rewards) <= self.bribe_threshold():
             for reward in needed_rewards:
-                self.used_rewards += self.rewards
-                for reward in self.rewards:
-                    getattr(self, reward[1]).increase()
-                self.rewards = []
-                self.add_token('dependence')
-                return
+                if reward not in self.used_rewards:
+                    self.used_rewards += self.rewards
+                    for reward in self.rewards:
+                        getattr(self, reward[1]).increase()
+                    self.rewards = []
+                    self.add_token('dependence')
+                    return
         else:
             self.rewards = []
             return
