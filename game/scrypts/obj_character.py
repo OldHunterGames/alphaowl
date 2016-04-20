@@ -299,7 +299,7 @@ class Person(object):
         check = 0
         
         if self.player_controlled:
-            vigor, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, skill)
+            vigor, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self)
         else:
             motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos, moral=moral)
             if motivation < 0:
@@ -465,6 +465,7 @@ class Person(object):
             if getattr(self, need).level > n:
                 n = getattr(self, need).level
         threshold = 3 + self.spirit + self.mood()[1] - n + mod
+        return threshold
 
     def remorse_threshold(self):
         if self.player_controlled:
@@ -474,6 +475,25 @@ class Person(object):
         if threshold < 0:
             threshold = 0
         threshold += mod
+        return threshold
+
+    def suggestion_threshold(self):
+        if self.player_controlled:
+            return 0
+        return self.spirit + self.authority.level - self.mood()[1]
+
+    def suggestion_check(self):
+        threshold = self.suggestion_threshold()
+        if self.relations_player().master_stance == 'cruel':
+            return 100
+        if self.relations_player().master_stance == 'opressive':
+            threshold -= self.favor()
+            if threshold < self.spirit:
+                threshold = self.spirit
+        if self.relations_player().master_stance == 'rightful':
+            threshold -= self.favor()
+        if self.relations_player().master_stance == 'benevolent':
+            return 0
         return threshold
 
     

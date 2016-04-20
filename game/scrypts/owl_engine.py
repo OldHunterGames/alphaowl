@@ -109,3 +109,8 @@ class Engine(object):
     def gratifaction(self, target, power, needs):
         if power > target.gratifaction_threshold(needs):
             target.relations_player().add_token('craving')
+
+    def suggestion(self, target, power):
+        if power > target.suggestion_check():
+            return True
+        return False

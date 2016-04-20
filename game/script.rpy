@@ -14,6 +14,7 @@ init python:
     child.master = mother
     register_actions()
     mother.enslave(child)
+    mom = mother
 
     
 # Игра начинается здесь.
@@ -81,13 +82,13 @@ label label_quiz:
     menu:
         "Чем по жизни занимаешься?"
         "Кодю, компилю, хакаю. Не палюсь.":
-            $ child.skill('coding').expert(5)
+            $ child.skill('coding').expert()
         "ЗОЖ. Брусья-брусья-турнички. Качалочка.":
-            $ child.skill('sports').expert(5)
+            $ child.skill('sports').expert()
         "Тусуюсь с друзьями.":
-            $ child.skill('conversation').expert(5)
+            $ child.skill('conversation').expert()
         "Блядую по черному. Молодость всего одна.":
-            $ child.skill('sex').expert(5)
+            $ child.skill('sex').expert()
         "Капчую. В дотан шпилю. Всё такое...":
             $ pass
             
@@ -220,17 +221,11 @@ label lbl_mom_info:
 
     return
     
-label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, determination=False):
+label lbl_skill_check(character=player):
     python:
         sabotage = False
         determination = False
-        failed = False
         vigor = False
-        if skill_to_use:
-            if character.skill(skill_to_use).level < 1:
-                failed = True
-    if failed:
-        return vigor, determination, sabotage
     menu:
         'Сделать спустя рукава':
             $ vigor = False
