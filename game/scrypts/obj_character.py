@@ -43,6 +43,7 @@ class Person(object):
         # init starting features
         self.add_feature(age)
         self.add_feature(gender)
+        self.availabe_actions = [] # used if we are playing slave-part
 
 
         self.allowance = 0         # Sparks spend each turn on a lifestyle
@@ -951,3 +952,12 @@ class Person(object):
         target.master = self
         self.slaves.append(target)
         self.relations(target)
+
+
+    def master_stance(self):
+        if self.player_controlled:
+            raise Exception('master_stance is only for npc')
+        stance = self.relations_player().master_stance
+        l = ['cruel', 'opressive', 'rightful', 'benevolent']
+        ind = l.index(stance)
+        return ind

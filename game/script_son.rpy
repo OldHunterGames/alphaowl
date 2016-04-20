@@ -201,13 +201,13 @@ label lbl_slave_lifestyle:
                 "Ой отрастил себе мамонище, девок пугать. Худей!":      # всегда доступно
                     $ child.ration['amount'] = "regime"
                     $ child.ration['target'] = 1
-                "Чтоб здоровенький был у нас, как Ванька Ерохин":       # oppressive и выше
+                "Чтоб здоровенький был у нас, как Ванька Ерохин" if mother.master_stance() > 0:       # oppressive и выше
                     $ child.ration['amount'] = "regime"
                     $ child.ration['target'] = 2
-                "Кожа да кости же, ухватиться не за что. Кушай лучше!": # 'rightful' и выше
+                "Кожа да кости же, ухватиться не за что. Кушай лучше!" if mother.master_stance() > 1: # 'rightful' и выше
                     $ child.ration['amount'] = "regime"
                     $ child.ration['target'] = 3
-                "Тётя Срака читала - кушать надо сколько душа просит":  # 'benevolent' и выше
+                "Тётя Срака читала - кушать надо сколько душа просит" if mother.master_stance() > 2:  # 'benevolent' и выше
                     $ child.ration['amount'] = "unlimited"           
     
     return
