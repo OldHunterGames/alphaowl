@@ -104,7 +104,31 @@ label lbl_son_manage:
             jump label_new_day
     
     return
-    
+
+label lbl_misery:
+    menu:
+        "Опишите тип исыпытваемой попоболи, когда BATYA применяет к вам меры дисциплинарного воздействия."
+        'Да не бомбит у меня!':
+            $ butthurt_force = 1
+            $ child.schedule.add_action('popo_bol', 'single')
+        'Ну таак... припекает':
+            $ butthurt_force = 2
+            $ child.schedule.add_action('popo_bol', 'single')
+        'Нехило так припекает...':
+            $ butthurt_force = 3
+            $ child.schedule.add_action('popo_bol', 'single')
+        'ПИЧОТ... МАМ ПРЯМ ПИЧОТ!':
+            $ butthurt_force = 4
+            $ child.schedule.add_action('popo_bol', 'single')
+        'POOKAN BOBMBANULO':
+            $ butthurt_force = 5
+            $ child.schedule.add_action('popo_bol', 'single')            
+        'Да не, я прикалываюсь ^_^':
+            $ child.schedule.remove_action('popo_bol')
+            
+    jump lbl_surrender
+    return
+
 label lbl_surrender:
     menu:
         "Давить на жалость":
@@ -115,10 +139,13 @@ label lbl_surrender:
         
         "Подлизываться":
             call lbl_asslick
-        
-        "Клянчить":
+
+        "Клянчить (нужын AP!)" if child.ap > 0:
             call lbl_beg
         
+        "Прорыв в отношениях (нужны AP)" if child.ap > 0:
+            call lbl_change_relations
+            
         "Оценить настроение мамки":
             call lbl_mom_info
             jump lbl_son_manage

@@ -15,6 +15,14 @@ label shd_general_accounting(character):
         
     return
     
+label shd_popo_bol(character):
+    python:
+        game.remorse(target = mom, power=butthurt_force)
+        child.wellness.set_shift(-butthurt_force)
+        mom.moral_action('evil', target = child)
+    'BATYA гандошит Cычу. Pain = [butthurt_force]. Злой постпок мамки в отношении Сычи. Самооценка матери: [mom.selfesteem]'
+    return   
+    
 label shd_batya_batya(character):
     python:
         game.torture(target = child, power=batya_force, taboos=['pain'])
@@ -51,7 +59,7 @@ label shd_discipline_hystery(character):
     python:
         mom.moral_action('ardent', target = child)        
         game.train(child, power=mom_power)
-    'Дисциплинарная эффекктивность мамкиной истерики [mom_power].'
+    'Дисциплинарная эффекктивность мамкиной истерики = [mom_power].'
 
     return   
 
