@@ -48,6 +48,34 @@ label evn_template(character):
 
 ######################################################## 
 
+label evn_teach_coding(character):
+        
+    python:
+        character.skill('coding').training = True
+    'С++ для чайников! Получен базовый навык программирования.'
+    return True
+
+label evn_teach_conversation(character):
+
+    python:
+        child.skill('conversation').training = True
+    'Чтобы справиться с Ерохой, надо мыслить как Ероха! Получен базовый навык социоблядства.'
+    return True
+
+label evn_teach_sex(character):
+        
+    python:
+        child.skill('sex').training = True
+    'BATYA знает как долго не кончать! Получена базовая сексуальная грамотность.'
+    return True
+
+label evn_teach_sports(character):
+        
+    python:
+        child.skill('sports').training = True
+    'Соблюдает дня режим - дЖым! Получены базовые знания о ЗОЖ.'
+    return True
+    
 
 label evn_dvach_coding(character):
     
@@ -160,11 +188,12 @@ label evn_do_major(character):
     $ result = child.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2),('activity', -1)])    
     
     python:
-       if result < 5:
+       if result < 4:
            txt = "Твёрдо решаешь засесть за курсовую \n @ \n Что-то сложновато  \n @ \n Завтра сделаю  \n @ \n За неделю - два параграфа..."
        else:
            txt = "Берешь себя за задницу покрепче \n @ \n Делаешь курсач как надо  \n @ \n Потом ещё неделю ловишь научрука... "
            game.studies.remove('major')        
+           child.skill('coding').expert(3)
    
     '[txt]'
    
@@ -184,11 +213,12 @@ label evn_do_gym(character):
     $ result = child.skillcheck(skill='sport', moral = moral, needs=[('ambition', 2),('comfort', -1),('activity', 3)])    
    
     python:
-       if result < 5:
+       if result < 3:
            txt = "Лазаем по канату \n @ \n Ебнулся на копчик  \n @ \n Группа ржёт как стадо гиен"
        else:
            txt = "Четко подтягиваешься \n @ \n Стометровка в нормативе  \n @ \n Фазген-семпай хвалит - ай, братуха-борцуха!"
-           game.studies.remove('gym')        
+           game.studies.remove('gym')       
+           child.skill('sports').expert(1)
    
     '[txt]'
    
@@ -208,11 +238,12 @@ label evn_do_practice_military(character):
     $ result = child.skillcheck(skill='sport', moral = moral, needs=[('activity', 2),('amusement', -2),('comfort', -1)]) 
    
     python:
-       if result < 5:
+       if result < 3:
            txt = "В колонну по двое \n @ \n Равнение на знамя \n @ \n Отдавил ноги впереди идущему \n @ \n Из-за тебя вся группа идет на пересдачу"
        else:
            txt = "Вспоминаешь видос про парад в лучшей Корее \n @ \n В голове играет hellmarch \n @ \n Шаг печаетается сам собой "
-           game.studies.remove('military')        
+           game.studies.remove('military')  
+           child.skill('sports').expert(1)
    
     '[txt]'
    
@@ -232,11 +263,12 @@ label evn_do_practice_military_chat(character):
     $ result = child.skillcheck(skill='communication', moral = moral, needs=[('communication', 1)])
    
     python:
-       if result < 5:
+       if result < 4:
            txt = "Пытаешься подружиться с подполканом \n @ \n А он вообще контуженный \n @ \n По итогам разговора - драишь до вечера очки"
        else:
            txt = "Расспрашиваешь старого подполкана про боевой опыт \n @ \n Он пускает скупую слезу по авганским друзьям \n @ \n И рисует тебе зачёт автоматом"
-           game.studies.remove('military')        
+           game.studies.remove('military')    
+           child.skill('conversation').expert(2)
    
     '[txt]'
    
@@ -256,11 +288,12 @@ label evn_do_practice_labs(character):
     $ result = child.skillcheck(skill='coding', moral = moral, needs=[('ambition', 3),('amusement', -2)]) 
    
     python:
-       if result < 5:
+       if result < 3:
            txt = "Пытаешься понять как это вообще работает \n @ \n Создаёшь велосипед на костыльной тяге  \n @ \n Но у тебя даже баги не фурычат"
        else:
            txt = "Вспоминаешь чему вас учили \n @ \n Сдаёшь профессору кривое но рабочее решение  \n @ \n А он и не против!"
-           game.studies.remove('labs')        
+           game.studies.remove('labs')     
+           child.skill('coding').expert(1)
    
     '[txt]'
    
@@ -280,11 +313,12 @@ label evn_do_practice_labs_chat(character):
     $ result = child.skillcheck(skill='communication', moral = moral, needs=[('communication', 2), ('ambition', -1)])
    
     python:
-       if result < 5:
+       if result < 4:
            txt = "Просишь у ботанов решение \n @ \n Послан нахуй  \n @ \n Даже ебаные задроты считают что они лучше тебя"
        else:
            txt = "Среди ботанов все свои \n @ \n Один из них такой же некрофил как профессор \n @ \n Можно самому и не напрягаться"
-           game.studies.remove('labs')        
+           game.studies.remove('labs')  
+           child.skill('conversation').expert(2)
    
     '[txt]'
    
@@ -304,11 +338,12 @@ label evn_do_practice_programm(character):
     $ result = child.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2)])    
    
     python:
-       if result < 5:
+       if result < 4:
            txt = "Весь день носишь ящики с перфокартами \n @ \n Роняешь один себе на ногу  \n @ \n Ренген показывает трещину \n @ \n  Неделю свободен"
        else:
            txt = "Скармлваешь Эльбрусу ящик перфокарт \n @ \n Понимаешь что это прикольно \n @ \n Как рулон бумаги в унитаз смыть  \n @ \n Руководитель подмахивает зачёт за усидчивость"
-           game.studies.remove('practice')        
+           game.studies.remove('practice')   
+           child.skill('coding').expert(2)
    
     '[txt]'
    
@@ -328,11 +363,12 @@ label evn_do_practice_programm_chat(character):
     $ result = child.skillcheck(skill='communication', moral = moral, needs=[('communication', 3)])
    
     python:
-       if result < 5:
+       if result < 3:
            txt = "Коллектив в перерыве расслабляется \n @ \n Пьют технические жидкости \n @ \nСблеванул \n @ \ncлабоват ещё для взрослой работы"
        else:
            txt = "Забухал с коллективом в подсобке \n @ \n Рассказал охуительных историй с учёбы \n @ \n Подписали весь лист практики на год вперёд"
            game.studies.remove('practice')        
+           child.skill('conversation').expert(1)
    
     '[txt]'
    

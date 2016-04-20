@@ -204,6 +204,7 @@ label subloc_work_perform:
     python:
         gain = result*10
         game.tenge += gain
+        child.skill('sports').expert(result)
     'Сычуля работает грузчиком. ([result])\n Нарушается табу на подчинение матери (2), удовлетворяется потребность в активности (2), подавляется развлечение (-3).\n Заработок: [gain] тенге'
     return
 
@@ -227,5 +228,6 @@ label subloc_whore_perform:
     python:
         gain = result*20
         game.tenge += gain
+        child.skill('sex').expert(result)
     'Сычуля работает на панели. ([result])\n Нарушается табу на сексуальную эксплуатацию (2), удовлетворяется потребность в общении (2), подавляются амбиции (-4) и авторитет (-2).\n Заработок: [gain] тенге'
     return

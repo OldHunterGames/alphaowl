@@ -69,9 +69,9 @@ label lbl_son_manage:
                             $ player.ap -= 1
                             $ EVGeneric(game, "evn_dvach_sex").trigger()
                             jump lbl_son_manage
-                        'Вкатиться в /fiz/' if not child.skill('coding').training:
+                        'Вкатиться в /fiz/' if not child.skill('sports').training:
                             $ player.ap -= 1
-                            $ EVGeneric(game, "evn_dvach_coding").trigger()
+                            $ EVGeneric(game, "evn_dvach_sports").trigger()
                             jump lbl_son_manage
                         'Засмеялся-обосрался. Рулеточки. ЦУИНЬ.':
                             $ player.ap -= 1
@@ -92,7 +92,11 @@ label lbl_son_manage:
                 "Потом подумаю":
                     jump lbl_son_manage
         
-        "Информация":
+        "Отношения в семье":
+            call lbl_surrender
+            jump lbl_son_manage
+        
+        "Смотреть в зеркало":
             call lbl_owl_info
             jump lbl_son_manage
         
@@ -100,3 +104,26 @@ label lbl_son_manage:
             jump label_new_day
     
     return
+    
+label lbl_surrender:
+    menu:
+        "Давить на жалость":
+            call lbl_misery
+            
+        "Вкалывать":
+            call lbl_serve
+        
+        "Подлизываться":
+            call lbl_asslick
+            
+        "Оценить настроение мамки":
+            call lbl_mom_info
+            jump lbl_son_manage
+
+        "Достаточно":
+            jump lbl_son_manage
+            
+    call lbl_surrender
+            
+    return
+    

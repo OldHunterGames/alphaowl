@@ -9,6 +9,8 @@ label lbl_mom_manage:
             call lbl_accomodation_rules
         "Правила и запреты":
             call lbl_rules            
+        "Требовать достижений" if player.ap > 0:
+            call lbl_developement
         "После учебы":
             call lbl_job_rules
         "Воспитание":
@@ -474,3 +476,81 @@ label lbl_job_rules:
             $ child.schedule.add_action('job_whore') 
     
     return
+    
+label lbl_developement:
+    menu:
+        'ЧТо-то одно в течечение недели...'
+        "Основные навыки":
+            menu:
+                'Хоть бы книжку почитал!' if not child.skill('coding').training:
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_teach_coding").trigger(child)
+                    jump lbl_mom_manage
+                'Тебе бы общаться поуверенней, как Ерохин!' if not child.skill('conversation').training:
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_teach_conversation").trigger(child)
+                    jump lbl_mom_manage
+                'Батя, поговори с ребёнком про ЭТО...' if not child.skill('sex').training:
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_teach_sex").trigger(child)
+                    jump lbl_mom_manage
+                'Зарядку у меня делать будешь. Кажное утро.' if not child.skill('sports').training:
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_teach_sports").trigger(child)
+                    jump lbl_mom_manage
+                'Да чему тебы учить. Ты же НУЛЕВОЙ!!!':
+                    call lbl_developement
+                
+        "Институт":
+            menu:
+                'Делай курсовую' if 'major' in game.studies:
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_do_major").trigger()
+                    jump lbl_mom_manage
+                    
+                'Сдай нормативы по физре' if study == 'gym':
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_do_gym").trigger()                            
+                    jump lbl_mom_manage
+
+                'Производственная практика' if study == 'practice':
+                    'На заводе по сборке вёдер  \n @ \n Наша инновационная ЭВМ "Эдьбрус-М"  \n @ \n  На перфокартах'
+                    menu:
+                        'Отпахать по честному':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_programm").trigger(child)    
+                        'Закорешиться с коллективом':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_programm_chat").trigger(child)    
+                    jump lbl_mom_manage
+
+                'Зачет на военной кафедре' if study == 'military':
+                    'Офицеры уже с утра бухие  \n @ \n Муштра на плацу как при Павле I \n @ \n Вечером зачет по строевой'
+                    menu:
+                        'Держать равнение налево':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_military").trigger(child)    
+                        'Подлизаться к товарищу подполковнику':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_military_chat").trigger(child)    
+                    jump lbl_mom_manage
+
+                'Лабы по программированию' if study == 'labs':
+                    'Старый профессор-некрофил  \n @ \n Задача на фортране  \n @ \n  Как буд-то кто-то им пользуется вообще'
+                    menu:
+                        'Накодить убер-алгоритм':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_labs").trigger(child)    
+                        'Скатать решение у ботанов':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_labs_chat").trigger(child)    
+                    jump lbl_mom_manage
+                    
+                'Совсем не учишься же, корзиночка...':
+                    jump lbl_developement 
+
+        "Назад":
+            call lbl_mom_manage
+    
+    return
+    

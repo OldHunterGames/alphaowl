@@ -38,15 +38,14 @@ label label_quiz:
                 child.alignment['Orderliness'] = "Conformal"
                 child.alignment['Activity'] = "Resonable"
                 child.alignment['Morality'] = "Selfish"
-                child.slave_stance = 'forced'
+                mother.master_stance = 'forced'
                 child.skill('coding').profession()
-                child.skill('sex').expert()
-                game.player = mother
+                game.player = child
                 player = game.player
                 mom = game.mother
                 mom.alignment['morality'] = 'evil'
                 player.player_controlled = True
-                child.set_relations(mother)    
+                mother.set_relations(child)    
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
@@ -80,13 +79,13 @@ label label_quiz:
     menu:
         "Чем по жизни занимаешься?"
         "Кодю, компилю, хакаю. Не палюсь.":
-            $ child.skill('coding').expert()
+            $ child.skill('coding').expert(5)
         "ЗОЖ. Брусья-брусья-турнички. Качалочка.":
-            $ child.skill('sports').expert()
+            $ child.skill('sports').expert(5)
         "Тусуюсь с друзьями.":
-            $ child.skill('conversation').expert()
+            $ child.skill('conversation').expert(5)
         "Блядую по черному. Молодость всего одна.":
-            $ child.skill('sex').expert()
+            $ child.skill('sex').expert(5)
         "Капчую. В дотан шпилю. Всё такое...":
             $ pass
             
@@ -172,7 +171,6 @@ label lbl_owl_info:
         job = child.job['name']
         desu = child.description()
         needs_overflow = child.show_needs('overflow')
-        needs_frustrated = child.show_needs('frustrated')        
         needs_tense = child.show_needs('tense')
         needs_relevant = child.show_needs('relevant')
         needs_statisfied = child.show_needs('satisfied')
@@ -187,7 +185,6 @@ label lbl_owl_info:
      Характер: [alignment]\n
      Отношение: [rel]\n
      Фокус: [focus]\n
-     Фрустрации: [needs_frustrated]\n
      Напряжения: [needs_tense]\n
      Актуальные нужды: [needs_relevant]\n
      Удовлетворённые: [needs_statisfied]\n          
@@ -195,10 +192,32 @@ label lbl_owl_info:
      Табу: \n[taboos]\n
      Особенности: \n[features]\n
      \n"
-     # 
 
     return
 
+label lbl_mom_info:
+    python:
+        alignment = mom.alignment['Orderliness'] +' '+ mom.alignment['Activity'] +' '+ mom.alignment['Morality'] 
+        needs_overflow = mom.show_needs('overflow')
+        needs_tense = mom.show_needs('tense')
+        needs_relevant = mom.show_needs('relevant')
+        needs_statisfied = mom.show_needs('satisfied')
+        features = mom.show_features()
+        rel = child.relations(mom).description()
+        txt = "Настроение: " + str(mom.mood()) + " | Благоволение: " + str(mom.favor())
+    "[txt] | Энергия: [mom.vigor] \n
+     Тэнге: [game.tenge] \n
+     Характер: [alignment]\n
+     Отношение: [rel]\n
+     Напряжения: [needs_tense]\n
+     Актуальные нужды: [needs_relevant]\n
+     Удовлетворённые: [needs_statisfied]\n          
+     Пресыщения: [needs_overflow]\n     
+     Особенности: \n[features]\n
+     \n"
+
+    return
+    
 label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, determination=False):
     python:
         sabotage = False
