@@ -188,26 +188,31 @@ label lbl_asslick:
     return
 
 label lbl_slave_lifestyle:
-    'Корзиночка может поменять условия своей жизни, но только в тех пределах что ему разрешает мамка. Для расширения вариантов надо улучшать её master_stance или выклянчивать отдельные разрешения.'
     menu:
+        'Корзиночка может поменять условия своей жизни, но только в тех пределах что ему разрешает мамка. Для расширения вариантов надо улучшать её master_stance или выклянчивать отдельные разрешения.'
         "Питание (количество)":
             menu:
-                "А ты вот посиди без етьбы, знать будешь как матери губить!":   # всегда доступно
+                "А ты вот посиди без етьбы, знать будешь как матери губить!":   
                     $ child.ration['amount'] = "starvation"   
                     $ child.ration['food_type'] = "forage"   
                     $ child.ration['target'] = 0           
                     $ child.ration['limit'] = None
                     jump lbl_mom_manage  
-                "Ой отрастил себе мамонище, девок пугать. Худей!":      # всегда доступно
+                "Ой отрастил себе мамонище, девок пугать. Худей!":      
                     $ child.ration['amount'] = "regime"
                     $ child.ration['target'] = 1
-                "Чтоб здоровенький был у нас, как Ванька Ерохин" if mother.master_stance() > 0:       # oppressive и выше
+                "Чтоб здоровенький был у нас, как Ванька Ерохин" if mother.master_stance() > 0 or 'food_ammount_healty' in player.availabe_actions:       
                     $ child.ration['amount'] = "regime"
                     $ child.ration['target'] = 2
-                "Кожа да кости же, ухватиться не за что. Кушай лучше!" if mother.master_stance() > 1: # 'rightful' и выше
+                "Кожа да кости же, ухватиться не за что. Кушай лучше!" if mother.master_stance() > 1 or 'food_ammount_chuby' in player.availabe_actions: 
                     $ child.ration['amount'] = "regime"
                     $ child.ration['target'] = 3
-                "Тётя Срака читала - кушать надо сколько душа просит" if mother.master_stance() > 2:  # 'benevolent' и выше
+                "Тётя Срака читала - кушать надо сколько душа просит" if mother.master_stance() > 2 or 'food_ammount_any' in player.availabe_actions:  
                     $ child.ration['amount'] = "unlimited"           
-    
+
+        "Достаточно":
+            jump lbl_son_manage
+            
+    jump lbl_slave_lifestyle
     return
+    
