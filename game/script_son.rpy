@@ -114,7 +114,7 @@ label lbl_misery:
         'Ну таак... припекает':
             $ butthurt_force = 2
             $ child.schedule.add_action('popo_bol', 'single')
-        'Нехило так припекает...':
+        'Нехило вообще-то припекает...':
             $ butthurt_force = 3
             $ child.schedule.add_action('popo_bol', 'single')
         'ПИЧОТ... МАМ ПРЯМ ПИЧОТ!':
@@ -129,13 +129,39 @@ label lbl_misery:
     jump lbl_surrender
     return
 
+label lbl_asslick:
+    menu:
+        "СЫЧА СЕГОДНЯ У МАМЫ ПОМЩНИК!"
+        'Процессор не влючается! Сыча, тыжпрогроммист.':
+            $ help_skill = 'coding'
+            $ need_helped = 'comfort'
+            $ child.schedule.add_action('help_mom', 'single')
+        'BATYA пьяный опять. Хоть ты со мной поговори.':
+            $ help_skill = 'conversation'
+            $ need_helped = 'communication'
+            $ child.schedule.add_action('help_mom', 'single')
+        'Надо холодильник на дачу отвезти. На поезде.':
+            $ help_skill = 'sports'
+            $ need_helped = 'authority'            
+            $ child.schedule.add_action('help_mom', 'single')
+        'Помассируй маме ножки, корзиночка.':
+            $ help_skill = 'sex'
+            $ need_helped = 'wellness'            
+            $ child.schedule.add_action('help_mom', 'single')            
+        'Ой всё':
+            $ child.schedule.remove_action('help_mom')
+            
+    jump lbl_surrender
+    return
+    
 label lbl_surrender:
     menu:
         "Давить на жалость":
             call lbl_misery
             
         "Вкалывать":
-            call lbl_serve
+            'СКАЗАЛ МАМЕ \n @ \nЧТО БУДЕШЬ УЧИТЬСЯ НА ЧЕТВЁРКИ И ПЯТЁРКИ \n @ \nДА КОККОЕ ТЕБЕ УЧИТЬСЯ КОРЗИНОЧКА \n @ \nТЫ ЖЕ У НАС НУЛЕВОЙ!'
+            $ child.schedule.add_action('learn_good', 'single')
         
         "Подлизываться":
             call lbl_asslick

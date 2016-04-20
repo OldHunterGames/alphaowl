@@ -15,6 +15,15 @@ label shd_general_accounting(character):
         
     return
     
+label shd_help_mom(character):
+    'Мамин помощник'
+    python:
+        moral = child.moral_action('good', target = mom)
+        result = child.skillcheck(skill=help_skill, moral = moral needs=[('ambition', -3),('altruism', 2)])            
+        game.gratifaction(target = mom, power=result, need = [need_helped])
+    'Качество подлизывания = result'
+    return   
+    
 label shd_popo_bol(character):
     python:
         game.remorse(target = mom, power=butthurt_force)
@@ -192,6 +201,20 @@ label subloc_chores_perform:
     $ child.drain_vigor()
     return
 
+label shd_learn_good(character):
+    "ВРЕМЯ ИДТИ В ИНСТИТУТ \n @ \n ИНСТИТУТ САМ В СЕБЯ НЕ ПОЙДЁТ"
+    python:
+        child.moral_action('lawful', target = mom)
+        result = child.skillcheck('coding', needs=[('activity', -2),('amusement', -3)])
+    if result >= 0:
+        $ game.duty(target = mom, power = result)   
+        '\n @ \nИ неплохо учишься! \n @ \nКак маме обещал (confidence = [result])'
+    else:
+        '\n @ \nИ ОПЯТЬ НИЗАЧОТ! \n @ \nА ВЕДЬ МАМЕ ОБЕЩАЛ...)' 
+        $ child.independence.set_shift(2)
+            
+    return    
+    
 
 label shd_job_work(character):
     python:

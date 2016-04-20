@@ -38,14 +38,16 @@ label label_quiz:
                 child.alignment['orderliness'] = "conformal"
                 child.alignment['activity'] = "reasonable"
                 child.alignment['morality'] = "selfish"
-                mother.master_stance = 'forced'
                 child.skill('coding').profession()
                 game.player = child
                 player = game.player
                 mom = game.mother
                 mom.alignment['morality'] = 'evil'
                 player.player_controlled = True
-                mother.set_relations(child)    
+                mom.set_relations(child)    
+                mom.add_feature('female')
+                mom.add_feature('mature')
+                mom.master_stance = 'opressive'
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
