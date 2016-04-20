@@ -623,6 +623,8 @@ class Person(object):
                 f = flist[ind]
                 if f:
                     self.add_feature(flist[ind])
+                else:
+                    self.feature_by_slot('shape').remove()
         if self.calorie_storage > 0:
             chance = randint(1, 10)
             if self.calorie_storage >= chance:
@@ -636,7 +638,8 @@ class Person(object):
                 f = flist[ind]
                 if f:
                     self.add_feature(f)
-
+                else:
+                    self.feature_by_slot('shape').remove()
     def nutrition_change(self, food_consumed):
         if food_consumed < self.food_demand():
             self.ration["overfeed"] -= 1

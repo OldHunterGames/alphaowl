@@ -55,6 +55,7 @@ class Skill(object):
     
 
     def profession(self, power=5):
+        self.training = True
         self.expirience = True
         self.specialization = True
         self.expirience_slot = power
