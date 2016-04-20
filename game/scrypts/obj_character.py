@@ -31,8 +31,6 @@ class Person(object):
         self.tokens = []             # Special resources to activate various events
         self.master = None          # If this person is a slave, the master will be set
         self.slave_stance = 'rebellious'     # rebellious, forced, accustomed or willing
-        self.master_stance = ''
-        self.recognition_stance = ''
         self.supervisor = None
         self.is_slave = False
         self.slaves = []
