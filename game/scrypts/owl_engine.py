@@ -106,6 +106,6 @@ class Engine(object):
     def duty(self, target, power):
         if power > target.duty_threshold():
             target.relations_player().add_token('confidence')
-    def gratification(self, target, power, needs):
-        if power > target.gratification_threshold(needs):
+    def gratifaction(self, target, power, needs):
+        if power > target.gratifaction_threshold(needs):
             target.relations_player().add_token('craving')
