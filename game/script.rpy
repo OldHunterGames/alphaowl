@@ -35,9 +35,9 @@ label label_quiz:
             python:
                 child.add_feature('male')
                 child.add_feature('adolescent')
-                child.alignment['Orderliness'] = "Conformal"
-                child.alignment['Activity'] = "Resonable"
-                child.alignment['Morality'] = "Selfish"
+                child.alignment['orderliness'] = "Conformal"
+                child.alignment['activity'] = "Resonable"
+                child.alignment['morality'] = "Selfish"
                 mother.master_stance = 'forced'
                 child.skill('coding').profession()
                 game.player = child
@@ -92,29 +92,29 @@ label label_quiz:
     menu:
         "Давай вспомним твои школьные годы. Много двоек было за прогулы?"
         "Никаких прогулов. У меня расписание чёткое.":
-            $ child.alignment['Orderliness'] = "Lawful"
+            $ child.alignment['orderliness'] = "Lawful"
         "А чё я? Все прогуливали и я прогуливал.":
-            $ child.alignment['Orderliness'] = "Conformal"
+            $ child.alignment['orderliness'] = "Conformal"
         "Делаю что хочу. Я вообще не контролируемый!":
-            $ child.alignment['Orderliness'] = "Chaotic"
+            $ child.alignment['orderliness'] = "Chaotic"
             
     menu:
         "Новая знакомая в скайпе предлагает тебе зависнуть с ней и ещё двумя подругами на ночь, на незнакомой хате в Медвеково. Твои действия?"
         "Пожаловаться на спам. Скрыть.":
-            $ child.alignment['Activity'] = "Timid"
+            $ child.alignment['activity'] = "Timid"
         "В Медведково? Ну хрееееееен знает...":
-            $ child.alignment['Activity'] = "Resonable"
+            $ child.alignment['activity'] = "Resonable"
         "Я за любой кипеш, кроме голодовки!":
-            $ child.alignment['Activity'] = "Ardent"
+            $ child.alignment['activity'] = "Ardent"
             
     menu:
         "Идёшь по улице. Кушаешь вкусный бутер с колбаской. К тебе подбегает няшный котик и просит кусочек."
         "Пнуть блохастого. Это моя колбаса. Плохая киса!":
-            $ child.alignment['Morality'] = "Evil"
+            $ child.alignment['morality'] = "Evil"
         "Пройти мимо. Пусть бабки подъездные его прикармливают.":
-            $ child.alignment['Morality'] = "Selfish"
+            $ child.alignment['morality'] = "Selfish"
         "Конечно дать колбаски. Да я бы и собаке...":
-            $ child.alignment['Morality'] = "Good"          
+            $ child.alignment['morality'] = "Good"          
     
     menu:
         "А что если мамка уроки делать заставит?"
@@ -125,7 +125,7 @@ label label_quiz:
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
             $ child.slave_stance = 'rebellious'
             
-    $ alignment = child.alignment['Orderliness'] +' '+ child.alignment['Activity'] +' '+ child.alignment['Morality'] 
+    $ alignment = child.alignment['orderliness'] +' '+ child.alignment['activity'] +' '+ child.alignment['morality'] 
     "Твой алаймент: [alignment]"
 
     menu:
@@ -197,7 +197,7 @@ label lbl_owl_info:
 
 label lbl_mom_info:
     python:
-        alignment = mom.alignment['Orderliness'] +' '+ mom.alignment['Activity'] +' '+ mom.alignment['Morality'] 
+        alignment = mom.alignment['orderliness'] +' '+ mom.alignment['activity'] +' '+ mom.alignment['morality'] 
         needs_overflow = mom.show_needs('overflow')
         needs_tense = mom.show_needs('tense')
         needs_relevant = mom.show_needs('relevant')

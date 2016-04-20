@@ -115,7 +115,10 @@ label lbl_surrender:
         
         "Подлизываться":
             call lbl_asslick
-            
+        
+        "Клянчить":
+            call lbl_beg
+        
         "Оценить настроение мамки":
             call lbl_mom_info
             jump lbl_son_manage
