@@ -83,7 +83,7 @@ class Engine(object):
         tear = target.pain_tear_threshold(taboo)
         tokens = []
         if power > tear:
-            tokens.append('angst')
+            target.anxiety += 1
             tokens.append('dread')
         elif power > effect:
             tokens.append('dread')
@@ -91,11 +91,21 @@ class Engine(object):
             return
         target.taboo(taboo).use(power)
         for i in tokens:
-            target.add_token(i)
+            target.relations_player().add_token(i)
         return
 
 
     def train(self, target, power=0):
         target_resistance = target.training_resistance()
         if target_resistance < power:
-            target.add_token('discipline')
+            target.relations_player().add_token('discipline')
+
+    def remorse(self, target, power):
+        if power > target.remorse_threshold():
+            target.relations_player().add_token('compassion')
+    def duty(self, target, power):
+        if power > target.duty_threshold():
+            target.relations_player().add_token('confidence')
+    def gratification(self, target, power, needs):
+        if power > target.gratification_threshold(needs):
+            target.relations_player().add_token('craving')
