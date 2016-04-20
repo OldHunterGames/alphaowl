@@ -98,5 +98,5 @@ class Relations(object):
         self.__dict__[axis] = rel
 
     def description(self):
-        return (self.fervor, self.distance, self.affection)
+        return (self.fervor, self.distance, self.congruence)
 
