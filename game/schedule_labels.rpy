@@ -29,7 +29,7 @@ label shd_popo_bol(character):
         game.remorse(target = mom, power=butthurt_force)
         child.wellness.set_shift(-butthurt_force)
         mom.moral_action('evil', target = child)
-    'BATYA гандошит Cычу. Pain = [butthurt_force]. Злой постпок мамки в отношении Сычи. Самооценка матери: [mom.selfesteem]'
+    'BATYA гандошит Cычу. Pain = [butthurt_force]. Злой поступок мамки в отношении Сычи. Самооценка матери: [mom.selfesteem]'
     return   
     
 label shd_batya_batya(character):
@@ -37,7 +37,7 @@ label shd_batya_batya(character):
         game.torture(target = child, power=batya_force, taboos=['pain'])
         child.wellness.set_shift(-batya_force)
         mom.moral_action('evil', target = child)
-    'BATYA гандошит Cычу. Pain = [batya_force]. Злой постпок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
+    'BATYA гандошит Cычу. Pain = [batya_force]. Злой поступок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
     return   
     
 label shd_mom_abuse(character):
