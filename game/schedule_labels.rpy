@@ -19,9 +19,9 @@ label shd_help_mom(character):
     'Мамин помощник'
     python:
         moral = child.moral_action('good', target = mom)
-        result = child.skillcheck(skill=help_skill, moral = moral needs=[('ambition', -3),('altruism', 2)])            
-        game.gratifaction(target = mom, power=result, need = [need_helped])
-    'Качество подлизывания = result'
+        result = child.skillcheck(help_skill, moral = moral, needs=[('ambition', -3),('altruism', 2)])     
+        game.gratifaction(target = mom, power=result, needs = [need_helped])
+    'Качество подлизывания = [result]'
     return   
     
 label shd_popo_bol(character):
