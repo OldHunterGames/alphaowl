@@ -395,7 +395,7 @@ class Person(object):
 
     
     def obedience(self):
-        if not self.is_slave:
+        if not self.is_slave or self.player_controlled:
             return 0
         obedience = 0
 
@@ -424,29 +424,29 @@ class Person(object):
 
 
     def favor(self):
-        if not self.master:
+        if not self.master or self.player_controlled:
             return 0
         favor = 0
         if self.master.alignment["orderliness"] == "lawful":
-            favor += self.relations(self.master).confidence*2
+            favor += self.relations_player().confidence*2
         elif self.master.alignment["orderliness"] == "chaotic":
-            favor += self.relations(self.master).confidence/2
+            favor += self.relations_player().confidence/2
         else:
-            favor += self.relations(self.master).confidence
+            favor += self.relations_player().confidence
 
         if self.master.alignment["activity"] == "timid":
-            favor += self.relations(self.master).craving*2
+            favor += self.relations_player().craving*2
         elif self.master.alignment["activity"] == "ardent":
-            favor+= self.relations(self.master).craving/2
+            favor+= self.relations_player().craving/2
         else:
-            favor += self.relations(self.master).craving
+            favor += self.relations_player().craving
 
         if self.master.alignment["morality"] == "evil":
-            favor += self.relations(self.master).compassion*2
+            favor += self.relations_player().compassion*2
         elif self.master.alignment["morality"] == "good":
-            favor += self.relations(self.master).compassion/2
+            favor += self.relations_player().compassion/2
         else:
-            favor += self.relations(self.master).compassion
+            favor += self.relations_player().compassion
         return favor
 
     def duty_threshold(self):
