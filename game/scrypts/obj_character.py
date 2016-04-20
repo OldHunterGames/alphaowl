@@ -31,7 +31,10 @@ class Person(object):
         self.tokens = []             # Special resources to activate various events
         self.master = None          # If this person is a slave, the master will be set
         self.slave_stance = 'rebellious'     # rebellious, forced, accustomed or willing
+        self.master_stance = ''
+        self.recognition_stance = ''
         self.supervisor = None
+        self.is_slave = False
         self.slaves = []
         self.subordinates = []
         self.ap = 1
@@ -41,10 +44,6 @@ class Person(object):
         self.add_feature(age)
         self.add_feature(gender)
 
-        # Slave stats, for obedience:
-        self.dread = 0
-        self.dependence = 0
-        self.discipline = 0
 
         self.allowance = 0         # Sparks spend each turn on a lifestyle
         self.ration = {
@@ -81,12 +80,13 @@ class Person(object):
         self.calorie_storage = 0
         self.money = 0
         self._determination = 0
+        self._anxiety = 0
         self.rewards = []
         self.used_rewards = []
 
         # Other persons known and relations with them, value[1] = [needed points, current points]
         self._relations = []
-        self.tokens_difficulty = {'dread': 0, 'dependence': 0, 'discipline': 0}
+        
         self.selfesteem = 0
         self.conditions = []
 
@@ -130,6 +130,14 @@ class Person(object):
         self._determination = value
         if self._determination < 0:
             self._determination = 0
+    @property
+    def anxiety(self):
+        return self._anxiety
+    @anxiety.setter
+    def anxiety(self, value):
+        self._anxiety = value
+        if self._anxiety < 0:
+            self_anxiety = 0
 
 
     @property
@@ -247,7 +255,8 @@ class Person(object):
 
 
     def pain_effect_threshold(self, taboo):
-        threshold = self.vigor + self.spirit + self.tokens_difficulty['dread'] - self.taboo(taboo).value
+        dif = self.relations(self.master).tokens_difficulty['dread'] if self.master else 0
+        threshold = self.vigor + self.spirit + dif - self.taboo(taboo).value
         return threshold
 
     def pain_tear_threshold(self, taboo):
@@ -268,7 +277,6 @@ class Person(object):
             skill = Skill(self, skillname)
         self.skills.append(skill)
         return skill
-
 
 
 
@@ -387,31 +395,86 @@ class Person(object):
 
     
     def obedience(self):
+        if not self.is_slave:
+            return 0
         obedience = 0
 
         if self.alignment["orderliness"] == "lawful":
-            obedience += self.discipline*2
+            obedience += self.relations(self.master).discipline*2
         elif self.alignment["orderliness"] == "chaotic":
-            obedience += self.discipline/2
+            obedience += self.relations(self.master).discipline/2
         else:
-            obedience += self.discipline
+            obedience += self.relations(self.master).discipline
 
         if self.alignment["activity"] == "timid":
-            obedience += self.dependence*2
+            obedience += self.relations(self.master).dependence*2
         elif self.alignment["activity"] == "ardent":
-            obedience += self.dependence/2
+            obedience += self.relations(self.master).dependence/2
         else:
-            obedience += self.dependence
+            obedience += self.relations(self.master).dependence
 
         if self.alignment["morality"] == "evil":
-            obedience += self.dread*2
+            obedience += self.relations(self.master).dread*2
         elif self.alignment["morality"] == "good":
-            obedience += self.dread/2
+            obedience += self.relations(self.master).dread/2
         else:
-            obedience += self.dread
+            obedience += self.relations(self.master).dread
 
         return obedience
-    
+
+
+    def favor(self):
+        if not self.master:
+            return 0
+        favor = 0
+        if self.master.alignment["orderliness"] == "lawful":
+            favor += self.relations(self.master).confidence*2
+        elif self.master.alignment["orderliness"] == "chaotic":
+            favor += self.relations(self.master).confidence/2
+        else:
+            favor += self.relations(self.master).confidence
+
+        if self.master.alignment["activity"] == "timid":
+            favor += self.relations(self.master).craving*2
+        elif self.master.alignment["activity"] == "ardent":
+            favor+= self.relations(self.master).craving/2
+        else:
+            favor += self.relations(self.master).craving
+
+        if self.master.alignment["morality"] == "evil":
+            favor += self.relations(self.master).compassion*2
+        elif self.master.alignment["morality"] == "good":
+            favor += self.relations(self.master).compassion/2
+        else:
+            favor += self.relations(self.master).compassion
+        return favor
+
+    def duty_threshold(self):
+        if self.player_controlled:
+            return 0
+        mod = self.relations_player().tokens_difficulty['confidence']
+        threshold = self.authority.level + self.order.level - self.independence.level + mod
+        return threshold
+
+    def gratification_threshold(self, needs=[]):
+        if self.player_controlled:
+            return 0
+        mod = self.relations_player().tokens_difficulty['craving']
+        n = 0
+        for need in needs:
+            if getattr(self, need).level > n:
+                n = getattr(self, need).level
+        threshold = 3 + self.spirit + self.mood()[1] - n + mod
+
+    def remorse_threshold(self):
+        if self.player_controlled:
+            return 0
+        mod = self.relations_player().tokens_difficulty['compassion']
+        threshold = self.ambition.level + self.power.level - self.altruism.level - self.sensitivity - self.mood()[1]
+        if threshold < 0:
+            threshold = 0
+        threshold += mod
+        return threshold
 
     
     def reduce_overflow(self):
@@ -651,12 +714,22 @@ class Person(object):
 
 
     def set_relations(self, person):
-        for relation in self._relations:
-            if relation.target == person:
-                return
-        if self.player_controlled or person.player_controlled:
-            self._relations.append(Relations(self, person))
-            person._relations.append(Relations(person, self))
+        if self.player_controlled:
+            for relation in self._relations:
+                if relation.owner == person:
+                    return 
+        else:
+            for relation in self._relations:
+                if relation.target == person:
+                    return
+        if self.player_controlled:
+            rel = Relations(person, self)
+            self._relations.append(rel)
+            person._relations.append(rel)
+        elif person.player_controlled:
+            rel = Relations(self, person)
+            self._relations.append(rel)
+            person._relations.append(rel)
         else:
             # simple relations model needed for npc-npc relations
             return
@@ -665,19 +738,31 @@ class Person(object):
     def relations(self, person):
         self.set_relations(person)
         for relation in self._relations:
-            if relation.target == person:
-                return relation
+            if self.player_controlled:
+                if relation.target == self:
+                    return relation
+            else:
+                if relation.target == person:
+                    return relation
         
 
     def relations_tokens(self, person):
         if self.player_controlled:
             for rel in self._relations:
-                if rel.target == person:
+                if rel.target == self:
                     return rel._tokens
         else:
             for rel in self._relations:
                 if isinstance(rel, Relations):
-                    return rel.target.relations(self)._tokens
+                    return rel.target.relations(person)._tokens
+
+    def relations_player(self):
+        if self.player_controlled:
+            return None
+        else:
+            for rel in self._relations:
+                if rel.target.player_controlled:
+                    return rel
 
 
 
@@ -685,7 +770,8 @@ class Person(object):
         self.rewards.append((name, need))
 
     def bribe_threshold(self):
-        threshold = 3 + self.spirit - self.sensitivity - self.tokens_difficulty['dependence']
+        dif = self.relations(self.master).tokens_difficulty['dependence'] if self.master else 0
+        threshold = 3 + self.spirit - self.sensitivity + dif
         return threshold
 
     def bribe(self):
@@ -722,14 +808,10 @@ class Person(object):
             return
 
     def training_resistance(self):
-        return self.insurgensy() + self.mind - 1 + self.tokens_difficulty['discipline']
+        dif = self.relations(self.master).tokens_difficulty['discipline'] if self.master else 0
+        return self.insurgensy() + self.mind - 1 + dif
     
 
-    def add_token(self, token):
-        if not token in self.tokens or token=='angst':
-            if self.player_controlled:
-                renpy.call_in_new_context('lbl_notify', token)
-            self.tokens.append(token)
 
 
     def use_token(self, token):
@@ -812,14 +894,14 @@ class Person(object):
                     result += 1
             elif target:
                 if valact == 1:
-                    if self.relations(target).affection == 'friend':
+                    if self.relations(target).congruence == 'supporter':
                         result += 1
-                    elif self.relations(target).affection == 'foe':
+                    elif self.relations(target).congruence == 'contradictor':
                         result -= 1
                 elif valact == -1:
-                    if self.relations(target).affection == 'foe':
+                    if self.relations(target).congruence == 'contradictor':
                         result -= 1
-                    elif self.relations(target).affection == 'friend':
+                    elif self.relations(target).congruence == 'supporter':
                         result += 1
         self.selfesteem += result
         return result
@@ -842,3 +924,10 @@ class Person(object):
         if not name in self.conditions:
             self.conditions.append(name)
         return
+
+
+    def enslave(self, target):
+        target.is_slave = True
+        target.master = self
+        self.slaves.append(target)
+        self.relations(target)

@@ -13,7 +13,7 @@ init python:
     mother = game.mother
     child.master = mother
     register_actions()
-    child.master = mother
+    mother.enslave(child)
 
     
 # Игра начинается здесь.
@@ -204,6 +204,7 @@ label lbl_skill_check(character=player, skill_to_use=None, res_to_use=None, dete
         sabotage = False
         determination = False
         failed = False
+        vigor = False
         if skill_to_use:
             if character.skill(skill_to_use).level < 1:
                 failed = True
@@ -254,6 +255,6 @@ label lbl_resist_result(effect, success):
     else:
         'Вы попытались справиться с [effect] но вам не удалось'
     return
-label lbl_notify(effect):
+label lbl_notify(character, effect):
     'Вы получили [effect]'
     return

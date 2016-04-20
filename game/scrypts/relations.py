@@ -1,18 +1,30 @@
 # -*- coding: UTF-8 -*-
+import renpy.store as store
+import renpy.exports as renpy
 
 
 class Relations(object):
     _fervor = ['delicate', 'plain', 'intense']
     _distance = ['formal', 'close', 'intimate']
-    _affection = ['foe', 'associate', 'friend']
+    _congruence = ['contradictor', 'associate', 'supporter']
     def __init__(self, owner, target):
         self.owner = owner
         self.target = target
         self.fervor = 'plain'
         self.distance = 'close'
-        self.affection = 'associate'
+        self.congruence = 'associate'
+        self.slave_stance = 'rebellious' # can be 'rebellious', 'forced', 'accustomed', 'willing'
+        self.master_stance = 'cruel' # can be 'cruel', 'opressive', 'rightful', 'benevolent'
+        self.recognition_stance = ''
+        self.respect = None
         self._tokens = []
-        self._tokens_difficulty = {'power': 0, 'feebleness': 0, 'reliance': 0, 'fondness': 0, 'hatered': 0}
+        self.tokens_difficulty = {'dread': 0, 'dependence': 0, 'discipline': 0, 'compassion': 0, 'confidence': 0, 'craving': 0}
+        self.dread = 0
+        self.dependence = 0
+        self.discipline = 0
+        self.confidence = 0
+        self.compassion = 0
+        self.craving = 0
 
     @property
     def tokens(self):
@@ -24,6 +36,7 @@ class Relations(object):
                     self.owner.relations_tokens(self.target).append(token)
             else:
                 self.owner.relations_tokens(self.target).append(token)
+            renpy.call_in_new_context('lbl_notify', self.owner, token)
 
  
     def has_token(self, token):
@@ -56,7 +69,7 @@ class Relations(object):
                         self.add_token('accordance')
                     elif self.owner.alignment['activity'] == 'ardent':
                         self.add_token('antagonism')
-                if axis == 'affection':
+                if axis == 'congruence':
                     if self.owner.alignment['morality'] == 'good':
                         self.add_token('accordance')
                     elif self.owner.alignment['morality'] == 'evil':
@@ -75,7 +88,7 @@ class Relations(object):
                         self.add_token('antagonism')
                     elif self.owner.alignment['activity'] == 'ardent':
                         self.add_token('accordance')
-                if axis == 'affection':
+                if axis == 'congruence':
                     if self.owner.alignment['morality'] == 'good':
                         self.add_token('antagonism')
                     elif self.owner.alignment['morality'] == 'evil':
