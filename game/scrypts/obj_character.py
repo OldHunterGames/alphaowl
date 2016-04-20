@@ -456,7 +456,7 @@ class Person(object):
         threshold = self.authority.level + self.order.level - self.independence.level + mod
         return threshold
 
-    def gratification_threshold(self, needs=[]):
+    def gratifaction_threshold(self, needs=[]):
         if self.player_controlled:
             return 0
         mod = self.relations_player().tokens_difficulty['craving']
