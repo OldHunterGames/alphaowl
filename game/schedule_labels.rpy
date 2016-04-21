@@ -276,7 +276,7 @@ label subloc_whore_perform:
         child.skill('sex').expert(result)
         mom.power.set_shift(5)           
         mom.prosperity.set_shift(result+2)    
-        mom.moral_action('evil', 'lawful', 'ardent' target = child)
+        mom.moral_action('evil', 'lawful', 'ardent', target = child)
         child.moral_action('timid', target = mom)            
     'Сычуля работает на панели, чувствуя себя timid. ([result])\n Нарушается табу на сексуальную эксплуатацию (2), удовлетворяется потребность в общении (2), подавляются амбиции (-4) и авторитет (-2).\n Заработок (для мамы!): [gain] тенге. Мамка чувствует своё могущество, энергию и власть, злой поступок.'
     return
