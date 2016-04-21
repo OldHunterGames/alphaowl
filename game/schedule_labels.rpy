@@ -21,6 +21,7 @@ label shd_help_mom(character):
         moral = child.moral_action('good', target = mom)
         result = child.skillcheck(help_skill, moral = moral, needs=[('ambition', -3),('altruism', 2)])     
         game.gratifaction(target = mom, power=result, needs = [need_helped])
+        mom.need_helped.set_shift(result)        
     'Качество подлизывания = [result]'
     return   
     
@@ -177,8 +178,9 @@ label shd_job_idle(character):
 label shd_job_study(character):
     python:
         character.skills_used.append('coding')
-    'Домашка сделана.'
-        
+    'Домашка сделана. Порядочный и добрый поступок матери. Порядочный и кроткий поступок Сычи.'
+    $ mom.moral_action('lawful', 'good', target = child)       
+    $ child.moral_action('lawful', 'timid', target = mom)    
     return    
     
 label shd_job_chores(character):
@@ -192,13 +194,17 @@ label shd_job_chores(character):
     return    
 
 label subloc_chores_sabotage:
-    'Сычуля саботирует уборку. ([result])\nУдовлетворяется потребность в независимости (2)'
-    $ child.independence.set_shift(2)
+    'Сычуля саботирует уборку чувствуя себя свободным и могучим. ([result])\nУдовлетворяется потребность в независимости (4) \n Авторитет мамки страдает (-3)'
+    $ child.independence.set_shift(4)
+    $ mom.authority.set_shift(-3)    
+    $ child.moral_action('chaotic', 'evil', target = mom)     
     return
 
 label subloc_chores_perform:
-    'Сычуля убирается в доме. ([result])\n Нарушается табу на подчинение матери (1), удовлетворяется альтруизм (2), подавляется развлечение (-1), усталость.'
+    'Сычуля убирается в доме чувствуя себя правильным и хорошим. ([result])\n Нарушается табу на подчинение матери (1), удовлетворяется альтруизм (2), подавляется развлечение (-1), усталость. Порядочный поступок матери.'
     $ child.drain_vigor()
+    $ mom.moral_action('lawful', target = child)   
+    $ child.moral_action('lawful', 'good', target = mom)         
     return
 
 label shd_learn_good(character):
@@ -212,6 +218,7 @@ label shd_learn_good(character):
     else:
         '\n @ \nИ ОПЯТЬ НИЗАЧОТ! \n @ \nА ВЕДЬ МАМЕ ОБЕЩАЛ...)' 
         $ child.independence.set_shift(2)
+        
             
     return    
     
@@ -227,8 +234,10 @@ label shd_job_work(character):
     return    
 
 label subloc_work_sabotage:
-    'Сычуля саботирует работу грузчика. ([result])\nУдовлетворяется потребность в независимости (2)'
-    $ child.independence.set_shift(2)
+    'Сычуля саботирует работу грузчика чувствуя свободу. ([result])\nУдовлетворяется потребность в независимости (3) \n Авторитет мамки страдает (-2)'
+    $ child.independence.set_shift(3)
+    $ mom.authority.set_shift(-2)
+    $ child.moral_action('chaotic', target = mom)      
     return
 
 label subloc_work_perform:
@@ -236,7 +245,11 @@ label subloc_work_perform:
         gain = result*10
         game.tenge += gain
         child.skill('sports').expert(result)
-    'Сычуля работает грузчиком. ([result])\n Нарушается табу на подчинение матери (2), удовлетворяется потребность в активности (2), подавляется развлечение (-3).\n Заработок: [gain] тенге'
+        mom.prosperity.set_shift(result+1)     
+        mom.authority.set_shift(4)        
+        mom.moral_action('lawful', 'ardent', target = child)       
+        child.moral_action('lawful', target = mom)          
+    'Сычуля работает грузчиком чувствуя себя правильным. ([result])\n Нарушается табу на подчинение матери (2), удовлетворяется потребность в активности (2), подавляется развлечение (-3).\n Заработок (для мамы!): [gain] тенге. Мамка чувствует свою власть, порядочный и энергичный поступок.'
     return
 
 
@@ -251,8 +264,9 @@ label shd_job_whore(character):
     return    
 
 label subloc_whore_sabotage:
-    'Сычуля саботирует работу на панели. ([result])\nУдовлетворяется потребность в независимости (1)'
+    'Сычуля саботирует работу на панели. ([result])\nУдовлетворяется потребность в независимости (1) \n Авторитет мамки страдает (-1)'
     $ child.independence.set_shift(2)
+    $ mom.authority.set_shift(-1)
     return
 
 label subloc_whore_perform:
@@ -260,5 +274,9 @@ label subloc_whore_perform:
         gain = result*20
         game.tenge += gain
         child.skill('sex').expert(result)
-    'Сычуля работает на панели. ([result])\n Нарушается табу на сексуальную эксплуатацию (2), удовлетворяется потребность в общении (2), подавляются амбиции (-4) и авторитет (-2).\n Заработок: [gain] тенге'
+        mom.power.set_shift(5)           
+        mom.prosperity.set_shift(result+2)    
+        mom.moral_action('evil', 'lawful', 'ardent' target = child)
+        child.moral_action('timid', target = mom)            
+    'Сычуля работает на панели, чувствуя себя timid. ([result])\n Нарушается табу на сексуальную эксплуатацию (2), удовлетворяется потребность в общении (2), подавляются амбиции (-4) и авторитет (-2).\n Заработок (для мамы!): [gain] тенге. Мамка чувствует своё могущество, энергию и власть, злой поступок.'
     return

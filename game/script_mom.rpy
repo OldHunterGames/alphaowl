@@ -61,6 +61,17 @@ label lbl_food_rules:
 
     return
 
+label lbl_diet:
+    menu:
+        "Мы сейчас тебе диету будем делать."
+        "Чтоб здоровенький был у нас, как Ванька Ерохин":
+            $ child.ration['target'] = 2
+        "А то отрастил себе мамонище, девок пугать.":
+            $ child.ration['target'] = 1
+        "Кожа да кости же, ухватиться не за что. Девки любить не будут!":
+            $ child.ration['target'] = 3
+        
+    return
     
 label lbl_food_limit:
     $ player.ration['limit'] = int(renpy.input("Сколько раз за неделю мамка будет покупать еду?"))
@@ -285,20 +296,29 @@ label lbl_discipline:
                 'Выбрать используемый жетон.'
                 'Accordance' if child.has_token("accordance"):
                     menu:
+                        'Привести к вынужденной покорности' if child.slave_stance == 'rebellious' and child.obedience() > 3:
+                            $ player.ap -= 1
+                            $ child.use_token('dread')
+                            $ child.slave_stance = 'forced'         
+                            'Глобальное отношение ребёнка к подчинению изменилось с сопротивления на вынужденное подчинение'                        
                         'Закрепить привычку подчиняться' if child.slave_stance == 'forced':
                             $ player.ap -= 1
                             $ child.use_token('accordance')
                             $ child.slave_stance = 'accustomed'  
                             'Глобальное отношение ребёнка к подчинению изменилось с вынужденного подчинения на привычное подчинение'   
-                        'Улучшить отношения':
+                        'Гармонизовать позиции':
                             $ player.ap -= 1
                             $ child.use_token('accordance')
-                            $ child.relations(mom).change('affection', '+')
+                            $ child.relations(mom).change('congruence', '+')
+                        'Создать напряжение':
+                            $ player.ap -= 1
+                            $ child.use_token('accordance')
+                            $ child.relations(mom).change('congruence', '-')                            
                         'Внушить уважение':
                             $ player.ap -= 1
                             $ child.use_token('accordance')
-                            $ child.relations(mom).change('fervor', '+')                            
-                        'Внушить уверенность':
+                            $ child.relations(mom).change('fervor', '+')      
+                        'Внушить спокойствие':
                             $ player.ap -= 1
                             $ child.use_token('accordance')
                             $ child.relations(mom).change('fervor', '-')  
@@ -316,7 +336,7 @@ label lbl_discipline:
                         'Усилить вражду':
                             $ player.ap -= 1
                             $ child.use_token('antagonism')
-                            $ child.relations(mom).change('affection', '-')
+                            $ child.relations(mom).change('congruence', '-')
                         'Формализовать отношения':
                             $ player.ap -= 1
                             $ child.use_token('antagonism')
@@ -325,7 +345,7 @@ label lbl_discipline:
                             
                 'Dread' if child.has_token("dread"):
                     menu:
-                        'Привести к вынужденной покорности' if child.slave_stance == 'rebellious' and child.obedience() > 3:
+                        'Привести к вынужденной покорности' if child.slave_stance == 'rebellious':
                             $ player.ap -= 1
                             $ child.use_token('dread')
                             $ child.slave_stance = 'forced'         
@@ -341,13 +361,13 @@ label lbl_discipline:
                         'Усилить вражду':
                             $ player.ap -= 1
                             $ child.use_token('dread')
-                            $ child.relations(mom).change('affection', '-')
+                            $ child.relations(mom).change('congruence', '-')
                         'Назад':
                             jump lbl_discipline  
                             
                 'Discipline' if child.has_token("discipline"):
                     menu:
-                        'Закрепить привычку подчиняться' if child.slave_stance == 'forced':
+                        'Закрепить привычку подчиняться' if child.slave_stance == 'forced' and child.obedience() > 3:
                             $ player.ap -= 1
                             $ child.use_token('discipline')
                             $ child.slave_stance = 'accustomed'         
@@ -369,7 +389,7 @@ label lbl_discipline:
                             
                 'Dependence' if child.has_token("dependence"):
                     menu:
-                        'Привести к вынужденной покорности' if child.slave_stance == 'rebellious' and child.obedience() > 3:
+                        'Привести к вынужденной покорности' if child.slave_stance == 'rebellious':
                             $ player.ap -= 1
                             $ child.use_token('dependence')
                             $ child.slave_stance = 'forced'         
@@ -423,18 +443,6 @@ label lbl_bribe:
             jump lbl_discipline    
     $ bribes += 1
     jump lbl_bribe
-
-label lbl_diet:
-    menu:
-        "Мы сейчас тебе диету будем делать."
-        "Чтоб здоровенький был у нас, как Ванька Ерохин":
-            $ child.ration['target'] = 2
-        "А то отрастил себе мамонище, девок пугать.":
-            $ child.ration['target'] = 1
-        "Кожа да кости же, ухватиться не за что. Девки любить не будут!":
-            $ child.ration['target'] = 3
-        
-    return
 
 label lbl_accomodation_rules:
     menu:

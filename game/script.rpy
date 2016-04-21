@@ -48,14 +48,12 @@ label label_quiz:
                 mom.set_relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
-                mom.master_stance = 'opressive'
+                mom.relations_player().master_stance = 'opressive'
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
         "Раскусил, дай мне платице...":
             $ child.add_feature('female')     
-            $ child.firstname = "Тошка"
-            $ child.surname = "Сычева"
             
     menu:
         "Волосики уже везде выросли?"
