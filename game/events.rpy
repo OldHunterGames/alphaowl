@@ -193,7 +193,7 @@ label evn_do_major(character):
        else:
            txt = "Берешь себя за задницу покрепче \n @ \n Делаешь курсач как надо  \n @ \n Потом ещё неделю ловишь научрука... "
            game.studies.remove('major')        
-           child.skill('coding').expert(3)
+           child.skill('coding').get_expirience(3)
    
     '[txt]'
    
@@ -218,7 +218,7 @@ label evn_do_gym(character):
        else:
            txt = "Четко подтягиваешься \n @ \n Стометровка в нормативе  \n @ \n Фазген-семпай хвалит - ай, братуха-борцуха!"
            game.studies.remove('gym')       
-           child.skill('sports').expert(1)
+           child.skill('sports').get_expirience(1)
    
     '[txt]'
    
@@ -243,7 +243,7 @@ label evn_do_practice_military(character):
        else:
            txt = "Вспоминаешь видос про парад в лучшей Корее \n @ \n В голове играет hellmarch \n @ \n Шаг печаетается сам собой "
            game.studies.remove('military')  
-           child.skill('sports').expert(1)
+           child.skill('sports').get_expirience(1)
    
     '[txt]'
    
@@ -268,7 +268,7 @@ label evn_do_practice_military_chat(character):
        else:
            txt = "Расспрашиваешь старого подполкана про боевой опыт \n @ \n Он пускает скупую слезу по авганским друзьям \n @ \n И рисует тебе зачёт автоматом"
            game.studies.remove('military')    
-           child.skill('conversation').expert(2)
+           child.skill('conversation').get_expirience(2)
    
     '[txt]'
    
@@ -293,7 +293,7 @@ label evn_do_practice_labs(character):
        else:
            txt = "Вспоминаешь чему вас учили \n @ \n Сдаёшь профессору кривое но рабочее решение  \n @ \n А он и не против!"
            game.studies.remove('labs')     
-           child.skill('coding').expert(1)
+           child.skill('coding').get_expirience(1)
    
     '[txt]'
    
@@ -318,7 +318,7 @@ label evn_do_practice_labs_chat(character):
        else:
            txt = "Среди ботанов все свои \n @ \n Один из них такой же некрофил как профессор \n @ \n Можно самому и не напрягаться"
            game.studies.remove('labs')  
-           child.skill('conversation').expert(2)
+           child.skill('conversation').get_expirience(2)
    
     '[txt]'
    
@@ -343,7 +343,7 @@ label evn_do_practice_programm(character):
        else:
            txt = "Скармлваешь Эльбрусу ящик перфокарт \n @ \n Понимаешь что это прикольно \n @ \n Как рулон бумаги в унитаз смыть  \n @ \n Руководитель подмахивает зачёт за усидчивость"
            game.studies.remove('practice')   
-           child.skill('coding').expert(2)
+           child.skill('coding').get_expirience(2)
    
     '[txt]'
    
@@ -368,7 +368,7 @@ label evn_do_practice_programm_chat(character):
        else:
            txt = "Забухал с коллективом в подсобке \n @ \n Рассказал охуительных историй с учёбы \n @ \n Подписали весь лист практики на год вперёд"
            game.studies.remove('practice')        
-           child.skill('conversation').expert(1)
+           child.skill('conversation').get_expirience(1)
    
     '[txt]'
    

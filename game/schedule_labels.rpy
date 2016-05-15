@@ -21,7 +21,7 @@ label shd_help_mom(character):
         moral = child.moral_action('good', target = mom)
         result = child.skillcheck(help_skill, moral = moral, needs=[('ambition', -3),('altruism', 2)])     
         game.gratifaction(target = mom, power=result, needs = [need_helped])
-        mom.need_helped.set_shift(result)        
+        getattr(mom, need_helped).set_shift(result)        
     'Качество подлизывания = [result]'
     return   
     
@@ -226,7 +226,8 @@ label shd_learn_good(character):
 label shd_job_work(character):
     python:
         mom.moral_action('lawful', target = child)
-        result = character.skillcheck('sport', taboos=[('submission', 2)], needs=[('activity', 2),('amusement', -3)], forced = True)
+        moral = character.check_moral('lawful', target = mom)
+        result = character.skillcheck('sport', taboos=[('submission', 2)], needs=[('activity', 2),('amusement', -3)], forced = True, moral=moral)
         if result >= 0:
             renpy.call('subloc_work_perform')   
         else:
@@ -244,7 +245,7 @@ label subloc_work_perform:
     python:
         gain = result*10
         game.tenge += gain
-        child.skill('sports').expert(result)
+        child.skill('sports').get_expirience(result)
         mom.prosperity.set_shift(result+1)     
         mom.authority.set_shift(4)        
         mom.moral_action('lawful', 'ardent', target = child)       
@@ -255,8 +256,9 @@ label subloc_work_perform:
 
 label shd_job_whore(character):
     python:
+        moral = character.check_moral('timid', target=mom)
         mom.moral_action('evil', target = child)
-        result = character.skillcheck('sex', taboos=[('sexplotation', 4)], needs=[('communication', 2),('ambition', -4),('authority', -2)], forced = True)
+        result = character.skillcheck('sex', taboos=[('sexplotation', 4)], needs=[('communication', 2),('ambition', -4),('authority', -2)], forced = True, moral=moral)
         if result >= 0:
             renpy.call('subloc_whore_perform')   
         else:
@@ -273,7 +275,7 @@ label subloc_whore_perform:
     python:
         gain = result*20
         game.tenge += gain
-        child.skill('sex').expert(result)
+        child.skill('sex').get_expirience(result)
         mom.power.set_shift(5)           
         mom.prosperity.set_shift(result+2)    
         mom.moral_action('evil', 'lawful', 'ardent', target = child)

@@ -844,10 +844,20 @@ class Person(object):
     def has_token(self, token):
         if token in self.tokens:
             return True
+        if self.relations_player():
+            if self.relations_player().has_token(token):
+                return True
         return False
 
 
+
     def moral_action(self, *args, **kwargs):
+        result = self.check_moral(*args, **kwargs)
+        self.selfesteem += result
+        return result
+        
+
+    def check_moral(self, *args, **kwargs):
         result = 0
         act = {'ardent': 1, 'reasonable': 0, 'timid': -1}
         moral = {'good': 1, 'selfish': 0, 'evil': -1}
@@ -922,7 +932,6 @@ class Person(object):
                         result -= 1
                     elif self.relations(target).congruence == 'supporter':
                         result += 1
-        self.selfesteem += result
         return result
 
     def reduce_esteem(self):

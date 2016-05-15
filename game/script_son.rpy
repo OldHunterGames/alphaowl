@@ -117,34 +117,34 @@ label lbl_chores:
     menu:
         'Какие работы по дому будет выполнять Сыча чтобы повысить настроение мамке? Каждая работа в расписании требует энергии (списывается в конце хода)! Ты можешь назначить любой объём, но перебор приведёт к усталости и неэффективной работе.'
 
-        "Готовить еду" if not child.schedule.has_action(cook_cook):
+        "Готовить еду" if not child.schedule.has_action('cook_cook'):
             $ child.schedule.add_action('cook_cook')              
-        "Отменить наряд по кухне" if child.schedule.has_action(cook_cook):
+        "Отменить наряд по кухне" if child.schedule.has_action('cook_cook'):
             $ child.schedule.remove_action('cook_cook')    
             
-        "Создать в доме уют" if not child.schedule.has_action(comfy_comfy):
+        "Создать в доме уют" if not child.schedule.has_action('comfy_comfy'):
             $ child.schedule.add_action('comfy_comfy')              
-        "Отменить наряд по уборке" if child.schedule.has_action(comfy_comfy):
+        "Отменить наряд по уборке" if child.schedule.has_action('comfy_comfy'):
             $ child.schedule.remove_action('comfy_comfy')  
             
-        "Делать мамке массаж" if not child.schedule.has_action(matz_matz):
+        "Делать мамке массаж" if not child.schedule.has_action('matz_matz'):
             $ child.schedule.add_action('matz_matz')              
-        "Отменить массаж" if child.schedule.has_action(matz_matz):
+        "Отменить массаж" if child.schedule.has_action('matz_matz'):
             $ child.schedule.remove_action('matz_matz')  
             
-        "Выслушивать мамкины истории" if not child.schedule.has_action(hear_hear):
+        "Выслушивать мамкины истории" if not child.schedule.has_action('hear_hear'):
             $ child.schedule.add_action('hear_hear')              
-        "Не слушать истории" if child.schedule.has_action(hear_hear):
+        "Не слушать истории" if child.schedule.has_action('hear_hear'):
             $ child.schedule.remove_action('hear_hear')  
             
-        "Батрачить на мамкиной весёлой ферме" if not child.schedule.has_action(farm_farm):
+        "Батрачить на мамкиной весёлой ферме" if not child.schedule.has_action('farm_farm'):
             $ child.schedule.add_action('farm_farm')              
-        "Забить на всёлую ферму" if child.schedule.has_action(farm_farm):
+        "Забить на всёлую ферму" if child.schedule.has_action('farm_farm'):
             $ child.schedule.remove_action('farm_farm')    
             
-        "Общаься с мамкиными гостями" if in if not child.schedule.has_action(lik_lik):
+        "Общаься с мамкиными гостями" if not child.schedule.has_action('lik_lik'):
             $ child.schedule.add_action('lik_lik')              
-        "Игнорировать на мамкиных гостей" if child.schedule.has_action(lik_lik):
+        "Игнорировать на мамкиных гостей" if child.schedule.has_action('lik_lik'):
             $ child.schedule.remove_action('lik_lik')  
                         
         "Достаточно":
@@ -168,8 +168,8 @@ label lbl_surrender:
         "Условия жизни":
             call lbl_slave_lifestyle
 
-        "Клянчить (нужын AP!)" if child.ap > 0:
-            call lbl_beg
+        #"Клянчить (нужын AP!)" if child.ap > 0:
+           # call lbl_beg
         
         "Прорыв в отношениях (нужны AP)" if child.ap > 0:
             call lbl_change_relations
