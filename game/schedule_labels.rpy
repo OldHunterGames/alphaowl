@@ -243,7 +243,7 @@ label subloc_work_sabotage:
 
 label subloc_work_perform:
     python:
-        gain = result*10
+        gain = result*result*10
         game.tenge += gain
         child.skill('sports').get_expirience(result)
         mom.prosperity.set_shift(result+1)     
@@ -273,7 +273,7 @@ label subloc_whore_sabotage:
 
 label subloc_whore_perform:
     python:
-        gain = result*20
+        gain = result*result*20
         game.tenge += gain
         child.skill('sex').get_expirience(result)
         mom.power.set_shift(5)           

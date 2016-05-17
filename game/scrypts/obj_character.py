@@ -12,9 +12,6 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 
-
-
-
 class Person(object):
 
     def __init__(self, age='adolescent', gender='male'):
@@ -23,9 +20,9 @@ class Person(object):
         self.surname = u"Сычов"
         self.nickname = u"Сычуля"
         self.alignment = {
-            "orderliness": "conformal",   # "Lawful", "Conformal" or "Chaotic"
-            "activity": "reasonable",        # "Ardent", "Reasonable" or "Timid"
-            "morality": "selfish",       # "Good", "Selfish" or "Evil"
+            "orderliness": "conformal",   # "lawful", "conformal" or "chaotic"
+            "activity": "reasonable",        # "ardent", "reasonable" or "timid"
+            "morality": "selfish",       # "good", "selfish" or "evil"
         }
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.tokens = []             # Special resources to activate various events

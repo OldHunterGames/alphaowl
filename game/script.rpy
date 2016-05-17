@@ -50,6 +50,24 @@ label label_quiz:
                 mom.add_feature('mature')
                 mom.relations_player().master_stance = 'opressive'
             jump label_new_day
+        "(разработчик, игра за маму)":
+            python:
+                child.add_feature('male')
+                child.add_feature('adolescent')
+                child.alignment['orderliness'] = "conformal"
+                child.alignment['activity'] = "reasonable"
+                child.alignment['morality'] = "selfish"
+                child.skill('coding').profession()
+                mom = game.mother
+                game.player = mom
+                player = game.player
+                mom.alignment['morality'] = 'selfish'
+                player.player_controlled = True
+                mom.set_relations(child)    
+                mom.add_feature('female')
+                mom.add_feature('mature')
+                child.relations_player().slave_stance = 'rebellious'
+            jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
         "Раскусил, дай мне платице...":
@@ -120,11 +138,12 @@ label label_quiz:
     menu:
         "А что если мамка уроки делать заставит?"
         "Конечно. Это - норма.":
-            $ child.slave_stance = 'accustomed'        
+            $ child.relations_player().slave_stance = 'accustomed'        
         "Ну что делать? Сяду. А то батя ремня всыпет.":
-            $ child.slave_stance = 'forced'    
+            $ child.relations_player().slave_stance = 'forced'    
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
-            $ child.slave_stance = 'rebellious'
+            $ child.relations_player().slave_stance = 'rebellious'
+
             
     $ alignment = child.alignment['orderliness'] +' '+ child.alignment['activity'] +' '+ child.alignment['morality'] 
     "Твой алаймент: [alignment]"
