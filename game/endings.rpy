@@ -29,3 +29,63 @@ label win_wealth:
     with dissolve
     $ renpy.full_restart()
     return    
+        
+label win_loyality:
+    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    show text "{b}YOU WIN{/b}" at truecenter
+    with dissolve
+    pause 1
+    hide text
+    with dissolve
+    $ renpy.full_restart()
+    return    
+        
+label win_scum:
+    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    show text "{b}YOU WIN{/b}" at truecenter
+    with dissolve
+    pause 1
+    hide text
+    with dissolve
+    $ renpy.full_restart()
+    return    
+        
+label win_worship:
+    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    show text "{b}YOU WIN{/b}" at truecenter
+    with dissolve
+    pause 1
+    hide text
+    with dissolve
+    $ renpy.full_restart()
+    return    
+        
+label win_disciple:
+    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    show text "{b}YOU WIN{/b}" at truecenter
+    with dissolve
+    pause 1
+    hide text
+    with dissolve
+    $ renpy.full_restart()
+    return    
+        
+label win_dedication:
+    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    show text "{b}YOU WIN{/b}" at truecenter
+    with dissolve
+    pause 1
+    hide text
+    with dissolve
+    $ renpy.full_restart()
+    return    
+        
+label win_henchman:
+    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    show text "{b}YOU WIN{/b}" at truecenter
+    with dissolve
+    pause 1
+    hide text
+    with dissolve
+    $ renpy.full_restart()
+    return    

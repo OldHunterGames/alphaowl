@@ -413,6 +413,25 @@ label lbl_discipline:
                 "Назад":
                     jump lbl_discipline                
         
+        "Ультиматум" if child.willing_available() and child.has_token("accordance"):
+            
+            menu:   
+                "Лояльность" if 'loyality' in child.willing_available():
+                    jump win_loyality
+                "Подстилка" if 'scum-slave' in child.willing_available():
+                    jump win_scum
+                "Поклонение" if 'worship' in child.willing_available():
+                    jump win_worship
+                "Последователь" if 'disciple' in child.willing_available():
+                    jump win_disciple
+                "Самоотречение" if 'dedication' in child.willing_available():
+                    jump win_dedication
+                "Прихвостень" if 'henchman' in child.willing_available():
+                    jump win_henchman
+                    
+                "Назад":
+                    jump lbl_discipline
+        
         "И так неплохо":
             $ pass
         
@@ -516,12 +535,12 @@ label lbl_developement:
                     $ EVGeneric(game, "evn_do_major").trigger()
                     jump lbl_mom_manage
                     
-                'Сдай нормативы по физре' if study == 'gym':
+                'Сдай нормативы по физре' if  'gym' in game.studies:
                     $ player.ap -= 1
                     $ EVGeneric(game, "evn_do_gym").trigger()                            
                     jump lbl_mom_manage
 
-                'Производственная практика' if study == 'practice':
+                'Производственная практика' if 'practice' in game.studies:
                     'На заводе по сборке вёдер  \n @ \n Наша инновационная ЭВМ "Эдьбрус-М"  \n @ \n  На перфокартах'
                     menu:
                         'Отпахать по честному':
@@ -532,7 +551,7 @@ label lbl_developement:
                             $ EVGeneric(game, "evn_do_practice_programm_chat").trigger(child)    
                     jump lbl_mom_manage
 
-                'Зачет на военной кафедре' if study == 'military':
+                'Зачет на военной кафедре' if 'military' in game.studies:
                     'Офицеры уже с утра бухие  \n @ \n Муштра на плацу как при Павле I \n @ \n Вечером зачет по строевой'
                     menu:
                         'Держать равнение налево':
@@ -543,7 +562,7 @@ label lbl_developement:
                             $ EVGeneric(game, "evn_do_practice_military_chat").trigger(child)    
                     jump lbl_mom_manage
 
-                'Лабы по программированию' if study == 'labs':
+                'Лабы по программированию' if 'labs' in game.studies:
                     'Старый профессор-некрофил  \n @ \n Задача на фортране  \n @ \n  Как буд-то кто-то им пользуется вообще'
                     menu:
                         'Накодить убер-алгоритм':
