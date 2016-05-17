@@ -831,7 +831,7 @@ class Person(object):
 
 
     def use_token(self, token):
-        if has_token(token):
+        if self.has_token(token):
             self.tokens.remove(token)
             if token in self.tokens_difficulty.keys():
                 self.tokens_difficulty[token] += 1
