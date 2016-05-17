@@ -367,7 +367,7 @@ label lbl_discipline:
                             
                 'Discipline' if child.has_token("discipline"):
                     menu:
-                        'Закрепить привычку подчиняться' if child.slave_stance == 'forced' and child.obedience() > 3:
+                        'Закрепить привычку подчиняться' if child.slave_stance == 'forced' and child.obedience() > child.spirit:
                             $ player.ap -= 1
                             $ child.use_token('discipline')
                             $ child.slave_stance = 'accustomed'         
