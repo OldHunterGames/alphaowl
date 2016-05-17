@@ -91,24 +91,24 @@ class Engine(object):
             return
         target.taboo(taboo).use(power)
         for i in tokens:
-            target.relations_player().add_token(i)
+            target.add_token(i)
         return
 
 
     def train(self, target, power=0):
         target_resistance = target.training_resistance()
         if target_resistance < power:
-            target.relations_player().add_token('discipline')
+            target.add_token('discipline')
 
     def remorse(self, target, power):
         if power > target.remorse_threshold():
-            target.relations_player().add_token('compassion')
+            target.add_token('compassion')
     def duty(self, target, power):
         if power > target.duty_threshold():
-            target.relations_player().add_token('confidence')
+            target.add_token('confidence')
     def gratifaction(self, target, power, needs):
         if power > target.gratifaction_threshold(needs):
-            target.relations_player().add_token('craving')
+            target.add_token('craving')
 
     def suggestion(self, target, power):
         if power > target.suggestion_check():
