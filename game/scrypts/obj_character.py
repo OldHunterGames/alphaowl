@@ -981,20 +981,20 @@ class Person(object):
 
         return [d.get(x) for x in self.alignment.values()]
 
-    def willing_available(self, target):
-        if not target in self.slaves:
+    def willing_available(self):
+        if not self.master:
             return []
         rel_check = False
-        rel = target.desirable_relations()
+        rel = self.desirable_relations()
         types = [x[1] for x in rel if isinstance(x, tuple)]
         check = [x[0] for x in rel if isinstance(x, tuple)]
-        for rel in self.relations(target).description():
+        for rel in self.relations(self.master).description():
             if rel in check:
                 rel_check = True
                 break
-        if target.obedience < target.spirit:
+        if self.obedience < self.spirit:
             rel_check = False
-        if not target.has_token('accordance'):
+        if not self.has_token('accordance'):
             rel_check = False
         if rel_check:
             return types
