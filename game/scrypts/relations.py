@@ -27,38 +27,38 @@ class Relations(object):
             if ind > 2:
                 if axis == 'distance':
                     if self.owner.alignment['orderliness'] == 'chaotic':
-                        self.add_token('accordance')
+                        self.owner.add_token('accordance')
                     elif self.owner.alignment['orderliness'] == 'lawful':
-                        self.add_token('antagonism')
+                        self.owner.add_token('antagonism')
                 if axis == 'fervor':
                     if self.owner.alignment['activity'] == 'timid':
-                        self.add_token('accordance')
+                        self.owner.add_token('accordance')
                     elif self.owner.alignment['activity'] == 'ardent':
-                        self.add_token('antagonism')
+                        self.owner.add_token('antagonism')
                 if axis == 'congruence':
                     if self.owner.alignment['morality'] == 'good':
-                        self.add_token('accordance')
+                        self.owner.add_token('accordance')
                     elif self.owner.alignment['morality'] == 'evil':
-                        self.add_token('antagonism')
+                        self.owner.add_token('antagonism')
                 ind = 2
         elif direction == '-':
             ind -= 1
             if ind < 0:
                 if axis == 'distance':
                     if self.owner.alignment['orderliness'] == 'chaotic':
-                        self.add_token('antagonism')
+                        self.owner.add_token('antagonism')
                     elif self.owner.alignment['orderliness'] == 'lawful':
-                        self.add_token('accordance')
+                        self.owner.add_token('accordance')
                 if axis == 'fervor':
                     if self.owner.alignment['activity'] == 'timid':
-                        self.add_token('antagonism')
+                        self.owner.add_token('antagonism')
                     elif self.owner.alignment['activity'] == 'ardent':
-                        self.add_token('accordance')
+                        self.owner.add_token('accordance')
                 if axis == 'congruence':
                     if self.owner.alignment['morality'] == 'good':
-                        self.add_token('antagonism')
+                        self.owner.add_token('antagonism')
                     elif self.owner.alignment['morality'] == 'evil':
-                        self.add_token('accordance')
+                        self.owner.add_token('accordance')
                 ind = 0
         rel = ax[ind]
         self.__dict__[axis] = rel
