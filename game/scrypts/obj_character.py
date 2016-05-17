@@ -965,3 +965,20 @@ class Person(object):
         l = ['cruel', 'opressive', 'rightful', 'benevolent']
         ind = l.index(stance)
         return ind
+
+    def desirable_relations(self):
+        d = {'lawful': 'formal', 'chaotic': 'intimate',
+            'timid': 'delicate', 'ardent': 'intense',
+            'good': 'supporter', 'evil': 'contradictor'}
+
+        return [d.get(x) for x in self.alignment.values()]
+
+    def willing_available(self, target):
+        if not target in self.slaves:
+            return False
+        rel_check = False
+        for rel in self.relations(target).description():
+            if rel in target.desirable_relations():
+                rel_check = True
+                break
+        return target.obedience()>target.spirit and target.relations(self).has_token('accordance') and rel_check
