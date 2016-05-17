@@ -169,10 +169,21 @@ label label_quiz:
     return
 
 label label_new_day:
+    ### ПРОВЕРКА НА ЗАВЕРШЕНИЕ ИГРЫ ###
+    if child.feature('dead'):
+        jump game_over
+    elif len(game.mom_stuff) > 5:
+        jump win_wealth
+    elif not game.studies:
+        jump win_study
+        
+    
+    ### ЕСЛИ ИГРА НЕ ОКОНЧЕНА
     $ study = game.choose_study()
     $ game.child.rest()
     $ game.mother.rest()
     "Неделя номер [game.time]"
+       
     $ gt = game.new_turn()
     $ game.evn_skipcheck = False
 

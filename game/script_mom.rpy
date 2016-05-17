@@ -559,39 +559,39 @@ label lbl_developement:
                 
         "Институт (коррупция)":
             menu:
-                'Купим курсовую (100 тенге)' if 'major' in game.studies and game.tenge >= 100:
+                'Купим курсовую (250 тенге)' if 'major' in game.studies and game.tenge >= 250:
                     $ player.ap -= 1
-                    $ game.tenge -= 100
+                    $ game.tenge -= 250
                     $ game.studies.remove('major')
                     'Бабло победит Зло.  \n @ \n Вопрос с курсовой закрыт.  \n @ \n Потрачено 100 тенге'
                     jump lbl_mom_manage     
                     
-                'Оформим освобождение от физкультуры (50 тенге)' if 'gym' in game.studies and game.tenge >= 50:
+                'Оформим освобождение от физкультуры (100 тенге)' if 'gym' in game.studies and game.tenge >= 100:
                     $ player.ap -= 1
-                    $ game.tenge -= 50
+                    $ game.tenge -= 100
                     $ game.studies.remove('gym')
-                    'Бабло победит Зло.  \n @ \n Вопрос с физкульутрой закрыт.  \n @ \n Потрачено 50 тенге'
+                    'Бабло победит Зло.  \n @ \n Вопрос с физкульутрой закрыт.  \n @ \n Потрачено 100 тенге'
                     jump lbl_mom_manage      
                    
-                'Договоримся с начальником проф-практики (50 тенге)' if 'practice' in game.studies and game.tenge >= 50:
+                'Договоримся с начальником проф-практики (100 тенге)' if 'practice' in game.studies and game.tenge >= 100:
                     $ player.ap -= 1
-                    $ game.tenge -= 50
+                    $ game.tenge -= 100
                     $ game.studies.remove('practice')
-                    'Бабло победит Зло.  \n @ \n Вопрос с производственной практикой закрыт.  \n @ \n Потрачено 50 тенге'
+                    'Бабло победит Зло.  \n @ \n Вопрос с производственной практикой закрыт.  \n @ \n Потрачено 100 тенге'
                     jump lbl_mom_manage      
                    
-                'Полковнику дадим на лапу (50 тенге)' if 'military' in game.studies and game.tenge >= 50:
+                'Полковнику дадим на лапу (100 тенге)' if 'military' in game.studies and game.tenge >= 100:
                     $ player.ap -= 1
-                    $ game.tenge -= 50
+                    $ game.tenge -= 100
                     $ game.studies.remove('military')
-                    'Бабло победит Зло.  \n @ \n Вопрос с военной кафедрой закрыт.  \n @ \n Потрачено 50 тенге'
+                    'Бабло победит Зло.  \n @ \n Вопрос с военной кафедрой закрыт.  \n @ \n Потрачено 100 тенге'
                     jump lbl_mom_manage      
                    
-                'С лабораторными порешаем как нибудь (50 тенге)' if 'labs' in game.studies and game.tenge >= 50:
+                'С лабораторными порешаем как нибудь (100 тенге)' if 'labs' in game.studies and game.tenge >= 100:
                     $ player.ap -= 1
-                    $ game.tenge -= 50
+                    $ game.tenge -= 100
                     $ game.studies.remove('labs')
-                    'Бабло победит Зло.  \n @ \n Вопрос с лабами закрыт.  \n @ \n Потрачено 50 тенге'
+                    'Бабло победит Зло.  \n @ \n Вопрос с лабами закрыт.  \n @ \n Потрачено 100 тенге'
                     jump lbl_mom_manage      
                             
                 'Никто тебя за уши тянуть не будет, Сыченька!':

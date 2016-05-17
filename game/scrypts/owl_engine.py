@@ -13,7 +13,7 @@ class Engine(object):
         self.characters = [self.child, self.mother]
         self.player = None
         self.time = 1
-        self.tenge = 100
+        self.tenge = 0
         self.mom_stuff = []
         self.events_list = events_list
         self.mode = 'son'
