@@ -840,13 +840,6 @@ class Person(object):
         else:
             return "%s has no token named %s"%(self.name(), token)
 
-    def use_token(self, token):
-        if self.has_token(token):
-            self.tokens.remove(token)
-            if token in self.tokens_difficulty:
-                self.tokens_difficulty[token] += 1
-            else:
-                self.tokens_difficulty[token] = 1
 
     def has_token(self, token):
         if token in self.tokens:
