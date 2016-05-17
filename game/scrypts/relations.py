@@ -17,40 +17,6 @@ class Relations(object):
         self.master_stance = 'cruel' # can be 'cruel', 'opressive', 'rightful', 'benevolent'
         self.recognition_stance = ''
         self.respect = None
-        self._tokens = []
-        self.tokens_difficulty = {'dread': 0, 'dependence': 0, 'discipline': 0, 'compassion': 0, 'confidence': 0, 'craving': 0}
-        self.dread = 0
-        self.dependence = 0
-        self.discipline = 0
-        self.confidence = 0
-        self.compassion = 0
-        self.craving = 0
-
-    @property
-    def tokens(self):
-        return self.owner.relations_tokens(self.target)
-    def add_token(self, token, power=None):
-        if not self.has_token(token):
-            if power:
-                if power > self._tokens_difficulty[token]:
-                    self.owner.relations_tokens(self.target).append(token)
-            else:
-                self.owner.relations_tokens(self.target).append(token)
-            renpy.call_in_new_context('lbl_notify', self.owner, token)
-
- 
-    def has_token(self, token):
-        if token in self.owner.relations_tokens(self.target):
-            return True
-        return False
-
-    def use_token(self, token):
-        if has_token(token):
-            self.owner.relations_tokens(self.target).remove(token)
-            self._tokens_difficulty[token] += 1
-            self.target.relations(self)._tokens_difficulty[token] += 1
-        else:
-            return "%s has no token named %s"%(self.owner.name(), token)
     def change(self, axis, direction):
         z = '_%s'%(axis)
         ax = getattr(Relations, z)
