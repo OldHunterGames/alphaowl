@@ -52,7 +52,7 @@ label shd_mom_abuse(character):
 label shd_discipline_pavsykakiy(character):
     python:
         mom.moral_action('lawful', target = child)         
-        game.train(child, power=3)
+        game.train(child, power=4)
     'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n Весь борщ сожрал, падла'
 
     return   
@@ -61,7 +61,7 @@ label shd_discipline_pavsykakiy(character):
 label shd_discipline_kohana(character):
     python:
         game.train(child, power=5)
-    'Антоша Сычов до сих пор писает в кровать\n @\nМы всё исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
+    'Антоша Сычов до сих пор писает в кровать\n @\nМы это исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
 
     return   
     
