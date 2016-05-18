@@ -100,6 +100,10 @@ label lbl_son_manage:
             call lbl_job_rules
             jump lbl_son_manage
             
+        "Условия жизни":
+            call lbl_control_lifestyle
+            jump lbl_son_manage
+            
         "Отношения в семье":
             call lbl_surrender
             jump lbl_son_manage
@@ -112,6 +116,117 @@ label lbl_son_manage:
             jump label_new_day
     
     return
+
+label lbl_control_lifestyle:
+    $ mom_stance = mom.relations_player().master_stance
+    menu:
+        "Количество и качество доступных для выбора вариантов заивисит от уровня благоволения Мамки!"
+        'Размер пайки':
+            menu:
+                '"Жертва бухенвальда"':
+                    $ child.ration['amount'] = "starvation"   
+                    $ child.ration['food_type'] = "forage"   
+                    $ child.ration['target'] = 0           
+                    $ child.ration['limit'] = None      
+                "Впроголодь":
+                    $ child.ration['amount'] = "regime" 
+                    $ child.ration['target'] = 1
+                "Считать калории" if mom_stance == 'opressive':
+                    $ child.ration['amount'] = "regime" 
+                    $ child.ration['target'] = 2     
+                "От пуза" if mom_stance == 'rightful':
+                    $ child.ration['amount'] = "unlimited"     
+                "Как на убой" if mom_stance == 'rightful':
+                    $ child.ration['amount'] = "regime" 
+                    $ child.ration['target'] = 3   
+                    
+        'Выбор продуктов' if child.ration['amount'] != "starvation":    
+            menu:
+                "Вот покушай ка Сычулька..."
+                "Своего, с огорода-то. Витаминчики!":
+                    $ child.ration['food_type'] = "sperm" 
+                    'Как земля... совсем невкусно (-3)'
+                "Мивины с маянезиком." if mom_stance == 'opressive':
+                    $ child.ration['food_type'] = "dry" 
+                    'Бичпакет... не вкусно (-1)'
+                "Тёпленького похлебай, домашнего. С хлебушком." if mom_stance == 'rightful':
+                    $ child.ration['food_type'] = "canned" 
+                    'Хрючево... нормальный вкус'
+                "В столовой вашей, я кухаркой не нанималась!" if mom_stance == 'rightful':
+                    $ child.ration['food_type'] = "cosine"   
+                    'Пища белых людей... вкуснота (3)'                    
+        
+        "Внешний вид":
+            menu:
+                'Мамина симпатяфка':
+                    $ child.appearance = 'lame'
+                    $ child.schedule.add_action('outfit_lame')
+                    'Вот свитерочек бабушка связала \n @ \n Штанишки тетя Ёба нам со своего оболтуса дала \n @ \n Шапку не забудь надеть! (autority -3)'
+                'Да носи что хочешь' if mom_stance == 'opressive':
+                    $ child.appearance = 'normal'
+                    $ child.schedule.add_action('outfit_normal')
+                    'Залезаешь в шкаф чтобы найти приличную одежду \n @ \n Там какие-то обноски от Тёти Ёбы и Дяди Бафомета \n @ \n И мутантная моль размером с кошака доедает ушанку (prosperity -2)'    
+                'Купим тебе модное, выбирай (25 тенгэ)' if game.tenge >= 25 and mom_stance == 'rightful':
+                    $ game.tenge -= 25
+                    $ child.appearance = 'cool'
+                    $ child.schedule.add_action('outfit_cool')
+                    'Ой Сыченька, сейчас купим тебе модного \n @ \n Затариваетесь на рынке у Ашота, турецкими подделками \n @ \n А ты и не против (prosperity 4)'
+
+        "Запреты и ограничения":
+            menu:
+                'Запретить гулять' if 'dates' not in child.restrictions:
+                    $ child.restrictions.append('dates')
+                'Разрешить гулять до поздна' if 'dates' in child.restrictions and mom_stance == 'rightful':
+                    $ child.restrictions.remove('dates')
+                'Запретить общаться с друзьями' if 'friends' not in child.restrictions:
+                    $ child.restrictions.append('friends')
+                'Разрешить общаться с друзьями' if 'friends' in child.restrictions and mom_stance == 'opressive':
+                    $ child.restrictions.remove('friends')
+                'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in child.restrictions:
+                    $ child.restrictions.append('pc')
+                'Ну и сиди за своим комплюктером' if 'pc' in child.restrictions and mom_stance == 'opressive':
+                    $ child.restrictions.remove('pc')                
+                'Пресечь любую дрочку' if 'masturbation' not in child.restrictions:
+                    $ child.restrictions.append('masturbation')
+                    $ child.schedule.add_action('fap_no')
+                    $ txt = 'Сыночка то наш, всё пиструнчик свой тилибонькает \n @ \n Скоро волосы на руках расти начнут \n @ \n В антимастурбационном кресте будещь спать, по совету отца Агапия'
+                'Игнорировать дрочку' if 'masturbation' in child.restrictions and mom_stance == 'opressive':
+                    $ child.restrictions.remove('masturbation')
+                    $ child.schedule.add_action('fap_yes')
+                    $ txt = 'А что это ты в ванной столько времени сидишь, Сыча? \n @ \n И то хорошо \n @ \n Приучили к чистоте ребёнка то'            
+                'Запретить алкоголь' if 'alcohol' not in child.restrictions:
+                    $ child.restrictions.append('alcohol')
+                    $ child.schedule.add_action('alcohol_no')
+                    $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ещё нос не дорос \n @ \n Я малолетних алкоголиков в доме не потерплю'
+                'Пусть накатит с BATYей' if 'alcohol' in child.restrictions and mom_stance == 'rightful':
+                    $ child.restrictions.remove('alcohol')
+                    $ child.schedule.add_action('alcohol_yes')
+                    $ txt = 'За дидов рюмашечку надо обязательно \n @ \n Что значит "не буду стекломой пить" \n @ \n Традиции наши не уважаешь?'                 
+                'Запретить курить' if 'tobacco' not in child.restrictions:
+                    $ child.restrictions.append('tobacco')
+                    $ child.schedule.add_action('smoke_no')
+                    $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
+                'Пусть курит но не дома' if 'tobacco' in child.restrictions and mom_stance == 'rightful':
+                    $ child.restrictions.remove('tobacco')
+                    $ child.schedule.add_action('smoke_yes')
+                    $ txt = 'Сыченька то бодрячком \n @ \n Каждые пять минут в падик бегает \n @ \n Наверное друзья у него там'         
+                'Запретить спайсы' if 'weed' not in child.restrictions:
+                    $ child.restrictions.append('weed')
+                    $ child.schedule.add_action('weed_no')
+                    $ txt = 'Чтобы я тебя с этими наркоманами не видела больше \n @ \n Пообколются своей марихуанной \n @ \n А потом ябут друг-друга в жёппы'
+                'Игнорировать спайсы' if 'weed' in child.restrictions and mom_stance == 'rightful':
+                    $ child.restrictions.remove('weed')
+                    $ child.schedule.add_action('weed_yes')
+                    $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
+                'Назад':
+                    jump lbl_control_lifestyle        
+        
+        "Достаточно":
+            jump lbl_son_manage     
+    
+    jump lbl_control_lifestyle
+    return
+    
 
 label lbl_chores:
     menu:
