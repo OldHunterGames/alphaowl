@@ -29,7 +29,20 @@ label start:
     
 label label_quiz:
     $ child.schedule.add_action('general_accounting')
-            
+    $ child.accommodation = "appartment"
+    $ child.schedule.add_action('living_appartment')
+    $ child.ration['food_type'] = "canned" 
+    $ child.ration['amount'] = "unlimited" 
+    $ child.schedule.add_action('fap_yes')
+    $ child.restrictions.append('alcohol')
+    $ child.schedule.add_action('alcohol_no')    
+    $ child.restrictions.append('tobacco')
+    $ child.schedule.add_action('smoke_no')      
+    $ child.restrictions.append('weed')
+    $ child.schedule.add_action('weed_no')   
+    $ child.appearance = 'normal'
+    $ child.schedule.add_action('outfit_normal')    
+    
     menu:
         "Ты мальчик или девочка-внутри?"
         "(я не человек уже, я разработчик нахуй)":
@@ -49,6 +62,16 @@ label label_quiz:
                 mom.add_feature('female')
                 mom.add_feature('mature')
                 mom.relations_player().master_stance = 'opressive'
+                child.ration['food_type'] = "sperm"
+                child.ration['target'] = 1
+                child.accommodation = "jailed"      
+                child.schedule.add_action('living_jailed')
+                child.job['name'] = 'chores'
+                child.schedule.add_action('job_chores')  
+                child.restrictions.append('masturbation')
+                child.schedule.add_action('fap_no')        
+                child.appearance = 'lame'
+                child.schedule.add_action('outfit_lame')                
             jump label_new_day
         "(разработчик, игра за маму)":
             python:
@@ -211,6 +234,8 @@ label lbl_owl_info:
         rel = child.relations(mom).description()
         txt = "Настроение: " + str(child.mood()) + " | Подчинение: " + str(child.obedience())
     "[txt] | Энергия: [child.vigor] \n
+    
+     Запреты: [child.restrictions] \n 
      Тэнге: [game.tenge] \n
      Условия сна: [child.accommodation]  |  Занятость: [job]       \n
      Характер: [alignment]\n
@@ -221,7 +246,7 @@ label lbl_owl_info:
      Удовлетворённые: [needs_statisfied]\n          
      Пресыщения: [needs_overflow]\n     
      Табу: \n[taboos]\n
-     Особенности: \n[features]\n
+     Особенности: [features]\n
      \n"
 
     return
@@ -244,7 +269,7 @@ label lbl_mom_info:
      Актуальные нужды: [needs_relevant]\n
      Удовлетворённые: [needs_statisfied]\n          
      Пресыщения: [needs_overflow]\n     
-     Особенности: \n[features]\n
+     Особенности: [features]\n
      \n"
 
     return

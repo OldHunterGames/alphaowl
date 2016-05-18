@@ -262,7 +262,7 @@ label lbl_change_relations:
             menu:
                 'Смягчить позицию мамки' if mom.relations_player().master_stance == 'cruel':
                     $ player.ap -= 1
-                    $ child.use_token('dread')
+                    $ child.use_token('compassion')
                     $ mom.relations_player().master_stance = 'opressive'         
                     'Глобальное отношение мамки изменилось с жестокого на деспотичное'
                 'Разжалобить мамку':
@@ -288,7 +288,7 @@ label lbl_change_relations:
             menu:
                 'Смягчить позицию мамки' if mom.relations_player().master_stance == 'cruel':
                     $ player.ap -= 1
-                    $ child.use_token('dread')
+                    $ child.use_token('confidence')
                     $ mom.relations_player().master_stance = 'opressive'         
                     'Глобальное отношение мамки изменилось с жестокого на деспотичное'
                 'Увеличить доверие мамки':
@@ -314,7 +314,7 @@ label lbl_change_relations:
             menu:
                 'Смягчить позицию мамки' if mom.relations_player().master_stance == 'opressive' and mom.favor() > 3:
                     $ player.ap -= 1
-                    $ child.use_token('dread')
+                    $ child.use_token('craving')
                     $ mom.relations_player().master_stance = 'rightful'         
                     'Глобальное отношение мамки изменилось с деспотичного на справедливое'
                 'Внушить мамке любовь':

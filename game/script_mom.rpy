@@ -112,7 +112,7 @@ label lbl_rules_clothes:
 
 label lbl_rules_drugs:
     menu:
-        'Запретить фапать' if 'masturbation' not in child.restrictions:
+        'Пресечь любую дрочку' if 'masturbation' not in child.restrictions:
             $ child.restrictions.append('masturbation')
             $ child.schedule.add_action('fap_no')
             $ txt = 'Сыночка то наш, всё пиструнчик свой тилибонькает \n @ \n Скоро волосы на руках расти начнут \n @ \n В антимастурбационном кресте будещь спать, по совету отца Агапия'
@@ -124,7 +124,7 @@ label lbl_rules_drugs:
             $ child.restrictions.append('alcohol')
             $ child.schedule.add_action('alcohol_no')
             $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ещё нос не дорос \n @ \n Я малолетних алкоголиков в доме не потерплю'
-        'Игнорировать алкоголь' if 'alcohol' in child.restrictions:
+        'Пусть накатит с BATYей' if 'alcohol' in child.restrictions:
             $ child.restrictions.remove('alcohol')
             $ child.schedule.add_action('alcohol_yes')
             $ txt = 'За дидов рюмашечку надо обязательно \n @ \n Что значит "не буду стекломой пить" \n @ \n Традиции наши не уважаешь?'                 
@@ -132,7 +132,7 @@ label lbl_rules_drugs:
             $ child.restrictions.append('tobacco')
             $ child.schedule.add_action('smoke_no')
             $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
-        'Игнорировать курение' if 'tobacco' in child.restrictions:
+        'Пусть курит но не дома' if 'tobacco' in child.restrictions:
             $ child.restrictions.remove('tobacco')
             $ child.schedule.add_action('smoke_yes')
             $ txt = 'Сыченька то бодрячком \n @ \n Каждые пять минут в падик бегает \n @ \n Наверное друзья у него там'         
@@ -231,7 +231,7 @@ label lbl_shop:
 
 label lbl_discipline:
     menu:
-        "Надо сконцентрироваться на чём то одном."
+        "Надо сконцентрироваться на чём-то одном в каждой категории."
         "Наказания":
             menu:
                 "Отец, научи Cычу уму-разуму то!":

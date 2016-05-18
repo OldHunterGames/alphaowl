@@ -41,7 +41,7 @@ label win_loyality:
     return    
         
 label win_scum:
-    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    'Успешная концовка: "МАМИНА СУЧКА".'    
     show text "{b}YOU WIN{/b}" at truecenter
     with dissolve
     pause 1
@@ -51,7 +51,7 @@ label win_scum:
     return    
         
 label win_worship:
-    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    'Успешная концовка: "МАМИН СКРОМНЯГА".'    
     show text "{b}YOU WIN{/b}" at truecenter
     with dissolve
     pause 1
@@ -61,7 +61,7 @@ label win_worship:
     return    
         
 label win_disciple:
-    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    'Успешная концовка: "ПАПИН БРОДЯГА".'    
     show text "{b}YOU WIN{/b}" at truecenter
     with dissolve
     pause 1
@@ -71,7 +71,7 @@ label win_disciple:
     return    
         
 label win_dedication:
-    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    'Успешная концовка: "МАМЕНЬКИН СЫНОЧЕК".'    
     show text "{b}YOU WIN{/b}" at truecenter
     with dissolve
     pause 1
@@ -81,7 +81,7 @@ label win_dedication:
     return    
         
 label win_henchman:
-    'Успешная концовка: "МАМИН ПОМОЩНИК".'    
+    'Успешная концовка: "МАМИН ХУЛИГАН".'    
     show text "{b}YOU WIN{/b}" at truecenter
     with dissolve
     pause 1
