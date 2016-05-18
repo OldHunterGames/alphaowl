@@ -15,7 +15,7 @@ class Relations(object):
         self.congruence = 'associate'
         self.slave_stance = 'rebellious' # can be 'rebellious', 'forced', 'accustomed', 'willing'
         self.master_stance = 'cruel' # can be 'cruel', 'opressive', 'rightful', 'benevolent'
-        self.recognition_stance = ''
+        self.recognition_stance = 'hostile' # can be 'hostile', 'distrustful', 'favorable', 'friendly'
         self.respect = None
     def change(self, axis, direction):
         z = '_%s'%(axis)

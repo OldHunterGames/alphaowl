@@ -114,3 +114,16 @@ class Engine(object):
         if power > target.suggestion_check():
             return True
         return False
+
+
+    def reliance(self, target, power):
+        if power > target.reliance.threshold():
+            target.add_token('reliance')
+
+    def kindness(self, target, power):
+        if power > target.kindness_threshold():
+            target.add_token('kindness')
+
+    def attraction(self, target, power):
+        if power > target.attraction_threshold():
+            target.add_token('attraction')

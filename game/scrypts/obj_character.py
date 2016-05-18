@@ -26,15 +26,19 @@ class Person(object):
         }
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.tokens = []             # Special resources to activate various events
-        self.tokens_difficulty = {'dread': 0, 'dependence': 0, 'discipline': 0, 'compassion': 0, 'confidence': 0, 'craving': 0}
+        self.tokens_difficulty = {'dread': 0, 'dependence': 0, 'discipline': 0, 'compassion': 0, 'confidence': 0, 'craving': 0,
+                                   'reliance': 0, 'attraction': 0, 'kindness': 0}
 
-        #obedience and dependecy stats
+        #obedience, dependecy and respect stats
         self.dread = 0
         self.dependence = 0
         self.discipline = 0
         self.confidence = 0
         self.compassion = 0
         self.craving = 0
+        self.reliance = 0
+        self.attraction = 0
+        self.kidness = 0
 
         self.master = None          # If this person is a slave, the master will be set
         self.slave_stance = 'rebellious'     # rebellious, forced, accustomed or willing
@@ -454,6 +458,44 @@ class Person(object):
         else:
             favor += self.compassion
         return favor
+
+    def respect(self):
+        if self.player_controlled:
+            return 0
+        obedience = 0
+
+        if self.alignment["orderliness"] == "lawful":
+            obedience += self.reliance*2
+        elif self.alignment["orderliness"] == "chaotic":
+            obedience += self.reliance/2
+        else:
+            obedience += self.reliance
+
+        if self.alignment["activity"] == "timid":
+            obedience += self.attraction*2
+        elif self.alignment["activity"] == "ardent":
+            obedience += self.attraction/2
+        else:
+            obedience += self.attraction
+
+        if self.alignment["morality"] == "evil":
+            obedience += self.kindness*2
+        elif self.alignment["morality"] == "good":
+            obedience += self.kindness/2
+        else:
+            obedience += self.kindness
+
+        return obedience
+
+
+    def reliance_threshold(self):
+        return 3+self.tokens_difficulty['reliance']
+
+    def attraction_threshold(self):
+        return 3+self.tokens_difficulty['attraction']
+
+    def kindness_threshold(self):
+        return 3+self.tokens_difficulty['kindness']
 
     def duty_threshold(self):
         if self.player_controlled:
