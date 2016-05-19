@@ -39,7 +39,7 @@ def check_cons_pros(character, difficulty, skill):
         contra.append('mood')
     if skill == character.focused_skill and focus > 5 - character.mind:
         pros.append('focus')
-    if character.has_token('anxiety'):
+    if character.anxiety > 0:
         contra.append('anxiety')
     #also will be bonuses for uniform or debuffs for something
     return (pros, contra) 
