@@ -330,8 +330,6 @@ class Person(object):
         if result > 0:
             for need in needs:
                 getattr(self, need[0]).set_shift(need[1])
-            for taboo in taboos:
-                self.taboo(taboo[0]).use(taboo[1])
         return result
 
     def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0, difficulty=3):
@@ -370,8 +368,6 @@ class Person(object):
             check += 1
         for need in needs:
             getattr(self, need[0]).set_shift(need[1])
-        for taboo in taboos:
-            self.taboo(taboo[0]).use(taboo[1])
         self.skills_used.append(skill)
         check = check + self.mood()[0] + self.skill(skill).level
         if determination and self.determination > 0:
@@ -627,9 +623,6 @@ class Person(object):
                     motiv += 1
                 elif status == 'overflow':
                     motiv -= 1
-        if len(taboos)>0:
-            for taboo in taboos:
-                motiv -= self.taboo(taboo[0]).value
         if forced:
             if self.slave_stance == 'rebellious':
                 if motiv > -1:
