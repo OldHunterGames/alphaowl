@@ -274,22 +274,24 @@ label lbl_mom_info:
 
     return
     
-label lbl_skill_check(character=player):
+label lbl_skill_check(character=player, pros_cons):
     python:
         sabotage = False
         determination = False
         vigor = False
+
+    show screen sc_action_stats(pros_cons[0], pros_cons[1])
     menu:
         'Сделать спустя рукава':
             $ vigor = False
             $ determination = False
-        'Работать хорошо' if character.vigor > 0:
+        'Работать хорошо({color=#00ff00}vigorous{/color})' if character.vigor > 0:
             $ vigor = True
             $ determination = False
-        'Сделать волевым усилием' if character.determination > 0:
+        'Сделать волевым усилием({color=#00ff00}determined{/color})' if character.determination > 0:
             $ vigor = False
             $ determination = True
-        'Выложиться полностью' if character.vigor > 0 and character.determination > 0:
+        'Выложиться полностью({color=#00ff00}vigorous{/color},{color=#00ff00}determined{/color})' if character.vigor > 0 and character.determination > 0:
             $ vigor = True
             $ determination = True
         'Саботировать':
@@ -327,3 +329,17 @@ label lbl_resist_result(effect, success):
 label lbl_notify(character, effect):
     'Вы получили [effect]'
     return
+
+
+screen sc_action_stats(pros, contra):
+    vbox:
+        xalign 0.0
+        yalign 0.0
+        for s in contra:
+            text "{color=#f00}[s]{/color}"
+    vbox:
+        xalign 1.0
+        yalign 0.0
+        for s in pros:
+            text "{color=#00ff00}[s]{/color}"
+
