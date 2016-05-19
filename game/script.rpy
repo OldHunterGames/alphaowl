@@ -298,6 +298,7 @@ label lbl_skill_check(character=player, pros_cons):
             $ vigor = False
             $ determination = False
             $ sabotage = True
+    hide screen sc_action_stats
     return vigor, determination, sabotage
 label lbl_check_result(result=0):
     'Результат проверки: [result]'
