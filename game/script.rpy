@@ -71,7 +71,10 @@ label label_quiz:
                 child.restrictions.append('masturbation')
                 child.schedule.add_action('fap_no')        
                 child.appearance = 'lame'
-                child.schedule.add_action('outfit_lame')                
+                child.schedule.add_action('outfit_lame')
+                child.restrictions.append('dates')
+                child.restrictions.append('friends')
+                child.restrictions.append('pc')
             jump label_new_day
         "(разработчик, игра за маму)":
             python:

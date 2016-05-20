@@ -55,7 +55,7 @@ label lbl_son_manage:
                         'Забить':
                             jump lbl_son_manage                            
                 
-                "Капчевание":
+                "Капчевание" if 'pc' not in child.restrictions:
                     menu:
                         'Вкатиться в /pr/' if not child.skill('coding').training:
                             $ player.ap -= 1
@@ -220,6 +220,23 @@ label lbl_control_lifestyle:
                     $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
                 'Назад':
                     jump lbl_control_lifestyle        
+        "После учёбы":
+            menu:
+                'Всё сидишь как сыч, за конпуктером. Иди пробзись.' if mom_stance == 'rightful':
+                    $ child.job['name'] = 'idle'
+                    $ child.schedule.add_action('job_idle')  
+                'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?' if mom_stance == 'opressive':
+                    $ child.job['name'] = 'study'
+                    $ child.schedule.add_action('job_study')  
+                'Посудку помой. Мусор вынеси. С собакой погуляй. И за дедом прибери.':
+                    $ child.job['name'] = 'chores'
+                    $ child.schedule.add_action('job_chores')            
+                'Вон здоровый какой. Иди вагоны разгружать - семье копеечка.':
+                    $ child.job['name'] = 'work'
+                    $ child.schedule.add_action('job_work')                   
+                'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
+                    $ child.job['name'] = 'whore'
+                    $ child.schedule.add_action('job_whore') 
         
         "Достаточно":
             jump lbl_son_manage     
@@ -319,27 +336,27 @@ label lbl_change_relations:
                     'Глобальное отношение матери изменилось. Теперь: [stance]'   
                 'Соглашаться и восхищаться':
                     $ player.ap -= 1
-                    $ child.use_token('accordance')
+                    $ mom.use_token('accordance')
                     $ child.relations(mom).change('congruence', '+')
                 'Троллить и подъёбывать':
                     $ player.ap -= 1
-                    $ child.use_token('accordance')
+                    $ mom.use_token('accordance')
                     $ child.relations(mom).change('congruence', '-')
                 'Знаять мягкую позицию':
                     $ player.ap -= 1
-                    $ child.use_token('accordance')
+                    $ mom.use_token('accordance')
                     $ child.relations(mom).change('fervor', '+')                            
                 'Занять жесткую позицию':
                     $ player.ap -= 1
-                    $ child.use_token('accordance')
+                    $ mom.use_token('accordance')
                     $ child.relations(mom).change('fervor', '-')  
                 'Больше личной вовлечённости':
                     $ player.ap -= 1
-                    $ child.use_token('accordance')
+                    $ mom.use_token('accordance')
                     $ child.relations(mom).change('distance', '+')
                 'Формализовать отношения':
                     $ player.ap -= 1
-                    $ child.use_token('accordance')
+                    $ mom.use_token('accordance')
                     $ child.relations(mom).change('distance', '-')
                 'Назад':
                     jump lbl_change_relations  
@@ -360,15 +377,15 @@ label lbl_change_relations:
                     'Глобальное отношение матери изменилось. Теперь: [stance]'                     
                 'Троллить и подъёбывать':
                     $ player.ap -= 1
-                    $ child.use_token('antagonism')
+                    $ mom.use_token('antagonism')
                     $ child.relations(mom).change('congruence', '-')
                 'Занять жесткую позицию':
                     $ player.ap -= 1
-                    $ child.use_token('accordance')
+                    $ mom.use_token('accordance')
                     $ child.relations(mom).change('fervor', '-')                    
                 'Формализовать отношения':
                     $ player.ap -= 1
-                    $ child.use_token('antagonism')
+                    $ mom.use_token('antagonism')
                     $ child.relations(mom).change('distance', '-')
                 'Назад':
                     jump lbl_change_relations  
@@ -377,25 +394,25 @@ label lbl_change_relations:
             menu:
                 'Смягчить позицию мамки' if mom.relations_player().master_stance == 'cruel':
                     $ player.ap -= 1
-                    $ child.use_token('compassion')
+                    $ mom.use_token('compassion')
                     $ mom.relations_player().master_stance = 'opressive'         
                     'Глобальное отношение мамки изменилось с жестокого на деспотичное'
                 'Разжалобить мамку':
                     $ player.ap -= 1
-                    $ child.use_token('compassion')
+                    $ mom.use_token('compassion')
                     $ mom.compassion += 1                    
                 'Соглашаться и восхищаться':
                     $ player.ap -= 1
-                    $ child.use_token('compassion')
-                    $ mom.relations(mom).change('congruence', '+')
+                    $ mom.use_token('compassion')
+                    $ mom.relations(child).change('congruence', '+')
                 'Занять мягкую позицию':
                     $ player.ap -= 1
-                    $ child.use_token('compassion')
-                    $ mom.relations(mom).change('fervor', '+')
+                    $ mom.use_token('compassion')
+                    $ mom.relations(child).change('fervor', '+')
                 'Больше личной вовлечённости':
                     $ player.ap -= 1
-                    $ child.use_token('compassion')
-                    $ mom.relations(mom).change('distance', '+')
+                    $ mom.use_token('compassion')
+                    $ mom.relations(child).change('distance', '+')
                 'Назад':
                     jump lbl_change_relations  
                     
@@ -403,24 +420,24 @@ label lbl_change_relations:
             menu:
                 'Смягчить позицию мамки' if mom.relations_player().master_stance == 'cruel':
                     $ player.ap -= 1
-                    $ child.use_token('confidence')
+                    $ mom.use_token('confidence')
                     $ mom.relations_player().master_stance = 'opressive'         
                     'Глобальное отношение мамки изменилось с жестокого на деспотичное'
                 'Увеличить доверие мамки':
                     $ player.ap -= 1
-                    $ child.use_token('confidence')
+                    $ mom.use_token('confidence')
                     $ mom.confidence += 1                    
                 'Соглашаться и восхищаться':
                     $ player.ap -= 1
-                    $ child.use_token('confidence')
-                    $ mom.relations(mom).change('congruence', '+')
+                    $ mom.use_token('confidence')
+                    $ mom.relations(child).change('congruence', '+')
                 'Занять жесткую позицию':
                     $ player.ap -= 1
-                    $ child.use_token('confidence')
+                    $ mom.use_token('confidence')
                     $ child.relations(mom).change('fervor', '-')   
                 'Формализовать отношения':
                     $ player.ap -= 1
-                    $ child.use_token('confidence')
+                    $ mom.use_token('confidence')
                     $ child.relations(mom).change('distance', '-')
                 'Назад':
                     jump lbl_change_relations  
@@ -429,32 +446,32 @@ label lbl_change_relations:
             menu:
                 'Смягчить позицию мамки' if mom.relations_player().master_stance == 'opressive' and mom.favor() > 3:
                     $ player.ap -= 1
-                    $ child.use_token('craving')
+                    $ mom.use_token('craving')
                     $ mom.relations_player().master_stance = 'rightful'         
                     'Глобальное отношение мамки изменилось с деспотичного на справедливое'
                 'Внушить мамке любовь':
                     $ player.ap -= 1
-                    $ child.use_token('craving')
+                    $ mom.use_token('craving')
                     $ mom.craving += 1                    
                 'Занять жесткую позицию':
                     $ player.ap -= 1
-                    $ child.use_token('craving')
-                    $ child.relations(mom).change('fervor', '-')   
+                    $ mom.use_token('craving')
+                    $ mom.relations(child).change('fervor', '-')   
                 'Занять мягкую позицию':
                     $ player.ap -= 1
-                    $ child.use_token('craving')
-                    $ mom.relations(mom).change('fervor', '+')
+                    $ mom.use_token('craving')
+                    $ mom.relations(child).change('fervor', '+')
                 'Больше личной вовлечённости':
                     $ player.ap -= 1
-                    $ child.use_token('craving')
-                    $ mom.relations(mom).change('distance', '+')
+                    $ mom.use_token('craving')
+                    $ mom.relations(child).change('distance', '+')
                 'Назад':
                     jump lbl_change_relations  
                     
         "Достаточно":
             jump lbl_son_manage        
                     
-    jump lbl_change_relations  
+    jump lbl_son_manage  
     return
 
 label lbl_misery:

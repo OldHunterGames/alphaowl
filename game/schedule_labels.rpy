@@ -5,8 +5,9 @@ label shd_None_template(character):
 
 label shd_general_accounting(character):
     # Allways active. Calculates minor issues.
-    'Мать получает зарплату (+10 тенгэ)'
-    $ game.tenge += 10
+    if game.player == mom:
+        'Мать получает зарплату (+10 тенгэ)'
+        $ game.tenge += 10
     if 'dates' in child.restrictions:
         $ child.eros.set_shift(-1)
         $ child.activity.set_shift(-1)
