@@ -11,7 +11,38 @@ from food import *
 from schedule import *
 from taboos import init_taboos
 from relations import Relations
-
+def check_cons_pros(character, difficulty, skill):
+    contra = []
+    pros = []
+    i = difficulty
+    if i > 1:
+        while i > 1:
+            contra.append('very')
+            i -= 1
+    if i==1:
+        contra.append('difficult')
+    elif i < 0:
+        pros.append('easy')
+    if skill.talent:
+        pros.append('talent')
+    if skill.expirience:
+        pros.append('expirience')
+    if skill.specialization:
+        pros.append('specialization')
+    if skill.training:
+        pros.append('training')
+    elif character.vigor < 1:
+        contra.append('exausted')
+    if character.mood()[0] > 0:
+        pros.append('mood')
+    elif character.mood()[0] < 0:
+        contra.append('mood')
+    if skill == character.focused_skill and focus > 5 - character.mind:
+        pros.append('focus')
+    if character.anxiety > 0:
+        contra.append('anxiety')
+    #also will be bonuses for uniform or debuffs for something
+    return (pros, contra) 
 class Person(object):
 
     def __init__(self, age='adolescent', gender='male'):
@@ -291,7 +322,7 @@ class Person(object):
 
 
 
-    def action(self, forced = False, needs=[], taboos=[], moral=0):
+    def action(self, forced = False, needs=[], taboos=[], moral=0, power=3):
         if self.player_controlled:
             result = renpy.call_in_new_context('lbl_action_check', self)
         else:
@@ -299,17 +330,19 @@ class Person(object):
         if result > 0:
             for need in needs:
                 getattr(self, need[0]).set_shift(need[1])
-            for taboo in taboos:
-                self.taboo(taboo[0]).use(taboo[1])
         return result
-    def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0):
+
+    def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0, difficulty=3):
+        if not skill:
+            raise Exception("skillcheck without skill")
         vigor = False
         determination = False
         sabotage = False
         check = 0
-        
+        difficulty -= getattr(self, self.skill(skill).attribute)
         if self.player_controlled:
-            vigor, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self)
+            pros_cons = check_cons_pros(self, difficulty, self.skill(skill))
+            vigor, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, pros_cons)#pros_cons passed as tuple
         else:
             motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos, moral=moral)
             if motivation < 0:
@@ -329,22 +362,16 @@ class Person(object):
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_check_result', check)
             return check
+        if difficulty > 0:
+            check -= difficulty
+        else:
+            check += 1
         for need in needs:
             getattr(self, need[0]).set_shift(need[1])
-        for taboo in taboos:
-            self.taboo(taboo[0]).use(taboo[1])
         self.skills_used.append(skill)
-        check = check + self.mood()[0] - 3 + self.skill(skill).level
+        check = check + self.mood()[0] + self.skill(skill).level
         if determination and self.determination > 0:
-            self.determination -= 1
-            if self.vigor < 1 or not vigor:
-                check += getattr(self, self.skill(skill).attribute)
-            else:
-                check += 1
-                check += getattr(self, self.skill(skill).attribute)
-        else:
-            val = max(self.vigor, getattr(self, self.skill(skill).attribute))
-            check += val
+            check += 1
         if vigor:
             self.drain_vigor()
         elif self.vigor < 1:
@@ -403,7 +430,12 @@ class Person(object):
 
 
 
-    
+    def respect(self, stance_type=None):
+        types = ['slave', 'master', 'neutral']
+        d = {'lawful': (self.discipline*2, self.confidence*2, self.reliance*2),
+            'chaotic': (self.discipline/2, self.confidence/2, self.reliance/2),
+            'timid': (self.dependence*2, self.craving*2, self.attraction*2),
+            }
     def obedience(self):
         if not self.is_slave or self.player_controlled:
             return 0
@@ -584,16 +616,13 @@ class Person(object):
             if shift < 0:
                 if status == 'tense':
                     motiv -= getattr(self, need[0]).level
-                elif status == 'overflow':
-                    motiv -= 1
             if shift > 0:
                 if status == 'tense': 
                     motiv += getattr(self, need[0]).level
                 elif status == 'relevant':
+                    motiv += 1
+                elif status == 'overflow':
                     motiv -= 1
-        if len(taboos)>0:
-            for taboo in taboos:
-                motiv -= self.taboo(taboo[0]).value
         if forced:
             if self.slave_stance == 'rebellious':
                 if motiv > -1:
