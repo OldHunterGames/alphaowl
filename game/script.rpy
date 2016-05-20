@@ -231,7 +231,7 @@ label lbl_owl_info:
         needs_tense = child.show_needs('tense')
         needs_relevant = child.show_needs('relevant')
         needs_statisfied = child.show_needs('satisfied')
-        taboos = child.show_taboos()
+        # taboos = child.show_taboos()
         features = child.show_features()
         focus = child.show_focus()
         rel = child.relations(mom).description()
@@ -248,7 +248,6 @@ label lbl_owl_info:
      Актуальные нужды: [needs_relevant]\n
      Удовлетворённые: [needs_statisfied]\n          
      Пресыщения: [needs_overflow]\n     
-     Табу: \n[taboos]\n
      Особенности: [features]\n
      \n"
 
