@@ -4,7 +4,42 @@ import renpy.store as store
 import renpy.exports as renpy
 from obj_character import *
 from events import events_list
-
+def pros_cons_tokens(character, morality):
+    cons = []
+    pros = []
+    cons.append('cons:')
+    pros.append('pros')
+    master = character.master
+    if character.sensitivity > master.spirit:
+        pros.append('emphaty')
+    else:
+        cons.append('stern')
+    if master.mood()[0] > 0:
+        pros.append("master mood")
+    elif master.mood()[0] < 0:
+        cons.append('master mood')
+    if character.mood()[0] > 0:
+        cons.append('too cheerful')
+    elif character.mood()[0] < 0:
+        pros.append('miserable slave')
+    if morality < 0:
+        pros.append('mercy')
+    else:
+        cons.append('sadism')
+    if master.authority.intensity == 0:
+        cons.append('indifference')
+    if master.authority.intensity > master.favor():
+        cons.append('tyrannous')
+    elif master.authority.intensity < master.favor():
+        pros.append('indulgence')
+    return (pros, cons)
+def get_power(pros_cons):
+    p = len(pros_cons[0]) - len(pros_cons[1])
+    if p < 0:
+        p = 0
+    elif p > 5:
+        p = 5
+    return p
 class Engine(object):
 
     def __init__(self):
@@ -100,8 +135,11 @@ class Engine(object):
         if target_resistance < power:
             target.add_token('discipline')
 
-    def remorse(self, target, power):
-        if power > target.remorse_threshold():
+    def remorse(self, morality):
+        power = renpy.call_in_new_context('lbl_skill_check', pros_cons_tokens(self.player, morality), self.player)
+        power = get_power(power)
+        renpy.call_in_new_context('lbl_notify', self.player, power)
+        if power > self.player.master.tokens_difficulty['compassion']:
             target.add_token('compassion')
     def duty(self, target, power):
         if power > target.duty_threshold():

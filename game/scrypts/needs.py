@@ -20,6 +20,8 @@ class Need(object):
         self.level = _default_need['level']
         self.shift = _default_need['shift']
         self._status = _default_need['status']
+        self._negatives_storage = []
+        self.cumulation = 0
 
 
     @property
@@ -36,33 +38,63 @@ class Need(object):
     
 
     def set_shift(self, value):
-        n = value*self.shift
-        if n < 0:
-            self.shift += value
-        elif abs(value) > abs(self.shift):
+        if self.level == 0:
+            return
+        if abs(value) > abs(self.shift):
             self.shift = value
+        elif value < 0:
+            self._negatives_storage.append(value)
 
+    def threshold(self):
+        val = 5-self.intensity()
+        if val < 0:
+            return 0
+        return val
+    def intensity(self):
+        if self.level == 0:
+            return 0
+        if self.level == 1:
+            return 1
+        if self.level == 2:
+            i = 0
+            if self.status == 'tense':
+                i = 1
+            elif self.status == 'satisfied' or self.status == 'overflow':
+                i = -1
+            i += self.owner.sensitivity
+            if i < 1:
+                i = 1
+            return i
+        if self.level == 3:
+            return 6
+        if self.level == 4:
+            return 6
     def status_change(self):
         if self.level == 0:
             return
-        high_treshold = 8-self.owner.sensitivity-self.level
-        if high_treshold < 1:
-            high_treshold = 1
-        low_treshold = (6-self.owner.sensitivity-self.level)*(-1)
-        if low_treshold > -1:
-            low_treshold = -1
+        shift = None
+        for val in self._negatives_storage:
+            self.shift -= 1
+        if self.shift < -5:
+            self.shift = -5
+        self._negatives_storage = []
+        if self.threshold() < abs(self.shift):
+            if self.shift < 0:
+                shift = '-'
+            elif self.shift > 0:
+                shift = '+'
         l = ['tense', 'relevant', 'satisfied', 'overflow']
         ind = l.index(self.status)
         if ind == 0:
             ind += 1
         if ind == 3:
-            if self.shift < low_treshold:
+            if shift == '-':
                 self.owner.determination -= 1
                 ind = 1
                 self.status = l[ind]
                 self.shift = 0
                 return
-        if self.level == 5:
+        if self.level == 4:
             if ind == 1:
                 ind = 0
         else:
@@ -70,9 +102,9 @@ class Need(object):
                 ind += 1
             elif ind == 2:
                 ind -= 1
-        if self.shift > high_treshold:
+        if shift == '+':
                 ind += 1
-        elif self.shift < low_treshold:
+        elif shift == '-':
                 ind -= 1
         if ind > 2:
             ind = 2

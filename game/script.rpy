@@ -276,14 +276,10 @@ label lbl_mom_info:
      \n"
 
     return
-    
 label lbl_skill_check(pros_cons, character):
     python:
-        vigor = False 
-        determination = False 
-        sabotage = False
         renpy.call_screen('sc_skillcheck', pros_cons[0], pros_cons[1], character)
-    return vigor, determination, sabotage, pros_cons
+    return pros_cons
         
     
     
@@ -384,9 +380,9 @@ screen sc_skillcheck(pros, contra, character):
             $ CalcResult(pros, contra, text)
             text "Опции: "
             if not('vigorous' in pros or 'unlucky' in contra or character.vigor < 2):
-                textbutton "Работать хорошо" action[AddToList(pros, 'vigorous'), SetVariable('vigor', True), CalcResult(pros, contra, text)] 
+                textbutton "Работать хорошо" action[AddToList(pros, 'vigorous'), CalcResult(pros, contra, text)] 
             if not('determined' in pros or 'unlucky' in contra or character.determination < 1):
-                textbutton "Выложиться полностью" action[AddToList(pros, 'determined'), SetVariable('determination', True), CalcResult(pros, contra, text)]
+                textbutton "Выложиться полностью" action[AddToList(pros, 'determined'), CalcResult(pros, contra, text)]
             if not('lucky' in pros or 'unlucky' in contra):
                 textbutton "Рискнуть" action[AddToList(pros, 'risk', contra), CalcResult(pros, contra, text)]
             vbox:
@@ -397,6 +393,6 @@ screen sc_skillcheck(pros, contra, character):
     hbox:
         xalign 0.5
         yalign 0.5
-        textbutton "Выполнить работу" action[SetVariable('sabotage', False), Return()]
-        textbutton "Саботировать" action[SetVariable('sabotage', True), Return()]
+        textbutton "Выполнить работу" action[Return()]
+        textbutton "Саботировать" action[AddToList(contra, 'sabotage'), Return()]
 

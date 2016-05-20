@@ -44,7 +44,7 @@ def check_cons_pros(character, difficulty, skill):
     if character.anxiety > 0:
         contra.append('anxiety')
     #also will be bonuses for uniform or debuffs for something
-    return (pros, contra) 
+    return (pros, contra)
 class Person(object):
 
     def __init__(self, age='adolescent', gender='male'):
@@ -337,32 +337,27 @@ class Person(object):
     def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0, difficulty=3):
         if not skill:
             raise Exception("skillcheck without skill")
-        vigor = False
-        determination = False
-        sabotage = False
         check = 0
-        lucky = 0
-        pros_cons = []
+        pros_cons = ([], [])
         difficulty -= getattr(self, self.skill(skill).attribute)
         if self.player_controlled:
             pros_cons = check_cons_pros(self, difficulty, self.skill(skill))
-            vigor, determination, sabotage, pros_cons = renpy.call_in_new_context('lbl_skill_check', pros_cons, self)#pros_cons passed as tuple
+            pros_cons = renpy.call_in_new_context('lbl_skill_check', pros_cons, self)#pros_cons passed as tuple
         else:
             motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos, moral=moral)
             if motivation < 0:
-                sabotage = True
+                pros_cons[1].append('sabotage')
             if motivation > 0 and motivation < 6-self.vigor:
                 pass
             if motivation > 6-self.vigor and motivation < 5:
-                vigor = True
+                pros_cons[0].append('vigorous')
             if motivation > 5 and res_to_use < 1:
-                vigor = False
-                determination = True
+                pros_cons[0].append('determined')
             if motivation > 10:
-                vigor = True
-                determination = True
+                pros_cons[0].append('determined')
+                pros_cons[0].append('vigorous')
 
-        if sabotage:
+        if 'sabotage' in pros_cons[1]:
             check = -1
             if self.player_controlled:
                 renpy.call_in_new_context('lbl_check_result', check)
@@ -375,20 +370,19 @@ class Person(object):
             getattr(self, need[0]).set_shift(need[1])
         self.skills_used.append(skill)
         check = check + self.mood()[0] + self.skill(skill).level
-        if determination and self.determination > 0:
+        if 'determined' in pros_cons[0] and self.determination > 0:
             check += 1
-        if vigor:
+        if 'vigorous' in pros_cons[0]:
             check += 1
             self.drain_vigor()
         self.drain_vigor()
         if self.focused_skill != None:
             if check < self.focus and skill == self.focused_skill.name:
                 check += 1
-        if self.player_controlled:
-            if 'lucky' in pros_cons[0]:
-                check += 1
-            elif 'unlucky' in pros_cons[1]:
-                check = 0
+        if 'lucky' in pros_cons[0]:
+            check += 1
+        elif 'unlucky' in pros_cons[1]:
+            check = 0
         if check < 0:
             check = 0
         if self.player_controlled:
@@ -588,7 +582,7 @@ class Person(object):
 
     
     def reduce_overflow(self):
-        max_level = 5
+        max_level = 4
         needs_list = []
         for need in self.needs:
             if need.status == 'overflow':
