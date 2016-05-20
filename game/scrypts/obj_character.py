@@ -12,8 +12,10 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 def check_cons_pros(character, difficulty, skill):
-    contra = ["cons:"]
-    pros = ["pros:"]
+    contra = []
+    contra.append("cons:")
+    pros = []
+    pros.append("pros:")
     i = difficulty
     if i > 1:
         while i > 1:
@@ -339,10 +341,12 @@ class Person(object):
         determination = False
         sabotage = False
         check = 0
+        lucky = 0
+        pros_cons = []
         difficulty -= getattr(self, self.skill(skill).attribute)
         if self.player_controlled:
             pros_cons = check_cons_pros(self, difficulty, self.skill(skill))
-            vigor, determination, sabotage = renpy.call_in_new_context('lbl_skill_check', self, pros_cons)#pros_cons passed as tuple
+            vigor, determination, sabotage, pros_cons = renpy.call_in_new_context('lbl_skill_check', pros_cons, self)#pros_cons passed as tuple
         else:
             motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos, moral=moral)
             if motivation < 0:
@@ -357,6 +361,7 @@ class Person(object):
             if motivation > 10:
                 vigor = True
                 determination = True
+
         if sabotage:
             check = -1
             if self.player_controlled:
@@ -373,12 +378,17 @@ class Person(object):
         if determination and self.determination > 0:
             check += 1
         if vigor:
+            check += 1
             self.drain_vigor()
-        elif self.vigor < 1:
-            self.drain_vigor()
+        self.drain_vigor()
         if self.focused_skill != None:
             if check < self.focus and skill == self.focused_skill.name:
                 check += 1
+        if self.player_controlled:
+            if 'lucky' in pros_cons[0]:
+                check += 1
+            elif 'unlucky' in pros_cons[1]:
+                check = 0
         if check < 0:
             check = 0
         if self.player_controlled:

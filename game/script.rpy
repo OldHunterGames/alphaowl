@@ -208,6 +208,7 @@ label label_new_day:
     $ study = game.choose_study()
     $ game.child.rest()
     $ game.mother.rest()
+    $ player.skillcheck('sex')
     "Неделя номер [game.time]"
        
     $ gt = game.new_turn()
@@ -277,32 +278,16 @@ label lbl_mom_info:
 
     return
     
-label lbl_skill_check(character=player, pros_cons):
+label lbl_skill_check(pros_cons, character):
     python:
+        vigor = False 
+        determination = False 
         sabotage = False
-        determination = False
-        vigor = False
-
-    show screen sc_action_stats(pros_cons[0], pros_cons[1])
-    menu:
-        'Сделать спустя рукава':
-            $ vigor = False
-            $ determination = False
-        'Работать хорошо({color=#00ff00}vigorous{/color})' if character.vigor > 0:
-            $ vigor = True
-            $ determination = False
-        'Сделать волевым усилием({color=#00ff00}determined{/color})' if character.determination > 0:
-            $ vigor = False
-            $ determination = True
-        'Выложиться полностью({color=#00ff00}vigorous{/color},{color=#00ff00}determined{/color})' if character.vigor > 0 and character.determination > 0:
-            $ vigor = True
-            $ determination = True
-        'Саботировать':
-            $ vigor = False
-            $ determination = False
-            $ sabotage = True
-    hide screen sc_action_stats
-    return vigor, determination, sabotage
+        renpy.call_screen('sc_skillcheck', pros_cons[0], pros_cons[1], character)
+    return vigor, determination, sabotage, pros_cons
+        
+    
+    
 label lbl_check_result(result=0):
     'Результат проверки: [result]'
     return
@@ -335,7 +320,61 @@ label lbl_notify(character, effect):
     return
 
 
-screen sc_action_stats(pros, contra):
+screen sc_skillcheck(pros, contra, character):
+    python:
+        results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
+                    '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
+        i = len(pros) - len(contra)
+        if i < 0:
+            i=0
+        if i > 5:
+            i=5
+        text = [results[i]]
+        class CalcResult(object):
+            def __init__(self, pros, cons, text):
+                self.results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
+                                '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
+                self.pros = pros
+                self.cons = cons
+                self.text = text
+            def __call__(self):
+                i = len(self.pros) - len(self.cons)
+                if i < 0:
+                    i = 0
+                elif i > 5:
+                    i = 5
+                if 'unlucky' in self.cons:
+                    i = 0
+                self.text = []
+                self.text.append(self.results[i])
+                renpy.restart_interaction()
+        class DelFromList(object):
+            def __init__(self, pros, text):
+                self.text = text
+                self.list = l
+            def __call__(self):
+                self.list.remove(text)
+                renpy.restart_interaction()
+        class AddToList(object):
+            def __init__(self, l, text, cons=None):
+                self.list = l
+                self.text = text
+                if cons:
+                    self.cons = cons
+            def __call__(self):
+                if self.text == 'risk':
+                    l = self.risk()
+                else:
+                    l = -1
+                    self.list.append(self.text)
+                    renpy.restart_interaction()
+            def risk(self):
+                i = randint(1, 2)
+                if i == 2:
+                    self.list.append('lucky')
+                elif i == 1:
+                    self.cons.append('unlucky')
+                renpy.restart_interaction()
     hbox:
         xalign 0.0
         yalign 0.0
@@ -343,6 +382,22 @@ screen sc_action_stats(pros, contra):
             for s in contra:
                 text "{color=#f00}[s]{/color}"
         vbox:
+            $ CalcResult(pros, contra, text)
+            text "Опции: "
+            if not('vigorous' in pros or 'unlucky' in contra or character.vigor < 2):
+                textbutton "Работать хорошо" action[AddToList(pros, 'vigorous'), SetVariable('vigor', True), CalcResult(pros, contra, text)] 
+            if not('determined' in pros or 'unlucky' in contra or character.determination < 1):
+                textbutton "Выложиться полностью" action[AddToList(pros, 'determined'), SetVariable('determination', True), CalcResult(pros, contra, text)]
+            if not('lucky' in pros or 'unlucky' in contra):
+                textbutton "Рискнуть" action[AddToList(pros, 'risk', contra), CalcResult(pros, contra, text)]
+            vbox:
+                text "Результат действия: [text[0]]"
+        vbox:
             for s in pros:
                 text "{color=#00ff00}[s]{/color}"
+    hbox:
+        xalign 0.5
+        yalign 0.5
+        textbutton "Выполнить работу" action[SetVariable('sabotage', False), Return()]
+        textbutton "Саботировать" action[SetVariable('sabotage', True), Return()]
 
