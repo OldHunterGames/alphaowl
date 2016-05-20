@@ -208,7 +208,6 @@ label label_new_day:
     $ study = game.choose_study()
     $ game.child.rest()
     $ game.mother.rest()
-    $ player.skillcheck('sex')
     "Неделя номер [game.time]"
        
     $ gt = game.new_turn()
