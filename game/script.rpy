@@ -336,14 +336,13 @@ label lbl_notify(character, effect):
 
 
 screen sc_action_stats(pros, contra):
-    vbox:
+    hbox:
         xalign 0.0
         yalign 0.0
-        for s in contra:
-            text "{color=#f00}[s]{/color}"
-    vbox:
-        xalign 1.0
-        yalign 0.0
-        for s in pros:
-            text "{color=#00ff00}[s]{/color}"
+        vbox:
+            for s in contra:
+                text "{color=#f00}[s]{/color}"
+        vbox:
+            for s in pros:
+                text "{color=#00ff00}[s]{/color}"
 

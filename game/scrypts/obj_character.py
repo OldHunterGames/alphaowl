@@ -12,8 +12,8 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 def check_cons_pros(character, difficulty, skill):
-    contra = []
-    pros = []
+    contra = ["cons:"]
+    pros = ["pros:"]
     i = difficulty
     if i > 1:
         while i > 1:
