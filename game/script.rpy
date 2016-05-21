@@ -277,7 +277,15 @@ label lbl_mom_info:
     return
 label lbl_skill_check(pros_cons, character):
     python:
+        if 'unfortunate' in character.conditions:
+            pros_cons[1].append('unfortunate')
         renpy.call_screen('sc_skillcheck', pros_cons[0], pros_cons[1], character)
+        if not 'unfortunate' in character.conditions:
+            if 'unlucky' in pros_cons[1]:
+                character.conditions.append('unfortunate')
+        else:
+            if len(pros_cons[0]) - len(pros_cons[1]) > 0:
+                character.conditions.remove('unfortunate')
     return pros_cons
         
     
@@ -357,9 +365,8 @@ screen sc_skillcheck(pros, contra, character):
                     self.cons = cons
             def __call__(self):
                 if self.text == 'risk':
-                    l = self.risk()
+                    self.risk()
                 else:
-                    l = -1
                     self.list.append(self.text)
                     renpy.restart_interaction()
             def risk(self):

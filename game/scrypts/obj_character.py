@@ -39,7 +39,7 @@ def check_cons_pros(character, difficulty, skill):
         pros.append('mood')
     elif character.mood()[0] < 0:
         contra.append('mood')
-    if skill == character.focused_skill and focus > 5 - character.mind:
+    if skill == character.focused_skill and character.focus > 5 - character.mind:
         pros.append('focus')
     if character.anxiety > 0:
         contra.append('anxiety')
@@ -376,13 +376,17 @@ class Person(object):
             check += 1
             self.drain_vigor()
         self.drain_vigor()
-        if self.focused_skill != None:
-            if check < self.focus and skill == self.focused_skill.name:
-                check += 1
+        if 'focus' in pros_cons[0]:
+            check += 1
+        if 'exausted' in pros_cons[1]:
+            check -= 1
+        if 'unfortunate' in pros_cons[1]:
+            check -= 1
         if 'lucky' in pros_cons[0]:
             check += 1
         elif 'unlucky' in pros_cons[1]:
             check = 0
+
         if check < 0:
             check = 0
         if self.player_controlled:
@@ -391,9 +395,11 @@ class Person(object):
     
 
     def calc_focus(self):
-        if self.focused_skill in self.skills_used:
-            self.focus += 1
-            return
+        if self.focused_skill:
+            if self.focused_skill.name in self.skills_used:
+                self.focus += 1
+                self.skills_used = []
+                return
         if len(self.skills_used) > 0:
             from collections import Counter
             counted = Counter()
