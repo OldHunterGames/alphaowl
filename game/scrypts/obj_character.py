@@ -11,6 +11,7 @@ from food import *
 from schedule import *
 from taboos import init_taboos
 from relations import Relations
+from stance import Stance
 def check_cons_pros(character, difficulty, skill):
     contra = []
     contra.append("cons:")
@@ -63,20 +64,11 @@ class Person(object):
                                    'reliance': 0, 'attraction': 0, 'kindness': 0}
 
         #obedience, dependecy and respect stats
-        self.dread = 0
-        self.dependence = 0
-        self.discipline = 0
-        self.confidence = 0
-        self.compassion = 0
-        self.craving = 0
-        self.reliance = 0
-        self.attraction = 0
-        self.kidness = 0
+        self.stance = Stance(self)
 
         self.master = None          # If this person is a slave, the master will be set
         self.slave_stance = 'rebellious'     # rebellious, forced, accustomed or willing
         self.supervisor = None
-        self.is_slave = False
         self.slaves = []
         self.subordinates = []
         self.ap = 1
@@ -334,6 +326,26 @@ class Person(object):
                 getattr(self, need[0]).set_shift(need[1])
         return result
 
+    def use_resources(self, pros_cons):
+        if 'sabotage' in pros_cons[1]:
+            return
+        if 'vigorous' in pros_cons[0]:
+            self.drain_vigor()
+        if 'determined' in pros_cons[0]:
+            self.determination -= 1
+        self.drain_vigor()
+
+    def get_action_power(self, pros_cons):
+        if 'sabotage' in pros_cons[1]:
+            return -1
+        self.use_resources(pros_cons)
+        p = len(pros_cons[0]) - len(pros_cons[1])
+        if p < 0:
+            p = 0
+        elif p > 5:
+            p = 5
+        return p
+
     def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0, difficulty=3):
         if not skill:
             raise Exception("skillcheck without skill")
@@ -356,39 +368,11 @@ class Person(object):
             if motivation > 10:
                 pros_cons[0].append('determined')
                 pros_cons[0].append('vigorous')
-
-        if 'sabotage' in pros_cons[1]:
-            check = -1
-            if self.player_controlled:
-                renpy.call_in_new_context('lbl_check_result', check)
-            return check
-        if difficulty > 0:
-            check -= difficulty
-        else:
-            check += 1
+        check = self.get_action_power(pros_cons)
         for need in needs:
             getattr(self, need[0]).set_shift(need[1])
         self.skills_used.append(skill)
         check = check + self.mood()[0] + self.skill(skill).level
-        if 'determined' in pros_cons[0] and self.determination > 0:
-            check += 1
-        if 'vigorous' in pros_cons[0]:
-            check += 1
-            self.drain_vigor()
-        self.drain_vigor()
-        if 'focus' in pros_cons[0]:
-            check += 1
-        if 'exausted' in pros_cons[1]:
-            check -= 1
-        if 'unfortunate' in pros_cons[1]:
-            check -= 1
-        if 'lucky' in pros_cons[0]:
-            check += 1
-        elif 'unlucky' in pros_cons[1]:
-            check = 0
-
-        if check < 0:
-            check = 0
         if self.player_controlled:
             renpy.call_in_new_context('lbl_check_result', check)
         return check
@@ -440,94 +424,20 @@ class Person(object):
 
 
 
-    def respect(self, stance_type=None):
-        types = ['slave', 'master', 'neutral']
-        d = {'lawful': (self.discipline*2, self.confidence*2, self.reliance*2),
-            'chaotic': (self.discipline/2, self.confidence/2, self.reliance/2),
-            'timid': (self.dependence*2, self.craving*2, self.attraction*2),
-            }
     def obedience(self):
-        if not self.is_slave or self.player_controlled:
-            return 0
-        obedience = 0
-
-        if self.alignment["orderliness"] == "lawful":
-            obedience += self.discipline*2
-        elif self.alignment["orderliness"] == "chaotic":
-            obedience += self.discipline/2
-        else:
-            obedience += self.discipline
-
-        if self.alignment["activity"] == "timid":
-            obedience += self.dependence*2
-        elif self.alignment["activity"] == "ardent":
-            obedience += self.dependence/2
-        else:
-            obedience += self.dependence
-
-        if self.alignment["morality"] == "evil":
-            obedience += self.dread*2
-        elif self.alignment["morality"] == "good":
-            obedience += self.dread/2
-        else:
-            obedience += self.dread
-
-        return obedience
-
+        if not self.stance.type=='slave' or self.player_controlled:
+            return -1
+        return self.stance.respect()
 
     def favor(self):
-        if not self.master or self.player_controlled:
-            return 0
-        favor = 0
-        if self.master.alignment["orderliness"] == "lawful":
-            favor += self.confidence*2
-        elif self.master.alignment["orderliness"] == "chaotic":
-            favor += self.confidence/2
-        else:
-            favor += self.confidence
-
-        if self.master.alignment["activity"] == "timid":
-            favor += self.craving*2
-        elif self.master.alignment["activity"] == "ardent":
-            favor+= self.craving/2
-        else:
-            favor += self.craving
-
-        if self.master.alignment["morality"] == "evil":
-            favor += self.compassion*2
-        elif self.master.alignment["morality"] == "good":
-            favor += self.compassion/2
-        else:
-            favor += self.compassion
-        return favor
+        if not self.stance.type=='master' or self.player_controlled:
+            return -1
+        return self.stance.respect()
 
     def respect(self):
-        if self.player_controlled:
-            return 0
-        obedience = 0
-
-        if self.alignment["orderliness"] == "lawful":
-            obedience += self.reliance*2
-        elif self.alignment["orderliness"] == "chaotic":
-            obedience += self.reliance/2
-        else:
-            obedience += self.reliance
-
-        if self.alignment["activity"] == "timid":
-            obedience += self.attraction*2
-        elif self.alignment["activity"] == "ardent":
-            obedience += self.attraction/2
-        else:
-            obedience += self.attraction
-
-        if self.alignment["morality"] == "evil":
-            obedience += self.kindness*2
-        elif self.alignment["morality"] == "good":
-            obedience += self.kindness/2
-        else:
-            obedience += self.kindness
-
-        return obedience
+        if not self.stance.type=='neutral' or self.player_controlled:
+            return -1
+        return self.stance.respect()
 
 
     def reliance_threshold(self):
@@ -1041,7 +951,7 @@ class Person(object):
 
 
     def enslave(self, target):
-        target.is_slave = True
+        target.stance.change_stance('slave')
         target.master = self
         self.slaves.append(target)
         self.relations(target)

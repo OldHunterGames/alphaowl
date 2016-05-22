@@ -33,13 +33,8 @@ def pros_cons_tokens(character, morality):
     elif master.authority.intensity < master.favor():
         pros.append('indulgence')
     return (pros, cons)
-def get_power(pros_cons):
-    p = len(pros_cons[0]) - len(pros_cons[1])
-    if p < 0:
-        p = 0
-    elif p > 5:
-        p = 5
-    return p
+
+
 class Engine(object):
 
     def __init__(self):
@@ -137,7 +132,7 @@ class Engine(object):
 
     def remorse(self, morality):
         power = renpy.call_in_new_context('lbl_skill_check', pros_cons_tokens(self.player, morality), self.player)
-        power = get_power(power)
+        power = self.player.get_action_power(power)
         renpy.call_in_new_context('lbl_notify', self.player, power)
         if power > self.player.master.tokens_difficulty['compassion']:
             target.add_token('compassion')
