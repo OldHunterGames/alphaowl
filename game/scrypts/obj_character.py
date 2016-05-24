@@ -2,7 +2,7 @@
 from random import *
 import renpy.store as store
 import renpy.exports as renpy
-from features import Feature, person_features
+from features import Feature, Phobia, person_features
 from skills import Skill, skills_data
 from needs import init_needs
 from copy import copy
@@ -108,7 +108,7 @@ class Person(object):
             'sensitivity':3
         }
         self.university = {'name': 'study', 'effort': 'bad', 'auto': False}
-        self.vigor = 0
+        self.vigor = self.attributes['physique']
         self.fatigue = 0
         self.taboos = init_taboos(self)
         self.appetite = 0
@@ -181,6 +181,13 @@ class Person(object):
     @property
     def age(self):
         return self.feature_by_slot('age').name
+
+    def phobias(self):
+        l = []
+        for feature in self.features:
+            if isinstance(feature, Phobia):
+                l.append(feature.target)
+        return l
 
     def insurgensy(self):
         val = self.vigor - self.obedience()
@@ -286,19 +293,7 @@ class Person(object):
             if t.name == name:
                 return t
         return "No taboo named %s"%(name)
-
-
-
-    def pain_effect_threshold(self, taboo):
-        dif = self.tokens_difficulty['dread'] if self.master else 0
-        threshold = self.vigor + self.spirit + dif - self.taboo(taboo).value
-        return threshold
-
-    def pain_tear_threshold(self, taboo):
-        threshold = self.vigor*2 + 6 - self.sensitivity - self.taboo(taboo).value
-        return threshold
-
-    
+  
 
     def skill(self, skillname):
         skill = None
@@ -314,8 +309,6 @@ class Person(object):
         return skill
 
 
-
-
     def action(self, forced = False, needs=[], taboos=[], moral=0, power=3):
         if self.player_controlled:
             result = renpy.call_in_new_context('lbl_action_check', self)
@@ -326,19 +319,24 @@ class Person(object):
                 getattr(self, need[0]).set_shift(need[1])
         return result
 
-    def use_resources(self, pros_cons):
+    def use_resources(self, pros_cons, skill=None, morality=0, vigor=True):
         if 'sabotage' in pros_cons[1]:
             return
         if 'vigorous' in pros_cons[0]:
             self.drain_vigor()
         if 'determined' in pros_cons[0]:
             self.determination -= 1
-        self.drain_vigor()
+        if skill:
+            self.skills_used.append(skill)
+        if morality:
+            self.moral_action(morality)
+        if vigor:
+            self.drain_vigor()
 
-    def get_action_power(self, pros_cons):
+    def get_action_power(self, pros_cons, skill=None, morality=0, vigor=True):
         if 'sabotage' in pros_cons[1]:
             return -1
-        self.use_resources(pros_cons)
+        self.use_resources(pros_cons, skill, morality, vigor)
         p = len(pros_cons[0]) - len(pros_cons[1])
         if p < 0:
             p = 0
@@ -346,35 +344,31 @@ class Person(object):
             p = 5
         return p
 
+    def motivated_check(self, pros_cons, skill=None, needs=[], forced=False, moral=0):
+        motivation = self.motivation(skill=skill, needs=needs, forced=forced, moral=moral)
+        if motivation < 0:
+            pros_cons[1].append('sabotage')
+        if motivation > 0 and motivation < 6-self.vigor:
+            pass
+        if motivation > 6-self.vigor and motivation < 5:
+            pros_cons[0].append('vigorous')
+        if motivation > 5 and res_to_use < 1:
+            pros_cons[0].append('determined')
+        if motivation > 10:
+            pros_cons[0].append('determined')
+            pros_cons[0].append('vigorous')
+
     def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0, difficulty=3):
         if not skill:
             raise Exception("skillcheck without skill")
         check = 0
         pros_cons = ([], [])
         difficulty -= getattr(self, self.skill(skill).attribute)
-        if self.player_controlled:
-            pros_cons = check_cons_pros(self, difficulty, self.skill(skill))
-            pros_cons = renpy.call_in_new_context('lbl_skill_check', pros_cons, self)#pros_cons passed as tuple
-        else:
-            motivation = self.motivation(skill=skill, needs=needs, forced=forced, taboos=taboos, moral=moral)
-            if motivation < 0:
-                pros_cons[1].append('sabotage')
-            if motivation > 0 and motivation < 6-self.vigor:
-                pass
-            if motivation > 6-self.vigor and motivation < 5:
-                pros_cons[0].append('vigorous')
-            if motivation > 5 and res_to_use < 1:
-                pros_cons[0].append('determined')
-            if motivation > 10:
-                pros_cons[0].append('determined')
-                pros_cons[0].append('vigorous')
-        check = self.get_action_power(pros_cons)
+        pros_cons = check_cons_pros(self, difficulty, self.skill(skill))
+        pros_cons = renpy.call_in_new_context('lbl_skill_check', pros_cons, self, True)#pros_cons passed as tuple
         for need in needs:
             getattr(self, need[0]).set_shift(need[1])
-        self.skills_used.append(skill)
         check = check + self.mood()[0] + self.skill(skill).level
-        if self.player_controlled:
-            renpy.call_in_new_context('lbl_check_result', check)
         return check
     
 
@@ -438,63 +432,6 @@ class Person(object):
         if not self.stance.type=='neutral' or self.player_controlled:
             return -1
         return self.stance.respect()
-
-
-    def reliance_threshold(self):
-        return 3+self.tokens_difficulty['reliance']
-
-    def attraction_threshold(self):
-        return 3+self.tokens_difficulty['attraction']
-
-    def kindness_threshold(self):
-        return 3+self.tokens_difficulty['kindness']
-
-    def duty_threshold(self):
-        if self.player_controlled:
-            return 0
-        mod = self.tokens_difficulty['confidence']
-        threshold = self.authority.level + self.order.level - self.independence.level + mod
-        return threshold
-
-    def gratifaction_threshold(self, needs=[]):
-        if self.player_controlled:
-            return 0
-        mod = self.tokens_difficulty['craving']
-        n = 0
-        for need in needs:
-            if getattr(self, need).level > n:
-                n = getattr(self, need).level
-        threshold = 3 + self.spirit + self.mood()[1] - n + mod
-        return threshold
-
-    def remorse_threshold(self):
-        if self.player_controlled:
-            return 0
-        mod = self.tokens_difficulty['compassion']
-        threshold = self.ambition.level + self.power.level - self.altruism.level - self.sensitivity - self.mood()[1]
-        if threshold < 0:
-            threshold = 0
-        threshold += mod
-        return threshold
-
-    def suggestion_threshold(self):
-        if self.player_controlled:
-            return 0
-        return self.spirit + self.authority.level - self.mood()[1]
-
-    def suggestion_check(self):
-        threshold = self.suggestion_threshold()
-        if self.relations_player().master_stance == 'cruel':
-            return 100
-        if self.relations_player().master_stance == 'opressive':
-            threshold -= self.favor()
-            if threshold < self.spirit:
-                threshold = self.spirit
-        if self.relations_player().master_stance == 'rightful':
-            threshold -= self.favor()
-        if self.relations_player().master_stance == 'benevolent':
-            return 0
-        return threshold
 
     
     def reduce_overflow(self):
@@ -568,7 +505,8 @@ class Person(object):
 
     def add_feature(self, name):    # adds features to person, if mutually exclusive removes old feature
         Feature(self, name)
-    
+    def add_phobia(self, name):
+        Phobia(self, name)
     def feature_by_slot(self, slot):        # finds feature which hold needed slot
         for f in self.features:
             if f.slot == slot:
@@ -848,6 +786,10 @@ class Person(object):
 
 
     def moral_action(self, *args, **kwargs):
+        for arg in args:
+            if isinstance(arg, int):
+                self.selfesteem += arg
+                break
         result = self.check_moral(*args, **kwargs)
         self.selfesteem += result
         return result
@@ -863,7 +805,12 @@ class Person(object):
         orderliness = None
         target = None
         if 'target' in kwargs:
-            target = kwargs['target']
+            if isinstance(kwargs['target'], Person):
+                target = kwargs['target']
+        else:
+            for arg in args:
+                if isinstance(arg, Person):
+                    target=arg
         for arg in args:
             if arg in act.keys():
                 activity = arg
@@ -953,14 +900,17 @@ class Person(object):
     def enslave(self, target):
         target.stance.change_stance('slave')
         target.master = self
+        target.supervisor = self
         self.slaves.append(target)
         self.relations(target)
 
+    def set_supervisor(self, supervisor):
+        self.supervisor = supervisor
 
     def master_stance(self):
         if self.player_controlled:
             raise Exception('master_stance is only for npc')
-        stance = self.relations_player().master_stance
+        stance = self.stance.level
         l = ['cruel', 'opressive', 'rightful', 'benevolent']
         ind = l.index(stance)
         return ind

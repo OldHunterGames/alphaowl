@@ -5,7 +5,7 @@ from copy import deepcopy
 needs_names = ["general", 'purpose', "nutrition", "wellness", "comfort", "activity", "communication", "amusement",
              "prosperity", "authority", "ambition", "eros", "order", "independence", "approval", "trill", "altruism", "power"]
 
-_default_need = {"level": 3, "shift": 0, "status": "relevant"}
+_default_need = {"level": 2, "shift": 0, "status": "relevant"}
 
 def init_needs(owner):
     l = []
@@ -22,7 +22,9 @@ class Need(object):
         self._status = _default_need['status']
         self._negatives_storage = []
         self.cumulation = 0
-
+        self.memory = {'bribe': 0, 'torture': 0, 'remorse': 0}
+        self.craving_memory = False
+        self.attraction_memory = False
 
     @property
     def status(self):

@@ -8,7 +8,9 @@ from features_data import person_features
 class Feature(object):
 
     def __init__(self, owner=None, name="generic", *args, **kwargs):
-        stats = person_features[name] if name in person_features else None
+        stats = None
+        if not stats:
+            stats = person_features[name] if name in person_features else None
         if not stats:
             return 
         self.name = name
@@ -26,6 +28,8 @@ class Feature(object):
         self.owner.features.remove(self)
 
     def add(self):
+        if self in self.owner.features:
+            return
         if self.slot == None:
             self.owner.features.append(self)
             if self.modifiers:
@@ -39,6 +43,13 @@ class Feature(object):
                 self.owner.modifiers.append(self.modifiers)
             self.owner.features.append(self)
             
+class Phobia(Feature):
+    def __init__(self, owner, name, target, *args, **kwargs):
+        stats = person_phobias[name] if name in person_phobias else None
+        super(Phobia, self).__init__(owner, name)
+        self.target = target
+    def add(self):
+        super(Phobia, self).add()
 
 
 class Blood(Feature):

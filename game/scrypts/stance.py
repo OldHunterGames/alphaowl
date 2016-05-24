@@ -35,7 +35,7 @@ class Stance(object):
     def level(self):
         return Stance._types[self._type][self.value]
     
-    def add_point(self, value, axis):
+    def add_point(self, axis, value=1):
         ind = None
         for key in Stance._types_stats:
             if axis in Stance._types_stats[key] and self._type!=key:
@@ -50,6 +50,9 @@ class Stance(object):
     
     def points(self, axis):
         ind = None
+        for key in Stance._types_stats:
+            if axis in Stance._types_stats[key] and self._type!=key:
+                raise Exception("Wrong axis for this type of relations: %s, %s"%(self.type, axis))
         for key in Stance._ax.keys():
             if axis in Stance._ax[key]:
                 ind = key

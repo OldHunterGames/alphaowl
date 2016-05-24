@@ -15,6 +15,8 @@ init python:
     register_actions()
     mother.enslave(child)
     mom = mother
+    check_results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
+                    '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
 
     
 # Игра начинается здесь.
@@ -275,18 +277,26 @@ label lbl_mom_info:
      \n"
 
     return
-label lbl_skill_check(pros_cons, character):
+label lbl_skill_check(pros_cons, character, skill=None, needs=[], forced=False, morality=0, vigor=True):
     python:
         if 'unfortunate' in character.conditions:
             pros_cons[1].append('unfortunate')
-        renpy.call_screen('sc_skillcheck', pros_cons[0], pros_cons[1], character)
+        if character.player_controlled:
+            renpy.call_screen('sc_skillcheck', pros_cons[0], pros_cons[1], character, skill)
+        else:
+            character.motivated_check(pros_cons, skill, needs, forced, moral)
+        r = character.get_action_power(pros_cons, skill, morality, vigor)
+        result = check_results[r]
+
         if not 'unfortunate' in character.conditions:
             if 'unlucky' in pros_cons[1]:
                 character.conditions.append('unfortunate')
         else:
-            if len(pros_cons[0]) - len(pros_cons[1]) > 0:
+            if result > 0:
                 character.conditions.remove('unfortunate')
-    return pros_cons
+    if character.player_controlled:
+        call lbl_result(result)
+    return r
         
     
     
@@ -317,25 +327,25 @@ label lbl_resist_result(effect, success):
     else:
         'Вы попытались справиться с [effect] но вам не удалось'
     return
+label lbl_result(result):
+    'Результат проверки: [result]'
+    return
 label lbl_notify(character, effect):
-    'Вы получили [effect]'
+    $ n = character.name()
+    '[n] получил(а) [effect]'
     return
 
 
-screen sc_skillcheck(pros, contra, character):
+screen sc_skillcheck(pros, contra, character, skill):
     python:
-        results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
-                    '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
         i = len(pros) - len(contra)
         if i < 0:
             i=0
         if i > 5:
             i=5
-        text = [results[i]]
+        text = [check_results[i]]
         class CalcResult(object):
             def __init__(self, pros, cons, text):
-                self.results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
-                                '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
                 self.pros = pros
                 self.cons = cons
                 self.text = text
@@ -348,7 +358,7 @@ screen sc_skillcheck(pros, contra, character):
                 if 'unlucky' in self.cons:
                     i = 0
                 self.text = []
-                self.text.append(self.results[i])
+                self.text.append(check_results[i])
                 renpy.restart_interaction()
         class DelFromList(object):
             def __init__(self, pros, text):
@@ -400,5 +410,6 @@ screen sc_skillcheck(pros, contra, character):
         xalign 0.5
         yalign 0.5
         textbutton "Выполнить работу" action[Return()]
-        textbutton "Саботировать" action[AddToList(contra, 'sabotage'), Return()]
+        if skill:
+            textbutton "Саботировать" action[AddToList(contra, 'sabotage'), Return()]
 
