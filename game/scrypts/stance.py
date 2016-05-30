@@ -25,15 +25,30 @@ class Stance(object):
         if self._value < 0:
             self._value = 0
         elif self._value > 3:
-            self._value = 3
+            self._value = 2
+
+    def to_max(self):
+        self._value = 3
 
     @property
     def type(self):
         return self._type
 
-
+    @property
     def level(self):
         return Stance._types[self._type][self.value]
+
+    
+    def set_level(self, value):
+        for key in Stance._types:
+            if value in Stance._types[key]:
+                if self._type == key:
+                    self._value = Stance._types[key].index(value)
+                else:
+                    raise Exception("Wrong value(%s) for %s type of stance"%(value, self.type))
+            else:
+                raise Exception("Unknown value %s"%(value))
+
     
     def add_point(self, axis, value=1):
         ind = None

@@ -17,6 +17,7 @@ class Skill(object):
         self.expirience = False
         self.specialization = False
         self.talent = False
+        self.inability = False
         self.expirience_slot = 0
 
     @property
@@ -30,6 +31,8 @@ class Skill(object):
             level += 1
         if self.talent:
             level += 1
+        if self.inability:
+            level -= 1
         return level
 
     def set_focus(self):

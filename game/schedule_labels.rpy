@@ -18,42 +18,32 @@ label shd_general_accounting(character):
     
 label shd_help_mom(character):
     'Мамин помощник'
-    python:
-        moral = child.moral_action('good', target = mom)
-        result = child.skillcheck(help_skill, moral = moral, needs=[('ambition', -3),('altruism', 2)])     
-        game.gratifaction(target = mom, power=result, needs = [need_helped])
-        getattr(mom, need_helped).set_shift(result)        
+    python:  
+        result = game.gratifaction(help_skill, needs = [need_helped])       
     'Качество подлизывания = [result]'
     return   
     
 label shd_popo_bol(character):
     python:
-        game.remorse(target = mom, power=butthurt_force)
-        child.wellness.set_shift(-butthurt_force)
-        mom.moral_action('evil', target = child)
+        game.remorse(power=butthurt_force, needs=['common'])
     'BATYA гандошит Cычу. Pain = [butthurt_force]. Злой поступок мамки в отношении Сычи. Самооценка матери: [mom.selfesteem]'
     return   
     
 label shd_batya_batya(character):
     python:
-        game.torture(target = child, power=batya_force, taboos=['pain'])
-        child.wellness.set_shift(-batya_force)
-        mom.moral_action('evil', target = child)
+        game.torture(target = child, power=batya_force, needs=['comfort'])
     'BATYA гандошит Cычу. Pain = [batya_force]. Злой поступок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
     return   
     
 label shd_mom_abuse(character):
     python:
-        game.torture(target = child, power=abuse_force, taboos=['abuse'])
-        child.ambition.set_shift(-abuse_force)
-        mom.moral_action('ardent', target = child)
-    'Мамка хуесосит Cычу. Abuse = [abuse_force]. Пылкий постпок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
+        game.torture(target = child, power=abuse_force, needs=['communication'])
+    'Мамка хуесосит Cычу. Abuse = [abuse_force]. Пылкий поступок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
     return   
     
 label shd_discipline_pavsykakiy(character):
-    python:
-        mom.moral_action('lawful', target = child)         
-        game.train(child, power=4)
+    python:  
+        game.train(child, pavsykakiy)
     'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n Весь борщ сожрал, падла'
 
     return   
@@ -61,16 +51,15 @@ label shd_discipline_pavsykakiy(character):
         
 label shd_discipline_kohana(character):
     python:
-        game.train(child, power=5)
+        game.train(child, kohana)
     'Антоша Сычов до сих пор писает в кровать\n @\nМы это исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
 
     return   
     
 label shd_discipline_hystery(character):
-    python:
-        mom.moral_action('ardent', target = child)        
-        game.train(child, power=mom_power)
-    'Дисциплинарная эффекктивность мамкиной истерики = [mom_power].'
+    python:    
+        power = game.train(child)
+    'Дисциплинарная эффекктивность мамкиной истерики = [power].'
 
     return   
 
@@ -187,7 +176,7 @@ label shd_job_study(character):
 label shd_job_chores(character):
     python:
         mom.moral_action('lawful', target = child)        
-        result = character.action(taboos=[('submission', 1)], needs=[('altruism', 2),('amusement', -1)], forced = True)
+        result = character.action(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], forced = True)
         if result >= 0:
             renpy.call('subloc_chores_perform')   
         else:

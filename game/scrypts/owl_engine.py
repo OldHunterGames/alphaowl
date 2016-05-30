@@ -41,6 +41,7 @@ def pros_cons_skill(character, skill, difficulty):
     pros = pros_cons[0]
     cons = pros_cons[1]
     i = difficulty
+    i -= getattr(character, character.skill(skill).attribute)
     if i > 1:
         while i > 1:
             cons.append('very')
@@ -107,7 +108,7 @@ def pros_cons_duty(character, power, morality):
         cons.append('dissatisfaction')
     if master.stance.value == 0:
         cons.append('cruel')
-    elif master.stance.level() == 3:
+    elif master.stance.value == 3:
         pros.append('benevolent')
     if character.mind > master.mind:
         pros.append('insight')
@@ -293,12 +294,17 @@ class Engine(object):
         quality = person.use_skill(skill, forced)
         self.tenge += efficiency*quality
 
-    def torture(self, target, needs=[], effects=[], power=0, source=None):
+    def torture(self, target, needs, power, effects=[], source=None, benefic=None):
         if not source:
             source = target.supervisor
-        moral = source.check_moral('evil', target)
+        if not benefic:
+            benefic = target.master
+        if source == self.player:
+            moral = source.check_moral('evil', target)
+        else:
+            moral = source.check_moral('evil')
         pros_cons = pros_cons_torture(target, source, moral, power, effects, needs)
-        p = renpy.call_in_new_context('lbl_skill_check', pros_cons, source, morality=moral)
+        p = renpy.call_in_new_context('lbl_skill_check', pros_cons, source, morality=moral, benefic=benefic)
         target.drain_vigor()
         broken = []
         for need in needs:
@@ -314,24 +320,31 @@ class Engine(object):
                 n = getattr(target, need)
                 if n.memory['torture'] < power:
                     n.memory['torture'] = power
+        return p
 
 
-    def train(self, target, skill='leadership', source=None):
+    def train(self, target, source=None, skill='leadership', benefic=None):
         if not target.master:
             raise Exception("train call with target who have no master")
+        if not benefic:
+            benefic = target.master
         if not source:
             source = target.supervisor
-        moral = source.check_moral('lawful', target=target)
+        if source == self.player:
+            moral = source.check_moral('evil', target)
+        else:
+            moral = source.check_moral('evil')
         difficulty = target.mind+target.anxiety
         if target.mood()[0] < 0:
             difficulty += 1
         elif target.mood()[0] > 0:
             difficulty -= 1
         pros_cons = pros_cons_discipline(target, source, moral, skill, difficulty)
-        power = renpy.call_in_new_context('lbl_skill_check', pros_cons, source, skill=True, morality=moral)
+        power = renpy.call_in_new_context('lbl_skill_check', pros_cons, source, skill=True, morality=moral, benefic=benefic)
         target.drain_vigor()
         if power > target.tokens_difficulty['discipline']:
             target.add_token('discipline')
+        return power
 
     def bribe(self, target, needs=[], power=0):
         if not target.master:
@@ -354,6 +367,7 @@ class Engine(object):
                 n = getattr(need, target)
                 if n.memory['bribe'] < power:
                     n.memory['bribe'] = power
+        return p
 
 
     def remorse(self, power, needs, phobias=[], slave=None):
@@ -376,6 +390,7 @@ class Engine(object):
             return
         if p > slave.master.tokens_difficulty['compassion']:
             slave.master.add_token('compassion')
+        return p
     def duty(self, power, slave=None):
         if not slave:
             slave = self.player
@@ -391,9 +406,10 @@ class Engine(object):
             slave.purpose.set_shift(power)
         if power > slave.master.tokens_difficulty['confidence']:
             slave.master.add_token('confidence')
+        return power
 
 
-    def gratifaction(self, power, needs, skill, slave=None):
+    def gratifaction(self, skill, needs, slave=None):
         if not slave:
             slave = self.player
         morality = slave.master.check_moral('ardent', slave)
@@ -412,6 +428,7 @@ class Engine(object):
             slave.master.add_token('craving')
             for need in needs:
                 getattr(need, slave.master).craving_memory = True
+        return power
 
 
 
@@ -435,6 +452,7 @@ class Engine(object):
             return
         if power > target.tokens_difficulty['attraction'] and not getattr(target, need).attraction_memory:
             target.add_token('attraction')
+        return power
 
     def kindness(self, target, power, source=None):
         if not source:
@@ -448,3 +466,5 @@ class Engine(object):
             power = renpy.call_in_new_context('lbl_skill_check', pros_cons, source, morality=moral)
             if power > target.tokens_difficulty['kindness']:
                 target.add_token('kindness')
+            return power
+        return -1

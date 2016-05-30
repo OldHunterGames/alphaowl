@@ -322,17 +322,12 @@ label lbl_change_relations:
         'Выбрать используемый жетон.'
         'Accordance' if child.has_token("accordance"):
             menu:
-                'Наладить отношения с матерью' if mother.master_stance() < 3:
+                'Наладить отношения с матерью' if mother.stance.value < 3:
                     python:
                         player.ap -= 1
                         child.use_token('accordance')
-                        if mom.relations_player().master_stance == 'rightful':
-                            mom.relations_player().master_stance = 'benevolent'
-                        if mom.relations_player().master_stance == 'opressive':
-                            mom.relations_player().master_stance = 'rightful'
-                        if mom.relations_player().master_stance == 'cruel':
-                            mom.relations_player().master_stance = 'opressive'
-                        stance = mom.relations_player().master_stance
+                        mom.stance.value += 1
+                        stance = mom.stance.level
                     'Глобальное отношение матери изменилось. Теперь: [stance]'   
                 'Соглашаться и восхищаться':
                     $ player.ap -= 1
@@ -363,17 +358,12 @@ label lbl_change_relations:
                     
         'Antagonism' if mom.has_token("antagonism"):
             menu:
-                'Испортить отношения с матерью' if mother.master_stance() > 0:
+                'Испортить отношения с матерью' if mother.stance.value > 0:
                     python:
                         player.ap -= 1
-                        child.use_token('accordance')
-                        if mom.relations_player().master_stance == 'opressive':
-                            mom.relations_player().master_stance = 'cruel'
-                        if mom.relations_player().master_stance == 'rightful':
-                            mom.relations_player().master_stance = 'opressive'
-                        if mom.relations_player().master_stance == 'benevolent':
-                            mom.relations_player().master_stance = 'rightful'
-                        stance = mom.relations_player().master_stance
+                        child.use_token('antagonism')
+                        mother.stance.value -= 1
+                        stance = mom.stance.level
                     'Глобальное отношение матери изменилось. Теперь: [stance]'                     
                 'Троллить и подъёбывать':
                     $ player.ap -= 1
@@ -381,7 +371,7 @@ label lbl_change_relations:
                     $ child.relations(mom).change('congruence', '-')
                 'Занять жесткую позицию':
                     $ player.ap -= 1
-                    $ mom.use_token('accordance')
+                    $ mom.use_token('antagonism')
                     $ child.relations(mom).change('fervor', '-')                    
                 'Формализовать отношения':
                     $ player.ap -= 1
@@ -392,15 +382,15 @@ label lbl_change_relations:
                     
         'Compassion' if mom.has_token("compassion"):
             menu:
-                'Смягчить позицию мамки' if mom.relations_player().master_stance == 'cruel':
+                'Смягчить позицию мамки' if mom.stance.level == 'cruel':
                     $ player.ap -= 1
                     $ mom.use_token('compassion')
-                    $ mom.relations_player().master_stance = 'opressive'         
+                    $ mom.stance.set_level('opressive')         
                     'Глобальное отношение мамки изменилось с жестокого на деспотичное'
                 'Разжалобить мамку':
                     $ player.ap -= 1
                     $ mom.use_token('compassion')
-                    $ mom.compassion += 1                    
+                    $ mom.stance.add_point('compassion')                    
                 'Соглашаться и восхищаться':
                     $ player.ap -= 1
                     $ mom.use_token('compassion')
@@ -418,15 +408,15 @@ label lbl_change_relations:
                     
         'Confidence' if mom.has_token("confidence"):
             menu:
-                'Смягчить позицию мамки' if mom.relations_player().master_stance == 'cruel':
+                'Смягчить позицию мамки' if mom.stance.level == 'cruel':
                     $ player.ap -= 1
                     $ mom.use_token('confidence')
-                    $ mom.relations_player().master_stance = 'opressive'         
+                    $ mom.stance.set_level('opressive')         
                     'Глобальное отношение мамки изменилось с жестокого на деспотичное'
                 'Увеличить доверие мамки':
                     $ player.ap -= 1
                     $ mom.use_token('confidence')
-                    $ mom.confidence += 1                    
+                    $ mom.stance.add_point('confidence')                    
                 'Соглашаться и восхищаться':
                     $ player.ap -= 1
                     $ mom.use_token('confidence')
@@ -444,15 +434,15 @@ label lbl_change_relations:
                     
         'Craving' if mom.has_token("craving"):
             menu:
-                'Смягчить позицию мамки' if mom.relations_player().master_stance == 'opressive' and mom.favor() > 3:
+                'Смягчить позицию мамки' if mom.stance.level == 'opressive' and mom.favor() > 3:
                     $ player.ap -= 1
                     $ mom.use_token('craving')
-                    $ mom.relations_player().master_stance = 'rightful'         
+                    $ mom.stance.set_level('rightful')         
                     'Глобальное отношение мамки изменилось с деспотичного на справедливое'
                 'Внушить мамке любовь':
                     $ player.ap -= 1
                     $ mom.use_token('craving')
-                    $ mom.craving += 1                    
+                    $ mom.stance.add_point('craving')                    
                 'Занять жесткую позицию':
                     $ player.ap -= 1
                     $ mom.use_token('craving')

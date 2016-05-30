@@ -67,7 +67,6 @@ class Person(object):
         self.stance = Stance(self)
 
         self.master = None          # If this person is a slave, the master will be set
-        self.slave_stance = 'rebellious'     # rebellious, forced, accustomed or willing
         self.supervisor = None
         self.slaves = []
         self.subordinates = []
@@ -309,11 +308,11 @@ class Person(object):
         return skill
 
 
-    def action(self, forced = False, needs=[], taboos=[], moral=0, power=3):
+    def action(self, needs=[], moral=0, benefic=None):
         if self.player_controlled:
-            result = renpy.call_in_new_context('lbl_action_check', self)
+            result = renpy.call_in_new_context('lbl_action_check')
         else:
-            result = self.motivation(forced=forced, needs=needs, taboos=taboos, moral=moral)
+            result = self.motivation(benefic=benefic, needs=needs, moral=moral)
         if result > 0:
             for need in needs:
                 getattr(self, need[0]).set_shift(need[1])
@@ -344,21 +343,24 @@ class Person(object):
             p = 5
         return p
 
-    def motivated_check(self, pros_cons, skill=None, needs=[], forced=False, moral=0):
-        motivation = self.motivation(skill=skill, needs=needs, forced=forced, moral=moral)
+    def motivated_check(self, pros_cons, skill=None, needs=[], moral=0, benefic=None, special=[]):
+        motivation = self.motivation(skill=skill, needs=needs, moral=moral)
         if motivation < 0:
             pros_cons[1].append('sabotage')
-        if motivation > 0 and motivation < 6-self.vigor:
+        if motivation == 0:
             pass
-        if motivation > 6-self.vigor and motivation < 5:
+        if motivation > 6-self.vigor and self.vigor>0:
             pros_cons[0].append('vigorous')
-        if motivation > 5 and res_to_use < 1:
+        if motivation > 5:
             pros_cons[0].append('determined')
-        if motivation > 10:
-            pros_cons[0].append('determined')
-            pros_cons[0].append('vigorous')
+        if self.feature('venturous'):
+            dice = randint(1,2)
+            if dice == 2:
+                pros_cons[0].append('lucky')
+            else:
+                pros_cons[1].append('unlucky')
 
-    def skillcheck(self, skill=None, forced = False, needs=[], taboos=[], moral=0, difficulty=3):
+    def skillcheck(self, skill=None, forced = False, needs=[], moral=0, difficulty=3):
         if not skill:
             raise Exception("skillcheck without skill")
         check = 0
@@ -456,49 +458,56 @@ class Person(object):
                 return
 
 
-    def motivation(self, skill=None, needs=[], forced=False, taboos=[], moral=0):# needs should be a list of tuples[(need, shift)]
+    def motivation(self, skill=None, needs=[], benefic = None, moral=0, special=[]):# needs should be a list of tuples[(need, shift)]
         motiv = 0
         motiv += self.mood()[0]
         motiv += moral
+        for i in special:
+            motiv += i
         if skill:
             if self.skill(skill).talent:
-                motiv += self.vigor
+                motiv += 1
+            elif self.skill(skill).inability:
+                motiv -= 1
         if self.vigor < 1:
             motiv -= 1
             motiv -= self.fatigue
+        elif self.vigor > 3:
+            motiv += 1
+
 
         for need in needs:
-            status = getattr(self, need[0]).status
+            n = getattr(self, need[0])
+            status = n.status
             shift = need[1]
             if shift < 0:
-                if status == 'tense':
-                    motiv -= getattr(self, need[0]).level
+                if status == 'relevant':
+                    motiv -= 2
             if shift > 0:
                 if status == 'tense': 
-                    motiv += getattr(self, need[0]).level
+                    motiv += 2
                 elif status == 'relevant':
                     motiv += 1
                 elif status == 'overflow':
                     motiv -= 1
-        if forced:
-            if self.slave_stance == 'rebellious':
-                if motiv > -1:
-                    motiv = -1
-            if self.slave_stance == 'forced':
-                if motiv < 0:
-                    motiv += self.obedience()
-                if motiv > 0:
-                    motiv = 0
-            if self.slave_stance == 'accustomed':
-                if motiv < 0:
-                    motiv += self.obedience()
-                if motiv < 5:
-                    motiv = self.obedience()
-                if motiv > 5:
-                    motiv = 5
-            if self.slave_stance == 'willing':
-                motiv += self.obedience()
-        
+        if benefic:
+            if benefic == self:
+                motiv += 1
+            elif benefic.player_controlled:
+                if self.stance.value == 3:
+                    motiv += 1
+                elif self.stance.value == 0:
+                    return -10
+                elif self.stance.value == 1:
+                    motiv -= 1
+            if benefic == self.master or benefic == self.supervisor:
+                if self.stance.value == 1:
+                    if motiv < 0:
+                        motiv += self.stance.respect()
+                    if motiv > 0:
+                        motiv = 0
+                elif self.stance.value >= 2:
+                    motiv += self.stance.respect()
         return motiv
 
     

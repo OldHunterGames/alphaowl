@@ -17,7 +17,11 @@ init python:
     mom = mother
     check_results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
                     '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
-
+    pavsykakiy = Person()
+    pavsykakiy.skill('leadership').expert()  
+    kohana = Person()
+    kohana.skill('leadership').profession()
+    kohana.spirit = 4
     
 # Игра начинается здесь.
 label start:
@@ -277,14 +281,14 @@ label lbl_mom_info:
      \n"
 
     return
-label lbl_skill_check(pros_cons, character, skill=None, needs=[], forced=False, morality=0, vigor=True):
+label lbl_skill_check(pros_cons, character, skill=None, needs=[], morality=0, vigor=True, benefic=None):
     python:
         if 'unfortunate' in character.conditions:
             pros_cons[1].append('unfortunate')
         if character.player_controlled:
             renpy.call_screen('sc_skillcheck', pros_cons[0], pros_cons[1], character, skill)
         else:
-            character.motivated_check(pros_cons, skill, needs, forced, moral)
+            character.motivated_check(pros_cons, skill, needs, morality)
         r = character.get_action_power(pros_cons, skill, morality, vigor)
         result = check_results[r]
 
@@ -294,16 +298,10 @@ label lbl_skill_check(pros_cons, character, skill=None, needs=[], forced=False, 
         else:
             if result > 0:
                 character.conditions.remove('unfortunate')
-    if character.player_controlled:
-        call lbl_result(result)
+    call lbl_result(result, character)
     return r
         
-    
-    
-label lbl_check_result(result=0):
-    'Результат проверки: [result]'
-    return
-label lbl_action_check(character=player):
+label lbl_action_check:
     menu:
         'Выполнить действие':
             return 1
@@ -327,8 +325,9 @@ label lbl_resist_result(effect, success):
     else:
         'Вы попытались справиться с [effect] но вам не удалось'
     return
-label lbl_result(result):
-    'Результат проверки: [result]'
+label lbl_result(result, character=player):
+    $ char_name = character.name()
+    'Результат проверки:[char_name]: [result]'
     return
 label lbl_notify(character, effect):
     $ n = character.name()
