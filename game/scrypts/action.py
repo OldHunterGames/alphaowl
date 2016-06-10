@@ -69,12 +69,10 @@ class Action(object):
         self._reduced = 0
         self._power_text = []
         self._compare_with_power = 0
-        
-        # we use morality, actor_tense, actor_gratify and specia_motivators to calculate actor's motivation if actor is npc
+        self.motivation = None
         self.morality = 0
-        self.actor_tense = []
-        self.actor_gratify = []
-        self._special_motivators = [] # used for motivated_check if actoris npc
+
+        
         
         self.pros = []
         self.cons = []
@@ -137,8 +135,9 @@ class Action(object):
         if self.actor.player_controlled:
             renpy.call_in_new_context(self._label, pros, cons, self.actor, self._skill, self.name) 
         else:
-            needs = self._gratify if not self.inverted else self._tense
-            motivated_check(self.actor, pros, cons, self._skill, needs, self.morality, self.beneficiar, self._special_motivators)
+            if not self.motivation:
+                raise Exception("npc action activated without motivation")
+            motivated_check(self.motivation, pros, cons)
         result = get_action_power(self.actor, pros, cons, self._skill, self.morality, self.actor_vigor)
         
         if not 'unfortunate' in self.actor.conditions:
@@ -245,16 +244,15 @@ def pros_cons_skill(character, skill, difficulty, pros, cons):
     return pros, cons
 
 
-def motivated_check(character, pros, cons, skill=None, needs=[], moral=0, benefic=None, special=[]):
-        motivation = character.motivation(skill=skill, needs=needs, moral=moral, benefic=benefic, special=special)
+def motivated_check(motivation, pros, cons):
         if motivation < 0:
-            pros_cons[1].append('sabotage')
+            cons.append('sabotage')
         if motivation == 0:
             pass
         if motivation > 6-self.vigor and self.vigor>0:
-            pros_cons[0].append('vigorous')
+            pros.append('vigorous')
         if motivation > 5:
-            pros_cons[0].append('determined')
+            pros.append('determined')
         if self.feature('venturous'):
             dice = randint(1,2)
             if dice == 2:
