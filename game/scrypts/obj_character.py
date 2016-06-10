@@ -650,7 +650,7 @@ class Person(object):
         for arg in args:
             if isinstance(arg, int):
                 self.selfesteem += arg
-                break
+                return 
         result = self.check_moral(*args, **kwargs)
         self.selfesteem += result
         return result
