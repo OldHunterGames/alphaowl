@@ -17,12 +17,57 @@ init python:
     mom = mother
     check_results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
                     '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
+    #BATYA
+    batya = Person()
+    batya.add_feature('male')
+    batya.add_feature('mature')        
+    batya.skill('leadership').profession()    
+    batya.stance.value = 1 
+    
+    #ЕНОТОВА
+    eot = Person()
+    eot.add_feature('female')
+    eot.add_feature('junior')     
+    eot.alignment['activity'] = "timid"
+    eot.alignment['orderliness'] = "lawful"
+    eot.alignment['morality'] = "good"
+    eot.skill('conversation').talent = True
+    eot.skill('conversation').profession()    
+    eot.skill('coding').training = True
+    eot.stance.value = 2 
+
+    #ЕРОХИН
+    erokhin = Person()
+    erokhin.add_feature('male')
+    erokhin.add_feature('adolescent')    
+    erokhin.alignment['activity'] = "ardent"
+    erokhin.skill('sports').talent = True
+    erokhin.skill('sports').profession()        
+    erokhin.skill('conversation').training = True
+    erokhin.stance.value = 0 
+    
+    #АШОТ
+    ashot = Person()
+    ashot.add_feature('male')
+    ashot.add_feature('mature')    
+    ashot.alignment['activity'] = "ardent"
+    ashot.alignment['orderliness'] = "chaotic"
+    ashot.alignment['morality'] = "evil"
+    ashot.skill('sex').talent = True
+    ashot.skill('sex').profession()     
+    ashot.skill('conversation').training = True
+    ashot.stance.value = 2     
+    
+    #СВЯЩЕННИК
     pavsykakiy = Person()
     pavsykakiy.skill('leadership').expert()  
+    
+    #ТЕЛЕВЕДУЩИЙ
     kohana = Person()
     kohana.skill('leadership').profession()
     kohana.spirit = 4
-    child.stance(mom).change_stance('slave')
+    
+    
     
 # Игра начинается здесь.
 label start:
@@ -60,7 +105,7 @@ label label_quiz:
                 child.alignment['activity'] = "reasonable"
                 child.alignment['morality'] = "selfish"
                 child.skill('coding').profession()
-                game.set_player(child)
+                game.player = child
                 player = game.player
                 mom = game.mother
                 mom.alignment['morality'] = 'evil'
@@ -68,7 +113,7 @@ label label_quiz:
                 mom.set_relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
-                mom.relations_player().master_stance = 'cruel'
+                mom..stance.value = 0
                 child.ration['food_type'] = "sperm"
                 child.ration['target'] = 1
                 child.accommodation = "jailed"      
@@ -92,14 +137,14 @@ label label_quiz:
                 child.alignment['morality'] = "selfish"
                 child.skill('coding').profession()
                 mom = game.mother
-                game.set_player(mom)
+                game.player = mom
                 player = game.player
                 mom.alignment['morality'] = 'selfish'
                 player.player_controlled = True
                 mom.set_relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
-                child.stance(player).set_level('rebellious')
+                child.relations_player().slave_stance = 'rebellious'
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
@@ -171,11 +216,11 @@ label label_quiz:
     menu:
         "А что если мамка уроки делать заставит?"
         "Конечно. Это - норма.":
-            $ child.stance(mom).set_level('accustomed')        
+            $ child.stance.value = 2       
         "Ну что делать? Сяду. А то батя ремня всыпет.":
-            $ child.stance(mom).set_level('forced')     
+            $ child.stance.value = 1    
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
-            $ child.stance(mom).set_level('rebellious') 
+            $ child.stance.value = 0
 
             
     $ alignment = child.alignment['orderliness'] +' '+ child.alignment['activity'] +' '+ child.alignment['morality'] 
@@ -185,7 +230,7 @@ label label_quiz:
         "Кем ты будешь управлять?"
         "Собой":
             $ game.mode = 'son'
-            $ game.set_player(child)
+            $ game.player = child
             $ player = game.player
             $ player.player_controlled = True
             $ child.set_relations(mother)
@@ -193,7 +238,7 @@ label label_quiz:
             
         "Своей мамкой":
             $ game.mode = 'mom'
-            $ game.set_player(mother)
+            $ game.player = mother
             $ player = game.player
             $ player.player_controlled = True
             $ child.set_relations(mother)           
@@ -215,10 +260,6 @@ label label_new_day:
     $ study = game.choose_study()
     $ game.child.rest()
     $ game.mother.rest()
-    $ game.atrocity(player, child, player, 'conquest', ['general'], 3)
-    $ game.suffering(player, child, player, 'conquest', ['general'], 3)
-    $ game.pleasing(player, child, player, 'conquest', power=6)
-    $ game.intercommunion(player, child, player, 'conquest', power=6)
     "Неделя номер [game.time]"
        
     $ gt = game.new_turn()
@@ -402,4 +443,3 @@ screen sc_skillcheck(pros, cons, character, skill, name):
         textbutton "Выполнить работу" action[Return()]
         if skill:
             textbutton "Саботировать" action[AddToList(cons, 'sabotage'), Return()]
-
