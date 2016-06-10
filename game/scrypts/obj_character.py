@@ -12,40 +12,7 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 from stance import Stance
-def check_cons_pros(character, difficulty, skill):
-    contra = []
-    contra.append("cons:")
-    pros = []
-    pros.append("pros:")
-    i = difficulty
-    if i > 1:
-        while i > 1:
-            contra.append('very')
-            i -= 1
-    if i==1:
-        contra.append('difficult')
-    elif i < 0:
-        pros.append('easy')
-    if skill.talent:
-        pros.append('talent')
-    if skill.expirience:
-        pros.append('expirience')
-    if skill.specialization:
-        pros.append('specialization')
-    if skill.training:
-        pros.append('training')
-    elif character.vigor < 1:
-        contra.append('exausted')
-    if character.mood()[0] > 0:
-        pros.append('mood')
-    elif character.mood()[0] < 0:
-        contra.append('mood')
-    if skill == character.focused_skill and character.focus > 5 - character.mind:
-        pros.append('focus')
-    if character.anxiety > 0:
-        contra.append('anxiety')
-    #also will be bonuses for uniform or debuffs for something
-    return (pros, contra)
+
 class Person(object):
 
     def __init__(self, age='adolescent', gender='male'):
@@ -60,11 +27,10 @@ class Person(object):
         }
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.tokens = []             # Special resources to activate various events
-        self.tokens_difficulty = {'dread': 0, 'dependence': 0, 'discipline': 0, 'compassion': 0, 'confidence': 0, 'craving': 0,
-                                   'reliance': 0, 'attraction': 0, 'kindness': 0}
+        self.tokens_difficulty = {}
 
         #obedience, dependecy and respect stats
-        self.stance = Stance(self)
+        self._stance = []
 
         self.master = None          # If this person is a slave, the master will be set
         self.supervisor = None
@@ -123,7 +89,7 @@ class Person(object):
         
         self.selfesteem = 0
         self.conditions = []
-
+    
     def count_modifiers(self, key):
         val = 0
         for mod in self.__dict__['modifiers']:
@@ -318,60 +284,6 @@ class Person(object):
                 getattr(self, need[0]).set_shift(need[1])
         return result
 
-    def use_resources(self, pros_cons, skill=None, morality=0, vigor=True):
-        if 'sabotage' in pros_cons[1]:
-            return
-        if 'vigorous' in pros_cons[0]:
-            self.drain_vigor()
-        if 'determined' in pros_cons[0]:
-            self.determination -= 1
-        if skill:
-            self.skills_used.append(skill)
-        if morality:
-            self.moral_action(morality)
-        if vigor:
-            self.drain_vigor()
-
-    def get_action_power(self, pros_cons, skill=None, morality=0, vigor=True):
-        if 'sabotage' in pros_cons[1]:
-            return -1
-        self.use_resources(pros_cons, skill, morality, vigor)
-        p = len(pros_cons[0]) - len(pros_cons[1])
-        if p < 0:
-            p = 0
-        elif p > 5:
-            p = 5
-        return p
-
-    def motivated_check(self, pros_cons, skill=None, needs=[], moral=0, benefic=None, special=[]):
-        motivation = self.motivation(skill=skill, needs=needs, moral=moral)
-        if motivation < 0:
-            pros_cons[1].append('sabotage')
-        if motivation == 0:
-            pass
-        if motivation > 6-self.vigor and self.vigor>0:
-            pros_cons[0].append('vigorous')
-        if motivation > 5:
-            pros_cons[0].append('determined')
-        if self.feature('venturous'):
-            dice = randint(1,2)
-            if dice == 2:
-                pros_cons[0].append('lucky')
-            else:
-                pros_cons[1].append('unlucky')
-
-    def skillcheck(self, skill=None, forced = False, needs=[], moral=0, difficulty=3):
-        if not skill:
-            raise Exception("skillcheck without skill")
-        check = 0
-        pros_cons = ([], [])
-        difficulty -= getattr(self, self.skill(skill).attribute)
-        pros_cons = check_cons_pros(self, difficulty, self.skill(skill))
-        pros_cons = renpy.call_in_new_context('lbl_skill_check', pros_cons, self, True)#pros_cons passed as tuple
-        for need in needs:
-            getattr(self, need[0]).set_shift(need[1])
-        check = check + self.mood()[0] + self.skill(skill).level
-        return check
     
 
     def calc_focus(self):
@@ -418,22 +330,6 @@ class Person(object):
 
         return (0, mood)
 
-
-
-    def obedience(self):
-        if not self.stance.type=='slave' or self.player_controlled:
-            return -1
-        return self.stance.respect()
-
-    def favor(self):
-        if not self.stance.type=='master' or self.player_controlled:
-            return -1
-        return self.stance.respect()
-
-    def respect(self):
-        if not self.stance.type=='neutral' or self.player_controlled:
-            return -1
-        return self.stance.respect()
 
     
     def reduce_overflow(self):
@@ -494,20 +390,20 @@ class Person(object):
             if benefic == self:
                 motiv += 1
             elif benefic.player_controlled:
-                if self.stance.value == 3:
+                if self.stance(benefic).value == 3:
                     motiv += 1
-                elif self.stance.value == 0:
+                elif self.stance(benefic).value == 0:
                     return -10
-                elif self.stance.value == 1:
+                elif self.stance(benefic).value == 1:
                     motiv -= 1
             if benefic == self.master or benefic == self.supervisor:
-                if self.stance.value == 1:
+                if self.stance(benefic).value == 1:
                     if motiv < 0:
-                        motiv += self.stance.respect()
+                        motiv += self.stance(benefic).respect()
                     if motiv > 0:
                         motiv = 0
-                elif self.stance.value >= 2:
-                    motiv += self.stance.respect()
+                elif self.stance(benefic).value >= 2:
+                    motiv += self.stance(benefic).respect()
         return motiv
 
     
@@ -550,7 +446,6 @@ class Person(object):
     
     def rest(self):
         self.schedule.use_actions()
-        self.bribe()
         self.fatness_change()
         for need in self.needs:
             need.status_change()
@@ -678,95 +573,41 @@ class Person(object):
 
 
     def set_relations(self, person):
-        if self.player_controlled:
-            for relation in self._relations:
-                if relation.owner == person:
-                    return 
-        else:
-            for relation in self._relations:
-                if relation.target == person:
-                    return
-        if self.player_controlled:
-            rel = Relations(person, self)
-            self._relations.append(rel)
-            person._relations.append(rel)
-        elif person.player_controlled:
-            rel = Relations(self, person)
-            self._relations.append(rel)
-            person._relations.append(rel)
-        else:
-            # simple relations model needed for npc-npc relations
+        if person==self:
             return
+        for rel in self._relations:
+            if rel.target == person and rel.owner == self or rel.target==self and rel.owner==person:
+                return 
+        if not self.player_controlled:
+            relations = Relations(self, person)
+        else:
+            relations = Relations(person, self)
+        person._relations.append(relations)
+        self._relations.append(relations)
 
 
     def relations(self, person):
         self.set_relations(person)
-        for relation in self._relations:
-            if self.player_controlled:
-                if relation.target == self and relation.owner == person:
-                    return relation
-            else:
-                if relation.target == person:
-                    return relation
+        for rel in self._relations:
+            if rel.target == person and rel.owner == self or rel.target==self and rel.owner==person:
+                return rel
         
-
-
-    def relations_player(self):
-        if self.player_controlled:
-            return None
-        else:
-            for rel in self._relations:
-                if rel.target.player_controlled:
-                    return rel
-
 
 
     def add_reward(self, name, need):
         self.rewards.append((name, need))
 
+    
     def bribe_threshold(self):
         dif = self.tokens_difficulty['dependence'] if self.master else 0
         threshold = 3 + self.spirit - self.sensitivity + dif
         return threshold
 
-    def bribe(self):
-        tensed_needs = []
-        for need in self.needs:
-            status = need.status
-            if status == 'tense':
-                tensed_needs.append(need.name)
-        tensed_num = len(tensed_needs)
-        if tensed_num < self.bribe_threshold():
-            self.rewards = []
-            return 
-        needed_rewards = []
-        needs = []
-        for reward in self.rewards:
-            need = reward[1]
-            if need in tensed_needs and need not in needs:
-                needed_rewards.append(reward)
-                needs.append(need)
-        if len(needed_rewards) < 1:
-            self.rewards = []
-            return
-        if tensed_num - len(needed_rewards) <= self.bribe_threshold():
-            for reward in needed_rewards:
-                if reward not in self.used_rewards:
-                    self.used_rewards += self.rewards
-                    for reward in self.rewards:
-                        getattr(self, reward[1]).set_shift(100)
-                    self.rewards = []
-                    self.add_token('dependence')
-                    return
-        else:
-            self.rewards = []
-            return
 
     def training_resistance(self):
         dif = self.tokens_difficulty['discipline'] if self.master else 0
         return self.insurgensy() + self.mind - 1 + dif
     
-
 
     def use_token(self, token):
         if self.has_token(token):
@@ -784,9 +625,20 @@ class Person(object):
             return True
         return False
 
-    def add_token(self, token, power=None):
+
+    def token_difficulty(self, token):
+        if token in self.tokens_difficulty.keys():
+            return self.tokens_difficulty[token]
+        else:
+            self.tokens_difficulty[token] = 0
+            return 0
+
+    
+    def add_token(self, token, power=-1):
         if not self.has_token(token):
-            if power:
+            if power >= 0:
+                if token not in self.tokens_difficulty.keys():
+                    self.tokens_difficulty[token] = 0
                 if power > self.tokens_difficulty[token]:
                     self.tokens.append(token)
             else:
@@ -907,7 +759,7 @@ class Person(object):
 
 
     def enslave(self, target):
-        target.stance.change_stance('slave')
+        target.stance(self).change_stance('slave')
         target.master = self
         target.supervisor = self
         self.slaves.append(target)
@@ -916,10 +768,10 @@ class Person(object):
     def set_supervisor(self, supervisor):
         self.supervisor = supervisor
 
-    def master_stance(self):
+    def master_stance(self, target):
         if self.player_controlled:
             raise Exception('master_stance is only for npc')
-        stance = self.stance.level
+        stance = self.stance(target).level
         l = ['cruel', 'opressive', 'rightful', 'benevolent']
         ind = l.index(stance)
         return ind
@@ -942,7 +794,7 @@ class Person(object):
             if rel in check:
                 rel_check = True
                 break
-        if self.obedience < self.spirit:
+        if self.stance(self.master).respect() < self.spirit:
             rel_check = False
         if not self.has_token('accordance'):
             rel_check = False
@@ -950,3 +802,29 @@ class Person(object):
             return types
         else:
             return []
+
+    def set_stance(self, target):
+        if target==self:
+            return
+        for stance in self._stance:
+            if stance.target==target and stance.owner==self or stance.owner==target and stance.target==self:
+                return stance
+        if self.player_controlled:
+            stance = Stance(target, self)
+        else:
+            stance = Stance(self, target)
+        self._stance.append(stance)
+        target._stance.append(stance)
+        return stance
+
+    def stance(self, target):
+        if target==self:
+            raise Exception("stance target and caller is same person")
+        s = None
+        for stance in self._stance:
+            if stance.target == target and stance.owner==self or stance.owner==target and stance.target==self:
+                s = stance
+                break
+        if not s:
+            s = self.set_stance(target)
+        return s 

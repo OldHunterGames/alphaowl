@@ -10,25 +10,35 @@ class Stance(object):
     _types_stats = {'master': ['dread', 'discipline', 'dependence'],
                     'slave': ['craving', 'confidence', 'compassion'],
                     'neutral': ['attraction', 'reliance', 'kindness']}
-    def __init__(self, owner):
+    def __init__(self, owner, target):
         self.owner = owner
+        self.target = target
+        self.characters = [self.owner, self.target]
         self._type = 'neutral'
         self._value = 0
         self._points = [0, 0, 0]
+        self._special_value = None
 
     @property
     def value(self):
         return self._value
+    
     @value.setter
     def value(self, value):
         self._value = value
-        if self._value < 0:
-            self._value = 0
-        elif self._value > 3:
-            self._value = 2
+        if not self.target.player_controlled:
+            self.target.stance(self.owner)._value = value
+        if self._value < -1:
+            self._value = -1
 
-    def to_max(self):
-        self._value = 3
+        elif self._value > 1:
+            self._value = 1
+
+    def to_max(self, value=None):
+        self._value = 2
+        if self.target.player_controlled:
+            self._special_value = value
+
 
     @property
     def type(self):
@@ -36,18 +46,23 @@ class Stance(object):
 
     @property
     def level(self):
-        return Stance._types[self._type][self.value]
+        if self.value == 2 and self.target.player_controlled:
+            return self._special_value
+        return Stance._types[self._type][self.value+1]
 
     
     def set_level(self, value):
+        wrong = True
         for key in Stance._types:
             if value in Stance._types[key]:
                 if self._type == key:
-                    self._value = Stance._types[key].index(value)
+                    self._value = Stance._types[key].index(value)-1
+                    wrong = False
+                    break
                 else:
                     raise Exception("Wrong value(%s) for %s type of stance"%(value, self.type))
-            else:
-                raise Exception("Unknown value %s"%(value))
+        if wrong:
+            raise Exception("Unknown value %s"%(value))
 
     
     def add_point(self, axis, value=1):
@@ -82,6 +97,9 @@ class Stance(object):
         val = 0
         for i in alig:
             val += alig_relations[i]
+        if not self.target.player_controlled:
+            values = {-1:0, 0:1, 1:5, 2:10}
+            return values[self.value]   
         return val
 
 
@@ -91,4 +109,6 @@ class Stance(object):
         else:
             self._type = stance
             self._points = [0, 0, 0]
-            self.value = 0
+            self._value = 0
+
+

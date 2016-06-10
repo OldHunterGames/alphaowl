@@ -22,6 +22,7 @@ init python:
     kohana = Person()
     kohana.skill('leadership').profession()
     kohana.spirit = 4
+    child.stance(mom).change_stance('slave')
     
 # Игра начинается здесь.
 label start:
@@ -59,7 +60,7 @@ label label_quiz:
                 child.alignment['activity'] = "reasonable"
                 child.alignment['morality'] = "selfish"
                 child.skill('coding').profession()
-                game.player = child
+                game.set_player(child)
                 player = game.player
                 mom = game.mother
                 mom.alignment['morality'] = 'evil'
@@ -91,14 +92,14 @@ label label_quiz:
                 child.alignment['morality'] = "selfish"
                 child.skill('coding').profession()
                 mom = game.mother
-                game.player = mom
+                game.set_player(mom)
                 player = game.player
                 mom.alignment['morality'] = 'selfish'
                 player.player_controlled = True
                 mom.set_relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
-                child.relations_player().slave_stance = 'rebellious'
+                child.stance(player).set_level('rebellious')
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
@@ -170,11 +171,11 @@ label label_quiz:
     menu:
         "А что если мамка уроки делать заставит?"
         "Конечно. Это - норма.":
-            $ child.relations_player().slave_stance = 'accustomed'        
+            $ child.stance(mom).set_level('accustomed')        
         "Ну что делать? Сяду. А то батя ремня всыпет.":
-            $ child.relations_player().slave_stance = 'forced'    
+            $ child.stance(mom).set_level('forced')     
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
-            $ child.relations_player().slave_stance = 'rebellious'
+            $ child.stance(mom).set_level('rebellious') 
 
             
     $ alignment = child.alignment['orderliness'] +' '+ child.alignment['activity'] +' '+ child.alignment['morality'] 
@@ -184,7 +185,7 @@ label label_quiz:
         "Кем ты будешь управлять?"
         "Собой":
             $ game.mode = 'son'
-            $ game.player = child
+            $ game.set_player(child)
             $ player = game.player
             $ player.player_controlled = True
             $ child.set_relations(mother)
@@ -192,7 +193,7 @@ label label_quiz:
             
         "Своей мамкой":
             $ game.mode = 'mom'
-            $ game.player = mother
+            $ game.set_player(mother)
             $ player = game.player
             $ player.player_controlled = True
             $ child.set_relations(mother)           
@@ -214,6 +215,10 @@ label label_new_day:
     $ study = game.choose_study()
     $ game.child.rest()
     $ game.mother.rest()
+    $ game.atrocity(player, child, player, 'conquest', ['general'], 3)
+    $ game.suffering(player, child, player, 'conquest', ['general'], 3)
+    $ game.pleasing(player, child, player, 'conquest', power=6)
+    $ game.intercommunion(player, child, player, 'conquest', power=6)
     "Неделя номер [game.time]"
        
     $ gt = game.new_turn()
@@ -281,25 +286,10 @@ label lbl_mom_info:
      \n"
 
     return
-label lbl_skill_check(pros_cons, character, skill=None, needs=[], morality=0, vigor=True, benefic=None):
+label lbl_skill_check(pros, cons, character, skill=None, name='template_name'):
     python:
-        if 'unfortunate' in character.conditions:
-            pros_cons[1].append('unfortunate')
-        if character.player_controlled:
-            renpy.call_screen('sc_skillcheck', pros_cons[0], pros_cons[1], character, skill)
-        else:
-            character.motivated_check(pros_cons, skill, needs, morality)
-        r = character.get_action_power(pros_cons, skill, morality, vigor)
-        result = check_results[r]
-
-        if not 'unfortunate' in character.conditions:
-            if 'unlucky' in pros_cons[1]:
-                character.conditions.append('unfortunate')
-        else:
-            if result > 0:
-                character.conditions.remove('unfortunate')
-    call lbl_result(result, character)
-    return r
+        renpy.call_screen('sc_skillcheck', pros, cons, character, skill, name)
+    return 
         
 label lbl_action_check:
     menu:
@@ -335,9 +325,9 @@ label lbl_notify(character, effect):
     return
 
 
-screen sc_skillcheck(pros, contra, character, skill):
+screen sc_skillcheck(pros, cons, character, skill, name):
     python:
-        i = len(pros) - len(contra)
+        i = len(pros) - len(cons)
         if i < 0:
             i=0
         if i > 5:
@@ -389,17 +379,18 @@ screen sc_skillcheck(pros, contra, character, skill):
         xalign 0.0
         yalign 0.0
         vbox:
-            for s in contra:
+            for s in cons:
                 text "{color=#f00}[s]{/color}"
         vbox:
-            $ CalcResult(pros, contra, text)
+            $ CalcResult(pros, cons, text)
+            text name
             text "Опции: "
-            if not('vigorous' in pros or 'unlucky' in contra or character.vigor < 2):
-                textbutton "Работать хорошо" action[AddToList(pros, 'vigorous'), CalcResult(pros, contra, text)] 
-            if not('determined' in pros or 'unlucky' in contra or character.determination < 1):
-                textbutton "Выложиться полностью" action[AddToList(pros, 'determined'), CalcResult(pros, contra, text)]
-            if not('lucky' in pros or 'unlucky' in contra):
-                textbutton "Рискнуть" action[AddToList(pros, 'risk', contra), CalcResult(pros, contra, text)]
+            if not('vigorous' in pros or 'unlucky' in cons or character.vigor < 2):
+                textbutton "Работать хорошо" action[AddToList(pros, 'vigorous'), CalcResult(pros, cons, text)] 
+            if not('determined' in pros or 'unlucky' in cons or character.determination < 1):
+                textbutton "Выложиться полностью" action[AddToList(pros, 'determined'), CalcResult(pros, cons, text)]
+            if not('lucky' in pros or 'unlucky' in cons):
+                textbutton "Рискнуть" action[AddToList(pros, 'risk', cons), CalcResult(pros, cons, text)]
             vbox:
                 text "Результат действия: [text[0]]"
         vbox:
@@ -410,5 +401,5 @@ screen sc_skillcheck(pros, contra, character, skill):
         yalign 0.5
         textbutton "Выполнить работу" action[Return()]
         if skill:
-            textbutton "Саботировать" action[AddToList(contra, 'sabotage'), Return()]
+            textbutton "Саботировать" action[AddToList(cons, 'sabotage'), Return()]
 

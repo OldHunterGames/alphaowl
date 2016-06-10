@@ -296,15 +296,15 @@ label lbl_discipline:
                 'Выбрать используемый жетон.'
                 'Accordance' if child.has_token("accordance"):
                     menu:
-                        'Привести к вынужденной покорности' if child.stance.level == 'rebellious' and child.obedience() > 3:
+                        'Привести к вынужденной покорности' if child.stance(player).level == 'rebellious' and child.child.stance(player).respect() > 3:
                             $ player.ap -= 1
                             $ child.use_token('dread')
-                            $ child.stance.set_level('forced')         
+                            $ child.stance(player).set_level('forced')         
                             'Глобальное отношение ребёнка к подчинению изменилось с сопротивления на вынужденное подчинение'                        
-                        'Закрепить привычку подчиняться' if child.stance.level == 'forced':
+                        'Закрепить привычку подчиняться' if child.stance(player).level == 'forced':
                             $ player.ap -= 1
                             $ child.use_token('accordance')
-                            $ child.stance.set_level('accustomed')  
+                            $ child.stance(player).set_level('accustomed')  
                             'Глобальное отношение ребёнка к подчинению изменилось с вынужденного подчинения на привычное подчинение'   
                         'Гармонизовать позиции':
                             $ player.ap -= 1
@@ -345,15 +345,15 @@ label lbl_discipline:
                             
                 'Dread' if child.has_token("dread"):
                     menu:
-                        'Привести к вынужденной покорности' if child.stance.level == 'rebellious':
+                        'Привести к вынужденной покорности' if child.stance(player).level == 'rebellious':
                             $ player.ap -= 1
                             $ child.use_token('dread')
-                            $ child.stance.set_level('forced')         
+                            $ child.stance(player).set_level('forced')         
                             'Глобальное отношение ребёнка к подчинению изменилось с сопротивления на вынужденное подчинение'
                         'Повысить уровень страха':
                             $ player.ap -= 1
                             $ child.use_token('dread')
-                            $ child.stance.add_point('dread')
+                            $ child.stance(player).add_point('dread')
                         'Внушить уважение':
                             $ player.ap -= 1
                             $ child.use_token('dread')
@@ -367,15 +367,15 @@ label lbl_discipline:
                             
                 'Discipline' if child.has_token("discipline"):
                     menu:
-                        'Закрепить привычку подчиняться' if child.stance.level == 'forced' and child.obedience() > child.spirit:
+                        'Закрепить привычку подчиняться' if child.stance(player).level == 'forced' and child.stance(player).respect() > child.spirit:
                             $ player.ap -= 1
                             $ child.use_token('discipline')
-                            $ child.stance.set_level('accustomed')
+                            $ child.stance(player).set_level('accustomed')
                             'Глобальное отношение ребёнка к подчинению изменилось с вынужденного подчинения на привычное подчинение'                        
                         'Повысить уровень дисциплины':
                             $ player.ap -= 1
                             $ child.use_token('discipline')
-                            $ child.stance.add_point('discipline')
+                            $ child.stance(player).add_point('discipline')
                         'Внушить уважение':
                             $ player.ap -= 1
                             $ child.use_token('discipline')
@@ -392,12 +392,12 @@ label lbl_discipline:
                         'Привести к вынужденной покорности' if child.stance.level == 'rebellious':
                             $ player.ap -= 1
                             $ child.use_token('dependence')
-                            $ child.stance.set_level('forced')         
+                            $ child.stance(player).set_level('forced')         
                             'Глобальное отношение ребёнка к подчинению изменилось с сопротивления на вынужденное подчинение'                        
                         'Повысить уровень зависимости':
                             $ player.ap -= 1
                             $ child.use_token('dependence')
-                            $ child.stance.add_point('dependence')
+                            $ child.stance(player).add_point('dependence')
                         'Внушить уважение':
                             $ player.ap -= 1
                             $ child.use_token('dependence')

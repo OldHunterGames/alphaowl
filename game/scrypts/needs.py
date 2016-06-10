@@ -22,9 +22,6 @@ class Need(object):
         self._status = _default_need['status']
         self._negatives_storage = []
         self.cumulation = 0
-        self.memory = {'bribe': 0, 'torture': 0, 'remorse': 0}
-        self.craving_memory = False
-        self.attraction_memory = False
 
     @property
     def status(self):
@@ -148,6 +145,3 @@ class Need(object):
             ind = 0
         self.status = l[ind]
         return
-
-
-

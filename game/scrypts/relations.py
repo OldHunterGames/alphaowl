@@ -10,17 +10,60 @@ class Relations(object):
     def __init__(self, owner, target):
         self.owner = owner
         self.target = target
-        self.fervor = 'plain'
-        self.distance = 'close'
-        self.congruence = 'associate'
+        self.characters = [self.owner, self.target]
+        self._fervor = 1
+        self._distance = 1
+        self._congruence = 1
+    @property
+    def fervor(self):
+        if self.target.player_controlled:
+            return Relations._fervor[self._fervor]
+        else:
+            f = 1
+            d = {'timid': 1, 'ardent': -1, 'reasonable':0}
+            f += d[self.owner.alignment['activity']]
+            f += d[self.owner.alignment['activity']]
+            if f > 2:
+                f = 2
+            if f < 0:
+                f = 0
+            return Relations._fervor[f]
+    @property
+    def distance(self):
+        if self.target.player_controlled:
+            return Relations._distance[self._distance]
+        else:
+            f = 1
+            d = {'chaotic': 1, 'lawful': -1, 'conformal':0}
+            f += d[self.owner.alignment['orderliness']]
+            f += d[self.owner.alignment['orderliness']]
+            if f > 2:
+                f = 2
+            if f < 0:
+                f = 0
+            return Relations._distance[f]
+    @property
+    def congruence(self):
+        if self.target.player_controlled:
+            return Relations._congruence[self._congruence]
+        else:
+            f = 1
+            d = {'good': 1, 'evil': -1, 'selfish':0}
+            f += d[self.owner.alignment['morality']]
+            f += d[self.owner.alignment['morality']]
+            if f > 2:
+                f = 2
+            if f < 0:
+                f = 0
+            return Relations._congruence[f]
+        
     def change(self, axis, direction):
-        z = '_%s'%(axis)
-        ax = getattr(Relations, z)
-        rel = getattr(self, axis)
-        ind = ax.index(rel)
+        if not target.player_controlled:
+            return
+        ax = getattr(self, '_%s'%(axis))
         if direction == "+":
-            ind += 1
-            if ind > 2:
+            ax += 1
+            if ax > 2:
                 if axis == 'distance':
                     if self.owner.alignment['orderliness'] == 'chaotic':
                         self.owner.add_token('accordance')
@@ -36,10 +79,10 @@ class Relations(object):
                         self.owner.add_token('accordance')
                     elif self.owner.alignment['morality'] == 'evil':
                         self.owner.add_token('antagonism')
-                ind = 2
+                ax = 2
         elif direction == '-':
-            ind -= 1
-            if ind < 0:
+            ax -= 1
+            if ax < 0:
                 if axis == 'distance':
                     if self.owner.alignment['orderliness'] == 'chaotic':
                         self.owner.add_token('antagonism')
@@ -55,9 +98,7 @@ class Relations(object):
                         self.owner.add_token('antagonism')
                     elif self.owner.alignment['morality'] == 'evil':
                         self.owner.add_token('accordance')
-                ind = 0
-        rel = ax[ind]
-        self.__dict__[axis] = rel
+                ax = 0
 
     def description(self):
         return (self.fervor, self.distance, self.congruence)
