@@ -21,8 +21,9 @@ init python:
     batya = Person()
     batya.add_feature('male')
     batya.add_feature('mature')        
-    batya.skill('leadership').profession()    
-    batya.stance.value = 1 
+    batya.skill('leadership').profession()  
+    batya.stance(child) = 0
+    batya.stance(mom) = 1
     
     #ЕНОТОВА
     eot = Person()
@@ -34,7 +35,7 @@ init python:
     eot.skill('conversation').talent = True
     eot.skill('conversation').profession()    
     eot.skill('coding').training = True
-    eot.stance.value = 2 
+    eot.stance(child) = 0    
 
     #ЕРОХИН
     erokhin = Person()
@@ -44,7 +45,7 @@ init python:
     erokhin.skill('sports').talent = True
     erokhin.skill('sports').profession()        
     erokhin.skill('conversation').training = True
-    erokhin.stance.value = 0 
+    erokhin.stance(child) = -1
     
     #АШОТ
     ashot = Person()
@@ -56,16 +57,18 @@ init python:
     ashot.skill('sex').talent = True
     ashot.skill('sex').profession()     
     ashot.skill('conversation').training = True
-    ashot.stance.value = 2     
+    ashot.stance(child) = 0     
     
     #СВЯЩЕННИК
     pavsykakiy = Person()
     pavsykakiy.skill('leadership').expert()  
+    pavsykakiy.stance(child) = 0 
     
     #ТЕЛЕВЕДУЩИЙ
     kohana = Person()
     kohana.skill('leadership').profession()
     kohana.spirit = 4
+    kohana.stance(child) = 0 
     
     
     
