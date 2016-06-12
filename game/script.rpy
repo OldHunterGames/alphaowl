@@ -22,8 +22,8 @@ init python:
     batya.add_feature('male')
     batya.add_feature('mature')        
     batya.skill('leadership').profession()  
-    batya.stance(child) = 0
-    batya.stance(mom) = 1
+    batya.stance(child).value = 0
+    batya.stance(mom).value = 1
     
     #ЕНОТОВА
     eot = Person()
@@ -35,7 +35,7 @@ init python:
     eot.skill('conversation').talent = True
     eot.skill('conversation').profession()    
     eot.skill('coding').training = True
-    eot.stance(child) = 0    
+    eot.stance(child).value = 0    
 
     #ЕРОХИН
     erokhin = Person()
@@ -45,7 +45,7 @@ init python:
     erokhin.skill('sports').talent = True
     erokhin.skill('sports').profession()        
     erokhin.skill('conversation').training = True
-    erokhin.stance(child) = -1
+    erokhin.stance(child).value = -1
     
     #АШОТ
     ashot = Person()
@@ -57,18 +57,18 @@ init python:
     ashot.skill('sex').talent = True
     ashot.skill('sex').profession()     
     ashot.skill('conversation').training = True
-    ashot.stance(child) = 0     
+    ashot.stance(child).value = 0     
     
     #СВЯЩЕННИК
     pavsykakiy = Person()
     pavsykakiy.skill('leadership').expert()  
-    pavsykakiy.stance(child) = 0 
+    pavsykakiy.stance(child).value = 0 
     
     #ТЕЛЕВЕДУЩИЙ
     kohana = Person()
     kohana.skill('leadership').profession()
     kohana.spirit = 4
-    kohana.stance(child) = 0 
+    kohana.stance(child).value = 0 
     
     
     
@@ -140,14 +140,14 @@ label label_quiz:
                 child.alignment['morality'] = "selfish"
                 child.skill('coding').profession()
                 mom = game.mother
-                game.player = mom
+                game.set_player(mom)
                 player = game.player
                 mom.alignment['morality'] = 'selfish'
                 player.player_controlled = True
                 mom.set_relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
-                child.relations_player().slave_stance = 'rebellious'
+                child.stance(mom).set_level('rebellious')
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')

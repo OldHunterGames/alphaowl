@@ -20,7 +20,6 @@ class Need_memory(object):
 
 
 class Action(object):
-    _player = None
     
 
     @staticmethod
@@ -166,8 +165,6 @@ class Action(object):
         else:
             raise Exception("Action activated without power or skill")
         phobias_check(self.target, self.phobias, pros, cons, self.phobias_inverted)
-        stance_target = Action._player if Action._player else self.beneficiar
-        stance_check(self.target, pros, cons, stance_target)
         return pros, cons
 
 

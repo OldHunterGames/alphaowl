@@ -15,7 +15,7 @@ class Stance(object):
         self.target = target
         self.characters = [self.owner, self.target]
         self._type = 'neutral'
-        self._value = 1
+        self._value = 0
         self._points = [0, 0, 0]
         self._special_value = None
 
@@ -69,7 +69,7 @@ class Stance(object):
         ind = None
         for key in Stance._types_stats:
             if axis in Stance._types_stats[key] and self._type!=key:
-                raise Exception("Wrong axis for this type of relations: %s, %s"%(self.type, axis))
+                raise Exception("Wrong axis for this type of stance: %s, %s"%(self.type, axis))
         for key in Stance._ax.keys():
             if axis in Stance._ax[key]:
                 ind = key
@@ -82,7 +82,7 @@ class Stance(object):
         ind = None
         for key in Stance._types_stats:
             if axis in Stance._types_stats[key] and self._type!=key:
-                raise Exception("Wrong axis for this type of relations: %s, %s"%(self.type, axis))
+                raise Exception("Wrong axis for this type of stance: %s, %s"%(self.type, axis))
         for key in Stance._ax.keys():
             if axis in Stance._ax[key]:
                 ind = key

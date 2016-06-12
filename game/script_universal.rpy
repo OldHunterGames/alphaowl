@@ -4,7 +4,8 @@ label lbl_universal_menu:
     
     menu:
         "Информация":
-            call lbl_info
+            $ target = renpy.call_screen('sc_choose_character')
+            call lbl_info_new(target)
             
         "Условия":
             menu:
@@ -18,7 +19,8 @@ label lbl_universal_menu:
             $ pass
                         
         "Следующая неделя":
-            jump label_new_day
+            # jump label_new_day
+            $ pass
             
     jump lbl_universal_menu
     return
@@ -34,6 +36,47 @@ label lbl_make_shedule:
         'Назад':
             jump universal_menu    
             
-        jump lbl_make_shedule
+        # jump lbl_make_shedule
+label lbl_info_new(target):
+    python:
+        alignment = target.alignment['orderliness'] +' '+ child.alignment['activity'] +' '+ child.alignment['morality'] 
+        job = target.job['name']
+        desu = target.description()
+        needs_overflow = target.show_needs('overflow')
+        needs_tense = target.show_needs('tense')
+        needs_relevant = target.show_needs('relevant')
+        needs_statisfied = target.show_needs('satisfied')
+        # taboos = child.show_taboos()
+        features = target.show_features()
+        focus = target.show_focus()
+        rel = target.relations(player).description()
+        txt = "Настроение: " + str(child.mood()) + " | Отношение: " + str(target.stance(player).respect())
+    "[txt] | Энергия: [target.vigor] \n
     
+     Запреты: [target.restrictions] \n 
+     Условия сна: [target.accommodation]  |  Занятость: [job]       \n
+     Характер: [alignment]\n
+     Отношение: [rel]\n
+     Фокус: [focus]\n
+     Напряжения: [needs_tense]\n
+     Актуальные нужды: [needs_relevant]\n
+     Удовлетворённые: [needs_statisfied]\n          
+     Пресыщения: [needs_overflow]\n     
+     Особенности: [features]\n
+     \n"
 
+    return
+
+
+screen sc_choose_character():
+    python:
+        plist = player.known_characters
+        ileft = 0
+        iright = 4 if len(plist) > 4 else len(plist)-1
+        def change_i(value):
+            ileft += value
+            iright += value
+    vbox:
+        for i in plist:
+            $ t = i.name()
+            textbutton t action Return(i)

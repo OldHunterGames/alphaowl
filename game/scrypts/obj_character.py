@@ -86,7 +86,7 @@ class Person(object):
 
         # Other persons known and relations with them, value[1] = [needed points, current points]
         self._relations = []
-        
+        self.known_characters = []
         self.selfesteem = 0
         self.conditions = []
     
@@ -584,10 +584,13 @@ class Person(object):
             relations = Relations(person, self)
         person._relations.append(relations)
         self._relations.append(relations)
+        self.known_characters.append(person)
+        person.known_characters.append(self)
 
 
     def relations(self, person):
         self.set_relations(person)
+        self.stance(person)
         for rel in self._relations:
             if rel.target == person and rel.owner == self or rel.target==self and rel.owner==person:
                 return rel
@@ -827,4 +830,5 @@ class Person(object):
                 break
         if not s:
             s = self.set_stance(target)
+            self.relations(target)
         return s 
