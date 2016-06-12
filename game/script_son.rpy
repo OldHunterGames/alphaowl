@@ -87,6 +87,7 @@ label lbl_son_manage:
                             jump lbl_son_manage
 
                 "Социоблядство":
+                    call lbl_social
                     jump lbl_son_manage
                     
                 "Потом подумаю":
@@ -114,6 +115,62 @@ label lbl_son_manage:
         
         "Конец недели":
             jump label_new_day
+    
+    return
+
+label lbl_social:
+    menu:
+        'Биопроблемы':
+            'Есть одна тян - ламповая няша Енотова. Сможешь ли ты завоевать её трепетное сердце?'
+            menu:
+                "Альфа-стайл":
+                    call lbl_enot_conquest
+                    
+                "Задрот-стайл":
+                    call lbl_enot_convention
+                    
+                "Пиздолиз-стайл":
+                    call lbl_enot_contribution
+                    
+        'Этология человека':    
+            'Главный альфач на курсе - тупой но хитрый качок и мажор Ерохин. Способен ли ты отстоять свой (омежко-)статус?'
+            menu:
+                "Противостояние":
+                    call lbl_eroha_conquest
+                    
+                "Коллаборационизм":
+                    call lbl_eroha_convention
+                    
+                "Контрибуции":
+                    call lbl_eroha_contribution
+            
+        'Траповать @ Шлюховать':
+            'Есть один кун - Ашот. Торгует на рынке помидорами, ебёт всё. Даже Небо, даже Аллаха, даже тебя. Но станет ли он хорошим спонсором?'
+            menu:
+                "Итс э ТРАП!":
+                    call lbl_ashot_conquest
+                    
+                "Гей-шлюха":
+                    call lbl_ashot_convention
+                    
+                "Мамин романтик":
+                    call lbl_ashot_contribution
+                    
+        'Забить':
+            $ pass
+    
+    jump lbl_son_manage
+    return
+
+label lbl_enot_conquest:
+    "Бей бабу молотом - будет баба золотом. Все говорят что девки любят плохих парней. Но дело не в любви - всё достаётся сильному!"
+    menu:
+        "Task":
+            'Плейсхолдер'
+        "Домогаться":
+            menu:
+                "Прижиматься в метро":
+                    $ pass
     
     return
 

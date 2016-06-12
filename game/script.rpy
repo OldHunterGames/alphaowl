@@ -113,7 +113,7 @@ label label_quiz:
                 mom.set_relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
-                mom..stance.value = 0
+                mom.stance.value = 0
                 child.ration['food_type'] = "sperm"
                 child.ration['target'] = 1
                 child.accommodation = "jailed"      
