@@ -28,6 +28,13 @@ class Engine(object):
             'practice',
         ]
         self.evn_skipcheck = True
+        self.resources = {'drugs': {'waste':0, 'current':0}, 'provision': {'waste': 0, 'current': 0}}
+        self._drugs_per_turn = 0
+        self._provision_per_turn = 0
+        self.drugs = 0
+        self.provision = 0
+        self.money = 0
+
 
     @property
     def player(self):
@@ -40,6 +47,56 @@ class Engine(object):
         self._player = person
         Action._player = person
         person.player_controlled = True
+
+
+    def resource(self, res):
+        return self.resources[res]['current']
+    def res_to_money(self, res):
+        return -(self.resources[res]['current']-self.resources[res]['waste'])*3
+    def res_set_waste(self, res, value):
+        if value < 0:
+            return
+        self.resources[res]['waste'] = value
+    def res_set(self, res, value):
+        self.resources[res]['current'] = value
+
+
+    def can_waste(self, res):
+        if self.resources[res]['current'] - self.resources[res]['waste'] >= 0:
+            return True
+        else:
+            return False
+    def res_waste(self):
+        for res in self.resources.keys():
+            if self.can_waste(res):
+                self.resources[res]['current'] -= self.resources[res]['waste']
+            elif self.has_money(self.res_to_money(res)):
+                self.res_set(res, 0)
+                self.use_money(self.res_to_money(res))
+
+    def has_money(self, value):
+        if self.money >= value:
+            return True
+        else:
+            return False
+    def use_money(self, value):
+        if self.has_money(value):
+            self.money -= value
+        else:
+            return
+
+    def can_skip_turn(self):
+        money = 0
+        for res in self.resources.keys():
+            if not self.can_waste(res) or not self.has_money(self.res_to_money(res)):
+                return False
+            else:
+                money += self.res_to_money(res)
+        if self.has_money(money):
+            return True
+        else:
+            return False
+
 
     
     def choose_study(self):
@@ -71,7 +128,6 @@ class Engine(object):
 
     #    return list_of_events
     
-
     def end_turn_event(self):
         shuffle(self.events_list)
         possible = self.events_list

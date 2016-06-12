@@ -15,7 +15,7 @@ class Stance(object):
         self.target = target
         self.characters = [self.owner, self.target]
         self._type = 'neutral'
-        self._value = 0
+        self._value = 1
         self._points = [0, 0, 0]
         self._special_value = None
 
