@@ -18,7 +18,7 @@ class Relations(object):
     def fervor(self):
         if self.target.player_controlled:
             return self._fervor
-        fervor = self._fervor + self.persons[1].alignment.activity + self.persons[2].alignment.activity
+        fervor = self._fervor + self.owner.alignment.activity + self.target.alignment.activity
         if fervor < -1:
             fervor = -1
         elif fervor > 1:
@@ -32,7 +32,7 @@ class Relations(object):
     def distance(self):
         if self.target.player_controlled:
             return self._distance
-        distance = self._distance + self.persons[1].alignment.orderliness + self.persons[2].alignment.orderliness
+        distance = self._distance + self.owner.alignment.orderliness + self.target.alignment.orderliness
         if distance < -1:
             distance = -1
         elif distance > 1:
@@ -46,7 +46,7 @@ class Relations(object):
     def congruence(self):
         if self.target.player_controlled:
             return self._congruence
-        congruence = self._distance + self.persons[1].alignment.morality + self.persons[2].alignment.morality
+        congruence = self._distance + self.owner.alignment.morality + self.target.alignment.morality
         if congruence < -1:
             congruence = -1
         elif congruence > 1:
@@ -72,38 +72,38 @@ class Relations(object):
             ax += 1
             if ax > 1:
                 if axis == 'distance':
-                    if self.owner.alignment['orderliness'] == 'chaotic':
+                    if self.owner.alignment.orderliness == 'chaotic':
                         self.owner.add_token('accordance')
-                    elif self.owner.alignment['orderliness'] == 'lawful':
+                    elif self.owner.alignment.orderliness == 'lawful':
                         self.owner.add_token('antagonism')
                 if axis == 'fervor':
-                    if self.owner.alignment['activity'] == 'timid':
+                    if self.owner.alignment.activity == 'timid':
                         self.owner.add_token('accordance')
-                    elif self.owner.alignment['activity'] == 'ardent':
+                    elif self.owner.alignment.activity == 'ardent':
                         self.owner.add_token('antagonism')
                 if axis == 'congruence':
-                    if self.owner.alignment['morality'] == 'good':
+                    if self.owner.alignment.morality == 'good':
                         self.owner.add_token('accordance')
-                    elif self.owner.alignment['morality'] == 'evil':
+                    elif self.owner.alignment.morality  == 'evil':
                         self.owner.add_token('antagonism')
                 ax = 2
         elif direction == '-':
             ax -= 1
             if ax < -1:
                 if axis == 'distance':
-                    if self.owner.alignment['orderliness'] == 'chaotic':
+                    if self.owner.alignment.orderliness == 'chaotic':
                         self.owner.add_token('antagonism')
-                    elif self.owner.alignment['orderliness'] == 'lawful':
+                    elif self.owner.alignment.orderliness == 'lawful':
                         self.owner.add_token('accordance')
                 if axis == 'fervor':
-                    if self.owner.alignment['activity'] == 'timid':
+                    if self.owner.alignment.activity == 'timid':
                         self.owner.add_token('antagonism')
-                    elif self.owner.alignment['activity'] == 'ardent':
+                    elif self.owner.alignment.activity == 'ardent':
                         self.owner.add_token('accordance')
                 if axis == 'congruence':
-                    if self.owner.alignment['morality'] == 'good':
+                    if self.owner.alignment.morality == 'good':
                         self.owner.add_token('antagonism')
-                    elif self.owner.alignment['morality'] == 'evil':
+                    elif self.owner.alignment.morality == 'evil':
                         self.owner.add_token('accordance')
                 ax = 0
 
