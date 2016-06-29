@@ -25,13 +25,20 @@ label lbl_universal_menu:
     return
     
 label lbl_make_shedule:
+        
+    $ shedule_major = dname[player.job['name']]
+    $ communication = '?'
+    
     menu:
-        "Основное: [shedule_major]":
+        "После учебы: [shedule_major]":
             $ pass
-        "Дополнительно: [shedule_minor]":
+        "В выходные: [shedule_minor]":
             $ pass
         "Общение: [communication]":
-            $ pass
+            if player == child:
+                call lbl_son_social
+            else:
+                $ pass
         'Назад':
             jump universal_menu    
             
@@ -41,7 +48,7 @@ label lbl_make_shedule:
 label lbl_info_new(target):
     python:
         alignment = target.alignment.description() 
-        job = target.job['name']
+        job = dname[target.job['name']]
         desu = target.description()
         needs_overflow = target.show_needs('overflow')
         needs_tense = target.show_needs('tense')

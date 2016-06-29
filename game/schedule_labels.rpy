@@ -15,7 +15,29 @@ label shd_general_accounting(character):
         $ child.communication.set_shift(-2)
         
     return
+
     
+label shd_dayoff_dacha(character):
+    python:
+        child.comfort.set_shift(-3)
+        child.amusement.set_shift(-2)
+        child.ambition.set_shift(-2)
+        child.wellness.set_shift(-1)
+        child.altruism.set_shift(2)        
+        child.activity.set_shift(2)
+        child.conditions.append(('vigor', -1))
+        effect = child.physique * 2
+        game.resources('provision') += effect
+    'Завтра рано вставать, а то опоздаем на поезд \n @\nПоможешь бабушке на даче \n @\nНадо огород вскопать, сорняки прополот, колорада потравить \n @\n(Ресурсы: провизия +[effect])'
+    return  
+    
+label shd_dayoff_2ch(character):
+    python:
+        child.amusement.set_shift(2)
+        child.communication.set_shift(2)        
+    'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
+    return  
+
 label shd_help_mom(character):
     'Мамин помощник'
     python:  
