@@ -311,14 +311,14 @@ label lbl_owl_info:
 
 label lbl_mom_info:
     python:
-        alignment = mom.alignment['orderliness'] +' '+ mom.alignment['activity'] +' '+ mom.alignment['morality'] 
+        alignment = mom.alignment.description()
         needs_overflow = mom.show_needs('overflow')
         needs_tense = mom.show_needs('tense')
         needs_relevant = mom.show_needs('relevant')
         needs_statisfied = mom.show_needs('satisfied')
         features = mom.show_features()
         rel = child.relations(mom).description()
-        txt = "Настроение: " + str(mom.mood()) + " | Благоволение: " + str(mom.favor())
+        txt = "Настроение: " + str(mom.mood()) + " | Благоволение: " + str(mom.stance(player).level)
     "[txt] | Энергия: [mom.vigor] \n
      Тэнге: [game.tenge] \n
      Характер: [alignment]\n

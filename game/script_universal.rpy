@@ -39,7 +39,7 @@ label lbl_make_shedule:
         # jump lbl_make_shedule
 label lbl_info_new(target):
     python:
-        alignment = target.alignment['orderliness'] +' '+ child.alignment['activity'] +' '+ child.alignment['morality'] 
+        alignment = target.alignment.description() 
         job = target.job['name']
         desu = target.description()
         needs_overflow = target.show_needs('overflow')
@@ -50,7 +50,7 @@ label lbl_info_new(target):
         features = target.show_features()
         focus = target.show_focus()
         rel = target.relations(player).description()
-        txt = "Настроение: " + str(child.mood()) + " | Отношение: " + str(target.stance(player).respect())
+        txt = "Настроение: " + str(target.mood()) + " | Отношение: " + str(target.stance(player).level)
     "[txt] | Энергия: [target.vigor] \n
     
      Запреты: [target.restrictions] \n 
