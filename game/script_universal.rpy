@@ -36,7 +36,9 @@ label lbl_make_shedule:
         'Назад':
             jump universal_menu    
             
-        # jump lbl_make_shedule
+    jump lbl_make_shedule
+        
+        
 label lbl_info_new(target):
     python:
         alignment = target.alignment.description() 
