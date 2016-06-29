@@ -31,8 +31,6 @@ class Engine(object):
         self.resources = {'drugs': {'waste':0, 'current':0}, 'provision': {'waste': 0, 'current': 0}}
         self._drugs_per_turn = 0
         self._provision_per_turn = 0
-        self.drugs = 0
-        self.provision = 0
         self.money = 0
 
 
@@ -108,6 +106,7 @@ class Engine(object):
         return study
 
     def new_turn(self):
+        self.res_waste()
         self.time += 1
         self.player.ap = 1
         return "label_new_day"

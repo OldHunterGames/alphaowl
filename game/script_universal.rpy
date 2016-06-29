@@ -18,9 +18,8 @@ label lbl_universal_menu:
         "Особые события ([player.ap])" if player.ap > 0:
             $ pass
                         
-        "Следующая неделя":
-            # jump label_new_day
-            $ pass
+        "Следующая неделя" if game.can_skip_turn():
+            jump label_new_day
             
     jump lbl_universal_menu
     return

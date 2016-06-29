@@ -39,7 +39,7 @@ class Schedule(object):
         self.actions = []
         self.owner = person
     
-    def add_action(self, action, single=None, target=None):
+    def add_action(self, action, single=False, target=None):
         if action in actions.keys():
             act = ScheduledAction(self.owner, action, actions[action][0], actions[action][1], target, single)
             if act.slot != None:
@@ -53,7 +53,7 @@ class Schedule(object):
         to_remove = []
         for action in self.actions:
             action.call()
-            if action.single == 'single':
+            if action.single:
                 to_remove.append(action)
         for a in to_remove:
             self.actions.remove(a)
