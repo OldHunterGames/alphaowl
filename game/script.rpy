@@ -111,6 +111,7 @@ label label_quiz:
     $ child.schedule.add_action('weed_no')   
     $ child.appearance = 'normal'
     $ child.schedule.add_action('outfit_normal')    
+    $ shedule_minor = '?'
     
     menu:
         "Ты мальчик или девочка-внутри?"

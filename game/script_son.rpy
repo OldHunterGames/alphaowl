@@ -118,7 +118,25 @@ label lbl_son_manage:
     
     return
 
-label lbl_social:
+label lbl_son_minor:
+    
+    menu:
+        'Пахать на даче':
+            $ shedule_minor = 'пахать на даче' 
+            $ child.schedule.add_action('dayoff_dacha')
+            
+        'Капчевать на дваче':
+            $ shedule_minor = 'капчевать на дваче' 
+            $ child.schedule.add_action('dayoff_2ch')
+            
+        'Сычевать на хате':
+            $ shedule_minor = 'сычевать' 
+            $ child.schedule.add_action('dayoff_owled')
+            
+    jump lbl_universal_menu
+    return
+    
+label lbl_son_social:
     menu:
         'Биопроблемы':
             'Есть одна тян - ламповая няша Енотова. Сможешь ли ты завоевать её трепетное сердце?'
@@ -132,6 +150,9 @@ label lbl_social:
                 "Пиздолиз-стайл":
                     call lbl_enot_contribution
                     
+                "Назад":
+                    call lbl_son_social
+                    
         'Этология человека':    
             'Главный альфач на курсе - тупой но хитрый качок и мажор Ерохин. Способен ли ты отстоять свой (омежко-)статус?'
             menu:
@@ -143,7 +164,10 @@ label lbl_social:
                     
                 "Контрибуции":
                     call lbl_eroha_contribution
-            
+
+                "Назад":
+                    call lbl_son_social
+                    
         'Траповать @ Шлюховать':
             'Есть один кун - Ашот. Торгует на рынке помидорами, ебёт всё. Даже Небо, даже Аллаха, даже тебя. Но станет ли он хорошим спонсором?'
             menu:
@@ -156,10 +180,12 @@ label lbl_social:
                 "Мамин романтик":
                     call lbl_ashot_contribution
                     
+                "Назад":
+                    call lbl_son_social                    
         'Забить':
             $ pass
     
-    jump lbl_son_manage
+    jump lbl_universal_menu
     return
 
 label lbl_enot_conquest:

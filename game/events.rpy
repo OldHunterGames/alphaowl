@@ -9,9 +9,9 @@ label init_events:
     $ register_event('evn_dvach_conversation')
     $ register_event('evn_dvach_sex')
     $ register_event('evn_dvach_sports')
-    $ register_event('evn_dvach_b')
-    $ register_event('evn_dvach_fap')
-    $ register_event('evn_dvach_olgino')
+    # $ register_event('evn_dvach_b')
+    # $ register_event('evn_dvach_fap')
+    # $ register_event('evn_dvach_olgino')
 
     $ register_event('evn_do_practice_programm_chat')
     $ register_event('evn_do_practice_programm')
@@ -145,7 +145,7 @@ label evn_dvach_b(character):
     python:
         child.amusement.set_shift(2)
         child.communication.set_shift(2)        
-    'Сосач \n @ \nРазвлечение (2) \n @ \nОбщение (2).'
+    'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
     return True
 
 label evn_dvach_fap(character):
