@@ -15,12 +15,16 @@ init python:
     register_actions()
     mother.enslave(child)
     mom = mother
+    mom.firstname = u"Маман"
+    mom.surname = u"Сычова"        
     check_results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
                     '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
     #BATYA
     batya = Person()
     batya.add_feature('male')
-    batya.add_feature('mature')        
+    batya.add_feature('mature')
+    batya.firstname = u"BATYA"
+    batya.surname = u"Сычов"    
     batya.skill('leadership').profession()  
     batya.stance(child).value = 0
     batya.stance(mom).value = 1
@@ -36,6 +40,8 @@ init python:
     eot.skill('conversation').profession()    
     eot.skill('coding').training = True
     eot.stance(child).value = 0    
+    eot.firstname = u"Наденька"
+    eot.surname = u"Енотова"        
 
     #ЕРОХИН
     erokhin = Person()
@@ -46,6 +52,8 @@ init python:
     erokhin.skill('sports').profession()        
     erokhin.skill('conversation').training = True
     erokhin.stance(child).value = -1
+    erokhin.firstname = u"Алекс"
+    erokhin.surname = u"Ерохин"     
     
     #АШОТ
     ashot = Person()
@@ -58,17 +66,23 @@ init python:
     ashot.skill('sex').profession()     
     ashot.skill('conversation').training = True
     ashot.stance(child).value = 0     
+    ashot.firstname = u"Ашот"
+    ashot.surname = u"Мудлаев"     
     
     #СВЯЩЕННИК
     pavsykakiy = Person()
     pavsykakiy.skill('leadership').expert()  
     pavsykakiy.stance(child).value = 0 
+    pavsykakiy.firstname = u"Павсикакий"
+    pavsykakiy.surname = u"Святомудин"      
     
     #ТЕЛЕВЕДУЩИЙ
     kohana = Person()
     kohana.skill('leadership').profession()
     kohana.spirit = 4
     kohana.stance(child).value = 0 
+    kohana.firstname = u"Кисель"
+    kohana.surname = u"Телеведущев"      
     
     
     

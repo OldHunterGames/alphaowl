@@ -12,6 +12,8 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 from stance import Stance
+
+
 class Alignment(object):
     _orderliness = {-1: "chaotic", 0: "conformal", 1: "lawful"}
     _activity = {-1: "timid", 0: "reasonable", 1: "ardent"}
@@ -21,7 +23,6 @@ class Alignment(object):
         self._activity = 0
         self._morality = 0
     
-
     @property
     def orderliness(self):
         return self._orderliness
@@ -85,6 +86,7 @@ class Alignment(object):
 
     def description(self):
         return self.show_orderliness(), self.show_activity(), self.show_morality()
+
 
 class Person(object):
 
