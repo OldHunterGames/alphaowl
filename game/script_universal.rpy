@@ -49,7 +49,7 @@ label lbl_info_new(target):
         # taboos = child.show_taboos()
         features = target.show_features()
         focus = target.show_focus()
-        rel = target.relations(player).description()
+        rel = target.relations(player).description() if target!=player else "None"
         txt = "Настроение: " + str(target.mood()) + " | Отношение: " + str(target.stance(player).level)
     "[txt] | Энергия: [target.vigor] \n
     
