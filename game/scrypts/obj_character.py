@@ -642,30 +642,55 @@ class Person(object):
 
         return
 
-
-    def set_relations(self, person):
-        if person==self:
-            return
-        for rel in self._relations:
-            if rel.target == person and rel.owner == self or rel.target==self and rel.owner==person:
-                return 
-        if not self.player_controlled:
-            relations = Relations(self, person)
-        else:
-            relations = Relations(person, self)
+    def know_person(self, person):
+        if person in self.known_characters:
+            return True
+        return False
+    def _set_relations(self, person):
+        relations = Relations(self, person)
         person._relations.append(relations)
         self._relations.append(relations)
-        self.known_characters.append(person)
-        person.known_characters.append(self)
+        if not person.know_person(self):
+            person.known_characters.append(self)
+        if not self.know_person(person):
+            self.known_characters.append(person)
+        return relations
 
 
     def relations(self, person):
-        self.set_relations(person)
-        self.stance(person)
+        if person==self:
+            raise Exception("relations: target and caller is same person")
+        if not self.know_person(person):
+            relations = self._set_relations(person)
+            self._set_stance(person)
+            return relations
         for rel in self._relations:
-            if rel.target == person and rel.owner == self or rel.target==self and rel.owner==person:
+            if self in rel.persons and person in rel.persons:
                 return rel
-        
+    
+
+    def _set_stance(self, person):
+        stance = Stance(self, person)
+        self._stance.append(stance)
+        person._stance.append(stance)
+        if not person.know_person(self):
+            person.known_characters.append(self)
+        if not self.know_person(person):
+            self.known_characters.append(person)
+        return stance
+
+    
+    def stance(self, person):
+        if person==self:
+            raise Exception("stance: target and caller is same person")
+        elif not self.know_person(person):
+            self._set_relations(person)
+            stance = self._set_stance(person)
+        else:
+            for s in self._stance:
+                if self in s.persons and person in s.persons:
+                    stance = s
+        return stance
 
 
     def add_reward(self, name, need):
@@ -876,30 +901,3 @@ class Person(object):
             return types
         else:
             return []
-
-    def set_stance(self, target):
-        if target==self:
-            return
-        for stance in self._stance:
-            if stance.target==target and stance.owner==self or stance.owner==target and stance.target==self:
-                return stance
-        if self.player_controlled:
-            stance = Stance(target, self)
-        else:
-            stance = Stance(self, target)
-        self._stance.append(stance)
-        target._stance.append(stance)
-        return stance
-
-    def stance(self, target):
-        if target==self:
-            raise Exception("stance target and caller is same person")
-        s = None
-        for stance in self._stance:
-            if stance.target == target and stance.owner==self or stance.owner==target and stance.target==self:
-                s = stance
-                break
-        if not s:
-            s = self.set_stance(target)
-            self.relations(target)
-        return s 
