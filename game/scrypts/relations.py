@@ -7,18 +7,29 @@ class Relations(object):
     _fervor = {-1: "intense", 0: "plain", 1: "delicate"}
     _distance = {-1: "intimate", 0: "close", 1: "formal"}
     _congruence = {-1: "contradictor", 0: "associate", 1: "supporter"}
-    def __init__(self, owner, target):
-        self.owner = owner
-        self.target = target
-        self.characters = [self.owner, self.target]
+    def __init__(self, person1, person2):
+        self.persons = [person1, person2]
         self._fervor = 1
         self._distance = 1
         self._congruence = 1
+        if self.is_player_relations():
+            for p in persons:
+                if p.player_controlled:
+                    self.player = p
+                else:
+                    self.npc = p
+
+    def is_player_relations(self):
+        if self.persons[0].player_controlled or self.persons[1].player_controlled:
+            return True
+        else:
+            return False
+
     @property
     def fervor(self):
-        if self.target.player_controlled:
+        if self.is_player_relations():
             return self._fervor
-        fervor = self._fervor + self.owner.alignment.activity + self.target.alignment.activity
+        fervor = self._fervor + persons[0].alignment.activity + persons[1].alignment.activity
         if fervor < -1:
             fervor = -1
         elif fervor > 1:
@@ -30,9 +41,9 @@ class Relations(object):
 
     @property
     def distance(self):
-        if self.target.player_controlled:
+        if self.is_player_relations():
             return self._distance
-        distance = self._distance + self.owner.alignment.orderliness + self.target.alignment.orderliness
+        distance = self._distance + persons[0].alignment.orderliness + persons[1].alignment.orderliness
         if distance < -1:
             distance = -1
         elif distance > 1:
@@ -44,9 +55,9 @@ class Relations(object):
 
     @property
     def congruence(self):
-        if self.target.player_controlled:
+        if self.is_player_relations():
             return self._congruence
-        congruence = self._distance + self.owner.alignment.morality + self.target.alignment.morality
+        congruence = self._distance + persons[0].alignment.morality + persons[1].alignment.morality
         if congruence < -1:
             congruence = -1
         elif congruence > 1:
@@ -65,46 +76,46 @@ class Relations(object):
         return (self.show_fervor(), self.show_distance(), self.show_congruence())
         
     def change(self, axis, direction):
-        if not target.player_controlled:
+        if not self.is_player_relations():
             return
         ax = getattr(self, '_%s'%(axis))
         if direction == "+":
             ax += 1
             if ax > 1:
                 if axis == 'distance':
-                    if self.owner.alignment.orderliness == 'chaotic':
-                        self.owner.add_token('accordance')
-                    elif self.owner.alignment.orderliness == 'lawful':
-                        self.owner.add_token('antagonism')
+                    if self.npc.alignment.orderliness == 'chaotic':
+                        self.npc.add_token('accordance')
+                    elif self.npc.alignment.orderliness == 'lawful':
+                        self.npc.add_token('antagonism')
                 if axis == 'fervor':
-                    if self.owner.alignment.activity == 'timid':
-                        self.owner.add_token('accordance')
-                    elif self.owner.alignment.activity == 'ardent':
-                        self.owner.add_token('antagonism')
+                    if self.npc.alignment.activity == 'timid':
+                        self.npc.add_token('accordance')
+                    elif self.npc.alignment.activity == 'ardent':
+                        self.npc.add_token('antagonism')
                 if axis == 'congruence':
-                    if self.owner.alignment.morality == 'good':
-                        self.owner.add_token('accordance')
-                    elif self.owner.alignment.morality  == 'evil':
-                        self.owner.add_token('antagonism')
+                    if self.npc.alignment.morality == 'good':
+                        self.npc.add_token('accordance')
+                    elif self.npc.alignment.morality  == 'evil':
+                        self.npc.add_token('antagonism')
                 ax = 2
         elif direction == '-':
             ax -= 1
             if ax < -1:
                 if axis == 'distance':
-                    if self.owner.alignment.orderliness == 'chaotic':
-                        self.owner.add_token('antagonism')
-                    elif self.owner.alignment.orderliness == 'lawful':
-                        self.owner.add_token('accordance')
+                    if self.npc.alignment.orderliness == 'chaotic':
+                        self.npc.add_token('antagonism')
+                    elif self.npc.alignment.orderliness == 'lawful':
+                        self.npc.add_token('accordance')
                 if axis == 'fervor':
-                    if self.owner.alignment.activity == 'timid':
-                        self.owner.add_token('antagonism')
-                    elif self.owner.alignment.activity == 'ardent':
-                        self.owner.add_token('accordance')
+                    if self.npc.alignment.activity == 'timid':
+                        self.npc.add_token('antagonism')
+                    elif self.npc.alignment.activity == 'ardent':
+                        self.npc.add_token('accordance')
                 if axis == 'congruence':
-                    if self.owner.alignment.morality == 'good':
-                        self.owner.add_token('antagonism')
-                    elif self.owner.alignment.morality == 'evil':
-                        self.owner.add_token('accordance')
+                    if self.npc.alignment.morality == 'good':
+                        self.npc.add_token('antagonism')
+                    elif self.npc.alignment.morality == 'evil':
+                        self.npc.add_token('accordance')
                 ax = 0
 
 

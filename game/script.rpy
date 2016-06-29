@@ -126,7 +126,7 @@ label label_quiz:
                 player = game.player
                 mom = game.mother
                 mom.alignment.morality = 'evil'
-                mom.set_relations(child)    
+                mom.relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
                 mom.stance(child).value = 0
@@ -156,7 +156,7 @@ label label_quiz:
                 game.set_player(mom)
                 player = game.player
                 mom.alignment.morality = 'selfish'
-                mom.set_relations(child)    
+                mom.relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
                 child.stance(mom).set_level('rebellious')
@@ -248,7 +248,7 @@ label label_quiz:
             $ game.set_player(child)
             $ player = game.player
             $ player.player_controlled = True
-            $ child.set_relations(mother)
+            $ child.relations(mother)
             jump label_new_day
             
         "Своей мамкой":
@@ -256,7 +256,7 @@ label label_quiz:
             $ game.set_player(mother)
             $ player = game.player
             $ player.player_controlled = True
-            $ child.set_relations(mother)           
+            $ child.relations(mother)           
             jump label_new_day
 
     return

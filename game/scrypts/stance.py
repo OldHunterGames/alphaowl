@@ -10,15 +10,22 @@ class Stance(object):
     _types_stats = {'master': ['dread', 'discipline', 'dependence'],
                     'slave': ['craving', 'confidence', 'compassion'],
                     'neutral': ['attraction', 'reliance', 'kindness']}
-    def __init__(self, owner, target):
-        self.owner = owner
-        self.target = target
-        self.characters = [self.owner, self.target]
+    def __init__(self, person1, person2):
+        self.persons = [person1, person2]
         self._type = 'neutral'
         self._value = 0
         self._points = [0, 0, 0]
         self._special_value = None
-
+        if self.is_player_stance():
+            for p in self.persons:
+                if p.player_controlled:
+                    self.player = p
+                else:
+                    self.npc = p
+    def is_player_stance(self):
+        if self.persons[0].player_controlled or self.persons[1].player_controlled:
+            return True
+        return False
     @property
     def value(self):
         return self._value
@@ -26,8 +33,6 @@ class Stance(object):
     @value.setter
     def value(self, value):
         self._value = value
-        if not self.target.player_controlled:
-            self.target.stance(self.owner)._value = value
         if self._value < -1:
             self._value = -1
 
@@ -36,7 +41,7 @@ class Stance(object):
 
     def to_max(self, value=None):
         self._value = 2
-        if self.target.player_controlled:
+        if self.is_player_stance():
             self._special_value = value
 
 
@@ -46,7 +51,7 @@ class Stance(object):
 
     @property
     def level(self):
-        if self.value == 2 and self.target.player_controlled:
+        if self.value == 2 and self.is_player_stance():
             return self._special_value
         return Stance._types[self._type][self.value+1]
 
@@ -90,16 +95,16 @@ class Stance(object):
         return self._points[ind]
 
     def respect(self):
+        if not self.is_player_stance():
+            values = {-1:0, 0:1, 1:5, 2:10}
+            return values[self.value]
         alig_relations = {'lawful': self._points[1]*2, 'conformal': self._points[1], 'chaotic': self._points[1]/2,
                             'timid': self._points[0]*2, 'reasonable': self._points[0], 'ardent': self._points[0]/2,
                             'evil': self._points[2]*2, 'selfish': self._points[2], 'good': self._points[2]/2}
-        alig = self.owner.alignment.description()
+        alig = self.npc.alignment.description()
         val = 0
         for i in alig:
-            val += alig_relations[i]
-        if not self.target.player_controlled:
-            values = {-1:0, 0:1, 1:5, 2:10}
-            return values[self.value]   
+            val += alig_relations[i]        
         return val
 
 
