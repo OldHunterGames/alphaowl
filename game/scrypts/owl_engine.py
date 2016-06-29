@@ -171,6 +171,10 @@ class Engine(object):
         torture.set_power(power, 6, Action.max_intensity(target, target_tense)[0], 'severe suffering', 'minor concern')
 
         result = torture.activate()
+        if result >= 0:
+            actor.drain_vigor()
+            target.drain_vigor()
+        
         maxn = Action.max_intensity(target, target_tense)[0]
         if maxn > Action.get_memory(actor, target, maxn, 'atrocity') and result > target.token_difficulty(token):
             memory = True
@@ -203,6 +207,8 @@ class Engine(object):
         suffering.compare_two(target.stance(self.player).respect(), Action.max_intensity(target, respect_needs)[0],
                             'indulgence', 'rigor')
         result = suffering.activate()
+        if result >= 0:
+            actor.drain_vigor()
 
         maxn = Action.max_intensity(target, actor_tense)[0]
         if maxn > Action.get_memory(actor, target, maxn, 'suffering') and result > target.token_difficulty(token):
@@ -224,7 +230,6 @@ class Engine(object):
         please = Action(actor, target, beneficiar)
         please.motivation = motivation
         please.morality = morality
-        please.target_vigor = False
         please.difficulty = difficulty
         please.set_power(power, 6, Action.max_intensity(target, target_please)[0], 'desire', 'unconcerned')
         please.set_skill(skill)
@@ -232,6 +237,8 @@ class Engine(object):
         please.compare_two(0, target.mood()[0], 'sorrow', 'already happy')
         please.compare_two(target.stance(self.player), Action.max_intensity(actor, respect_needs)[0], 'well-earned', 'connivance')
         result = please.activate()
+        if result >= 0:
+            actor.drain_vigor()
 
         maxn = Action.max_intensity(target, target_please)[0]
         if maxn > Action.get_memory(actor, target, maxn, 'pleasing') and result > target.token_difficulty(token):
@@ -248,7 +255,6 @@ class Engine(object):
     def intercommunion(self, actor, target, beneficiar, token, power=0, skill=None, difficulty=3,
                         respect_needs=['communication'], morality=0, motivation=None):
 
-        memory = False
         commun = Action(actor, target, beneficiar)
         commun.motivation = motivation
         commun.morality = morality
@@ -259,7 +265,9 @@ class Engine(object):
         commun.compare_two(actor.mind, target.mind, 'insightful', 'clueless')
         commun.compare_two(target.mood()[0], 0, 'cheerful', 'grumpy')
         commun.compare_two(morality, 0, 'morally sure', 'moral doubts')
+        
         result = commun.activate()
+        
         if result > target.token_difficulty(token):
             target.add_tokne(token)
         return result

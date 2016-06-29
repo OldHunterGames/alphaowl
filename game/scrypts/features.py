@@ -44,12 +44,10 @@ class Feature(object):
             self.owner.features.append(self)
             
 class Phobia(Feature):
-    def __init__(self, owner, name, target, *args, **kwargs):
+    def __init__(self, owner, name, fear_obj, *args, **kwargs):
         stats = person_phobias[name] if name in person_phobias else None
         super(Phobia, self).__init__(owner, name)
-        self.target = target
-    def add(self):
-        super(Phobia, self).add()
+        self.object_of_fear = fear_obj
 
 
 class Blood(Feature):

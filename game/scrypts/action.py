@@ -60,8 +60,6 @@ class Action(object):
 
         self.phobias = []
         self.phobias_inverted = False
-        self.actor_vigor = True
-        self.target_vigor = True
         
         self._skill = None
         self._label = 'lbl_skill_check'
@@ -147,11 +145,6 @@ class Action(object):
             if result > 0:
                 self.actor.conditions.remove('unfortunate')
 
-        if self.actor_vigor:
-            self.actor.drain_vigor()
-        if self.target_vigor:
-            self.target.drain_vigor()
-
         return result
 
 
@@ -175,7 +168,6 @@ class Skillcheck(Action):
     def __init__(self, actor, beneficiar, skill, *args, **kwargs):
         super(Skillcheck, self).__init__(actor, None, beneficiar, *args, **kwargs)
         self.set_skill(skill)
-        self.target_vigor = False
     
 
     def _build_pros_cons(self):

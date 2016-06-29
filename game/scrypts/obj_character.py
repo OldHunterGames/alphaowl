@@ -12,6 +12,79 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 from stance import Stance
+class Alignment(object):
+    _orderliness = {-1: "chaotic", 0: "conformal", 1: "lawful"}
+    _activity = {-1: "timid", 0: "reasonable", 1: "ardent"}
+    _morality = {-1: "evil", 0: "selfish", 1: "good"}
+    def __init__(self):
+        self._orderliness = 0
+        self._activity = 0
+        self._morality = 0
+    
+
+    @property
+    def orderliness(self):
+        return self._orderliness
+    @orderliness.setter
+    def orderliness(self, value):
+        if isinstance(value, str):
+            for k, v in Alignment._orderliness.items():
+                if v == value:
+                    self._orderliness = k
+                    return
+            raise Exception("Orderliness set with non-int value or not valid string value")
+        if value < -1:
+            value = -1
+        elif value > 1:
+            value = 1
+        self._orderliness = value
+
+    
+    @property
+    def activity(self):
+        return self._activity
+    @activity.setter
+    def activity(self, value):
+        if isinstance(value, str):
+            for k, v in Alignment._activity.items():
+                if v == value:
+                    self._activity = k
+                    return
+            raise Exception("Activity set with non-int value or not valid string value")
+        if value < -1:
+            value = -1
+        elif value > 1:
+            value = 1
+        self._activity = value
+    
+
+    @property
+    def morality(self):
+        return self._morality
+    @morality.setter
+    def morality(self, value):
+        if isinstance(value, str):
+            for k, v in Alignment._morality.items():
+                if v == value:
+                    self._morality = k
+                    return
+            raise Exception("Morality set with non-int value or not valid string value")
+        if value < -1:
+            value = -1
+        elif value > 1:
+            value = 1
+        self._morality = value
+
+
+    def show_orderliness(self):
+        return Alignment._orderliness[self.orderliness]
+    def show_activity(self):
+        return Alignment._activity[self.activity]
+    def show_morality(self):
+        return Alignment._morality[self.morality]
+
+    def description(self):
+        return self.show_orderliness(), self.show_activity(), self.show_morality()
 
 class Person(object):
 
@@ -20,11 +93,7 @@ class Person(object):
         self.firstname = u"Антон"
         self.surname = u"Сычов"
         self.nickname = u"Сычуля"
-        self.alignment = {
-            "orderliness": "conformal",   # "lawful", "conformal" or "chaotic"
-            "activity": "reasonable",        # "ardent", "reasonable" or "timid"
-            "morality": "selfish",       # "good", "selfish" or "evil"
-        }
+        self.alignment = Alignment()
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.tokens = []             # Special resources to activate various events
         self.tokens_difficulty = {}
@@ -151,7 +220,7 @@ class Person(object):
         l = []
         for feature in self.features:
             if isinstance(feature, Phobia):
-                l.append(feature.target)
+                l.append(feature.object_of_fear)
         return l
 
     def insurgensy(self):
@@ -683,7 +752,7 @@ class Person(object):
             if arg in order.keys():
                 orderliness = arg
         if orderliness:
-            valself = order[self.alignment['orderliness']]
+            valself = self.alignment.orderliness
             valact = order[orderliness]
             if valself != 0:
                 if valself + valact == 0:
@@ -702,7 +771,7 @@ class Person(object):
                     elif self.relations(target).distance == 'intimate':
                         result += 1
         if activity:
-            valself = act[self.alignment['activity']]
+            valself = self.alignment.activity
             valact = act[activity]
             if valself != 0:
                 if valself + valact == 0:
@@ -721,7 +790,7 @@ class Person(object):
                     elif self.relations(target).fervor == 'intense':
                         result += 1
         if morality:
-            valself = moral[self.alignment['morality']]
+            valself = self.alignment.morality
             valact = moral[morality]
             if valself != 0:
                 if valself + valact == 0:
@@ -784,7 +853,7 @@ class Person(object):
             'timid': ('delicate', 'worship'), 'ardent': ('intense', 'disciple'),
             'good': ('supporter', 'dedication'), 'evil': ('contradictor', 'henchman')}
 
-        return [d.get(x) for x in self.alignment.values()]
+        return [d.get(x) for x in self.alignment.description()]
 
     def willing_available(self):
         if not self.master:

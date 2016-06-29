@@ -4,9 +4,9 @@ import renpy.exports as renpy
 
 
 class Relations(object):
-    _fervor = ['delicate', 'plain', 'intense']
-    _distance = ['formal', 'close', 'intimate']
-    _congruence = ['contradictor', 'associate', 'supporter']
+    _fervor = {-1: "intense", 0: "plain", 1: "delicate"}
+    _distance = {-1: "intimate", 0: "close", 1: "formal"}
+    _congruence = {-1: "contradictor", 0: "associate", 1: "supporter"}
     def __init__(self, owner, target):
         self.owner = owner
         self.target = target
@@ -17,45 +17,52 @@ class Relations(object):
     @property
     def fervor(self):
         if self.target.player_controlled:
-            return Relations._fervor[self._fervor]
-        else:
-            f = 1
-            d = {'timid': 1, 'ardent': -1, 'reasonable':0}
-            f += d[self.owner.alignment['activity']]
-            f += d[self.owner.alignment['activity']]
-            if f > 2:
-                f = 2
-            if f < 0:
-                f = 0
-            return Relations._fervor[f]
+            return self._fervor
+        fervor = self._fervor + self.persons[1].alignment.activity + self.persons[2].alignment.activity
+        if fervor < -1:
+            fervor = -1
+        elif fervor > 1:
+            fervor = 1
+        return fervor
+    def show_fervor(self):
+        return Relations._fervor[self.fervor]
+    
+
     @property
     def distance(self):
         if self.target.player_controlled:
-            return Relations._distance[self._distance]
-        else:
-            f = 1
-            d = {'chaotic': 1, 'lawful': -1, 'conformal':0}
-            f += d[self.owner.alignment['orderliness']]
-            f += d[self.owner.alignment['orderliness']]
-            if f > 2:
-                f = 2
-            if f < 0:
-                f = 0
-            return Relations._distance[f]
+            return self._distance
+        distance = self._distance + self.persons[1].alignment.orderliness + self.persons[2].alignment.orderliness
+        if distance < -1:
+            distance = -1
+        elif distance > 1:
+            distance = 1
+        return distance
+    def show_distance(self):
+        return Relations._distance[self.distance]
+    
+
     @property
     def congruence(self):
         if self.target.player_controlled:
-            return Relations._congruence[self._congruence]
-        else:
-            f = 1
-            d = {'good': 1, 'evil': -1, 'selfish':0}
-            f += d[self.owner.alignment['morality']]
-            f += d[self.owner.alignment['morality']]
-            if f > 2:
-                f = 2
-            if f < 0:
-                f = 0
-            return Relations._congruence[f]
+            return self._congruence
+        congruence = self._distance + self.persons[1].alignment.morality + self.persons[2].alignment.morality
+        if congruence < -1:
+            congruence = -1
+        elif congruence > 1:
+            congruence = 1
+        return congruence
+    def show_congruence(self):
+        return Relations._congruence[self.congruence]
+
+    
+    def set_axis(self, axis, value):
+        ax = '_%s'%(axis)
+        if hasattr(self, ax) and value in range(-1, 1):
+            self.__dict__[ax] = value
+
+    def description(self):
+        return (self.show_fervor(), self.show_distance(), self.show_congruence())
         
     def change(self, axis, direction):
         if not target.player_controlled:
@@ -63,7 +70,7 @@ class Relations(object):
         ax = getattr(self, '_%s'%(axis))
         if direction == "+":
             ax += 1
-            if ax > 2:
+            if ax > 1:
                 if axis == 'distance':
                     if self.owner.alignment['orderliness'] == 'chaotic':
                         self.owner.add_token('accordance')
@@ -82,7 +89,7 @@ class Relations(object):
                 ax = 2
         elif direction == '-':
             ax -= 1
-            if ax < 0:
+            if ax < -1:
                 if axis == 'distance':
                     if self.owner.alignment['orderliness'] == 'chaotic':
                         self.owner.add_token('antagonism')
@@ -100,6 +107,4 @@ class Relations(object):
                         self.owner.add_token('accordance')
                 ax = 0
 
-    def description(self):
-        return (self.fervor, self.distance, self.congruence)
 

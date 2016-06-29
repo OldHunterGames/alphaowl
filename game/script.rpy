@@ -29,9 +29,9 @@ init python:
     eot = Person()
     eot.add_feature('female')
     eot.add_feature('junior')     
-    eot.alignment['activity'] = "timid"
-    eot.alignment['orderliness'] = "lawful"
-    eot.alignment['morality'] = "good"
+    eot.alignment.activity = "timid"
+    eot.alignment.orderliness = "lawful"
+    eot.alignment.morality = "good"
     eot.skill('conversation').talent = True
     eot.skill('conversation').profession()    
     eot.skill('coding').training = True
@@ -41,7 +41,7 @@ init python:
     erokhin = Person()
     erokhin.add_feature('male')
     erokhin.add_feature('adolescent')    
-    erokhin.alignment['activity'] = "ardent"
+    erokhin.alignment.activity = "ardent"
     erokhin.skill('sports').talent = True
     erokhin.skill('sports').profession()        
     erokhin.skill('conversation').training = True
@@ -51,9 +51,9 @@ init python:
     ashot = Person()
     ashot.add_feature('male')
     ashot.add_feature('mature')    
-    ashot.alignment['activity'] = "ardent"
-    ashot.alignment['orderliness'] = "chaotic"
-    ashot.alignment['morality'] = "evil"
+    ashot.alignment.activity = "ardent"
+    ashot.alignment.orderliness = "chaotic"
+    ashot.alignment.morality = "evil"
     ashot.skill('sex').talent = True
     ashot.skill('sex').profession()     
     ashot.skill('conversation').training = True
@@ -104,19 +104,18 @@ label label_quiz:
             python:
                 child.add_feature('male')
                 child.add_feature('adolescent')
-                child.alignment['orderliness'] = "conformal"
-                child.alignment['activity'] = "reasonable"
-                child.alignment['morality'] = "selfish"
+                child.alignment.orderliness = "conformal"
+                child.alignment.activity = "reasonable"
+                child.alignment.morality = "selfish"
                 child.skill('coding').profession()
-                game.player = child
+                game.set_player(child)
                 player = game.player
                 mom = game.mother
-                mom.alignment['morality'] = 'evil'
-                player.player_controlled = True
+                mom.alignment.morality = 'evil'
                 mom.set_relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
-                mom.stance.value = 0
+                mom.stance(child).value = 0
                 child.ration['food_type'] = "sperm"
                 child.ration['target'] = 1
                 child.accommodation = "jailed"      
@@ -135,15 +134,14 @@ label label_quiz:
             python:
                 child.add_feature('male')
                 child.add_feature('adolescent')
-                child.alignment['orderliness'] = "conformal"
-                child.alignment['activity'] = "reasonable"
-                child.alignment['morality'] = "selfish"
+                child.alignment.orderliness = "conformal"
+                child.alignment.activity = "reasonable"
+                child.alignment.morality = "selfish"
                 child.skill('coding').profession()
                 mom = game.mother
                 game.set_player(mom)
                 player = game.player
-                mom.alignment['morality'] = 'selfish'
-                player.player_controlled = True
+                mom.alignment.morality = 'selfish'
                 mom.set_relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
@@ -192,48 +190,48 @@ label label_quiz:
     menu:
         "Давай вспомним твои школьные годы. Много двоек было за прогулы?"
         "Никаких прогулов. У меня расписание чёткое.":
-            $ child.alignment['orderliness'] = "lawful"
+            $ child.alignment.orderliness = "lawful"
         "А чё я? Все прогуливали и я прогуливал.":
-            $ child.alignment['orderliness'] = "conformal"
+            $ child.alignment.orderliness = "conformal"
         "Делаю что хочу. Я вообще не контролируемый!":
-            $ child.alignment['orderliness'] = "chaotic"
+            $ child.alignment.orderliness = "chaotic"
             
     menu:
         "Новая знакомая в скайпе предлагает тебе зависнуть с ней и ещё двумя подругами на ночь, на незнакомой хате в Медвеково. Твои действия?"
         "Пожаловаться на спам. Скрыть.":
-            $ child.alignment['activity'] = "timid"
+            $ child.alignment.activity = "timid"
         "В Медведково? Ну хрееееееен знает...":
-            $ child.alignment['activity'] = "reasonable"
+            $ child.alignment.activity = "reasonable"
         "Я за любой кипеш, кроме голодовки!":
-            $ child.alignment['activity'] = "ardent"
+            $ child.alignment.activity = "ardent"
             
     menu:
         "Идёшь по улице. Кушаешь вкусный бутер с колбаской. К тебе подбегает няшный котик и просит кусочек."
         "Пнуть блохастого. Это моя колбаса. Плохая киса!":
-            $ child.alignment['morality'] = "evil"
+            $ child.alignment.morality = "evil"
         "Пройти мимо. Пусть бабки подъездные его прикармливают.":
-            $ child.alignment['morality'] = "selfish"
+            $ child.alignment.morality = "selfish"
         "Конечно дать колбаски. Да я бы и собаке...":
-            $ child.alignment['morality'] = "good"          
+            $ child.alignment.morality = "good"          
     
     menu:
         "А что если мамка уроки делать заставит?"
         "Конечно. Это - норма.":
-            $ child.stance.value = 2       
+            $ child.stance(mom).value = 2       
         "Ну что делать? Сяду. А то батя ремня всыпет.":
-            $ child.stance.value = 1    
+            $ child.stance(mom).value = 1    
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
-            $ child.stance.value = 0
+            $ child.stance(mom).value = 0
 
             
-    $ alignment = child.alignment['orderliness'] +' '+ child.alignment['activity'] +' '+ child.alignment['morality'] 
+    $ alignment = child.alignment.description
     "Твой алаймент: [alignment]"
 
     menu:
         "Кем ты будешь управлять?"
         "Собой":
             $ game.mode = 'son'
-            $ game.player = child
+            $ game.set_player(child)
             $ player = game.player
             $ player.player_controlled = True
             $ child.set_relations(mother)
@@ -241,7 +239,7 @@ label label_quiz:
             
         "Своей мамкой":
             $ game.mode = 'mom'
-            $ game.player = mother
+            $ game.set_player(mother)
             $ player = game.player
             $ player.player_controlled = True
             $ child.set_relations(mother)           

@@ -93,7 +93,7 @@ class Stance(object):
         alig_relations = {'lawful': self._points[1]*2, 'conformal': self._points[1], 'chaotic': self._points[1]/2,
                             'timid': self._points[0]*2, 'reasonable': self._points[0], 'ardent': self._points[0]/2,
                             'evil': self._points[2]*2, 'selfish': self._points[2], 'good': self._points[2]/2}
-        alig = self.owner.alignment.values()
+        alig = self.owner.alignment.description()
         val = 0
         for i in alig:
             val += alig_relations[i]
