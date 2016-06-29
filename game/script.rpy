@@ -268,10 +268,13 @@ label label_new_day:
 
     $ game.end_turn_event()
     $ game.evn_skipcheck = True
-    if player == game.child:
-        call lbl_son_manage
-    else:
-        call lbl_mom_manage
+    
+    call lbl_universal_menu
+    
+    # if player == game.child:
+    #    call lbl_son_manage
+    #else:
+    #    call lbl_mom_manage
 
     return        
 
