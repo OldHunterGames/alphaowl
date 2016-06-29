@@ -71,6 +71,7 @@ label lbl_info_new(target):
 screen sc_choose_character():
     python:
         plist = player.known_characters
+        plist.appennd(player)
         ileft = 0
         iright = 4 if len(plist) > 4 else len(plist)-1
         def change_i(value):
