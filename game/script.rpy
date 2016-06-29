@@ -277,7 +277,7 @@ label label_new_day:
 
 label lbl_owl_info:
     python:
-        alignment = child.alignment['orderliness'] +' '+ child.alignment['activity'] +' '+ child.alignment['morality'] 
+        alignment = child.alignment.description()
         job = child.job['name']
         desu = child.description()
         needs_overflow = child.show_needs('overflow')
@@ -288,7 +288,7 @@ label lbl_owl_info:
         features = child.show_features()
         focus = child.show_focus()
         rel = child.relations(mom).description()
-        txt = "Настроение: " + str(child.mood()) + " | Подчинение: " + str(child.obedience())
+        txt = "Настроение: " + str(child.mood()) + " | Подчинение: " + str(child.stance(mother).level)
     "[txt] | Энергия: [child.vigor] \n
     
      Запреты: [child.restrictions] \n 
