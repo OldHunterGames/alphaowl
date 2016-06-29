@@ -52,7 +52,8 @@ label lbl_info_new(target):
         features = target.show_features()
         focus = target.show_focus()
         rel = target.relations(player).description() if target!=player else "None"
-        txt = "Настроение: " + str(target.mood()) + " | Отношение: " + str(target.stance(player).level)
+        stance = target.stance(player).level if target!=player else "None"
+        txt = "Настроение: " + str(target.mood()) + " | Отношение: " + str(stance)
     "[txt] | Энергия: [target.vigor] \n
     
      Запреты: [target.restrictions] \n 
