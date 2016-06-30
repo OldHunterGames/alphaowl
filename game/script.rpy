@@ -279,10 +279,8 @@ label label_new_day:
     "Неделя номер [game.time]"
        
     $ gt = game.new_turn()
-    $ game.evn_skipcheck = False
 
     $ game.end_turn_event()
-    $ game.evn_skipcheck = True
     
     call lbl_universal_menu
     
