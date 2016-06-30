@@ -139,7 +139,6 @@ label shd_living_jailed(character):
 label shd_fap_no(character):
     python:
         child.eros.set_shift(-1)
-    'Нофапофон'
     return  
     
 label shd_fap_yes(character):

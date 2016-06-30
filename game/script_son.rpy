@@ -118,6 +118,28 @@ label lbl_son_manage:
     
     return
 
+label lbl_son_major:
+    $ mom_stance = mom.stance(player).value
+    menu:
+        'Всё сидишь как сыч, за конпуктером. Иди пробзись.' if mom_stance > 0:
+            $ child.job['name'] = 'idle'
+            $ child.schedule.add_action('job_idle')  
+        'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?' if mom_stance > -1:
+            $ child.job['name'] = 'study'
+            $ child.schedule.add_action('job_study')  
+        'Посудку помой. Мусор вынеси. С собакой погуляй. И за дедом прибери.':
+            $ child.job['name'] = 'chores'
+            $ child.schedule.add_action('job_chores')            
+        'Вон здоровый какой. Иди вагоны разгружать - семье копеечка.':
+            $ child.job['name'] = 'work'
+            $ child.schedule.add_action('job_work')                   
+        'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
+            $ child.job['name'] = 'whore'
+            $ child.schedule.add_action('job_whore') 
+            
+    jump lbl_universal_menu            
+    return
+
 label lbl_son_minor:
     
     menu:
@@ -303,23 +325,6 @@ label lbl_control_lifestyle:
                     $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
                 'Назад':
                     jump lbl_control_lifestyle        
-        "После учёбы":
-            menu:
-                'Всё сидишь как сыч, за конпуктером. Иди пробзись.' if mom_stance == 'rightful':
-                    $ child.job['name'] = 'idle'
-                    $ child.schedule.add_action('job_idle')  
-                'Уроки делай, бездельник! Зря тебя мать в интитут пристраивала?' if mom_stance == 'opressive':
-                    $ child.job['name'] = 'study'
-                    $ child.schedule.add_action('job_study')  
-                'Посудку помой. Мусор вынеси. С собакой погуляй. И за дедом прибери.':
-                    $ child.job['name'] = 'chores'
-                    $ child.schedule.add_action('job_chores')            
-                'Вон здоровый какой. Иди вагоны разгружать - семье копеечка.':
-                    $ child.job['name'] = 'work'
-                    $ child.schedule.add_action('job_work')                   
-                'Да хоть на панели жопой торгуй! Я на тебя батрачить не нанималась.':
-                    $ child.job['name'] = 'whore'
-                    $ child.schedule.add_action('job_whore') 
         
         "Достаточно":
             jump lbl_son_manage     

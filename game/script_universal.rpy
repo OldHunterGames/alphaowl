@@ -31,9 +31,15 @@ label lbl_make_shedule:
     
     menu:
         "После учебы: [shedule_major]":
-            $ pass
+            if player == child:
+                call lbl_son_major
+            else:
+                $ pass
         "В выходные: [shedule_minor]":
-            $ pass
+            if player == child:
+                call lbl_son_minor
+            else:
+                $ pass
         "Общение: [communication]":
             if player == child:
                 call lbl_son_social
@@ -59,7 +65,7 @@ label lbl_info_new(target):
         focus = target.show_focus()
         rel = target.relations(player).description() if target!=player else "None"
         stance = target.stance(player).level if target!=player else "None"
-        txt = "Настроение: " + str(target.mood()) + " | Отношение: " + str(stance)
+        txt = "Настроение: " + str(target.mood()) + " | Поза: " + str(stance)
     "[txt] | Энергия: [target.vigor] \n
     
      Запреты: [target.restrictions] \n 
