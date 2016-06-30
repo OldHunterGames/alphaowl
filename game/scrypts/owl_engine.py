@@ -181,7 +181,8 @@ class Engine(object):
             memory = True
         for need in target_tense:
             n = getattr(target, need)
-            n.set_shift(result)
+            if result > 0:
+                n.set_shift(-result)
             if memory:
                 Action.set_memory(actor, target, n, result, 'atrocity')
         if memory:
@@ -217,7 +218,8 @@ class Engine(object):
             memory = True
         for need in actor_tense:
             n = getattr(target, need)
-            n.set_shift(result)
+            if result > 0:
+                n.set_shift(-result)
             if memory:
                 Action.set_memory(actor, target, n, result, 'suffering')
         if memory:
@@ -248,7 +250,8 @@ class Engine(object):
             memory = True
         for need in target_please:
             n = getattr(target, need)
-            n.set_shift(result)
+            if result > 0:
+                n.set_shift(-result)
             if memory:
                 Action.set_memory(actor, target, n, result, 'pleasing')
         if memory:
