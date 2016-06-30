@@ -13,14 +13,15 @@ class Stance(object):
         self.convention = 0
         self.contribution = 0
         self._special_value = None
-        if self.is_player_stance():
-            for p in self.persons:
-                if p.player_controlled:
-                    self.player = p
-                else:
-                    self.npc = p
+        self.is_player_stance()
     def is_player_stance(self):
         if self.persons[0].player_controlled or self.persons[1].player_controlled:
+            if not hasattr(self, 'player') and not hasattr(self, 'npc'):
+                for p in self.persons:
+                    if p.player_controlled:
+                        self.player = p
+                    else:
+                        self.npc = p
             return True
         return False
     def nature(self):

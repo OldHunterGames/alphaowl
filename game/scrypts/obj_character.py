@@ -778,6 +778,15 @@ class Person(object):
                 morality = arg
             if arg in order.keys():
                 orderliness = arg
+        for arg in args:
+            if isinstance(arg, list):
+                for i in arg:
+                    if i in act.keys():
+                        activity = i
+                    if i in moral.keys():
+                        morality = i
+                    if i in order.keys():
+                        orderliness = i
         if orderliness:
             valself = self.alignment.orderliness
             valact = order[orderliness]
