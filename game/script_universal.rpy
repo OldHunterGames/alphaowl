@@ -9,14 +9,19 @@ label lbl_universal_menu:
             
         "Условия":
             menu:
-                "Личные":
-                    $ pass
+                "Личные" if player == child:
+                    call lbl_control_lifestyle
+                "Сычик" if player == mom:
+                    call lbl_control_lifestyle                
             
         "Расписание":
             call lbl_make_shedule
                     
         "Особые события ([player.ap])" if player.ap > 0:
-            $ pass
+            if player == child:
+                call lbl_son_events
+            else:
+                $ pass
                         
         "Следующая неделя" if game.can_skip_turn():
             jump label_new_day
@@ -27,20 +32,25 @@ label lbl_universal_menu:
 label lbl_make_shedule:
         
     $ shedule_major = dname[player.job['name']]
-    $ communication = '?'
     
     menu:
         "После учебы: [shedule_major]":
-            $ pass
+            if player == child:
+                call lbl_son_major
+            else:
+                $ pass
         "В выходные: [shedule_minor]":
-            $ pass
+            if player == child:
+                call lbl_son_minor
+            else:
+                $ pass
         "Общение: [communication]":
             if player == child:
                 call lbl_son_social
             else:
                 $ pass
         'Назад':
-            jump universal_menu    
+            jump lbl_universal_menu    
             
     jump lbl_make_shedule
         

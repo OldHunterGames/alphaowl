@@ -18,6 +18,8 @@ init python:
     mom.surname = u"Сычова"        
     check_results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
                     '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
+    communication = '?'
+    
     #BATYA
     batya = Person()
     batya.add_feature('male')

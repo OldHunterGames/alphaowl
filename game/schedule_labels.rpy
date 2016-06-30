@@ -38,6 +38,15 @@ label shd_dayoff_2ch(character):
     'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
     return  
 
+    
+label shd_social_eotatroeros(character):
+    python:
+        moral = character.moral_action('evil', eot) 
+        motivation = character.motivation(needs=[('power', atrocity_force),('eros', 1)], beneficiar = child, morality = moral)  
+        game.atrocity(actor = child, target = eot, token = 'conquest', target_tense = ['eros'], power =  atrocity_force, skill = None, phobias = [], morality = ['evil'], respect_needs = ['authority', 'power'], difficulty = 0)
+    'Есть'
+    return   
+
 label shd_help_mom(character):
     'Мамин помощник'
     python:  
@@ -196,8 +205,8 @@ label shd_job_study(character):
     
 label shd_job_chores(character):
     python:
-        moral = character.moral_action('ardent') 
-        motivation = character.motivation(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], beneficiar = mom, moral = moral)        
+        moral = character.moral_action('lawful') 
+        motivation = character.motivation(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], beneficiar = mom, morality = moral)        
         if motivation >= 0:
             renpy.call('subloc_chores_perform')   
         else:
@@ -205,14 +214,14 @@ label shd_job_chores(character):
     return    
 
 label subloc_chores_sabotage:
-    'Сычуля саботирует уборку чувствуя себя свободным и могучим. ([result])\nУдовлетворяется потребность в независимости (4) \n Авторитет мамки страдает (-3)'
+    'Сычуля саботирует уборку чувствуя себя свободным и могучим. ([moral])\nУдовлетворяется потребность в независимости (4) \n Авторитет мамки страдает (-3)'
     $ child.independence.set_shift(4)
     $ mom.authority.set_shift(-3)    
     $ child.moral_action('chaotic', 'evil', target = mom)     
     return
 
 label subloc_chores_perform:
-    'Сычуля убирается в доме чувствуя себя правильным и хорошим. ([result])\n Нарушается табу на подчинение матери (1), удовлетворяется альтруизм (2), подавляется развлечение (-1), усталость. Порядочный поступок матери.'
+    'Сычуля убирается в доме чувствуя себя правильным и хорошим. ([moral])\n Нарушается табу на подчинение матери (1), удовлетворяется альтруизм (2), подавляется развлечение (-1), усталость. Порядочный поступок матери.'
     $ child.drain_vigor()
     $ mom.moral_action('lawful', target = child)   
     $ child.moral_action('lawful', 'good', target = mom)         

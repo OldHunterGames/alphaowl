@@ -2,8 +2,7 @@
 
 label lbl_son_manage:
     
-    menu:
-      
+    menu:      
         "Работы по дому" if child.vigor > 0:
             call lbl_chores
             jump lbl_son_manage            
@@ -181,13 +180,14 @@ label lbl_son_social:
 label lbl_enot_conquest:
     "Бей бабу молотом - будет баба золотом. Все говорят что девки любят плохих парней. Но дело не в любви - всё достаётся сильному!"
     menu:
-        "Task":
-            'Плейсхолдер'
         "Домогаться":
             menu:
                 "Прижиматься в метро":
-                    $ pass
-    
+                    $ atrocity_force = 1
+                    $ child.schedule.add_action('social_eotatroeros', 'single')
+                                        
+    $ communication = 'Енотова'
+    jump lbl_universal_menu
     return
 
 label lbl_control_lifestyle:
