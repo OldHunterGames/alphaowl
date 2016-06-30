@@ -158,7 +158,7 @@ class Engine(object):
                 respect_needs=['authority', 'power'], difficulty=3, motivation=None):
 
         memory = False
-        torture = Action(actor, target)
+        torture = Action(actor, target, name)
         torture.difficulty = difficulty
         torture.motivation = motivation
         torture.morality = morality
@@ -195,7 +195,7 @@ class Engine(object):
                 respect_needs=['authority', 'power'], difficulty=3, motivation=None):
 
         memory = False
-        suffering = Action(actor, target)
+        suffering = Action(actor, target, name, name)
         suffering.motivation = motivation
         suffering.morality = morality
         suffering.difficulty = difficulty
@@ -227,11 +227,11 @@ class Engine(object):
         return result
 
 
-    def pleasing(self, actor, target, token, target_please=['general'], power=0, difficulty=3,
+    def pleasing(self, actor, target, token, target_please=['general'], power=0, difficulty=3, name='template_name',
                 skill=None, actor_needs=[], respect_needs=['authority', 'altruism'], morality=0, motivation=None):
 
         memory = False
-        please = Action(actor, target)
+        please = Action(actor, target, name)
         please.motivation = motivation
         please.morality = morality
         please.difficulty = difficulty
@@ -259,9 +259,9 @@ class Engine(object):
         return result
 
     def intercommunion(self, actor, target, token, power=0, skill=None, difficulty=3,
-                        respect_needs=['communication'], morality=0, motivation=None):
+                        respect_needs=['communication'], morality=0, motivation=None, name='template_name'):
 
-        commun = Action(actor, target)
+        commun = Action(actor, target, name)
         commun.motivation = motivation
         commun.morality = morality
         commun.set_skill(skill)
@@ -280,8 +280,9 @@ class Engine(object):
         return result
 
 
-    def skillcheck(self, actor, skill, motivation=None, morality=0):
+    def skillcheck(self, actor, skill, motivation=None, morality=0, name='template_name'):
         sk = Skillcheck(actor, skill)
+        sk.name = name
         sk.motivation = motivation
         sk.morality = morality
         result = sk.activate()
