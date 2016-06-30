@@ -177,6 +177,89 @@ label lbl_son_social:
     jump lbl_universal_menu
     return
 
+label lbl_universal_interaction:
+    menu:
+        'Выберите объект социального взаимодействия'
+        "Енотова":
+            $ communication = 'Енотова'
+            $ unin_target = eot
+        "Ерохин":
+            $ communication = 'Ерохин'
+            $ unin_target = erokhin
+        "Ашот":
+            $ communication = 'Ашот'
+            $ unin_target = ashot
+            
+    menu:
+        'Выберите тип взаимодействия'
+        'Агрессия':
+            $ token_to_gain = 'conquest'
+            $ moral_burden = ['evil', 'ardent']
+            call lbl_son_social_uni_conquest 
+        'Кооперация':
+            call lbl_son_social_uni_convention 
+        'Ублажение':
+            call lbl_son_social_uni_contribution             
+            
+    $ child.schedule.add_action('social_universal', 'single')
+    'Готово. Неделя будет посвящена установленному плану действий.'
+    jump lbl_universal_menu
+    return
+
+label lbl_son_social_uni_conquest:
+    $ self_bonus_need = 'power'
+    menu:
+        'Выберите силу воздействия'
+        'Минимальная':
+            $ used_force = 1
+        'Слабая':
+            $ used_force = 2
+        'Средняя':
+            $ used_force = 3
+        'Значительная':
+            $ used_force = 4
+        'Максимальная':
+            $ used_force = 5            
+    
+    menu:
+        'Выберите направление удара'
+        'Смысл жизни':
+            $ targeted_need = 'purporse'
+        'Питание':
+            $ targeted_need = 'nutrition'
+        'Здоровье':
+            $ targeted_need = 'wellness'
+        'Комфорт':
+            $ targeted_need = 'comfort'
+        'Подвижность':
+            $ targeted_need = 'activity'
+        'Общение':
+            $ targeted_need = 'communication'            
+        'Развлечения':
+            $ targeted_need = 'amusement'
+        'Богатство':
+            $ targeted_need = 'prosperity'   
+        'Авторитет':
+            $ targeted_need = 'authority'
+        'Амбиции':
+            $ targeted_need = 'ambition'   
+        'Секс':
+            $ targeted_need = 'eros'
+        'Стабильность':
+            $ targeted_need = 'order'   
+        'Независимость':
+            $ targeted_need = 'independence'
+        'Моральная поддержка':
+            $ targeted_need = 'approval'   
+        'Адреналин':
+            $ targeted_need = 'thrill'
+        'Альтруизм':
+            $ targeted_need = 'altruism'  
+        'Могущество':
+            $ targeted_need = 'power'
+            
+    return
+
 label lbl_enot_conquest:
     "Бей бабу молотом - будет баба золотом. Все говорят что девки любят плохих парней. Но дело не в любви - всё достаётся сильному!"
     menu:
