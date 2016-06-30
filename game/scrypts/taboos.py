@@ -49,3 +49,6 @@ class Taboo(object):
                 self.counter = self.max_counter
                 self.owner.tokens.append('angst')
         return
+
+
+        

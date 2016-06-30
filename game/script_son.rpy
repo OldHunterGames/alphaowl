@@ -3,96 +3,7 @@
 label lbl_son_manage:
     
     menu:
-        
-        "Сосредоточиться на..." if player.ap > 0:
-            menu:
-                " У тебя целая неделя впереди \n @ \n Думаешь сколько всего успеешь сделать \n @ \n Эй, а куда делась неделя?"
-                "Очоба" if game.studies:
-                    menu:
-                        'Запилить курсач' if 'major' in game.studies:
-                            $ player.ap -= 1
-                            $ EVGeneric(game, "evn_do_major").trigger()
-                            jump lbl_son_manage
-                            
-                        'Сдать нормативы по физре' if study == 'gym':
-                            $ player.ap -= 1
-                            $ EVGeneric(game, "evn_do_gym").trigger()                            
-                            jump lbl_son_manage
-
-                        'Производственная практика' if study == 'practice':
-                            'На заводе по сборке вёдер  \n @ \n Наша инновационная ЭВМ "Эдьбрус-М"  \n @ \n  На перфокартах'
-                            menu:
-                                'Отпахать по честному':
-                                    $ player.ap -= 1
-                                    $ EVGeneric(game, "evn_do_practice_programm").trigger()    
-                                'Закорешиться с коллективом':
-                                    $ player.ap -= 1
-                                    $ EVGeneric(game, "evn_do_practice_programm_chat").trigger()    
-                            jump lbl_son_manage
-
-                        'Зачет на военной кафедре' if study == 'military':
-                            'Офицеры уже с утра бухие  \n @ \n Муштра на плацу как при Павле I \n @ \n Вечером зачет по строевой'
-                            menu:
-                                'Держать равнение налево':
-                                    $ player.ap -= 1
-                                    $ EVGeneric(game, "evn_do_practice_military").trigger()    
-                                'Подлизаться к товарищу подполковнику':
-                                    $ player.ap -= 1
-                                    $ EVGeneric(game, "evn_do_practice_military_chat").trigger()    
-                            jump lbl_son_manage
-
-                        'Лабы по программированию' if study == 'labs':
-                            'Старый профессор-некрофил  \n @ \n Задача на фортране  \n @ \n  Как буд-то кто-то им пользуется вообще'
-                            menu:
-                                'Накодить убер-алгоритм':
-                                    $ player.ap -= 1
-                                    $ EVGeneric(game, "evn_do_practice_labs").trigger()    
-                                'Скатать решение у ботанов':
-                                    $ player.ap -= 1
-                                    $ EVGeneric(game, "evn_do_practice_labs_chat").trigger()    
-                            jump lbl_son_manage
-                            
-                        'Забить':
-                            jump lbl_son_manage                            
-                
-                "Капчевание" if 'pc' not in child.restrictions:
-                    menu:
-                        'Вкатиться в /pr/' if not child.skill('coding').training:
-                            $ player.ap -= 1
-                            $ EVGeneric(game, "evn_dvach_coding").trigger()
-                            jump lbl_son_manage
-                        'Создать ЕОТ тред. Просить помощи.' if not child.skill('conversation').training:
-                            $ player.ap -= 1
-                            $ EVGeneric(game, "evn_dvach_conversation").trigger()
-                            jump lbl_son_manage
-                        'Создать тред как дольше не кончать' if not child.skill('sex').training:
-                            $ player.ap -= 1
-                            $ EVGeneric(game, "evn_dvach_sex").trigger()
-                            jump lbl_son_manage
-                        'Вкатиться в /fiz/' if not child.skill('sports').training:
-                            $ player.ap -= 1
-                            $ EVGeneric(game, "evn_dvach_sports").trigger()
-                            jump lbl_son_manage
-                        'Засмеялся-обосрался. Рулеточки. ЦУИНЬ.':
-                            $ player.ap -= 1
-                            $ EVGeneric(game, "evn_dvach_b").trigger()
-                            jump lbl_son_manage
-                        'Не найти фап-тред. Создать.':
-                            $ player.ap -= 1
-                            $ EVGeneric(game, "evn_dvach_fap").trigger()
-                            jump lbl_son_manage                            
-                        'Работать на Ольгино за 15 тенгэ':
-                            $ player.ap -= 1
-                            $ EVGeneric(game, "evn_dvach_olgino").trigger()
-                            jump lbl_son_manage
-
-                "Социоблядство":
-                    call lbl_social
-                    jump lbl_son_manage
-                    
-                "Потом подумаю":
-                    jump lbl_son_manage
-        
+      
         "Работы по дому" if child.vigor > 0:
             call lbl_chores
             jump lbl_son_manage            
@@ -116,6 +27,63 @@ label lbl_son_manage:
         "Конец недели":
             jump label_new_day
     
+    return
+
+label lbl_son_events:
+
+    menu:
+        " У тебя целая неделя впереди \n @ \n Думаешь сколько всего успеешь сделать \n @ \n Эй, а куда делась неделя?"
+        "Очоба" if game.studies:
+            menu:
+                'Запилить курсач' if 'major' in game.studies:
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_do_major").trigger(child)
+                            
+                'Сдать нормативы по физре' if study == 'gym':
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_do_gym").trigger(child)                            
+
+                'Производственная практика' if study == 'practice':
+                    'На заводе по сборке вёдер  \n @ \n Наша инновационная ЭВМ "Эдьбрус-М"  \n @ \n  На перфокартах'
+                    menu:
+                        'Отпахать по честному':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_programm").trigger(child)    
+                        'Закорешиться с коллективом':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_programm_chat").trigger(child)    
+
+                'Зачет на военной кафедре' if study == 'military':
+                    'Офицеры уже с утра бухие  \n @ \n Муштра на плацу как при Павле I \n @ \n Вечером зачет по строевой'
+                    menu:
+                        'Держать равнение налево':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_military").trigger(child)    
+                        'Подлизаться к товарищу подполковнику':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_military_chat").trigger(child)    
+
+                'Лабы по программированию' if study == 'labs':
+                    'Старый профессор-некрофил  \n @ \n Задача на фортране  \n @ \n  Как буд-то кто-то им пользуется вообще'
+                    menu:
+                        'Накодить убер-алгоритм':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_labs").trigger(child)    
+                        'Скатать решение у ботанов':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_labs_chat").trigger(child)    
+                            
+                'Забить':
+                    jump lbl_universal_menu                            
+
+        "Социоблядство":
+            call lbl_social
+            jump lbl_universal_menu
+                    
+        "Потом подумаю":
+            jump lbl_universal_menu
+
+    jump lbl_universal_menu
     return
 
 label lbl_son_major:
@@ -223,7 +191,7 @@ label lbl_enot_conquest:
     return
 
 label lbl_control_lifestyle:
-    $ mom_stance = mom.relations_player().master_stance
+    $ mom_stance = mom.stance(player).value
     menu:
         "Количество и качество доступных для выбора вариантов заивисит от уровня благоволения Мамки!"
         'Размер пайки':
@@ -236,10 +204,10 @@ label lbl_control_lifestyle:
                 "Впроголодь":
                     $ child.ration['amount'] = "regime" 
                     $ child.ration['target'] = 1
-                "Считать калории" if mom_stance == 'opressive':
+                "Считать калории" if mom_stance > -1:
                     $ child.ration['amount'] = "regime" 
                     $ child.ration['target'] = 2     
-                "От пуза" if mom_stance == 'rightful':
+                "От пуза" if mom_stance > 0:
                     $ child.ration['amount'] = "unlimited"     
                 "Как на убой" if mom_stance == 'rightful':
                     $ child.ration['amount'] = "regime" 
@@ -251,13 +219,13 @@ label lbl_control_lifestyle:
                 "Своего, с огорода-то. Витаминчики!":
                     $ child.ration['food_type'] = "sperm" 
                     'Как земля... совсем невкусно (-3)'
-                "Мивины с маянезиком." if mom_stance == 'opressive':
+                "Мивины с маянезиком." if mom_stance > -1:
                     $ child.ration['food_type'] = "dry" 
                     'Бичпакет... не вкусно (-1)'
-                "Тёпленького похлебай, домашнего. С хлебушком." if mom_stance == 'rightful':
+                "Тёпленького похлебай, домашнего. С хлебушком." if mom_stance > 0:
                     $ child.ration['food_type'] = "canned" 
                     'Хрючево... нормальный вкус'
-                "В столовой вашей, я кухаркой не нанималась!" if mom_stance == 'rightful':
+                "В столовой вашей, я кухаркой не нанималась!" if mom_stance > 0:
                     $ child.ration['food_type'] = "cosine"   
                     'Пища белых людей... вкуснота (3)'                    
         
@@ -267,11 +235,11 @@ label lbl_control_lifestyle:
                     $ child.appearance = 'lame'
                     $ child.schedule.add_action('outfit_lame')
                     'Вот свитерочек бабушка связала \n @ \n Штанишки тетя Ёба нам со своего оболтуса дала \n @ \n Шапку не забудь надеть! (autority -3)'
-                'Да носи что хочешь' if mom_stance == 'opressive':
+                'Да носи что хочешь' if mom_stance > -1:
                     $ child.appearance = 'normal'
                     $ child.schedule.add_action('outfit_normal')
                     'Залезаешь в шкаф чтобы найти приличную одежду \n @ \n Там какие-то обноски от Тёти Ёбы и Дяди Бафомета \n @ \n И мутантная моль размером с кошака доедает ушанку (prosperity -2)'    
-                'Купим тебе модное, выбирай (25 тенгэ)' if game.tenge >= 25 and mom_stance == 'rightful':
+                'Купим тебе модное, выбирай (25 тенгэ)' if game.tenge >= 25 and mom_stance > 0:
                     $ game.tenge -= 25
                     $ child.appearance = 'cool'
                     $ child.schedule.add_action('outfit_cool')
@@ -281,15 +249,15 @@ label lbl_control_lifestyle:
             menu:
                 'Запретить гулять' if 'dates' not in child.restrictions:
                     $ child.restrictions.append('dates')
-                'Разрешить гулять до поздна' if 'dates' in child.restrictions and mom_stance == 'rightful':
+                'Разрешить гулять до поздна' if 'dates' in child.restrictions and mom_stance > 0:
                     $ child.restrictions.remove('dates')
                 'Запретить общаться с друзьями' if 'friends' not in child.restrictions:
                     $ child.restrictions.append('friends')
-                'Разрешить общаться с друзьями' if 'friends' in child.restrictions and mom_stance == 'opressive':
+                'Разрешить общаться с друзьями' if 'friends' in child.restrictions and mom_stance > -1:
                     $ child.restrictions.remove('friends')
                 'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in child.restrictions:
                     $ child.restrictions.append('pc')
-                'Ну и сиди за своим комплюктером' if 'pc' in child.restrictions and mom_stance == 'opressive':
+                'Ну и сиди за своим комплюктером' if 'pc' in child.restrictions and mom_stance > -1:
                     $ child.restrictions.remove('pc')                
                 'Пресечь любую дрочку' if 'masturbation' not in child.restrictions:
                     $ child.restrictions.append('masturbation')
@@ -303,7 +271,7 @@ label lbl_control_lifestyle:
                     $ child.restrictions.append('alcohol')
                     $ child.schedule.add_action('alcohol_no')
                     $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ещё нос не дорос \n @ \n Я малолетних алкоголиков в доме не потерплю'
-                'Пусть накатит с BATYей' if 'alcohol' in child.restrictions and mom_stance == 'rightful':
+                'Пусть накатит с BATYей' if 'alcohol' in child.restrictions and mom_stance > 0:
                     $ child.restrictions.remove('alcohol')
                     $ child.schedule.add_action('alcohol_yes')
                     $ txt = 'За дидов рюмашечку надо обязательно \n @ \n Что значит "не буду стекломой пить" \n @ \n Традиции наши не уважаешь?'                 
@@ -311,7 +279,7 @@ label lbl_control_lifestyle:
                     $ child.restrictions.append('tobacco')
                     $ child.schedule.add_action('smoke_no')
                     $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
-                'Пусть курит но не дома' if 'tobacco' in child.restrictions and mom_stance == 'rightful':
+                'Пусть курит но не дома' if 'tobacco' in child.restrictions and mom_stance > 0:
                     $ child.restrictions.remove('tobacco')
                     $ child.schedule.add_action('smoke_yes')
                     $ txt = 'Сыченька то бодрячком \n @ \n Каждые пять минут в падик бегает \n @ \n Наверное друзья у него там'         
@@ -319,7 +287,7 @@ label lbl_control_lifestyle:
                     $ child.restrictions.append('weed')
                     $ child.schedule.add_action('weed_no')
                     $ txt = 'Чтобы я тебя с этими наркоманами не видела больше \n @ \n Пообколются своей марихуанной \n @ \n А потом ябут друг-друга в жёппы'
-                'Игнорировать спайсы' if 'weed' in child.restrictions and mom_stance == 'rightful':
+                'Игнорировать спайсы' if 'weed' in child.restrictions and mom_stance > 0:
                     $ child.restrictions.remove('weed')
                     $ child.schedule.add_action('weed_yes')
                     $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
@@ -327,7 +295,7 @@ label lbl_control_lifestyle:
                     jump lbl_control_lifestyle        
         
         "Достаточно":
-            jump lbl_son_manage     
+            jump lbl_universal_menu     
     
     jump lbl_control_lifestyle
     return

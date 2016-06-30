@@ -196,9 +196,9 @@ label shd_job_study(character):
     
 label shd_job_chores(character):
     python:
-        mom.moral_action('lawful', target = child)        
-        result = character.action(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], forced = True)
-        if result >= 0:
+        moral = character.moral_action('ardent') 
+        motivation = character.motivation(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], beneficiar = mom, moral = moral)        
+        if motivation >= 0:
             renpy.call('subloc_chores_perform')   
         else:
             renpy.call('subloc_chores_sabotage')       
