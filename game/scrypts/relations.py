@@ -12,15 +12,17 @@ class Relations(object):
         self._fervor = 1
         self._distance = 1
         self._congruence = 1
-        if self.is_player_relations():
-            for p in self.persons:
-                if p.player_controlled:
-                    self.player = p
-                else:
-                    self.npc = p
+        self.is_player_relations()
+            
 
     def is_player_relations(self):
         if self.persons[0].player_controlled or self.persons[1].player_controlled:
+            if not hasattr(self, 'player') and not hasattr(self, 'npc'):
+                for p in self.persons:
+                    if p.player_controlled:
+                        self.player = p
+                    else:
+                        self.npc = p
             return True
         else:
             return False
