@@ -207,7 +207,7 @@ label lbl_universal_interaction:
     return
 
 label lbl_son_social_uni_conquest:
-    $ self_bonus_need = 'power'
+    $ self_bonus_need = ['power']
     menu:
         'Выберите силу воздействия'
         'Минимальная':
