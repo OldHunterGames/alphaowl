@@ -31,7 +31,7 @@ class Relations(object):
     def fervor(self):
         if self.is_player_relations():
             return self._fervor
-        fervor = self._fervor + persons[0].alignment.activity + persons[1].alignment.activity
+        fervor = self._fervor + self.persons[0].alignment.activity + self.persons[1].alignment.activity
         if fervor < -1:
             fervor = -1
         elif fervor > 1:
@@ -45,7 +45,7 @@ class Relations(object):
     def distance(self):
         if self.is_player_relations():
             return self._distance
-        distance = self._distance + persons[0].alignment.orderliness + persons[1].alignment.orderliness
+        distance = self._distance + self.persons[0].alignment.orderliness + self.persons[1].alignment.orderliness
         if distance < -1:
             distance = -1
         elif distance > 1:
@@ -59,7 +59,7 @@ class Relations(object):
     def congruence(self):
         if self.is_player_relations():
             return self._congruence
-        congruence = self._distance + persons[0].alignment.morality + persons[1].alignment.morality
+        congruence = self._distance + self.persons[0].alignment.morality + self.persons[1].alignment.morality
         if congruence < -1:
             congruence = -1
         elif congruence > 1:

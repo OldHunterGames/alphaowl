@@ -224,7 +224,7 @@ label lbl_son_social_uni_conquest:
     menu:
         'Выберите направление удара'
         'Смысл жизни':
-            $ targeted_need = 'purporse'
+            $ targeted_need = 'purpose'
         'Питание':
             $ targeted_need = 'nutrition'
         'Здоровье':
