@@ -13,7 +13,7 @@ class Relations(object):
         self._distance = 1
         self._congruence = 1
         if self.is_player_relations():
-            for p in persons:
+            for p in self.persons:
                 if p.player_controlled:
                     self.player = p
                 else:

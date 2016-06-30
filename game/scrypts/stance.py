@@ -4,17 +4,14 @@
 class Stance(object):
     _types = {'master': ['cruel', 'opressive', 'rightful', 'benevolent'],
             'slave': ['rebellious', 'forced', 'accustomed', 'willing'],
-            'neutral': ['hostile', 'distrustful', 'favorable', 'friendly']}
-    _ax = {0: ['dependence', 'craving', 'attraction'], 1: ['discipline', 'confidence', 'reliance'],
-            2: ['dread', 'compassion', 'kindness']}
-    _types_stats = {'master': ['dread', 'discipline', 'dependence'],
-                    'slave': ['craving', 'confidence', 'compassion'],
-                    'neutral': ['attraction', 'reliance', 'kindness']}
+            'neutral': ['hostile', 'distrustful', 'favorable', 'friendly']} 
     def __init__(self, person1, person2):
         self.persons = [person1, person2]
         self._type = 'neutral'
         self._value = 0
-        self._points = [0, 0, 0]
+        self.conquest = 0
+        self.convention = 0
+        self.contribution = 0
         self._special_value = None
         if self.is_player_stance():
             for p in self.persons:
@@ -26,6 +23,23 @@ class Stance(object):
         if self.persons[0].player_controlled or self.persons[1].player_controlled:
             return True
         return False
+    def nature(self):
+        if self.conquest == self.convention and self.convention == self.contribution:
+            return 0
+        if self.convention > self.contribution and self.convention > self.conquest:
+            return 0
+        if self.conquest > self.contribution and self.conquest > self.convention:
+            return -1
+        if self.contribution > self.conquest and self.contribution > self.convention:
+            return 1
+        if self.conquest == self.contribution and self.conquest > self.convention:
+            return 0
+        if self.convention == self.conquest and self.conquest > self.contribution:
+            return -1
+        if self.convention == self.contribution and sle.contribution > self.conquest:
+            return 1
+        return 0
+
     @property
     def value(self):
         return self._value
@@ -55,52 +69,14 @@ class Stance(object):
             return self._special_value
         return Stance._types[self._type][self.value+1]
 
-    
-    def set_level(self, value):
-        wrong = True
-        for key in Stance._types:
-            if value in Stance._types[key]:
-                if self._type == key:
-                    self._value = Stance._types[key].index(value)-1
-                    wrong = False
-                    break
-                else:
-                    raise Exception("Wrong value(%s) for %s type of stance"%(value, self.type))
-        if wrong:
-            raise Exception("Unknown value %s"%(value))
-
-    
-    def add_point(self, axis, value=1):
-        ind = None
-        for key in Stance._types_stats:
-            if axis in Stance._types_stats[key] and self._type!=key:
-                raise Exception("Wrong axis for this type of stance: %s, %s"%(self.type, axis))
-        for key in Stance._ax.keys():
-            if axis in Stance._ax[key]:
-                ind = key
-                break
-        if not ind:
-            raise Exception("Wrong axis: %s"%(axis))
-        self._points[ind] += value
-    
-    def points(self, axis):
-        ind = None
-        for key in Stance._types_stats:
-            if axis in Stance._types_stats[key] and self._type!=key:
-                raise Exception("Wrong axis for this type of stance: %s, %s"%(self.type, axis))
-        for key in Stance._ax.keys():
-            if axis in Stance._ax[key]:
-                ind = key
-                break
-        return self._points[ind]
 
     def respect(self):
         if not self.is_player_stance():
             values = {-1:0, 0:1, 1:5, 2:10}
             return values[self.value]
-        alig_relations = {'lawful': self._points[1]*2, 'conformal': self._points[1], 'chaotic': self._points[1]/2,
-                            'timid': self._points[0]*2, 'reasonable': self._points[0], 'ardent': self._points[0]/2,
-                            'evil': self._points[2]*2, 'selfish': self._points[2], 'good': self._points[2]/2}
+        alig_relations = {'lawful': self.convention*2, 'conformal': self.convention, 'chaotic': self.convention/2,
+                            'timid': self.conquest*2, 'reasonable': self.conquest, 'ardent': self.conquest/2,
+                            'evil': self.contribution*2, 'selfish': self.contribution, 'good': self.contribution/2}
         alig = self.npc.alignment.description()
         val = 0
         for i in alig:
@@ -113,7 +89,9 @@ class Stance(object):
             raise Exception("Wrong stance: %s"%(t))
         else:
             self._type = stance
-            self._points = [0, 0, 0]
+            self.convention = 0
+            self.conquest = 0
+            self.contribution = 0
             self._value = 0
 
 

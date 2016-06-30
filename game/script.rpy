@@ -13,7 +13,6 @@ init python:
     mother = game.mother
     child.master = mother
     register_actions()
-    mother.enslave(child)
     mom = mother
     mom.firstname = u"Маман"
     mom.surname = u"Сычова"        
@@ -144,6 +143,7 @@ label label_quiz:
                 child.restrictions.append('dates')
                 child.restrictions.append('friends')
                 child.restrictions.append('pc')
+                mother.enslave(child)
             jump label_new_day
         "(разработчик, игра за маму)":
             python:
@@ -160,7 +160,8 @@ label label_quiz:
                 mom.relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
-                child.stance(mom).set_level('rebellious')
+                mother.enslave(child)
+                mom.stance(child).value = -1
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
@@ -232,11 +233,11 @@ label label_quiz:
     menu:
         "А что если мамка уроки делать заставит?"
         "Конечно. Это - норма.":
-            $ child.stance(mom).value = 2       
+            $ child.stance(mom).value = 1       
         "Ну что делать? Сяду. А то батя ремня всыпет.":
-            $ child.stance(mom).value = 1    
+            $ child.stance(mom).value = 0    
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
-            $ child.stance(mom).value = 0
+            $ child.stance(mom).value = -1
 
             
     $ alignment = child.alignment.description
@@ -250,6 +251,7 @@ label label_quiz:
             $ player = game.player
             $ player.player_controlled = True
             $ child.relations(mother)
+            $ mother.enslave(child)
             jump label_new_day
             
         "Своей мамкой":
@@ -257,7 +259,8 @@ label label_quiz:
             $ game.set_player(mother)
             $ player = game.player
             $ player.player_controlled = True
-            $ child.relations(mother)           
+            $ child.relations(mother)
+            $ mother.enslave(child)           
             jump label_new_day
 
     return

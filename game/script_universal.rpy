@@ -57,29 +57,33 @@ label lbl_info_new(target):
         # taboos = child.show_taboos()
         features = target.show_features()
         focus = target.show_focus()
-        rel = target.relations(player).description() if target!=player else "None"
-        stance = target.stance(player).level if target!=player else "None"
-        txt = "Настроение: " + str(target.mood()) + " | Отношение: " + str(stance)
-    "[txt] | Энергия: [target.vigor] \n
-    
-     Запреты: [target.restrictions] \n 
-     Условия сна: [target.accommodation]  |  Занятость: [job]       \n
-     Характер: [alignment]\n
-     Отношение: [rel]\n
-     Фокус: [focus]\n
-     Напряжения: [needs_tense]\n
-     Актуальные нужды: [needs_relevant]\n
-     Удовлетворённые: [needs_statisfied]\n          
-     Пресыщения: [needs_overflow]\n     
-     Особенности: [features]\n
-     \n"
+        rel = target.relations(player).description() if target!=player else None
+        stance = target.stance(player).level if target!=player else None
+        txt = "Настроение: " + str(target.mood())
+        if stance:
+            txt += " | Отношение: " + str(stance) +'\n'
+        txt += " | Энергия: %s \n "%(target.vigor)
+        txt += "Запреты: %s \n "%(target.restrictions)
+        txt += "Условия сна: %s  |  %s       \n"%(target.accommodation, job)
+        txt += "Характер: %s, %s, %s\n"%(target.alignment.description())
+        if rel:
+            txt += "Отношение: %s, %s, %s\n"%(rel)
+        else:
+            txt += "Деньги: %s, Провизия: %s, Вещества: %s \n"%(game.money, game.resource("provision"), game.resource("drugs"))
+        txt += "Фокус: %s\n"%(focus)
+        txt += "Напряжения: %s\n"%(needs_tense)
+        txt += "Актуальные нужды: %s\n"%(needs_relevant)
+        txt += "Удовлетворённые: %s\n"%(needs_statisfied)
+        txt += "Пресыщения: %s\n"%(needs_overflow)
+        txt += "Особенности: %s\n"%(features)
+    "[txt]"
 
     return
 
 
 screen sc_choose_character():
     python:
-        plist = player.known_characters
+        plist = [person for person in player.known_characters]
         plist.append(player)
         ileft = 0
         iright = 4 if len(plist) > 4 else len(plist)-1

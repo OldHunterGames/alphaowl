@@ -345,11 +345,11 @@ class Person(object):
         return skill
 
 
-    def action(self, needs=[], moral=0, benefic=None):
+    def action(self, needs=[], moral=0, beneficiar=None):
         if self.player_controlled:
             result = renpy.call_in_new_context('lbl_action_check')
         else:
-            result = self.motivation(benefic=benefic, needs=needs, moral=moral)
+            result = self.motivation(beneficiar=beneficiar, needs=needs, morality=moral)
         if result > 0:
             for need in needs:
                 getattr(self, need[0]).set_shift(need[1])
@@ -425,10 +425,10 @@ class Person(object):
                 return
 
 
-    def motivation(self, skill=None, needs=[], benefic = None, moral=0, special=[]):# needs should be a list of tuples[(need, shift)]
+    def motivation(self, skill=None, needs=[], beneficiar = None, morality=0, special=[]):# needs should be a list of tuples[(need, shift)]
         motiv = 0
         motiv += self.mood()[0]
-        motiv += moral
+        motiv += morality
         for i in special:
             motiv += i
         if skill:
@@ -457,24 +457,24 @@ class Person(object):
                     motiv += 1
                 elif status == 'overflow':
                     motiv -= 1
-        if benefic:
-            if benefic == self:
+        if beneficiar:
+            if beneficiar == self:
                 motiv += 1
-            elif benefic.player_controlled:
-                if self.stance(benefic).value == 3:
+            elif beneficiar.player_controlled:
+                if self.stance(beneficiar).value == 3:
                     motiv += 1
-                elif self.stance(benefic).value == 0:
+                elif self.stance(beneficiar).value == 0:
                     return -10
-                elif self.stance(benefic).value == 1:
+                elif self.stance(beneficiar).value == 1:
                     motiv -= 1
-            if benefic == self.master or benefic == self.supervisor:
-                if self.stance(benefic).value == 1:
+            if beneficiar == self.master or beneficiar == self.supervisor:
+                if self.stance(beneficiar).value == 1:
                     if motiv < 0:
-                        motiv += self.stance(benefic).respect()
+                        motiv += self.stance(beneficiar).respect()
                     if motiv > 0:
                         motiv = 0
-                elif self.stance(benefic).value >= 2:
-                    motiv += self.stance(benefic).respect()
+                elif self.stance(beneficiar).value >= 2:
+                    motiv += self.stance(beneficiar).respect()
         return motiv
 
     
@@ -858,7 +858,10 @@ class Person(object):
 
 
     def enslave(self, target):
-        target.stance(self).change_stance('slave')
+        if target.player_controlled:
+            target.stance(self).change_stance('master')
+        else:
+            target.stance(self).change_stance('slave')
         target.master = self
         target.supervisor = self
         self.slaves.append(target)
