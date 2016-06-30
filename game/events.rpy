@@ -31,15 +31,15 @@ label evn_blank:
    $pass   
    return True
   
-label evn_template(character):
+label evn_template(event_obj):
     
     #Проверка для турн энда
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         if True:
-            $ game.evn_skipcheck = True
+            $ event_obj.skipcheck = True
     
     # Отсечка
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     #тело эвента
@@ -48,126 +48,126 @@ label evn_template(character):
 
 ######################################################## 
 
-label evn_teach_coding(character):
+label evn_teach_coding(event_obj):
         
     python:
-        character.skill('coding').training = True
+        event_obj.target.skill('coding').training = True
     'С++ для чайников! Получен базовый навык программирования.'
     return True
 
-label evn_teach_conversation(character):
+label evn_teach_conversation(event_obj):
 
     python:
-        child.skill('conversation').training = True
+        event_obj.target.skill('conversation').training = True
     'Чтобы справиться с Ерохой, надо мыслить как Ероха! Получен базовый навык социоблядства.'
     return True
 
-label evn_teach_sex(character):
+label evn_teach_sex(event_obj):
         
     python:
-        child.skill('sex').training = True
+        event_obj.target.skill('sex').training = True
     'BATYA знает как долго не кончать! Получена базовая сексуальная грамотность.'
     return True
 
-label evn_teach_sports(character):
+label evn_teach_sports(event_obj):
         
     python:
-        child.skill('sports').training = True
+        event_obj.target.skill('sports').training = True
     'Соблюдает дня режим - дЖым! Получены базовые знания о ЗОЖ.'
     return True
     
 
-label evn_dvach_coding(character):
+label evn_dvach_coding(event_obj):
     
-    if not game.evn_skipcheck:
-        if not character.skill('coding').training and character == child and 'pc' not in child.restrictions:
-            $ game.evn_skipcheck = True
+    if not event_obj.skipcheck:
+        if not event_obj.target.skill('coding').training and event_obj.target == event_obj.target and 'pc' not in event_obj.target.restrictions:
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     python:
-        character.skill('coding').training = True
+        event_obj.target.skill('coding').training = True
     'Двач = образовательный! Получен базовый навык программирования.'
     return True
 
-label evn_dvach_conversation(character):
+label evn_dvach_conversation(event_obj):
     
-    if not game.evn_skipcheck:
-        if not child.skill('conversation').training and 'pc' not in child.restrictions:
-            $ game.evn_skipcheck = True
+    if not event_obj.skipcheck:
+        if not event_obj.target.skill('conversation').training and 'pc' not in event_obj.target.restrictions:
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     python:
-        child.skill('conversation').training = True
+        event_obj.target.skill('conversation').training = True
     'Двач = образовательный! Получен базовый навык социоблядства.'
     return True
 
-label evn_dvach_sex(character):
+label evn_dvach_sex(event_obj):
     
-    if not game.evn_skipcheck:
-        if not child.skill('sex').training and 'pc' not in child.restrictions:
-            $ game.evn_skipcheck = True
+    if not event_obj.skipcheck:
+        if not event_obj.target.skill('sex').training and 'pc' not in event_obj.target.restrictions:
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     python:
-        child.skill('sex').training = True
+        event_obj.target.skill('sex').training = True
     'Двач = образовательный! Получена базовая сексуальная грамотность.'
     return True
 
-label evn_dvach_sports(character):
+label evn_dvach_sports(event_obj):
     
-    if not game.evn_skipcheck:
-        if not child.skill('sports').training and 'pc' not in child.restrictions:
-            $ game.evn_skipcheck = True
+    if not event_obj.skipcheck:
+        if not event_obj.target.skill('sports').training and 'pc' not in event_obj.target.restrictions:
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     python:
-        child.skill('sports').training = True
+        event_obj.target.skill('sports').training = True
     'Двач = образовательный! Получены базовые знания о ЗОЖ.'
     return True
 
-label evn_dvach_b(character):
+label evn_dvach_b(event_obj):
     
-    if not game.evn_skipcheck:
-        if 'pc' not in child.restrictions:
-            $ game.evn_skipcheck = True
+    if not event_obj.skipcheck:
+        if 'pc' not in event_obj.target.restrictions:
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     python:
-        child.amusement.set_shift(2)
-        child.communication.set_shift(2)        
+        event_obj.target.amusement.set_shift(2)
+        event_obj.target.communication.set_shift(2)        
     'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
     return True
 
-label evn_dvach_fap(character):
+label evn_dvach_fap(event_obj):
     
-    if not game.evn_skipcheck:
-        if 'pc' not in child.restrictions:
-            $ game.evn_skipcheck = True
+    if not event_obj.skipcheck:
+        if 'pc' not in event_obj.target.restrictions:
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
-    $ child.eros.set_shift(1)
+    $ event_obj.target.eros.set_shift(1)
     'Обмалафился. Половое удовлетворение (1)'
     return True
 
-label evn_dvach_olgino(character):
+label evn_dvach_olgino(event_obj):
     
-    if not game.evn_skipcheck:
-        if 'pc' not in child.restrictions:
-            $ game.evn_skipcheck = True
+    if not event_obj.skipcheck:
+        if 'pc' not in event_obj.target.restrictions:
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     python:
@@ -175,17 +175,17 @@ label evn_dvach_olgino(character):
     'Понадусёровые швайнокараси порвались. +15!'
     return True
 
-label evn_do_major(character):
+label evn_do_major(event_obj):
     
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         if 'major' in game.studies:
-            $ game.evn_skipcheck = True
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False 
     'Надо делать курсовю'
-    $ moral = child.moral_action('lawful') 
-    $ result = child.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2),('activity', -1)])    
+    $ moral = event_obj.target.moral_action('lawful') 
+    $ result = event_obj.target.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2),('activity', -1)])    
     
     python:
        if result < 4:
@@ -193,24 +193,24 @@ label evn_do_major(character):
        else:
            txt = "Берешь себя за задницу покрепче \n @ \n Делаешь курсач как надо  \n @ \n Потом ещё неделю ловишь научрука... "
            game.studies.remove('major')        
-           child.skill('coding').get_expirience(3)
+           event_obj.target.skill('coding').get_expirience(3)
    
     '[txt]'
    
     return True
 
-label evn_do_gym(character):
+label evn_do_gym(event_obj):
     
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         if 'gym' in game.studies:
-            $ game.evn_skipcheck = True
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     'Зачёт по физре'
-    $ moral = child.moral_action('ardent') 
-    $ result = child.skillcheck(skill='sport', moral = moral, needs=[('ambition', 2),('comfort', -1),('activity', 3)])    
+    $ moral = event_obj.target.moral_action('ardent') 
+    $ result = event_obj.target.skillcheck(skill='sport', moral = moral, needs=[('ambition', 2),('comfort', -1),('activity', 3)])    
    
     python:
        if result < 3:
@@ -218,24 +218,24 @@ label evn_do_gym(character):
        else:
            txt = "Четко подтягиваешься \n @ \n Стометровка в нормативе  \n @ \n Фазген-семпай хвалит - ай, братуха-борцуха!"
            game.studies.remove('gym')       
-           child.skill('sports').get_expirience(1)
+           event_obj.target.skill('sports').get_expirience(1)
    
     '[txt]'
    
     return True
 
-label evn_do_practice_military(character):
+label evn_do_practice_military(event_obj):
     
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         if 'military' in game.studies:
-            $ game.evn_skipcheck = True
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
    
     'Зачёт на военной кафедре (строевая)'
-    $ moral = child.moral_action('lawful') 
-    $ result = child.skillcheck(skill='sport', moral = moral, needs=[('activity', 2),('amusement', -2),('comfort', -1)]) 
+    $ moral = event_obj.target.moral_action('lawful') 
+    $ result = event_obj.target.skillcheck(skill='sport', moral = moral, needs=[('activity', 2),('amusement', -2),('comfort', -1)]) 
    
     python:
        if result < 3:
@@ -243,24 +243,24 @@ label evn_do_practice_military(character):
        else:
            txt = "Вспоминаешь видос про парад в лучшей Корее \n @ \n В голове играет hellmarch \n @ \n Шаг печаетается сам собой "
            game.studies.remove('military')  
-           child.skill('sports').get_expirience(1)
+           event_obj.target.skill('sports').get_expirience(1)
    
     '[txt]'
    
     return True
 
-label evn_do_practice_military_chat(character):
+label evn_do_practice_military_chat(event_obj):
     
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         if 'military' in game.studies:
-            $ game.evn_skipcheck = True
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
    
     'Зачёт на военной кафедре (общение)'
-    $ moral = child.moral_action('chaotic') 
-    $ result = child.skillcheck(skill='communication', moral = moral, needs=[('communication', 1)])
+    $ moral = event_obj.target.moral_action('chaotic') 
+    $ result = event_obj.target.skillcheck(skill='communication', moral = moral, needs=[('communication', 1)])
    
     python:
        if result < 4:
@@ -268,24 +268,24 @@ label evn_do_practice_military_chat(character):
        else:
            txt = "Расспрашиваешь старого подполкана про боевой опыт \n @ \n Он пускает скупую слезу по авганским друзьям \n @ \n И рисует тебе зачёт автоматом"
            game.studies.remove('military')    
-           child.skill('conversation').get_expirience(2)
+           event_obj.target.skill('conversation').get_expirience(2)
    
     '[txt]'
    
     return True
    
-label evn_do_practice_labs(character):
+label evn_do_practice_labs(event_obj):
     
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         if 'labs' in game.studies:
-            $ game.evn_skipcheck = True
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     'Лабораторная по программированию (брутфорс)'
-    $ moral = child.moral_action('lawful', 'timid') 
-    $ result = child.skillcheck(skill='coding', moral = moral, needs=[('ambition', 3),('amusement', -2)]) 
+    $ moral = event_obj.target.moral_action('lawful', 'timid') 
+    $ result = event_obj.target.skillcheck(skill='coding', moral = moral, needs=[('ambition', 3),('amusement', -2)]) 
    
     python:
        if result < 3:
@@ -293,24 +293,24 @@ label evn_do_practice_labs(character):
        else:
            txt = "Вспоминаешь чему вас учили \n @ \n Сдаёшь профессору кривое но рабочее решение  \n @ \n А он и не против!"
            game.studies.remove('labs')     
-           child.skill('coding').get_expirience(1)
+           event_obj.target.skill('coding').get_expirience(1)
    
     '[txt]'
    
     return True
 
-label evn_do_practice_labs_chat(character):
+label evn_do_practice_labs_chat(event_obj):
     
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         if 'labs' in game.studies:
-            $ game.evn_skipcheck = True
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     'Лабораторная по программированию (попытка списать)'
-    $ moral = child.moral_action('chaotic', 'ardent') 
-    $ result = child.skillcheck(skill='communication', moral = moral, needs=[('communication', 2), ('ambition', -1)])
+    $ moral = event_obj.target.moral_action('chaotic', 'ardent') 
+    $ result = event_obj.target.skillcheck(skill='communication', moral = moral, needs=[('communication', 2), ('ambition', -1)])
    
     python:
        if result < 4:
@@ -318,24 +318,24 @@ label evn_do_practice_labs_chat(character):
        else:
            txt = "Среди ботанов все свои \n @ \n Один из них такой же некрофил как профессор \n @ \n Можно самому и не напрягаться"
            game.studies.remove('labs')  
-           child.skill('conversation').get_expirience(2)
+           event_obj.target.skill('conversation').get_expirience(2)
    
     '[txt]'
    
     return True
 
-label evn_do_practice_programm(character):
+label evn_do_practice_programm(event_obj):
     
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         if 'practice' in game.studies:
-            $ game.evn_skipcheck = True
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     'Производственная практика'
-    $ moral = child.moral_action('lawful', 'timid') 
-    $ result = child.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2)])    
+    $ moral = event_obj.target.moral_action('lawful', 'timid') 
+    $ result = event_obj.target.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2)])    
    
     python:
        if result < 4:
@@ -343,24 +343,24 @@ label evn_do_practice_programm(character):
        else:
            txt = "Скармлваешь Эльбрусу ящик перфокарт \n @ \n Понимаешь что это прикольно \n @ \n Как рулон бумаги в унитаз смыть  \n @ \n Руководитель подмахивает зачёт за усидчивость"
            game.studies.remove('practice')   
-           child.skill('coding').get_expirience(2)
+           event_obj.target.skill('coding').get_expirience(2)
    
     '[txt]'
    
     return True 
 
-label evn_do_practice_programm_chat(character):
+label evn_do_practice_programm_chat(event_obj):
     
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         if 'practice' in game.studies:
-            $ game.evn_skipcheck = True
+            $ event_obj.skipcheck = True
 
-    if not game.evn_skipcheck:
+    if not event_obj.skipcheck:
         return False
         
     'Производственная практика (общение)'
-    $ moral = child.moral_action('chaotic', 'ardent') 
-    $ result = child.skillcheck(skill='communication', moral = moral, needs=[('communication', 3)])
+    $ moral = event_obj.target.moral_action('chaotic', 'ardent') 
+    $ result = event_obj.target.skillcheck(skill='communication', moral = moral, needs=[('communication', 3)])
    
     python:
        if result < 3:
@@ -368,7 +368,7 @@ label evn_do_practice_programm_chat(character):
        else:
            txt = "Забухал с коллективом в подсобке \n @ \n Рассказал охуительных историй с учёбы \n @ \n Подписали весь лист практики на год вперёд"
            game.studies.remove('practice')        
-           child.skill('conversation').get_expirience(1)
+           event_obj.target.skill('conversation').get_expirience(1)
    
     '[txt]'
    
@@ -406,7 +406,7 @@ label evn_do_practice_programm_chat(character):
    
 ####################### ФИЛЛЕРЫ   
    
-label evn_bugurt_gazeta(character):
+label evn_bugurt_gazeta(event_obj):
    "К НАМ СКОРО ЕРОХИНЫ ПРИДУТ \n @ \nГАЗЕТКИ ИЗ ТУАЛЕТА УБЕРИ \n @ \nПОЛОЖИ БУМАГУ ТУАЛЕТНУЮ \n @ \n И САМ В ТУАЛЕТЕ ОСТАВАЙСЯ\n @ \n ЧТОБЫ МАТЕРИ ЗА ТЕБЯ НЕ СТЫДИТЬСЯ"
    python:
        pass

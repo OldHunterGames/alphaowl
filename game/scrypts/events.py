@@ -25,16 +25,22 @@ class Event(object):
         self.tags = []              # tags for filtering "gay", "lolicon", "bestiality", "futanari" etc
         self.unique = False         # Unique events shown once in a game instance
         self.seen = 0               # Number of times this event seen
+        self.skipcheck = False
+        self.target = None
 
-    def trigger(self, target=None):
+    def trigger(self, target=None, skipcheck=False):
         """
         On event activation
         """
         if self.seen > 0 and self.unique:
             return False
-        result = renpy.call_in_new_context(self.goto, target)
+        self.skipcheck = skipcheck
+        self.target = target
+        result = renpy.call_in_new_context(self.goto, self)
         if result:
             self.seen += 1
+        self.skipcheck = False
+        self.target = None
         return result
 
 

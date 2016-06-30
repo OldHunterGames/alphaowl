@@ -57,6 +57,8 @@ class Engine(object):
         self.resources[res]['waste'] = value
     def res_set(self, res, value):
         self.resources[res]['current'] = value
+    def res_add(self, res, value):
+        self.resources[res]['current'] = self.resources[res]['current'] + value
 
 
     def can_waste(self, res):
@@ -127,12 +129,12 @@ class Engine(object):
 
     #    return list_of_events
     
-    def end_turn_event(self):
+    def end_turn_event(self, skipcheck=True):
         shuffle(self.events_list)
         possible = self.events_list
         char = choice(self.characters)
         for ev in possible:
-            r = ev.trigger(char)
+            r = ev.trigger(char, skipcheck)
             if r:
                 return  
 

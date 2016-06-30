@@ -27,7 +27,7 @@ label shd_dayoff_dacha(character):
         child.activity.set_shift(2)
         child.conditions.append(('vigor', -1))
         effect = child.physique * 2
-        game.resources('provision') += effect
+        game.res_add('provision', effect)
     'Завтра рано вставать, а то опоздаем на поезд \n @\nПоможешь бабушке на даче \n @\nНадо огород вскопать, сорняки прополот, колорада потравить \n @\n(Ресурсы: провизия +[effect])'
     return  
     
