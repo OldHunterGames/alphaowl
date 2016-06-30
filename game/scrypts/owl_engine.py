@@ -43,7 +43,6 @@ class Engine(object):
 
     def set_player(self, person):
         self._player = person
-        Action._player = person
         person.player_controlled = True
 
 
@@ -154,18 +153,19 @@ class Engine(object):
         return False
 
 
-    def atrocity(self, actor, target, beneficiar, token, target_tense=['general'], power=0, 
+    def atrocity(self, actor, target, token, target_tense=['general'], power=0, 
                 skill=None, phobias=[], morality=0, name='template_name',
                 respect_needs=['authority', 'power'], difficulty=3, motivation=None):
 
         memory = False
-        torture = Action(actor, target, beneficiar)
+        torture = Action(actor, target)
         torture.difficulty = difficulty
         torture.motivation = motivation
         torture.morality = morality
         torture.compare_two(0, target.mood()[0], 'misery', 'hope')
         torture.set_phobias(*phobias)
         torture.set_skill(skill)
+        torture.compare_two(target.stance(self.player), 0, 'wilingness', 'contradiction')
         torture.compare_two(morality, 0, 'morally sure', 'moral doubts')
         torture.compare_two(Action.max_intensity(actor, respect_needs)[0], target.stance(self.player).respect(),
                             'rigor', 'indulgence')
@@ -189,12 +189,12 @@ class Engine(object):
         return result
 
 
-    def suffering(self, actor, target, beneficiar, token, actor_tense=['general'], power=0, 
+    def suffering(self, actor, target, token, actor_tense=['general'], power=0, 
                 skill=None, phobias=[], morality=0, name='template_name',
                 respect_needs=['authority', 'power'], difficulty=3, motivation=None):
 
         memory = False
-        suffering = Action(actor, target, beneficiar)
+        suffering = Action(actor, target)
         suffering.motivation = motivation
         suffering.morality = morality
         suffering.difficulty = difficulty
@@ -203,6 +203,7 @@ class Engine(object):
         suffering.set_phobias(*phobias)
         if not skill:
             suffering.compare_two(target.mood()[0], 0, 'serene torturer', 'angry torturer')
+        suffering.compare_two(target.stance(self.player), 0, 'wilingness', 'contradiction')
         suffering.compare_two(0, actor.mood()[0], 'miserable victim', 'cheerful victim')
         suffering.compare_two(0, morality, 'mercy', 'sadism')
         suffering.compare_two(target.stance(self.player).respect(), Action.max_intensity(target, respect_needs)[0],
@@ -224,16 +225,17 @@ class Engine(object):
         return result
 
 
-    def pleasing(self, actor, target, beneficiar, token, target_please=['general'], power=0, difficulty=3,
+    def pleasing(self, actor, target, token, target_please=['general'], power=0, difficulty=3,
                 skill=None, actor_needs=[], respect_needs=['authority', 'altruism'], morality=0, motivation=None):
 
         memory = False
-        please = Action(actor, target, beneficiar)
+        please = Action(actor, target)
         please.motivation = motivation
         please.morality = morality
         please.difficulty = difficulty
         please.set_power(power, 6, Action.max_intensity(target, target_please)[0], 'desire', 'unconcerned')
         please.set_skill(skill)
+        please.compare_two(target.stance(self.player), 0, 'wilingness', 'contradiction')
         please.compare_two(morality, 0, 'ardour', 'composure')
         please.compare_two(0, target.mood()[0], 'sorrow', 'already happy')
         please.compare_two(target.stance(self.player), Action.max_intensity(actor, respect_needs)[0], 'well-earned', 'connivance')
@@ -253,16 +255,17 @@ class Engine(object):
             target.add_token(token)
         return result
 
-    def intercommunion(self, actor, target, beneficiar, token, power=0, skill=None, difficulty=3,
+    def intercommunion(self, actor, target, token, power=0, skill=None, difficulty=3,
                         respect_needs=['communication'], morality=0, motivation=None):
 
-        commun = Action(actor, target, beneficiar)
+        commun = Action(actor, target)
         commun.motivation = motivation
         commun.morality = morality
         commun.set_skill(skill)
         commun.set_power(power, 6, Action.max_intensity(actor, respect_needs), 'confidence', 'disbelief')
         if not skill:
             commun.compare_two(actor.mood()[0], 0, 'mood', 'mood')
+        commun.compare_two(target.stance(self.player), 0, 'wilingness', 'contradiction')
         commun.compare_two(actor.mind, target.mind, 'insightful', 'clueless')
         commun.compare_two(target.mood()[0], 0, 'cheerful', 'grumpy')
         commun.compare_two(morality, 0, 'morally sure', 'moral doubts')
@@ -274,8 +277,11 @@ class Engine(object):
         return result
 
 
-    def skillcheck(self, actor, beneficiar, skill, motivation=None, morality=0):
-        sk = Skillcheck(actor, beneficiar, skill)
+    def skillcheck(self, actor, skill, motivation=None, morality=0):
+        sk = Skillcheck(actor, skill)
         sk.motivation = motivation
         sk.morality = morality
-        return sk.activate()
+        result = sk.activate()
+        if result >= 0:
+            actor.drain_vigor()
+        return result

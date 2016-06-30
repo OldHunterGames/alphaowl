@@ -20,7 +20,6 @@ class Need_memory(object):
 
 
 class Action(object):
-    _player = None
     
 
     @staticmethod
@@ -51,11 +50,10 @@ class Action(object):
             raise Exception("Should use at least one need")
 
 
-    def __init__(self, actor, target, beneficiar, name='template_name', difficulty=3, *args, **kwargs):
+    def __init__(self, actor, target, name='template_name', difficulty=3, *args, **kwargs):
         self.name = name # name used for screen title
         self.actor = actor
         self.target = target
-        self.beneficiar = beneficiar
         self.difficulty = difficulty # 3 is default for most actions
 
         self.phobias = []
@@ -135,8 +133,8 @@ class Action(object):
         else:
             if not self.motivation:
                 raise Exception("npc action activated without motivation")
-            motivated_check(self.motivation, pros, cons)
-        result = get_action_power(self.actor, pros, cons, self._skill, self.morality, self.actor_vigor)
+            motivated_check(self.actor, self.motivation, pros, cons)
+        result = get_action_power(self.actor, pros, cons, self._skill, self.morality)
         
         if not 'unfortunate' in self.actor.conditions:
             if 'unlucky' in cons:
@@ -159,14 +157,12 @@ class Action(object):
         else:
             raise Exception("Action activated without power or skill")
         phobias_check(self.target, self.phobias, pros, cons, self.phobias_inverted)
-        stance_target = Action._player if Action._player else self.beneficiar
-        stance_check(self.target, pros, cons, stance_target)
         return pros, cons
 
 
 class Skillcheck(Action):
-    def __init__(self, actor, beneficiar, skill, *args, **kwargs):
-        super(Skillcheck, self).__init__(actor, None, beneficiar, *args, **kwargs)
+    def __init__(self, actor, skill, *args, **kwargs):
+        super(Skillcheck, self).__init__(actor, None, *args, **kwargs)
         self.set_skill(skill)
     
 
@@ -190,12 +186,6 @@ def phobias_check(target, phobias, pros, cons=None, inverted=False):
                 pros.append('phobia')
             return
 
-
-def stance_check(source, pros, cons, target):
-    if source.stance(target).value < 0:
-        cons.append('contradiction')
-    elif source.stance(target).value > 0:
-        pros.append('willigness')
 
 def pros_cons_default():
     cons = []
@@ -236,16 +226,16 @@ def pros_cons_skill(character, skill, difficulty, pros, cons):
     return pros, cons
 
 
-def motivated_check(motivation, pros, cons):
+def motivated_check(actor, motivation, pros, cons):
         if motivation < 0:
             cons.append('sabotage')
         if motivation == 0:
             pass
-        if motivation > 6-self.vigor and self.vigor>0:
+        if motivation > 6-actor.vigor and actor.vigor>0:
             pros.append('vigorous')
         if motivation > 5:
             pros.append('determined')
-        if self.feature('venturous'):
+        if actor.feature('venturous'):
             dice = randint(1,2)
             if dice == 2:
                 pros.append('lucky')
@@ -253,10 +243,10 @@ def motivated_check(motivation, pros, cons):
                 cons.append('unlucky')
 
 
-def get_action_power(person, pros, cons, skill=None, morality=0, vigor=True):
+def get_action_power(person, pros, cons, skill=None, morality=0):
         if 'sabotage' in cons:
             return -1
-        use_resources(person, pros, cons, skill, morality, vigor)
+        use_resources(person, pros, cons, skill, morality)
         p = len(pros) - len(cons)
         if p < 0:
             p = 0
@@ -264,7 +254,7 @@ def get_action_power(person, pros, cons, skill=None, morality=0, vigor=True):
             p = 5
         return p
 
-def use_resources(person, pros, cons, skill=None, morality=0, vigor=True):
+def use_resources(person, pros, cons, skill=None, morality=0):
         if 'sabotage' in cons:
             return
         if 'vigorous' in pros:
@@ -275,5 +265,3 @@ def use_resources(person, pros, cons, skill=None, morality=0, vigor=True):
             person.skills_used.append(skill)
         if morality:
             person.moral_action(morality)
-        if vigor:
-            person.drain_vigor()

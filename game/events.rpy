@@ -31,15 +31,15 @@ label evn_blank:
    $pass   
    return True
   
-label evn_template(event_obj):
+label evn_template(event):
     
     #Проверка для турн энда
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         if True:
-            $ event_obj.skipcheck = True
+            $ event.skipcheck = True
     
     # Отсечка
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     #тело эвента
@@ -48,126 +48,126 @@ label evn_template(event_obj):
 
 ######################################################## 
 
-label evn_teach_coding(event_obj):
+label evn_teach_coding(event):
         
     python:
-        event_obj.target.skill('coding').training = True
+        event.target.skill('coding').training = True
     'С++ для чайников! Получен базовый навык программирования.'
     return True
 
-label evn_teach_conversation(event_obj):
+label evn_teach_conversation(event):
 
     python:
-        event_obj.target.skill('conversation').training = True
+        event.target.skill('conversation').training = True
     'Чтобы справиться с Ерохой, надо мыслить как Ероха! Получен базовый навык социоблядства.'
     return True
 
-label evn_teach_sex(event_obj):
+label evn_teach_sex(event):
         
     python:
-        event_obj.target.skill('sex').training = True
+        event.target.skill('sex').training = True
     'BATYA знает как долго не кончать! Получена базовая сексуальная грамотность.'
     return True
 
-label evn_teach_sports(event_obj):
+label evn_teach_sports(event):
         
     python:
-        event_obj.target.skill('sports').training = True
+        event.target.skill('sports').training = True
     'Соблюдает дня режим - дЖым! Получены базовые знания о ЗОЖ.'
     return True
     
 
-label evn_dvach_coding(event_obj):
+label evn_dvach_coding(event):
     
-    if not event_obj.skipcheck:
-        if not event_obj.target.skill('coding').training and event_obj.target == event_obj.target and 'pc' not in event_obj.target.restrictions:
-            $ event_obj.skipcheck = True
+    if not event.skipcheck:
+        if not event.target.skill('coding').training and event.target == event.target and 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     python:
-        event_obj.target.skill('coding').training = True
+        event.target.skill('coding').training = True
     'Двач = образовательный! Получен базовый навык программирования.'
     return True
 
-label evn_dvach_conversation(event_obj):
+label evn_dvach_conversation(event):
     
-    if not event_obj.skipcheck:
-        if not event_obj.target.skill('conversation').training and 'pc' not in event_obj.target.restrictions:
-            $ event_obj.skipcheck = True
+    if not event.skipcheck:
+        if not event.target.skill('conversation').training and 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     python:
-        event_obj.target.skill('conversation').training = True
+        event.target.skill('conversation').training = True
     'Двач = образовательный! Получен базовый навык социоблядства.'
     return True
 
-label evn_dvach_sex(event_obj):
+label evn_dvach_sex(event):
     
-    if not event_obj.skipcheck:
-        if not event_obj.target.skill('sex').training and 'pc' not in event_obj.target.restrictions:
-            $ event_obj.skipcheck = True
+    if not event.skipcheck:
+        if not event.target.skill('sex').training and 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     python:
-        event_obj.target.skill('sex').training = True
+        event.target.skill('sex').training = True
     'Двач = образовательный! Получена базовая сексуальная грамотность.'
     return True
 
-label evn_dvach_sports(event_obj):
+label evn_dvach_sports(event):
     
-    if not event_obj.skipcheck:
-        if not event_obj.target.skill('sports').training and 'pc' not in event_obj.target.restrictions:
-            $ event_obj.skipcheck = True
+    if not event.skipcheck:
+        if not event.target.skill('sports').training and 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     python:
-        event_obj.target.skill('sports').training = True
+        event.target.skill('sports').training = True
     'Двач = образовательный! Получены базовые знания о ЗОЖ.'
     return True
 
-label evn_dvach_b(event_obj):
+label evn_dvach_b(event):
     
-    if not event_obj.skipcheck:
-        if 'pc' not in event_obj.target.restrictions:
-            $ event_obj.skipcheck = True
+    if not event.skipcheck:
+        if 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     python:
-        event_obj.target.amusement.set_shift(2)
-        event_obj.target.communication.set_shift(2)        
+        event.target.amusement.set_shift(2)
+        event.target.communication.set_shift(2)        
     'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
     return True
 
-label evn_dvach_fap(event_obj):
+label evn_dvach_fap(event):
     
-    if not event_obj.skipcheck:
-        if 'pc' not in event_obj.target.restrictions:
-            $ event_obj.skipcheck = True
+    if not event.skipcheck:
+        if 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
-    $ event_obj.target.eros.set_shift(1)
+    $ event.target.eros.set_shift(1)
     'Обмалафился. Половое удовлетворение (1)'
     return True
 
-label evn_dvach_olgino(event_obj):
+label evn_dvach_olgino(event):
     
-    if not event_obj.skipcheck:
-        if 'pc' not in event_obj.target.restrictions:
-            $ event_obj.skipcheck = True
+    if not event.skipcheck:
+        if 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     python:
@@ -175,17 +175,18 @@ label evn_dvach_olgino(event_obj):
     'Понадусёровые швайнокараси порвались. +15!'
     return True
 
-label evn_do_major(event_obj):
+label evn_do_major(event):
     
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         if 'major' in game.studies:
-            $ event_obj.skipcheck = True
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False 
     'Надо делать курсовю'
-    $ moral = event_obj.target.moral_action('lawful') 
-    $ result = event_obj.target.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2),('activity', -1)])    
+    $ moral = event.target.moral_action('lawful') 
+    $ motivation = event.target.motivation('coding', [('ambition', 2),('amusement', -2),('activity', -1)], event.target, moral)
+    $ result = game.skillcheck(event.target, 'coding', motivation, moral)    
     
     python:
        if result < 4:
@@ -193,24 +194,25 @@ label evn_do_major(event_obj):
        else:
            txt = "Берешь себя за задницу покрепче \n @ \n Делаешь курсач как надо  \n @ \n Потом ещё неделю ловишь научрука... "
            game.studies.remove('major')        
-           event_obj.target.skill('coding').get_expirience(3)
+           event.target.skill('coding').get_expirience(3)
    
     '[txt]'
    
     return True
 
-label evn_do_gym(event_obj):
+label evn_do_gym(event):
     
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         if 'gym' in game.studies:
-            $ event_obj.skipcheck = True
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     'Зачёт по физре'
-    $ moral = event_obj.target.moral_action('ardent') 
-    $ result = event_obj.target.skillcheck(skill='sport', moral = moral, needs=[('ambition', 2),('comfort', -1),('activity', 3)])    
+    $ moral = event.target.moral_action('ardent') 
+    $ motivation = event.target.motivation('sport', [('ambition', 2),('comfort', -1),('activity', 3)], event.target, moral)
+    $ result = game.skillcheck(event.target, 'sport', motivation, moral)    
    
     python:
        if result < 3:
@@ -218,24 +220,25 @@ label evn_do_gym(event_obj):
        else:
            txt = "Четко подтягиваешься \n @ \n Стометровка в нормативе  \n @ \n Фазген-семпай хвалит - ай, братуха-борцуха!"
            game.studies.remove('gym')       
-           event_obj.target.skill('sports').get_expirience(1)
+           event.target.skill('sports').get_expirience(1)
    
     '[txt]'
    
     return True
 
-label evn_do_practice_military(event_obj):
+label evn_do_practice_military(event):
     
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         if 'military' in game.studies:
-            $ event_obj.skipcheck = True
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
    
     'Зачёт на военной кафедре (строевая)'
-    $ moral = event_obj.target.moral_action('lawful') 
-    $ result = event_obj.target.skillcheck(skill='sport', moral = moral, needs=[('activity', 2),('amusement', -2),('comfort', -1)]) 
+    $ moral = event.target.moral_action('lawful')
+    $ motivation = event.target.motivation('sport', [('activity', 2), ('amusement', -2), ('comfort', -1)], event.target, moral) 
+    $ result = game.skillcheck(event.target, 'sport', motivation, moral) 
    
     python:
        if result < 3:
@@ -243,24 +246,25 @@ label evn_do_practice_military(event_obj):
        else:
            txt = "Вспоминаешь видос про парад в лучшей Корее \n @ \n В голове играет hellmarch \n @ \n Шаг печаетается сам собой "
            game.studies.remove('military')  
-           event_obj.target.skill('sports').get_expirience(1)
+           event.target.skill('sports').get_expirience(1)
    
     '[txt]'
    
     return True
 
-label evn_do_practice_military_chat(event_obj):
+label evn_do_practice_military_chat(event):
     
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         if 'military' in game.studies:
-            $ event_obj.skipcheck = True
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
    
     'Зачёт на военной кафедре (общение)'
-    $ moral = event_obj.target.moral_action('chaotic') 
-    $ result = event_obj.target.skillcheck(skill='communication', moral = moral, needs=[('communication', 1)])
+    $ moral = event.target.moral_action('chaotic')
+    $ motivation = event.target.motivation('communication', [('communication', 1)], event.target, moral) 
+    $ result = game.skillcheck(event.target, 'communication', motivation, moral)
    
     python:
        if result < 4:
@@ -268,24 +272,25 @@ label evn_do_practice_military_chat(event_obj):
        else:
            txt = "Расспрашиваешь старого подполкана про боевой опыт \n @ \n Он пускает скупую слезу по авганским друзьям \n @ \n И рисует тебе зачёт автоматом"
            game.studies.remove('military')    
-           event_obj.target.skill('conversation').get_expirience(2)
+           event.target.skill('conversation').get_expirience(2)
    
     '[txt]'
    
     return True
    
-label evn_do_practice_labs(event_obj):
+label evn_do_practice_labs(event):
     
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         if 'labs' in game.studies:
-            $ event_obj.skipcheck = True
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     'Лабораторная по программированию (брутфорс)'
-    $ moral = event_obj.target.moral_action('lawful', 'timid') 
-    $ result = event_obj.target.skillcheck(skill='coding', moral = moral, needs=[('ambition', 3),('amusement', -2)]) 
+    $ moral = event.target.moral_action('lawful', 'timid')
+    $ motivation = event.target.motivation('coding', [('ambition', 3),('amusement', -2)], event.target, moral) 
+    $ result = game.skillcheck(event.target, 'coding', motivation, moral)
    
     python:
        if result < 3:
@@ -293,24 +298,25 @@ label evn_do_practice_labs(event_obj):
        else:
            txt = "Вспоминаешь чему вас учили \n @ \n Сдаёшь профессору кривое но рабочее решение  \n @ \n А он и не против!"
            game.studies.remove('labs')     
-           event_obj.target.skill('coding').get_expirience(1)
+           event.target.skill('coding').get_expirience(1)
    
     '[txt]'
    
     return True
 
-label evn_do_practice_labs_chat(event_obj):
+label evn_do_practice_labs_chat(event):
     
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         if 'labs' in game.studies:
-            $ event_obj.skipcheck = True
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     'Лабораторная по программированию (попытка списать)'
-    $ moral = event_obj.target.moral_action('chaotic', 'ardent') 
-    $ result = event_obj.target.skillcheck(skill='communication', moral = moral, needs=[('communication', 2), ('ambition', -1)])
+    $ moral = event.target.moral_action('chaotic', 'ardent') 
+    $ motivation = event.target.motivation('communication', [('communication', 2), ('ambition', -1)], event.target, moral) 
+    $ result = game.skillcheck(event.target, 'communication', motivation, moral)
    
     python:
        if result < 4:
@@ -318,24 +324,25 @@ label evn_do_practice_labs_chat(event_obj):
        else:
            txt = "Среди ботанов все свои \n @ \n Один из них такой же некрофил как профессор \n @ \n Можно самому и не напрягаться"
            game.studies.remove('labs')  
-           event_obj.target.skill('conversation').get_expirience(2)
+           event.target.skill('conversation').get_expirience(2)
    
     '[txt]'
    
     return True
 
-label evn_do_practice_programm(event_obj):
+label evn_do_practice_programm(event):
     
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         if 'practice' in game.studies:
-            $ event_obj.skipcheck = True
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     'Производственная практика'
-    $ moral = event_obj.target.moral_action('lawful', 'timid') 
-    $ result = event_obj.target.skillcheck(skill='coding', moral = moral, needs=[('ambition', 2),('amusement', -2)])    
+    $ moral = event.target.moral_action('lawful', 'timid') 
+    $ motivation = event.target.motivation('coding', [('ambition', 2),('amusement', -2)], event.target, moral) 
+    $ result = game.skillcheck(event.target, 'coding', motivation, moral)    
    
     python:
        if result < 4:
@@ -343,24 +350,25 @@ label evn_do_practice_programm(event_obj):
        else:
            txt = "Скармлваешь Эльбрусу ящик перфокарт \n @ \n Понимаешь что это прикольно \n @ \n Как рулон бумаги в унитаз смыть  \n @ \n Руководитель подмахивает зачёт за усидчивость"
            game.studies.remove('practice')   
-           event_obj.target.skill('coding').get_expirience(2)
+           event.target.skill('coding').get_expirience(2)
    
     '[txt]'
    
     return True 
 
-label evn_do_practice_programm_chat(event_obj):
+label evn_do_practice_programm_chat(event):
     
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         if 'practice' in game.studies:
-            $ event_obj.skipcheck = True
+            $ event.skipcheck = True
 
-    if not event_obj.skipcheck:
+    if not event.skipcheck:
         return False
         
     'Производственная практика (общение)'
-    $ moral = event_obj.target.moral_action('chaotic', 'ardent') 
-    $ result = event_obj.target.skillcheck(skill='communication', moral = moral, needs=[('communication', 3)])
+    $ moral = event.target.moral_action('chaotic', 'ardent') 
+    $ motivation = event.target.motivation('communication', [('communication', 3)], event.target, moral) 
+    $ result = game.skillcheck(event.target, 'communication', motivation, moral)
    
     python:
        if result < 3:
@@ -368,7 +376,7 @@ label evn_do_practice_programm_chat(event_obj):
        else:
            txt = "Забухал с коллективом в подсобке \n @ \n Рассказал охуительных историй с учёбы \n @ \n Подписали весь лист практики на год вперёд"
            game.studies.remove('practice')        
-           event_obj.target.skill('conversation').get_expirience(1)
+           event.target.skill('conversation').get_expirience(1)
    
     '[txt]'
    
@@ -406,7 +414,7 @@ label evn_do_practice_programm_chat(event_obj):
    
 ####################### ФИЛЛЕРЫ   
    
-label evn_bugurt_gazeta(event_obj):
+label evn_bugurt_gazeta(event):
    "К НАМ СКОРО ЕРОХИНЫ ПРИДУТ \n @ \nГАЗЕТКИ ИЗ ТУАЛЕТА УБЕРИ \n @ \nПОЛОЖИ БУМАГУ ТУАЛЕТНУЮ \n @ \n И САМ В ТУАЛЕТЕ ОСТАВАЙСЯ\n @ \n ЧТОБЫ МАТЕРИ ЗА ТЕБЯ НЕ СТЫДИТЬСЯ"
    python:
        pass
