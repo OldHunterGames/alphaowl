@@ -139,7 +139,6 @@ label shd_living_jailed(character):
 label shd_fap_no(character):
     python:
         child.eros.set_shift(-1)
-    'Нофапофон'
     return  
     
 label shd_fap_yes(character):
@@ -197,9 +196,9 @@ label shd_job_study(character):
     
 label shd_job_chores(character):
     python:
-        mom.moral_action('lawful', target = child)        
-        result = character.action(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], forced = True)
-        if result >= 0:
+        moral = character.moral_action('ardent') 
+        motivation = character.motivation(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], beneficiar = mom, moral = moral)        
+        if motivation >= 0:
             renpy.call('subloc_chores_perform')   
         else:
             renpy.call('subloc_chores_sabotage')       

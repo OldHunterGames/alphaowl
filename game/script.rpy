@@ -294,59 +294,6 @@ label label_new_day:
 
     return        
 
-label lbl_owl_info:
-    python:
-        alignment = child.alignment.description()
-        job = child.job['name']
-        desu = child.description()
-        needs_overflow = child.show_needs('overflow')
-        needs_tense = child.show_needs('tense')
-        needs_relevant = child.show_needs('relevant')
-        needs_statisfied = child.show_needs('satisfied')
-        # taboos = child.show_taboos()
-        features = child.show_features()
-        focus = child.show_focus()
-        rel = child.relations(mom).description()
-        txt = "Настроение: " + str(child.mood()) + " | Подчинение: " + str(child.stance(mother).level)
-    "[txt] | Энергия: [child.vigor] \n
-    
-     Запреты: [child.restrictions] \n 
-     Тэнге: [game.tenge] \n
-     Условия сна: [child.accommodation]  |  Занятость: [job]       \n
-     Характер: [alignment]\n
-     Отношение: [rel]\n
-     Фокус: [focus]\n
-     Напряжения: [needs_tense]\n
-     Актуальные нужды: [needs_relevant]\n
-     Удовлетворённые: [needs_statisfied]\n          
-     Пресыщения: [needs_overflow]\n     
-     Особенности: [features]\n
-     \n"
-
-    return
-
-label lbl_mom_info:
-    python:
-        alignment = mom.alignment.description()
-        needs_overflow = mom.show_needs('overflow')
-        needs_tense = mom.show_needs('tense')
-        needs_relevant = mom.show_needs('relevant')
-        needs_statisfied = mom.show_needs('satisfied')
-        features = mom.show_features()
-        rel = child.relations(mom).description()
-        txt = "Настроение: " + str(mom.mood()) + " | Благоволение: " + str(mom.stance(player).level)
-    "[txt] | Энергия: [mom.vigor] \n
-     Тэнге: [game.tenge] \n
-     Характер: [alignment]\n
-     Отношение: [rel]\n
-     Напряжения: [needs_tense]\n
-     Актуальные нужды: [needs_relevant]\n
-     Удовлетворённые: [needs_statisfied]\n          
-     Пресыщения: [needs_overflow]\n     
-     Особенности: [features]\n
-     \n"
-
-    return
 label lbl_skill_check(pros, cons, character, skill=None, name='template_name'):
     python:
         renpy.call_screen('sc_skillcheck', pros, cons, character, skill, name)

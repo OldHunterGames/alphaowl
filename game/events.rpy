@@ -183,7 +183,7 @@ label evn_do_major(event):
 
     if not event.skipcheck:
         return False 
-    'Надо делать курсовю'
+    'Пора делать курсовую, курсовая сама себя не сделает.'
     $ moral = event.target.moral_action('lawful') 
     $ motivation = event.target.motivation('coding', [('ambition', 2),('amusement', -2),('activity', -1)], event.target, moral)
     $ result = game.skillcheck(event.target, 'coding', motivation, moral)    
