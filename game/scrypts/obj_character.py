@@ -725,6 +725,12 @@ class Person(object):
         return False
 
 
+    def has_any_token(self):
+        if len(self.tokens) > 0:
+            return True
+        return False
+
+
     def token_difficulty(self, token):
         if token in self.tokens_difficulty.keys():
             return self.tokens_difficulty[token]
