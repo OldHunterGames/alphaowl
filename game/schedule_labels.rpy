@@ -57,7 +57,7 @@ label shd_social_intercommunion(character):
     python:
         moral = child.moral_action(moral_burden, unin_target) 
         motivation = character.motivation(needs=[(self_bonus_need, 3)], beneficiar = child, morality = moral)  
-        game.intercommunion(actor = child, target = unin_target, token = token_to_gain, power =  0, skill = used_skill, morality = moral, name = 'тестовый интеркомушен', respect_needs = ['authority', 'power'], difficulty = 0)
+        game.intercommunion(actor = child, target = unin_target, token = token_to_gain, power =  0, skill = used_skill, morality = moral, name = 'тестовый интеркомушен', respect_needs = ['authority', 'power'], difficulty = 3)
     return   
     
 label shd_help_mom(character):
