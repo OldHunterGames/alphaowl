@@ -198,7 +198,7 @@ label lbl_universal_interaction:
             $ child.schedule.add_action('social_atrocity', 'single')
             call lbl_son_social_uni_conquest 
         'Кооперация':
-            $ token_to_gain = 'contribution'
+            $ token_to_gain = 'convention'
             $ moral_burden = ['lawful']       
             $ child.schedule.add_action('social_intercommunion', 'single')            
             call lbl_son_social_uni_convention 
@@ -267,6 +267,13 @@ label lbl_son_social_uni_conquest:
             
     return
 
+label lbl_son_social_uni_convention:
+    $ self_bonus_need = 'order'
+    $ targeted_need = 'communication'            
+    $ used_skill = 'conversation'
+            
+    return
+    
 label lbl_son_social_uni_contribution:
     $ self_bonus_need = 'altruism'
     
