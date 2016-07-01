@@ -39,12 +39,18 @@ label shd_dayoff_2ch(character):
     return  
 
     
-label shd_social_universal(character):
+label shd_social_atrocity(character):
     python:
         moral = child.moral_action(moral_burden, unin_target) 
         motivation = character.motivation(needs=[(self_bonus_need, used_force)], beneficiar = child, morality = moral)  
-        game.atrocity(actor = child, target = unin_target, token = token_to_gain, target_tense = [targeted_need], power =  used_force, skill = None, phobias = [], morality = moral, respect_needs = ['authority', 'power'], difficulty = 0)
-    'Есть'
+        game.atrocity(actor = child, target = unin_target, token = token_to_gain, target_tense = [targeted_need], power =  used_force, skill = None, phobias = [], morality = moral, name = 'тесто', respect_needs = ['authority', 'power'], difficulty = 0)
+    return   
+    
+label shd_social_pleasing(character):
+    python:
+        moral = child.moral_action(moral_burden, unin_target) 
+        motivation = character.motivation(needs=[(self_bonus_need, used_force)], beneficiar = child, morality = moral)  
+        game.pleasing(actor = child, target = unin_target, token = token_to_gain, target_please = [targeted_need], power =  used_force, skill = None, morality = moral, name = 'тестовый плиз', respect_needs = ['authority', 'power'], difficulty = 0)
     return   
     
 label shd_social_eotatroeros(character):
@@ -52,7 +58,6 @@ label shd_social_eotatroeros(character):
         moral = character.moral_action('evil', eot) 
         motivation = character.motivation(needs=[('power', atrocity_force),('eros', 1)], beneficiar = child, morality = moral)  
         game.atrocity(actor = child, target = eot, token = 'conquest', target_tense = ['eros'], power =  atrocity_force, skill = None, phobias = [], morality = ['evil'], respect_needs = ['authority', 'power'], difficulty = 0)
-    'Есть'
     return   
 
 label shd_help_mom(character):

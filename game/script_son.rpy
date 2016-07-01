@@ -195,31 +195,25 @@ label lbl_universal_interaction:
         'Агрессия':
             $ token_to_gain = 'conquest'
             $ moral_burden = ['evil', 'ardent']
+            $ child.schedule.add_action('social_atrocity', 'single')
             call lbl_son_social_uni_conquest 
         'Кооперация':
+            $ token_to_gain = 'contribution'
+            $ moral_burden = ['lawful']       
+            $ child.schedule.add_action('social_intercommunion', 'single')            
             call lbl_son_social_uni_convention 
         'Ублажение':
+            $ token_to_gain = 'contribution'
+            $ moral_burden = ['good']            
+            $ child.schedule.add_action('social_pleasing', 'single')
             call lbl_son_social_uni_contribution             
             
-    $ child.schedule.add_action('social_universal', 'single')
     'Готово. Неделя будет посвящена установленному плану действий.'
     jump lbl_universal_menu
     return
 
 label lbl_son_social_uni_conquest:
     $ self_bonus_need = 'power'
-    menu:
-        'Выберите силу воздействия'
-        'Минимальная':
-            $ used_force = 1
-        'Слабая':
-            $ used_force = 2
-        'Средняя':
-            $ used_force = 3
-        'Значительная':
-            $ used_force = 4
-        'Максимальная':
-            $ used_force = 5            
     
     menu:
         'Выберите направление удара'
@@ -258,21 +252,76 @@ label lbl_son_social_uni_conquest:
         'Могущество':
             $ targeted_need = 'power'
             
-    return
-
-label lbl_enot_conquest:
-    "Бей бабу молотом - будет баба золотом. Все говорят что девки любят плохих парней. Но дело не в любви - всё достаётся сильному!"
     menu:
-        "Домогаться":
-            menu:
-                "Прижиматься в метро":
-                    $ atrocity_force = 1
-                    $ child.schedule.add_action('social_eotatroeros', 'single')
-                                        
-    $ communication = 'Енотова'
-    jump lbl_universal_menu
+        'Выберите силу воздействия'
+        'Минимальная':
+            $ used_force = 1
+        'Слабая':
+            $ used_force = 2
+        'Средняя':
+            $ used_force = 3
+        'Значительная':
+            $ used_force = 4
+        'Максимальная':
+            $ used_force = 5      
+            
     return
 
+label lbl_son_social_uni_contribution:
+    $ self_bonus_need = 'altruism'
+    
+    menu:
+        'Выберите какую потребность объекта вы хотите удовлетворить'
+        'Смысл жизни':
+            $ targeted_need = 'purpose'
+        'Питание':
+            $ targeted_need = 'nutrition'
+        'Здоровье':
+            $ targeted_need = 'wellness'
+        'Комфорт':
+            $ targeted_need = 'comfort'
+        'Подвижность':
+            $ targeted_need = 'activity'
+        'Общение':
+            $ targeted_need = 'communication'            
+        'Развлечения':
+            $ targeted_need = 'amusement'
+        'Богатство':
+            $ targeted_need = 'prosperity'   
+        'Авторитет':
+            $ targeted_need = 'authority'
+        'Амбиции':
+            $ targeted_need = 'ambition'   
+        'Секс':
+            $ targeted_need = 'eros'
+        'Стабильность':
+            $ targeted_need = 'order'   
+        'Независимость':
+            $ targeted_need = 'independence'
+        'Моральная поддержка':
+            $ targeted_need = 'approval'   
+        'Адреналин':
+            $ targeted_need = 'thrill'
+        'Альтруизм':
+            $ targeted_need = 'altruism'  
+        'Могущество':
+            $ targeted_need = 'power'
+
+    menu:
+        'Выберите силу воздействия'
+        'Минимальная':
+            $ used_force = 1
+        'Слабая':
+            $ used_force = 2
+        'Средняя':
+            $ used_force = 3
+        'Значительная':
+            $ used_force = 4
+        'Максимальная':
+            $ used_force = 5       
+            
+    return
+    
 label lbl_control_lifestyle:
     $ mom_stance = mom.stance(player).value
     menu:
