@@ -262,6 +262,7 @@ class Engine(object):
                         respect_needs=['communication'], morality=0, motivation=None, name='template_name'):
 
         commun = Action(actor, target, name)
+        commun.difficulty = difficulty
         commun.motivation = motivation
         commun.morality = morality
         commun.set_skill(skill)
@@ -276,7 +277,7 @@ class Engine(object):
         result = commun.activate()
         
         if result > target.token_difficulty(token):
-            target.add_tokne(token)
+            target.add_token(token)
         return result
 
 
