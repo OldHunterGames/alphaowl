@@ -131,7 +131,7 @@ label lbl_universal_interaction:
         'Маман':
             $ communication = 'Маман'
             $ unin_target = eot
-            jump lbl_misery
+            jump lbl_social_mom
         "Енотова":
             $ communication = 'Енотова'
             $ unin_target = eot
@@ -392,7 +392,7 @@ label lbl_control_lifestyle:
     return
     
 
-label lbl_surrender:
+label lbl_social_mom:
     menu:
         "Давить на жалость":
             call lbl_misery
@@ -404,7 +404,7 @@ label lbl_surrender:
         "Подлизываться":
             call lbl_asslick
         
-        "Прорыв в отношениях (нужны AP)" if child.ap > 0:
+        "Прорыв в отношениях (нужны AP)" if player.ap > 0 and mom.has_any_token:
             call lbl_change_relations
             
         "Назад":
@@ -419,7 +419,7 @@ label lbl_change_relations:
         'Выбрать используемый жетон.'
         'Accordance' if child.has_token("accordance"):
             menu:
-                'Наладить отношения с матерью' if mother.stance.value < 3:
+                'Наладить отношения с матерью' if mom.stance(player).value < 2:
                     python:
                         player.ap -= 1
                         child.use_token('accordance')
