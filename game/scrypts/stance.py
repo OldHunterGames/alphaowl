@@ -90,9 +90,5 @@ class Stance(object):
             raise Exception("Wrong stance: %s"%(t))
         else:
             self._type = stance
-            self.convention = 0
-            self.conquest = 0
-            self.contribution = 0
-            self._value = 0
 
 
