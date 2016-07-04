@@ -93,7 +93,7 @@ class Action(object):
     def set_power(self, power, reduced, compare_value, pros_text, cons_text):
         self._power = power
         self._reduced = reduced
-        self._comare_with_power = compare_value
+        self._compare_with_power = compare_value
         self._power_text.append(pros_text)
         self._power_text.append(cons_text)
 
