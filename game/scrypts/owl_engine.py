@@ -192,7 +192,7 @@ class Engine(object):
 
     def suffering(self, actor, target, token, actor_tense=['general'], power=0, 
                 skill=None, phobias=[], morality=0, name='template_name',
-                respect_needs=['authority', 'power'], difficulty=3, motivation=None):
+                respect_needs=['authority', 'power'], difficulty=3, motivation=None, beneficiar=None):
 
         memory = False
         suffering = Action(actor, target, name, name)
@@ -216,8 +216,10 @@ class Engine(object):
         maxn = Action.max_intensity(target, actor_tense)[0]
         if maxn > Action.get_memory(actor, target, maxn, 'suffering') and result > target.token_difficulty(token):
             memory = True
+        if beneficiar:
+            target = beneficiar
         for need in actor_tense:
-            n = getattr(target, need)
+            n = getattr(actor, need)
             if result > 0:
                 n.set_shift(-result)
             if memory:
