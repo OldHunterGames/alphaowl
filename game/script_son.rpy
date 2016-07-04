@@ -124,62 +124,14 @@ label lbl_son_minor:
             
     jump lbl_universal_menu
     return
-    
-label lbl_son_social:
-    menu:
-        'Биопроблемы':
-            'Есть одна тян - ламповая няша Енотова. Сможешь ли ты завоевать её трепетное сердце?'
-            menu:
-                "Альфа-стайл":
-                    call lbl_enot_conquest
-                    
-                "Задрот-стайл":
-                    call lbl_enot_convention
-                    
-                "Пиздолиз-стайл":
-                    call lbl_enot_contribution
-                    
-                "Назад":
-                    call lbl_son_social
-                    
-        'Этология человека':    
-            'Главный альфач на курсе - тупой но хитрый качок и мажор Ерохин. Способен ли ты отстоять свой (омежко-)статус?'
-            menu:
-                "Противостояние":
-                    call lbl_eroha_conquest
-                    
-                "Коллаборационизм":
-                    call lbl_eroha_convention
-                    
-                "Контрибуции":
-                    call lbl_eroha_contribution
-
-                "Назад":
-                    call lbl_son_social
-                    
-        'Траповать @ Шлюховать':
-            'Есть один кун - Ашот. Торгует на рынке помидорами, ебёт всё. Даже Небо, даже Аллаха, даже тебя. Но станет ли он хорошим спонсором?'
-            menu:
-                "Итс э ТРАП!":
-                    call lbl_ashot_conquest
-                    
-                "Гей-шлюха":
-                    call lbl_ashot_convention
-                    
-                "Мамин романтик":
-                    call lbl_ashot_contribution
-                    
-                "Назад":
-                    call lbl_son_social                    
-        'Забить':
-            $ pass
-    
-    jump lbl_universal_menu
-    return
-
+ 
 label lbl_universal_interaction:
     menu:
         'Выберите объект социального взаимодействия'
+        'Маман':
+            $ communication = 'Маман'
+            $ unin_target = eot
+            jump lbl_misery
         "Енотова":
             $ communication = 'Енотова'
             $ unin_target = eot
@@ -200,7 +152,7 @@ label lbl_universal_interaction:
         'Кооперация':
             $ token_to_gain = 'convention'
             $ moral_burden = ['lawful']       
-            $ child.schedule.add_action('social_intercommunion', 'single')            
+            $ child.schedule.add_action('social_intercommun', 'single')            
             call lbl_son_social_uni_convention 
         'Ублажение':
             $ token_to_gain = 'contribution'
@@ -440,46 +392,6 @@ label lbl_control_lifestyle:
     return
     
 
-label lbl_chores:
-    menu:
-        'Какие работы по дому будет выполнять Сыча чтобы повысить настроение мамке? Каждая работа в расписании требует энергии (списывается в конце хода)! Ты можешь назначить любой объём, но перебор приведёт к усталости и неэффективной работе.'
-
-        "Готовить еду" if not child.schedule.has_action('cook_cook'):
-            $ child.schedule.add_action('cook_cook')              
-        "Отменить наряд по кухне" if child.schedule.has_action('cook_cook'):
-            $ child.schedule.remove_action('cook_cook')    
-            
-        "Создать в доме уют" if not child.schedule.has_action('comfy_comfy'):
-            $ child.schedule.add_action('comfy_comfy')              
-        "Отменить наряд по уборке" if child.schedule.has_action('comfy_comfy'):
-            $ child.schedule.remove_action('comfy_comfy')  
-            
-        "Делать мамке массаж" if not child.schedule.has_action('matz_matz'):
-            $ child.schedule.add_action('matz_matz')              
-        "Отменить массаж" if child.schedule.has_action('matz_matz'):
-            $ child.schedule.remove_action('matz_matz')  
-            
-        "Выслушивать мамкины истории" if not child.schedule.has_action('hear_hear'):
-            $ child.schedule.add_action('hear_hear')              
-        "Не слушать истории" if child.schedule.has_action('hear_hear'):
-            $ child.schedule.remove_action('hear_hear')  
-            
-        "Батрачить на мамкиной весёлой ферме" if not child.schedule.has_action('farm_farm'):
-            $ child.schedule.add_action('farm_farm')              
-        "Забить на всёлую ферму" if child.schedule.has_action('farm_farm'):
-            $ child.schedule.remove_action('farm_farm')    
-            
-        "Общаься с мамкиными гостями" if not child.schedule.has_action('lik_lik'):
-            $ child.schedule.add_action('lik_lik')              
-        "Игнорировать на мамкиных гостей" if child.schedule.has_action('lik_lik'):
-            $ child.schedule.remove_action('lik_lik')  
-                        
-        "Достаточно":
-            jump lbl_son_manage        
-            
-    jump lbl_chores
-    return
-
 label lbl_surrender:
     menu:
         "Давить на жалость":
@@ -491,21 +403,11 @@ label lbl_surrender:
         
         "Подлизываться":
             call lbl_asslick
-            
-        "Условия жизни":
-            call lbl_slave_lifestyle
-
-        #"Клянчить (нужын AP!)" if child.ap > 0:
-           # call lbl_beg
         
         "Прорыв в отношениях (нужны AP)" if child.ap > 0:
             call lbl_change_relations
             
-        "Оценить настроение мамки":
-            call lbl_mom_info
-            jump lbl_son_manage
-
-        "Достаточно":
+        "Назад":
             jump lbl_son_manage
             
     call lbl_surrender
@@ -663,24 +565,24 @@ label lbl_misery:
     menu:
         "Опишите тип исыпытваемой попоболи, когда BATYA применяет к вам меры дисциплинарного воздействия."
         'Да не бомбит у меня!':
-            $ butthurt_force = 1
-            $ child.schedule.add_action('popo_bol', 'single')
+            $ used_force = 1
+            $ child.schedule.add_action('social_misery', 'single')
         'Ну таак... припекает':
-            $ butthurt_force = 2
-            $ child.schedule.add_action('popo_bol', 'single')
+            $ used_force = 2
+            $ child.schedule.add_action('social_misery', 'single')
         'Нехило вообще-то припекает...':
-            $ butthurt_force = 3
-            $ child.schedule.add_action('popo_bol', 'single')
+            $ used_force = 3
+            $ child.schedule.add_action('social_misery', 'single')
         'ПИЧОТ... МАМ ПРЯМ ПИЧОТ!':
-            $ butthurt_force = 4
-            $ child.schedule.add_action('popo_bol', 'single')
+            $ used_force = 4
+            $ child.schedule.add_action('social_misery', 'single')
         'POOKAN BOBMBANULO':
-            $ butthurt_force = 5
-            $ child.schedule.add_action('popo_bol', 'single')            
+            $ used_force = 5
+            $ child.schedule.add_action('social_misery', 'single')            
         'Да не, я прикалываюсь ^_^':
-            $ child.schedule.remove_action('popo_bol')
+            $ child.schedule.remove_action('shd_social_misery')
             
-    jump lbl_surrender
+    jump lbl_universal_menu
     return
 
 label lbl_asslick:
@@ -708,6 +610,46 @@ label lbl_asslick:
     jump lbl_surrender
     return
 
+label lbl_chores:
+    menu:
+        'Какие работы по дому будет выполнять Сыча чтобы повысить настроение мамке? Каждая работа в расписании требует энергии (списывается в конце хода)! Ты можешь назначить любой объём, но перебор приведёт к усталости и неэффективной работе.'
+
+        "Готовить еду" if not child.schedule.has_action('cook_cook'):
+            $ child.schedule.add_action('cook_cook')              
+        "Отменить наряд по кухне" if child.schedule.has_action('cook_cook'):
+            $ child.schedule.remove_action('cook_cook')    
+            
+        "Создать в доме уют" if not child.schedule.has_action('comfy_comfy'):
+            $ child.schedule.add_action('comfy_comfy')              
+        "Отменить наряд по уборке" if child.schedule.has_action('comfy_comfy'):
+            $ child.schedule.remove_action('comfy_comfy')  
+            
+        "Делать мамке массаж" if not child.schedule.has_action('matz_matz'):
+            $ child.schedule.add_action('matz_matz')              
+        "Отменить массаж" if child.schedule.has_action('matz_matz'):
+            $ child.schedule.remove_action('matz_matz')  
+            
+        "Выслушивать мамкины истории" if not child.schedule.has_action('hear_hear'):
+            $ child.schedule.add_action('hear_hear')              
+        "Не слушать истории" if child.schedule.has_action('hear_hear'):
+            $ child.schedule.remove_action('hear_hear')  
+            
+        "Батрачить на мамкиной весёлой ферме" if not child.schedule.has_action('farm_farm'):
+            $ child.schedule.add_action('farm_farm')              
+        "Забить на всёлую ферму" if child.schedule.has_action('farm_farm'):
+            $ child.schedule.remove_action('farm_farm')    
+            
+        "Общаься с мамкиными гостями" if not child.schedule.has_action('lik_lik'):
+            $ child.schedule.add_action('lik_lik')              
+        "Игнорировать на мамкиных гостей" if child.schedule.has_action('lik_lik'):
+            $ child.schedule.remove_action('lik_lik')  
+                        
+        "Достаточно":
+            jump lbl_son_manage        
+            
+    jump lbl_chores
+    return
+    
 label lbl_slave_lifestyle:
     menu:
         'Корзиночка может поменять условия своей жизни, но только в тех пределах что ему разрешает мамка. Для расширения вариантов надо улучшать её master_stance или выклянчивать отдельные разрешения.'

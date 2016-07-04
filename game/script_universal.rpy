@@ -49,7 +49,7 @@ label lbl_make_shedule:
                 $ pass
         "Общение: [communication]":
             if player == child:
-                call lbl_son_social
+                call lbl_universal_interaction
             else:
                 $ pass
         'Назад':

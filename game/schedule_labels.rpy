@@ -60,17 +60,19 @@ label shd_social_intercommunion(character):
         game.intercommunion(actor = child, target = unin_target, token = token_to_gain, power =  0, skill = used_skill, morality = moral, name = 'тестовый интеркомушен', respect_needs = ['authority', 'power'], difficulty = 3)
     return   
     
+label shd_social_misery(character):
+    python:
+        moral = mom.moral_action('evil', used_force) 
+        motivation = character.motivation(needs=[('general', -used_force)], beneficiar = mom)  
+        game.suffering(actor = batya, target = child, token = 'conquest', actor_tense = ['general'], power =  used_force, skill = None, phobias = [], morality = moral, name = 'batya', respect_needs = ['authority', 'power'], difficulty = 0)
+    'BATYA гандошит Cычу. Pain = [butthurt_force]. Злой поступок мамки в отношении Сычи. Самооценка матери: [mom.selfesteem]'
+    return   
+    
 label shd_help_mom(character):
     'Мамин помощник'
     python:  
         result = game.gratifaction(help_skill, needs = [need_helped])       
     'Качество подлизывания = [result]'
-    return   
-    
-label shd_popo_bol(character):
-    python:
-        game.remorse(power=butthurt_force, needs=['common'])
-    'BATYA гандошит Cычу. Pain = [butthurt_force]. Злой поступок мамки в отношении Сычи. Самооценка матери: [mom.selfesteem]'
     return   
     
 label shd_batya_batya(character):
