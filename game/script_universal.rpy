@@ -1,9 +1,10 @@
 #Универсальное меню управления 
 
 label lbl_universal_menu:
-    
+    $ info_provision = game.resource('provision')
+    $ info_drugs = game.resource('drugs')
     menu:
-        'Тенгэ: [game.money] | Жратва: [game.resources("provision")] | Вещества: [game.resources("drugs")]'
+        'Тенгэ: [game.money] | Жратва: [info_provision] | Вещества: [info_drugs]'
         "Информация":
             $ target = renpy.call_screen('sc_choose_character')
             call lbl_info_new(target)
