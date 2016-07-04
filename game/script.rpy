@@ -127,11 +127,12 @@ label label_quiz:
                 game.set_player(child)
                 player = game.player
                 mom = game.mother
+                mom.enslave(child)
                 mom.alignment.morality = 'evil'
                 mom.relations(child)    
                 mom.add_feature('female')
                 mom.add_feature('mature')
-                mom.stance(child).value = 0
+                mom.stance(child).value = -1
                 child.ration['food_type'] = "sperm"
                 child.ration['target'] = 1
                 child.accommodation = "jailed"      
@@ -145,7 +146,6 @@ label label_quiz:
                 child.restrictions.append('dates')
                 child.restrictions.append('friends')
                 child.restrictions.append('pc')
-                mother.enslave(child)
             jump label_new_day
         "(разработчик, игра за маму)":
             python:

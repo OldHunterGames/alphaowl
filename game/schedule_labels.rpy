@@ -65,7 +65,7 @@ label shd_social_misery(character):
         moral = mom.moral_action('evil', used_force) 
         motivation = character.motivation(needs=[('general', -used_force)], beneficiar = mom)  
         game.suffering(actor = child, target = batya, token = 'conquest', actor_tense = ['general'], power =  used_force, skill = None, phobias = [], morality = moral, name = 'batya', respect_needs = ['authority', 'power'], difficulty = 0, beneficiar=mom)
-    'BATYA гандошит Cычу. Pain = [butthurt_force]. Злой поступок мамки в отношении Сычи. Самооценка матери: [mom.selfesteem]'
+    'BATYA гандошит Cычу. Pain = [used_force]. Злой поступок мамки в отношении Сычи. Самооценка матери: [mom.selfesteem]'
     return   
     
 label shd_help_mom(character):

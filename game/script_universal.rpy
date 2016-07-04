@@ -13,10 +13,7 @@ label lbl_universal_menu:
                     call lbl_control_lifestyle
                 "Сычик" if player == mom:
                     call lbl_control_lifestyle                
-        
-        "Тестота":
-            call lbl_universal_interaction
-        
+       
         "Расписание":
             call lbl_make_shedule
                     

@@ -76,7 +76,10 @@ label lbl_son_events:
                     jump lbl_universal_menu                            
 
         "Социоблядство":
-            call lbl_social
+            menu:
+                "Прорыв в отношениях (нужны AP)" if player.ap > 0:
+                    call lbl_change_relations
+            
             jump lbl_universal_menu
                     
         "Потом подумаю":
@@ -404,7 +407,7 @@ label lbl_social_mom:
         "Подлизываться":
             call lbl_asslick
         
-        "Прорыв в отношениях (нужны AP)" if player.ap > 0 and mom.has_any_token:
+        "Прорыв в отношениях (нужны AP)" if player.ap > 0:
             call lbl_change_relations
             
         "Назад":
@@ -415,150 +418,150 @@ label lbl_social_mom:
     return
     
 label lbl_change_relations:
+    $ target = renpy.call_screen('sc_choose_character')
+    call lbl_info_new(target)
     menu:
         'Выбрать используемый жетон.'
-        'Accordance' if child.has_token("accordance"):
+        'Accordance' if target.has_token("accordance"):
             menu:
-                'Наладить отношения с матерью' if mom.stance(player).value < 2:
+                'Наладить отношения глоабльно' if target.stance(player).value < 2:
                     python:
                         player.ap -= 1
-                        child.use_token('accordance')
-                        mom.stance.value += 1
-                        stance = mom.stance.level
-                    'Глобальное отношение матери изменилось. Теперь: [stance]'   
-                'Соглашаться и восхищаться':
+                        target.use_token('accordance')
+                        target.stance.value += 1
+                    'Глобальное отношение с персонажем изменилось.'   
+                'Улучшить согласие':
                     $ player.ap -= 1
-                    $ mom.use_token('accordance')
-                    $ child.relations(mom).change('congruence', '+')
-                'Троллить и подъёбывать':
+                    $ target.use_token('accordance')
+                    $ player.relations(target).change('congruence', '+')
+                'Обострить разногласия':
                     $ player.ap -= 1
-                    $ mom.use_token('accordance')
-                    $ child.relations(mom).change('congruence', '-')
-                'Знаять мягкую позицию':
+                    $ target.use_token('accordance')
+                    $ player.relations(target).change('congruence', '-')
+                'Охладить пыл':
                     $ player.ap -= 1
-                    $ mom.use_token('accordance')
-                    $ child.relations(mom).change('fervor', '+')                            
-                'Занять жесткую позицию':
+                    $ target.use_token('accordance')
+                    $ player.relations(target).change('fervor', '+')                            
+                'Разжечь пыл':
                     $ player.ap -= 1
-                    $ mom.use_token('accordance')
-                    $ child.relations(mom).change('fervor', '-')  
+                    $ target.use_token('accordance')
+                    $ player.relations(target).change('fervor', '-')  
                 'Больше личной вовлечённости':
                     $ player.ap -= 1
-                    $ mom.use_token('accordance')
-                    $ child.relations(mom).change('distance', '+')
+                    $ target.use_token('accordance')
+                    $ player.relations(target).change('distance', '+')
                 'Формализовать отношения':
                     $ player.ap -= 1
-                    $ mom.use_token('accordance')
-                    $ child.relations(mom).change('distance', '-')
+                    $ target.use_token('accordance')
+                    $ player.relations(target).change('distance', '-')
                 'Назад':
                     jump lbl_change_relations  
                     
-        'Antagonism' if mom.has_token("antagonism"):
+        'Antagonism' if target.has_token("antagonism"):
             menu:
-                'Испортить отношения с матерью' if mother.stance.value > 0:
+                'Испортить отношения глобально' if target.stance(player).value > 0:
                     python:
                         player.ap -= 1
-                        child.use_token('antagonism')
-                        mother.stance.value -= 1
-                        stance = mom.stance.level
-                    'Глобальное отношение матери изменилось. Теперь: [stance]'                     
-                'Троллить и подъёбывать':
+                        target.use_token('antagonism')
+                        target.stance.value -= 1
+                    'Глобальное отношение изменилось.'                     
+                'Обострить разногласия':
                     $ player.ap -= 1
-                    $ mom.use_token('antagonism')
-                    $ child.relations(mom).change('congruence', '-')
-                'Занять жесткую позицию':
+                    $ target.use_token('antagonism')
+                    $ player.relations(target).change('congruence', '-')
+                'Разжечь пыл':
                     $ player.ap -= 1
-                    $ mom.use_token('antagonism')
-                    $ child.relations(mom).change('fervor', '-')                    
+                    $ target.use_token('antagonism')
+                    $ player.relations(target).change('fervor', '-')                  
                 'Формализовать отношения':
                     $ player.ap -= 1
-                    $ mom.use_token('antagonism')
-                    $ child.relations(mom).change('distance', '-')
+                    $ target.use_token('antagonism')
+                    $ player.relations(target).change('distance', '-')
                 'Назад':
                     jump lbl_change_relations  
                     
-        'Compassion' if mom.has_token("compassion"):
+        'Conquest' if target.has_token("conquest"):
             menu:
-                'Смягчить позицию мамки' if mom.stance.level == 'cruel':
+                'Наладить отношения глобально' if target.stance(player).value == -1:
                     $ player.ap -= 1
-                    $ mom.use_token('compassion')
-                    $ mom.stance.set_level('opressive')         
-                    'Глобальное отношение мамки изменилось с жестокого на деспотичное'
-                'Разжалобить мамку':
+                    $ target.use_token('conquest')
+                    $ target.stance(player).value += 1         
+                    'Глобальное отношение (stance) изменилось.'
+                'Насилие ведёт к уважению':
                     $ player.ap -= 1
-                    $ mom.use_token('compassion')
-                    $ mom.stance.add_point('compassion')                    
-                'Соглашаться и восхищаться':
+                    $ target.use_token('conquest')
+                    $ target.stance(player).conquest += 1
+                'Улучшить согласие':
                     $ player.ap -= 1
-                    $ mom.use_token('compassion')
-                    $ mom.relations(child).change('congruence', '+')
-                'Занять мягкую позицию':
+                    $ target.use_token('conquest')
+                    $ player.relations(target).change('congruence', '+')
+                'Охладить пыл':
                     $ player.ap -= 1
-                    $ mom.use_token('compassion')
-                    $ mom.relations(child).change('fervor', '+')
+                    $ target.use_token('conquest')
+                    $ player.relations(target).change('fervor', '+')   
                 'Больше личной вовлечённости':
                     $ player.ap -= 1
-                    $ mom.use_token('compassion')
-                    $ mom.relations(child).change('distance', '+')
+                    $ target.use_token('conquest')
+                    $ player.relations(target).change('distance', '+')
                 'Назад':
                     jump lbl_change_relations  
                     
-        'Confidence' if mom.has_token("confidence"):
+        'Confidence' if target.has_token("convention"):
             menu:
-                'Смягчить позицию мамки' if mom.stance.level == 'cruel':
+                'Наладить отношения глобально' if target.stance(player).value == -1:
                     $ player.ap -= 1
-                    $ mom.use_token('confidence')
-                    $ mom.stance.set_level('opressive')         
-                    'Глобальное отношение мамки изменилось с жестокого на деспотичное'
-                'Увеличить доверие мамки':
+                    $ target.use_token('convention')
+                    $ target.stance(player).value += 1         
+                    'Глобальное отношение (stance) изменилось.'
+                'Постоянство ведёт к уважению':
                     $ player.ap -= 1
-                    $ mom.use_token('confidence')
-                    $ mom.stance.add_point('confidence')                    
-                'Соглашаться и восхищаться':
+                    $ target.use_token('convention')
+                    $ target.stance(player).convention += 1                 
+                'Улучшить согласие':
                     $ player.ap -= 1
-                    $ mom.use_token('confidence')
-                    $ mom.relations(child).change('congruence', '+')
-                'Занять жесткую позицию':
+                    $ target.use_token('convention')
+                    $ player.relations(target).change('congruence', '+')
+                'Разжечь пыл':
                     $ player.ap -= 1
-                    $ mom.use_token('confidence')
-                    $ child.relations(mom).change('fervor', '-')   
+                    $ target.use_token('convention')
+                    $ player.relations(target).change('fervor', '-')     
                 'Формализовать отношения':
                     $ player.ap -= 1
-                    $ mom.use_token('confidence')
-                    $ child.relations(mom).change('distance', '-')
+                    $ target.use_token('convention')
+                    $ player.relations(target).change('distance', '-')
                 'Назад':
                     jump lbl_change_relations  
                     
-        'Craving' if mom.has_token("craving"):
+        'Craving' if target.has_token("contribution"):
             menu:
-                'Смягчить позицию мамки' if mom.stance.level == 'opressive' and mom.favor() > 3:
+                'Наладить отношения глобально' if target.stance(player).value == 0 and target.stance(player).respect() > 3:                    
                     $ player.ap -= 1
-                    $ mom.use_token('craving')
-                    $ mom.stance.set_level('rightful')         
-                    'Глобальное отношение мамки изменилось с деспотичного на справедливое'
-                'Внушить мамке любовь':
+                    $ target.use_token('contribution')
+                    $ target.stance(player).value += 1           
+                    'Глобальное отношение изменилось'
+                'Благодарность ведёт к уважению':
                     $ player.ap -= 1
-                    $ mom.use_token('craving')
-                    $ mom.stance.add_point('craving')                    
-                'Занять жесткую позицию':
+                    $ target.use_token('contribution')
+                    $ target.stance(player).contribution += 1                         
+                'Разжечь пыл':
                     $ player.ap -= 1
-                    $ mom.use_token('craving')
-                    $ mom.relations(child).change('fervor', '-')   
-                'Занять мягкую позицию':
+                    $ target.use_token('contribution')
+                    $ player.relations(target).change('fervor', '-')     
+                'Охладить пыл':
                     $ player.ap -= 1
-                    $ mom.use_token('craving')
-                    $ mom.relations(child).change('fervor', '+')
+                    $ target.use_token('contribution')
+                    $ player.relations(target).change('fervor', '+') 
                 'Больше личной вовлечённости':
                     $ player.ap -= 1
-                    $ mom.use_token('craving')
-                    $ mom.relations(child).change('distance', '+')
+                    $ target.use_token('contribution')
+                    $ player.relations(target).change('distance', '+')
                 'Назад':
                     jump lbl_change_relations  
                     
         "Достаточно":
-            jump lbl_son_manage        
+            jump lbl_universal_menu        
                     
-    jump lbl_son_manage  
+    jump lbl_universal_menu  
     return
 
 label lbl_misery:
