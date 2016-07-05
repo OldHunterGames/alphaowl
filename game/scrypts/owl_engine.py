@@ -177,7 +177,7 @@ class Engine(object):
         if controlled:
             torture.add_button('minor', 'minor', 'cons', 'intensity')
             torture.add_button('severe', 'severe', 'pros', 'intensity')
-
+        
         result = torture.activate()
         if 'severe' in torture.pros:
             target.general.set_shift(-5)

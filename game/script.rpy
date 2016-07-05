@@ -356,6 +356,11 @@ screen sc_skillcheck(action):
         if i > 5:
             i=5
         text = [check_results[i]]
+        class Special_button(object):
+            def __init__(self, button):
+                self.button = button
+            def __call__(self):
+                self.button.click()
         class CalcResult(object):
             def __init__(self, pros, cons, text):
                 self.pros = pros
@@ -396,7 +401,7 @@ screen sc_skillcheck(action):
                 if i == 2:
                     self.list.append('lucky')
                 elif i == 1:
-                    self.action.cons.append('unlucky')
+                    self.cons.append('unlucky')
                 renpy.restart_interaction()
 
     hbox:
@@ -418,7 +423,7 @@ screen sc_skillcheck(action):
                 textbutton "Рискнуть" action[AddToList(action.pros, 'risk', action.cons), CalcResult(action.pros, action.cons, text)]
             for button in action.buttons:
                 if button.active:
-                    textbutton '[button.name]' action[button.click(), AddToList(button.list_to_add, button.description), CalcResult(action.pros, action.cons, text)]
+                    textbutton '[button.name]' action[Special_button(button), AddToList(button.list_to_add, button.description), CalcResult(action.pros, action.cons, text)]
             vbox:
                 text "Результат действия: [text[0]]"
         vbox:

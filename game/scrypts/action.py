@@ -228,15 +228,13 @@ def pros_cons_default():
 
 def pros_cons_skill(character, skill, difficulty, pros, cons):
     skill = character.skill(skill)
-    i = difficulty
-    i -= getattr(character, character.skill(skill).attribute)
-    if i > 1:
-        while i > 1:
+    if difficulty-skill.attribute_value > 1:
+        for i in range(difficulty-1):
             cons.append('very')
-            i -= 1
-    if i==1:
         cons.append('difficult')
-    elif i < 0:
+    if difficulty-skill.attribute_value == 1:
+        cons.append('difficult')
+    if difficulty-skill.attribute_value < 0:
         pros.append('easy')
     if skill.talent:
         pros.append('talent')
