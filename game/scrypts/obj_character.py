@@ -319,7 +319,9 @@ class Person(object):
     def show_skills(self):
         s = ""
         for skill in self.skills:
-            s += "{skill.name}({skill.level})".format(skill=skill)
+            s += "{name}({skill.level}, {skill.attribute}({skill.attribute_value}))".format(name=skill.name, skill=skill)
+            if skill != self.skills[len(self.skills)-1]:
+                s += ', '
         return s
 
     def show_mood(self):
@@ -327,6 +329,12 @@ class Person(object):
         mood = self.mood()
         return "{mood}({val})".format(mood=m[mood[0]], val=mood[1])
 
+
+    def show_attributes(self):
+        s = ""
+        for key, value in self.attributes.items():
+            s += "{0}({1})".format(key, value)
+        return s
 
     def name(self):
         s = self.firstname + " " + self.surname

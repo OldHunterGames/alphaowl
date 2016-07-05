@@ -75,6 +75,7 @@ label lbl_info_new(target):
         focus = target.show_focus()
         rel = target.relations(player).description() if target!=player else None
         stance = target.stance(player).level if target!=player else None
+        skills = target.show_skills()
         txt = "Настроение: " + str(target.mood())
         if stance:
             txt += " | Отношение: " + str(stance) +'\n'
@@ -92,6 +93,9 @@ label lbl_info_new(target):
         txt += "Удовлетворённые: %s\n"%(needs_statisfied)
         txt += "Пресыщения: %s\n"%(needs_overflow)
         txt += "Особенности: %s\n"%(features)
+        txt += "Аттрибуты: %s\n"%(target.show_attributes())
+        if skills:
+            txt += "Навыки: %s\n"%(skills)
     "[txt]"
 
     return
