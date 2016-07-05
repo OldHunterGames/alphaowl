@@ -12,7 +12,16 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 from stance import Stance
-
+accommodation_types = {'makeshift bad': {'vigor': 2, 'comfort': -3},
+                       'campfire': {'vigor': 3, 'comfort': -1},
+                       'chained': {'vigor': 0, 'comfort': -4, 'activity': -4, 'wellness': -3},
+                       'jailed': {'vigor': 0, 'comfort': -3, 'activity': -3, 'wellness': -2},
+                       'confined': {'vigor': 0, 'comfort': -5, 'activity': -5, 'wellness': -4},
+                       'rough mat': {'vigor': 2, 'comfort': -2, 'prosperity': -1, 'wellness': -1},
+                       'cot and blanket': {'vigor': 4},
+                       'appartament': {'vigor': 5, 'comfort': 3},
+                       'love nest': {'vigor': 6, 'comfort': 5, 'prosperity': 2, 'communication': 2, 'eros': 2}
+                       }
 
 class Alignment(object):
     _orderliness = {-1: "chaotic", 0: "conformal", 1: "lawful"}
@@ -487,8 +496,7 @@ class Person(object):
         for f in self.features:
             if f.slot == slot:
                 return f
-            else:
-                return None
+        return None
 
     def feature(self, name):                # finds feature with needed name if exist
         for f in self.features:
@@ -586,7 +594,7 @@ class Person(object):
 
     def fatness_change(self):
         calorie_difference = self.consume_food() - self.food_demand()
-        if calorie_difference > 0:
+        if calorie_difference > -1:
             power = 5 - calorie_difference
             if power < 1:
                 power = 1
@@ -607,32 +615,37 @@ class Person(object):
             self.conditions.append(('vigor', -1))
             if self.calorie_storage <= chance:
                 ind -= 1
+                if self.feature('dyspnoea'):
+                    self.remove_feature('dyspnoea')
                 if ind < 0:
                     ind = 0
-                    if self.feature('starving'):
-                        self.add_feature('dead')
-                    else:
-                        self.add_feature('starving')
+                if self.feature('starving'):
+                    self.add_feature('dead')
+                else:
+                    self.add_feature('starving')
                 f = flist[ind]
                 if f:
-                    self.add_feature(flist[ind])
+                    self.add_feature(f)
                 else:
                     self.feature_by_slot('shape').remove()
+                self.calorie_storage = 0
+                return
         if self.calorie_storage > 0:
             chance = randint(1, 10)
             if self.calorie_storage >= chance:
                 ind += 1
                 if ind > 4:
                     ind = 4
-                    if self.feature('dyspnoea'):
-                        self.add_feature('diabetes')
-                    else:
-                        self.add_feature('dyspnoea')
+                if self.feature('dyspnoea'):
+                    self.add_feature('diabetes')
+                else:
+                    self.add_feature('dyspnoea')
                 f = flist[ind]
                 if f:
                     self.add_feature(f)
                 else:
                     self.feature_by_slot('shape').remove()
+                self.calorie_storage = 0
     def nutrition_change(self, food_consumed):
         if food_consumed < self.food_demand():
             self.ration["overfeed"] -= 1
