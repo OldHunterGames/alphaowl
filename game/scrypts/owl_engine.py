@@ -179,6 +179,8 @@ class Engine(object):
             torture.add_button('severe', 'severe', 'pros', 'intensity')
 
         result = torture.activate()
+        if 'severe' in torture.pros:
+            target.general.set_shift(-5)
         if result < 1:
             target.add_token('antagonism')
             return
@@ -195,8 +197,7 @@ class Engine(object):
                 n.set_shift(-result)
             if memory:
                 Action.set_memory(actor, target, n, result, 'atrocity')
-        if 'severe' in torture.pros:
-            target.general.set_shift(-5)
+        
         if memory:
             target.add_token(token)
         return result
