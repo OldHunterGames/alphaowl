@@ -169,7 +169,7 @@ class Engine(object):
         torture.compare_two(0, target.mood()[0], 'misery', 'hope')
         torture.set_phobias(*phobias)
         torture.set_skill(skill)
-        torture.compare_two(target.stance(self.player), 0, 'wilingness', 'contradiction')
+        torture.compare_two(target.stance(self.player).value, 0, 'wilingness', 'contradiction')
         torture.compare_two(morality, 0, 'morally sure', 'moral doubts')
         torture.compare_two(Action.max_intensity(actor, respect_needs)[0], target.stance(self.player).respect(),
                             'rigor', 'indulgence')
@@ -221,7 +221,7 @@ class Engine(object):
         suffering.set_phobias(*phobias)
         if not skill:
             suffering.compare_two(target.mood()[0], 0, 'serene torturer', 'angry torturer')
-        suffering.compare_two(target.stance(self.player), 0, 'wilingness', 'contradiction')
+        suffering.compare_two(target.stance(self.player).value, 0, 'wilingness', 'contradiction')
         suffering.compare_two(0, actor.mood()[0], 'miserable victim', 'cheerful victim')
         suffering.compare_two(0, morality, 'mercy', 'sadism')
         suffering.compare_two(target.stance(self.player).respect(), Action.max_intensity(target, respect_needs)[0],
@@ -262,10 +262,10 @@ class Engine(object):
         please.difficulty = difficulty if difficulty else target.sensitivity
         please.set_power(power, 6, Action.max_intensity(target, target_please)[0], 'desire', 'unconcerned')
         please.set_skill(skill)
-        please.compare_two(target.stance(self.player), 0, 'wilingness', 'contradiction')
+        please.compare_two(target.stance(self.player).value, 0, 'wilingness', 'contradiction')
         please.compare_two(morality, 0, 'ardour', 'composure')
         please.compare_two(0, target.mood()[0], 'sorrow', 'already happy')
-        please.compare_two(target.stance(self.player), Action.max_intensity(actor, respect_needs)[0], 'well-earned', 'connivance')
+        please.compare_two(target.stance(self.player).respect(), Action.max_intensity(actor, respect_needs)[0], 'well-earned', 'connivance')
         result = please.activate()
         if result < 1:
             target.add_token('antagonism')
@@ -300,7 +300,7 @@ class Engine(object):
         commun.set_power(power, 6, Action.max_intensity(actor, respect_needs), 'confidence', 'disbelief')
         if not skill:
             commun.compare_two(actor.mood()[0], 0, 'mood', 'mood')
-        commun.compare_two(target.stance(self.player), 0, 'wilingness', 'contradiction')
+        commun.compare_two(target.stance(self.player).value, 0, 'wilingness', 'contradiction')
         commun.compare_two(actor.mind, target.mind, 'insightful', 'clueless')
         commun.compare_two(target.mood()[0], 0, 'cheerful', 'grumpy')
         commun.compare_two(morality, 0, 'morally sure', 'moral doubts')
