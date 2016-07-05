@@ -539,7 +539,7 @@ label lbl_social_mom:
     return
     
 label lbl_change_relations:
-    $ target = renpy.call_screen('sc_choose_character')
+    # target = renpy.call_screen('sc_choose_character')
     call lbl_info_new(target)
     menu:
         'Выбрать используемый жетон.'

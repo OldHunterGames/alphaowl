@@ -43,7 +43,13 @@ label lbl_slave_torture:
             $ phobias_to_use = ['pain']
             $ targeted_need = 'wellness'    
             $ player.schedule.add_action('discipline_atrocity', 'single')
-    
+            
+        'Поставить в угол':
+            $ skill_to_use = 'sport'
+            $ phobias_to_use = ['deprevation']
+            $ targeted_need = ['comfort', 'activity']    
+            $ player.schedule.add_action('discipline_atrocity', 'single')
+            
     'Стратения наказаний определена'
     jump lbl_universal_menu
     return
@@ -315,6 +321,10 @@ label lbl_shop:
 label lbl_developement:
     menu:
         "Надо что-то сделать для развития сыночки-корзиночки."
+        "Прорыв в отношениях":
+            $ target = child
+            call lbl_change_relations
+        
         "Основные навыки":
             menu:
                 'Хоть бы книжку почитал!' if not child.skill('coding').training:
