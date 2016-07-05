@@ -51,6 +51,10 @@ class Action(object):
         for mem in _needs_memory:
             if mem.actor == actor and mem.target == target:
                 mem.set_memory(need, power, t)
+                return
+        m = Need_memory(actor, target)
+        m.set_memory(need, power, t)
+        _needs_memory.append(m)
     
 
     @staticmethod

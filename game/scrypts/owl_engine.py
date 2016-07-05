@@ -188,15 +188,15 @@ class Engine(object):
             actor.drain_vigor()
             target.drain_vigor()
         
-        maxn = Action.max_intensity(target, target_tense)[0]
-        if maxn > Action.get_memory(self.player, target, maxn, 'atrocity') and result > target.token_difficulty(token):
+        maxn = Action.max_intensity(target, target_tense)
+        if maxn[0] > Action.get_memory(self.player, target, maxn[1], 'atrocity') and result > target.token_difficulty(token):
             memory = True
         for need in target_tense:
             n = getattr(target, need)
             if result > 0 and not 'minor' in torture.cons:
                 n.set_shift(-result)
             if memory:
-                Action.set_memory(self.player, target, n, result, 'atrocity')
+                Action.set_memory(self.player, target, need, result, 'atrocity')
         
         if memory:
             target.add_token(token)
@@ -235,8 +235,8 @@ class Engine(object):
         if result >= 0:
             actor.drain_vigor()
 
-        maxn = Action.max_intensity(actor, actor_tense)[0]
-        if maxn > Action.get_memory(self.player, target, maxn, 'suffering') and result > target.token_difficulty(token):
+        maxn = Action.max_intensity(actor, actor_tense)
+        if maxn[0] > Action.get_memory(self.player, target, maxn[1], 'suffering') and result > target.token_difficulty(token):
             memory = True
         
         for need in actor_tense:
@@ -244,7 +244,7 @@ class Engine(object):
             if result > 0:
                 n.set_shift(-result)
             if memory:
-                Action.set_memory(self.player, target, n, result, 'suffering')
+                Action.set_memory(self.player, target, need, result, 'suffering')
         if memory:
             target.add_token(token)
         return result
@@ -273,15 +273,15 @@ class Engine(object):
         if result >= 0:
             actor.drain_vigor()
 
-        maxn = Action.max_intensity(target, target_please)[0]
-        if maxn > Action.get_memory(self.player, target, maxn, 'pleasing') and result > target.token_difficulty(token):
+        maxn = Action.max_intensity(target, target_please)
+        if maxn[0] > Action.get_memory(self.player, target, maxn[1], 'pleasing') and result > target.token_difficulty(token):
             memory = True
         for need in target_please:
             n = getattr(target, need)
             if result > 0:
                 n.set_shift(-result)
             if memory:
-                Action.set_memory(self.player, target, n, result, 'pleasing')
+                Action.set_memory(self.player, target, need, result, 'pleasing')
         if memory:
             target.add_token(token)
         return result
@@ -290,7 +290,7 @@ class Engine(object):
     def intercommunion_power(self, *args, **kwargs):
         return self.intercommunion(*args, **kwargs)
     def intercommunion(self, actor, target, token='convention', power=0, skill=None, difficulty=0,
-                        respect_needs=['communication'], morality=0, motivation=None, name='template_name'):
+                        morality=0, motivation=None, name='template_name'):
 
         commun = Action(actor, target, name)
         commun.difficulty = difficulty if difficulty else target.mind
