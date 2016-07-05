@@ -9,9 +9,9 @@ class Relations(object):
     _congruence = {-1: "contradictor", 0: "associate", 1: "supporter"}
     def __init__(self, person1, person2):
         self.persons = [person1, person2]
-        self._fervor = 1
-        self._distance = 1
-        self._congruence = 1
+        self._fervor = 0
+        self._distance = 0
+        self._congruence = 0
         self.is_player_relations()
             
 
