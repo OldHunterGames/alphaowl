@@ -16,6 +16,9 @@ label lbl_universal_menu:
                 "Сычик" if player == mom:
                     call lbl_mom_manage    
        
+        "Общение" if player == mom:
+            call lbl_universal_interaction
+            
         "Расписание" if player == child:
             call lbl_make_shedule
                     

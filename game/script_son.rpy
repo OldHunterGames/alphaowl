@@ -147,6 +147,7 @@ label lbl_universal_interaction:
         "Сыночка-корзиночка" if player == mom:
             $ communication = 'Сычуля'
             $ unin_target = child
+            call lbl_slave_train
         "ВАTYA" if player == mom:
             $ communication = 'BATYA'
             $ unin_target = batya

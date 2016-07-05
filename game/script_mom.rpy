@@ -10,17 +10,31 @@ label lbl_mom_manage:
             call lbl_rules            
         "После учебы":
             call lbl_job_rules
-
-        
-
-        "Воспитание":
-            call lbl_discipline
-
             
-    jump lbl_mom_manage
+    jump lbl_universal_menu
     
     return
     
+
+label lbl_slave_train:
+    menu:
+        "Нужно выбрать концептуальный подход к воспитанию."
+        "Наказания":
+            $ token_to_gain = 'conquest'
+            $ moral_burden = ['evil', 'ardent'] 
+            $ self_bonus_need = ['power']
+            call lbl_slave_torture
+    
+    return
+
+label lbl_slave_torture
+    menu:
+        'Пороть':
+            $ skill_to_use = 'sport'
+            $ targeted_need = 'wellness'    
+            $ player.schedule.add_action('discipline_atrocity', 'single')
+            
+    return
 
 label lbl_food_rules:
     menu:
@@ -258,7 +272,7 @@ label lbl_shop:
                     txt = "ПРИХОДИШЬ В МАГАЗ\n @\n И ДАЖЕ СРАНЫЙ ГАРНИТУР МОЖЕШЬ КУПИТЬ\n @\n ТЕНГЕ НЕ ХВАТАЕТ"
 
         'Назад':
-            jump lbl_mom_manage
+            jump lbl_universal_menu
             
     
     '[txt]'    
