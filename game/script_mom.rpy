@@ -22,18 +22,21 @@ label lbl_slave_train:
         "Наказания":
             $ token_to_gain = 'conquest'
             $ moral_burden = ['evil', 'ardent'] 
-            $ self_bonus_need = ['power']
+            $ self_bonus_need = 'power'
             call lbl_slave_torture
     
     return
 
-label lbl_slave_torture
+label lbl_slave_torture:
     menu:
         'Пороть':
             $ skill_to_use = 'sport'
+            $ phobias_to_use = ['pain']
             $ targeted_need = 'wellness'    
             $ player.schedule.add_action('discipline_atrocity', 'single')
-            
+    
+    'Стратения наказаний определена'
+    jump lbl_universal_menu
     return
 
 label lbl_food_rules:
