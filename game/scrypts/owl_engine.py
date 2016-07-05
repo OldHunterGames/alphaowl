@@ -152,14 +152,18 @@ class Engine(object):
             return True
         return False
 
+    
 
-    def atrocity(self, actor, target, token, target_tense=['general'], power=0, 
-                skill=None, phobias=[], morality=0, name='template_name',
-                respect_needs=['authority', 'power'], difficulty=3, motivation=None):
+    def atrocity_power(self, *args, **kwargs):
+        return self.atrocity(*args, **kwargs)
+
+    def atrocity(self, actor, target, token='conquest', target_tense=['general'], power=0, 
+                skill=None, phobias=[], morality=0, name='template_name', controlled=False,
+                respect_needs=['authority', 'power'], difficulty=0, motivation=None):
 
         memory = False
         torture = Action(actor, target, name)
-        torture.difficulty = difficulty
+        torture.difficulty = difficulty if difficulty else target.spirit
         torture.motivation = motivation
         torture.morality = morality
         torture.compare_two(0, target.mood()[0], 'misery', 'hope')
@@ -170,8 +174,16 @@ class Engine(object):
         torture.compare_two(Action.max_intensity(actor, respect_needs)[0], target.stance(self.player).respect(),
                             'rigor', 'indulgence')
         torture.set_power(power, 6, Action.max_intensity(target, target_tense)[0], 'severe suffering', 'minor concern')
+        if controlled:
+            torture.add_button('minor', 'minor', 'cons', 'intensity')
+            torture.add_button('severe', 'severe', 'pros', 'intensity')
 
         result = torture.activate()
+        if 'severe' in torture.pros:
+            target.general.set_shift(-5)
+        if result < 1:
+            target.add_token('antagonism')
+            return
         if result >= 0:
             actor.drain_vigor()
             target.drain_vigor()
@@ -181,24 +193,29 @@ class Engine(object):
             memory = True
         for need in target_tense:
             n = getattr(target, need)
-            if result > 0:
+            if result > 0 and not 'minor' in torture.cons:
                 n.set_shift(-result)
             if memory:
                 Action.set_memory(actor, target, n, result, 'atrocity')
+        
         if memory:
             target.add_token(token)
         return result
 
 
-    def suffering(self, actor, target, token, actor_tense=['general'], power=0, 
+    def suffering_power(self, *args, **kwargs):
+        if 'skill' in kwargs:
+            raise Exception('Suffering_power is not for check with skill')
+        return self.suffering(*args, **kwargs)
+    def suffering(self, actor, target, token='conquest', actor_tense=['general'], power=0, 
                 skill=None, phobias=[], morality=0, name='template_name',
-                respect_needs=['authority', 'power'], difficulty=3, motivation=None, beneficiar=None):
+                respect_needs=['authority', 'power'], difficulty=0, motivation=None, beneficiar=None):
 
         memory = False
         suffering = Action(actor, target, name, name)
         suffering.motivation = motivation
         suffering.morality = morality
-        suffering.difficulty = difficulty
+        suffering.difficulty = difficulty if difficulty else actor.spirit
         suffering.set_power(power, 6, Action.max_intensity(actor, actor_tense)[0], 'severe suffering', 'minor concern')
         suffering.set_skill(skill)
         suffering.set_phobias(*phobias)
@@ -210,14 +227,18 @@ class Engine(object):
         suffering.compare_two(target.stance(self.player).respect(), Action.max_intensity(target, respect_needs)[0],
                             'indulgence', 'rigor')
         result = suffering.activate()
+        if beneficiar:
+            target = beneficiar
+        if result < 1:
+            target.add_token('antagonism')
+            return
         if result >= 0:
             actor.drain_vigor()
 
-        maxn = Action.max_intensity(target, actor_tense)[0]
+        maxn = Action.max_intensity(actor, actor_tense)[0]
         if maxn > Action.get_memory(actor, target, maxn, 'suffering') and result > target.token_difficulty(token):
             memory = True
-        if beneficiar:
-            target = beneficiar
+        
         for need in actor_tense:
             n = getattr(actor, need)
             if result > 0:
@@ -229,14 +250,16 @@ class Engine(object):
         return result
 
 
-    def pleasing(self, actor, target, token, target_please=['general'], power=0, difficulty=3, name='template_name',
+    def pleasing_power(self, *args, **kwargs):
+        return self.pleasing(*args, **kwargs)
+    def pleasing(self, actor, target, token='contribution', target_please=['general'], power=0, difficulty=0, name='template_name',
                 skill=None, actor_needs=[], respect_needs=['authority', 'altruism'], morality=0, motivation=None):
 
         memory = False
         please = Action(actor, target, name)
         please.motivation = motivation
         please.morality = morality
-        please.difficulty = difficulty
+        please.difficulty = difficulty if difficulty else target.sensitivity
         please.set_power(power, 6, Action.max_intensity(target, target_please)[0], 'desire', 'unconcerned')
         please.set_skill(skill)
         please.compare_two(target.stance(self.player), 0, 'wilingness', 'contradiction')
@@ -244,6 +267,9 @@ class Engine(object):
         please.compare_two(0, target.mood()[0], 'sorrow', 'already happy')
         please.compare_two(target.stance(self.player), Action.max_intensity(actor, respect_needs)[0], 'well-earned', 'connivance')
         result = please.activate()
+        if result < 1:
+            target.add_token('antagonism')
+            return 
         if result >= 0:
             actor.drain_vigor()
 
@@ -260,11 +286,14 @@ class Engine(object):
             target.add_token(token)
         return result
 
-    def intercommunion(self, actor, target, token, power=0, skill=None, difficulty=3,
+
+    def intercommunion_power(self, *args, **kwargs):
+        return self.intercommunion(*args, **kwargs)
+    def intercommunion(self, actor, target, token='convention', power=0, skill=None, difficulty=0,
                         respect_needs=['communication'], morality=0, motivation=None, name='template_name'):
 
         commun = Action(actor, target, name)
-        commun.difficulty = difficulty
+        commun.difficulty = difficulty if difficulty else target.mind
         commun.motivation = motivation
         commun.morality = morality
         commun.set_skill(skill)
@@ -277,7 +306,9 @@ class Engine(object):
         commun.compare_two(morality, 0, 'morally sure', 'moral doubts')
         
         result = commun.activate()
-        
+        if result < 1:
+            target.add_token('antagonism')
+            return
         if result > target.token_difficulty(token):
             target.add_token(token)
         return result

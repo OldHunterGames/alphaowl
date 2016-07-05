@@ -299,9 +299,9 @@ label label_new_day:
 
     return        
 
-label lbl_skill_check(pros, cons, character, skill=None, name='template_name'):
+label lbl_skill_check(action):
     python:
-        renpy.call_screen('sc_skillcheck', pros, cons, character, skill, name)
+        renpy.call_screen('sc_skillcheck', action)
     return 
         
 label lbl_action_check:
@@ -338,9 +338,9 @@ label lbl_notify(character, effect):
     return
 
 
-screen sc_skillcheck(pros, cons, character, skill, name):
+screen sc_skillcheck(action):
     python:
-        i = len(pros) - len(cons)
+        i = len(action.pros) - len(action.cons)
         if i < 0:
             i=0
         if i > 5:
@@ -363,7 +363,7 @@ screen sc_skillcheck(pros, cons, character, skill, name):
                 self.text.append(check_results[i])
                 renpy.restart_interaction()
         class DelFromList(object):
-            def __init__(self, pros, text):
+            def __init__(self, l, pros, text):
                 self.text = text
                 self.list = l
             def __call__(self):
@@ -373,8 +373,8 @@ screen sc_skillcheck(pros, cons, character, skill, name):
             def __init__(self, l, text, cons=None):
                 self.list = l
                 self.text = text
-                if cons:
-                    self.cons = cons
+                if action.cons:
+                    self.cons = action.cons
             def __call__(self):
                 if self.text == 'risk':
                     self.risk()
@@ -386,32 +386,36 @@ screen sc_skillcheck(pros, cons, character, skill, name):
                 if i == 2:
                     self.list.append('lucky')
                 elif i == 1:
-                    self.cons.append('unlucky')
+                    self.action.cons.append('unlucky')
                 renpy.restart_interaction()
+
     hbox:
         xalign 0.0
         yalign 0.0
         vbox:
-            for s in cons:
+            for s in action.cons:
                 text "{color=#f00}[s]{/color}"
         vbox:
-            $ CalcResult(pros, cons, text)
-            text name
+            $ CalcResult(action.pros, action.cons, text)
+            text action.name
             text "Опции: "
-            if not('vigorous' in pros or 'unlucky' in cons or character.vigor < 2):
-                textbutton "Работать хорошо" action[AddToList(pros, 'vigorous'), CalcResult(pros, cons, text)] 
-            if not('determined' in pros or 'unlucky' in cons or character.determination < 1):
-                textbutton "Выложиться полностью" action[AddToList(pros, 'determined'), CalcResult(pros, cons, text)]
-            if not('lucky' in pros or 'unlucky' in cons):
-                textbutton "Рискнуть" action[AddToList(pros, 'risk', cons), CalcResult(pros, cons, text)]
+            if not('vigorous' in action.pros or 'unlucky' in action.cons or action.actor.vigor < 2):
+                textbutton "Работать хорошо" action[AddToList(action.pros, 'vigorous'), CalcResult(action.pros, action.cons, text)] 
+            if not('determined' in action.pros or 'unlucky' in action.cons or action.actor.determination < 1):
+                textbutton "Выложиться полностью" action[AddToList(action.pros, 'determined'), CalcResult(action.pros, action.cons, text)]
+            if not('lucky' in action.pros or 'unlucky' in action.cons):
+                textbutton "Рискнуть" action[AddToList(action.pros, 'risk', action.cons), CalcResult(action.pros, action.cons, text)]
+            for button in action.buttons:
+                if button.active:
+                    textbutton '[button.name]' action[button.click(), AddToList(button.list_to_add, button.description), CalcResult(action.pros, action.cons, text)]
             vbox:
                 text "Результат действия: [text[0]]"
         vbox:
-            for s in pros:
+            for s in action.pros:
                 text "{color=#00ff00}[s]{/color}"
     hbox:
         xalign 0.5
         yalign 0.5
         textbutton "Выполнить работу" action[Return()]
-        if skill:
-            textbutton "Саботировать" action[AddToList(cons, 'sabotage'), Return()]
+        if action.is_skillcheck():
+            textbutton "Саботировать" action[AddToList(action.cons, 'sabotage'), Return()]
