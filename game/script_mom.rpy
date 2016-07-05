@@ -37,20 +37,38 @@ label lbl_slave_train:
     return
 
 label lbl_slave_torture:
-    menu:
-        'Пороть':
+    menu:            
+        'Ругать':
+            $ skill_to_use = 'conversation'
+            $ phobias_to_use = ['abuse']
+            $ targeted_need = ['communication', 'approval']    
+            $ player.schedule.add_action('discipline_atrocity', 'single')
+
+        'Чморить':
+            $ skill_to_use = 'conversation'
+            $ phobias_to_use = ['abuse']
+            $ targeted_need = ['authority', 'ambition']    
+            $ player.schedule.add_action('discipline_atrocity', 'single')
+            
+        'Пороть (батя)':
             $ skill_to_use = 'sport'
             $ phobias_to_use = ['pain']
             $ targeted_need = ['wellness']    
-            $ player.schedule.add_action('discipline_atrocity', 'single')
+            $ batya.schedule.add_action('discipline_atrocity', 'single')
             
-        'Поставить в угол':
+        'Поставить в угол (батя)':
             $ skill_to_use = 'sport'
             $ phobias_to_use = ['deprevation']
             $ targeted_need = ['comfort', 'activity']    
+            $ batya.schedule.add_action('discipline_atrocity', 'single')
+            
+        'Хвататься за сердце':
+            $ skill_to_use = 'conversation'
+            $ phobias_to_use = ['brutality']
+            $ targeted_need = ['altruism']    
             $ player.schedule.add_action('discipline_atrocity', 'single')
             
-    'Стратения наказаний определена'
+    'Стратегия наказаний определена'
     jump lbl_universal_menu
     return
 
@@ -69,7 +87,23 @@ label lbl_slave_encourage:
             $ skill_to_use = 'conversation'
             $ targeted_need = ['ambition', 'approval']    
             $ player.schedule.add_action('discipline_pleasing', 'single')
-    
+
+        'Давать вкусняшки':
+            $ skill_to_use = 'conversation'
+            $ targeted_need = ['nutrition']    
+            $ player.schedule.add_action('discipline_pleasing', 'single')
+
+        'Отпустить в кино':
+            $ skill_to_use = 'conversation'
+            $ targeted_need = ['amusement']    
+            $ player.schedule.add_action('discipline_pleasing', 'single')
+            
+        'Карманные расходы (10 тенгэ)' if game.money > 9:
+            $ game.money -= 10
+            $ skill_to_use = 'conversation'
+            $ targeted_need = ['prosperity']    
+            $ player.schedule.add_action('discipline_pleasing', 'single')
+            
     'Стратения поощрений определена'
     jump lbl_universal_menu
     return
