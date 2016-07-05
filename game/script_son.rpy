@@ -131,19 +131,25 @@ label lbl_son_minor:
 label lbl_universal_interaction:
     menu:
         'Выберите объект социального взаимодействия'
-        'Маман':
+        'Маман' if player == child:
             $ communication = 'Маман'
             $ unin_target = mom
             jump lbl_social_mom
-        "Енотова":
+        "Енотова" if player == child:
             $ communication = 'Енотова'
             $ unin_target = eot
-        "Ерохин":
+        "Ерохин" if player == child:
             $ communication = 'Ерохин'
             $ unin_target = erokhin
-        "Ашот":
+        "Ашот" if player == child:
             $ communication = 'Ашот'
             $ unin_target = ashot
+        "Сыночка-корзиночка" if player == mom:
+            $ communication = 'Сычуля'
+            $ unin_target = child
+        "ВАTYA" if player == mom:
+            $ communication = 'BATYA'
+            $ unin_target = batya
             
     menu:
         'Выберите тип взаимодействия'
@@ -443,7 +449,7 @@ label lbl_control_lifestyle:
                     $ child.schedule.add_action('outfit_normal')
                     'Залезаешь в шкаф чтобы найти приличную одежду \n @ \n Там какие-то обноски от Тёти Ёбы и Дяди Бафомета \n @ \n И мутантная моль размером с кошака доедает ушанку (prosperity -2)'    
                 'Купим тебе модное, выбирай (25 тенгэ)' if game.tenge >= 25 and mom_stance > 0:
-                    $ game.tenge -= 25
+                    $ game.money -= 25
                     $ child.appearance = 'cool'
                     $ child.schedule.add_action('outfit_cool')
                     'Ой Сыченька, сейчас купим тебе модного \n @ \n Затариваетесь на рынке у Ашота, турецкими подделками \n @ \n А ты и не против (prosperity 4)'

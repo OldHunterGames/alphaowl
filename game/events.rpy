@@ -41,6 +41,8 @@ label evn_template(event):
     # Отсечка
     if not event.skipcheck:
         return False
+    if event.target != child:
+        $ event.skipcheck = False    
         
     #тело эвента
     return True
@@ -49,6 +51,8 @@ label evn_template(event):
 ######################################################## 
 
 label evn_teach_coding(event):
+    if event.target != child:
+        $ event.skipcheck = False    
         
     python:
         event.target.skill('coding').training = True
@@ -56,21 +60,27 @@ label evn_teach_coding(event):
     return True
 
 label evn_teach_conversation(event):
-
+    if event.target != child:
+        $ event.skipcheck = False    
+        
     python:
         event.target.skill('conversation').training = True
     'Чтобы справиться с Ерохой, надо мыслить как Ероха! Получен базовый навык социоблядства.'
     return True
 
 label evn_teach_sex(event):
-        
+    if event.target != child:
+        $ event.skipcheck = False    
+                
     python:
         event.target.skill('sex').training = True
     'BATYA знает как долго не кончать! Получена базовая сексуальная грамотность.'
     return True
 
 label evn_teach_sports(event):
-        
+    if event.target != child:
+        $ event.skipcheck = False    
+                
     python:
         event.target.skill('sports').training = True
     'Соблюдает дня режим - дЖым! Получены базовые знания о ЗОЖ.'
@@ -78,7 +88,9 @@ label evn_teach_sports(event):
     
 
 label evn_dvach_coding(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if not event.target.skill('coding').training and event.target == event.target and 'pc' not in event.target.restrictions:
             $ event.skipcheck = True
@@ -92,7 +104,9 @@ label evn_dvach_coding(event):
     return True
 
 label evn_dvach_conversation(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if not event.target.skill('conversation').training and 'pc' not in event.target.restrictions:
             $ event.skipcheck = True
@@ -106,7 +120,9 @@ label evn_dvach_conversation(event):
     return True
 
 label evn_dvach_sex(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if not event.target.skill('sex').training and 'pc' not in event.target.restrictions:
             $ event.skipcheck = True
@@ -120,7 +136,9 @@ label evn_dvach_sex(event):
     return True
 
 label evn_dvach_sports(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if not event.target.skill('sports').training and 'pc' not in event.target.restrictions:
             $ event.skipcheck = True
@@ -134,7 +152,9 @@ label evn_dvach_sports(event):
     return True
 
 label evn_dvach_b(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'pc' not in event.target.restrictions:
             $ event.skipcheck = True
@@ -149,7 +169,9 @@ label evn_dvach_b(event):
     return True
 
 label evn_dvach_fap(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'pc' not in event.target.restrictions:
             $ event.skipcheck = True
@@ -162,7 +184,9 @@ label evn_dvach_fap(event):
     return True
 
 label evn_dvach_olgino(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'pc' not in event.target.restrictions:
             $ event.skipcheck = True
@@ -176,7 +200,9 @@ label evn_dvach_olgino(event):
     return True
 
 label evn_do_major(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'major' in game.studies:
             $ event.skipcheck = True
@@ -201,7 +227,9 @@ label evn_do_major(event):
     return True
 
 label evn_do_gym(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'gym' in game.studies:
             $ event.skipcheck = True
@@ -227,7 +255,9 @@ label evn_do_gym(event):
     return True
 
 label evn_do_practice_military(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'military' in game.studies:
             $ event.skipcheck = True
@@ -253,7 +283,9 @@ label evn_do_practice_military(event):
     return True
 
 label evn_do_practice_military_chat(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'military' in game.studies:
             $ event.skipcheck = True
@@ -279,7 +311,9 @@ label evn_do_practice_military_chat(event):
     return True
    
 label evn_do_practice_labs(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'labs' in game.studies:
             $ event.skipcheck = True
@@ -305,7 +339,9 @@ label evn_do_practice_labs(event):
     return True
 
 label evn_do_practice_labs_chat(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'labs' in game.studies:
             $ event.skipcheck = True
@@ -331,7 +367,9 @@ label evn_do_practice_labs_chat(event):
     return True
 
 label evn_do_practice_programm(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'practice' in game.studies:
             $ event.skipcheck = True
@@ -359,7 +397,9 @@ label evn_do_practice_programm(event):
     return True 
 
 label evn_do_practice_programm_chat(event):
-    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
     if not event.skipcheck:
         if 'practice' in game.studies:
             $ event.skipcheck = True

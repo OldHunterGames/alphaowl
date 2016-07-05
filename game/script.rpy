@@ -166,6 +166,11 @@ label label_quiz:
                 mom.add_feature('mature')
                 mother.enslave(child)
                 mom.stance(child).value = -1
+                shedule_minor = 'безделье'
+                mom.ration['amount'] = "unlimited"   
+                mom.ration['food_type'] = "cousine"
+                mom.accommodation = "appartment"
+                mom.schedule.add_action('living_appartment')
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
