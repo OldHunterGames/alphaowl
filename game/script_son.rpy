@@ -133,7 +133,7 @@ label lbl_universal_interaction:
         'Выберите объект социального взаимодействия'
         'Маман':
             $ communication = 'Маман'
-            $ unin_target = eot
+            $ unin_target = mom
             jump lbl_social_mom
         "Енотова":
             $ communication = 'Енотова'
@@ -155,7 +155,7 @@ label lbl_universal_interaction:
         'Кооперация':
             $ token_to_gain = 'convention'
             $ moral_burden = ['lawful']       
-            $ child.schedule.add_action('social_intercommun', 'single')            
+            $ child.schedule.add_action('social_intercommunion', 'single')            
             call lbl_son_social_uni_convention 
         'Ублажение':
             $ token_to_gain = 'contribution'
@@ -222,6 +222,62 @@ label lbl_son_social_uni_conquest:
             
     return
 
+label lbl_son_social_reverse_conquest:
+
+    $ benefactor = mom
+    
+    menu:
+        'Выберите направление удара'
+        'Смысл жизни':
+            $ targeted_need = 'purpose'
+        'Питание':
+            $ targeted_need = 'nutrition'
+        'Здоровье':
+            $ targeted_need = 'wellness'
+        'Комфорт':
+            $ targeted_need = 'comfort'
+        'Подвижность':
+            $ targeted_need = 'activity'
+        'Общение':
+            $ targeted_need = 'communication'            
+        'Развлечения':
+            $ targeted_need = 'amusement'
+        'Богатство':
+            $ targeted_need = 'prosperity'   
+        'Авторитет':
+            $ targeted_need = 'authority'
+        'Амбиции':
+            $ targeted_need = 'ambition'   
+        'Секс':
+            $ targeted_need = 'eros'
+        'Стабильность':
+            $ targeted_need = 'order'   
+        'Независимость':
+            $ targeted_need = 'independence'
+        'Моральная поддержка':
+            $ targeted_need = 'approval'   
+        'Адреналин':
+            $ targeted_need = 'thrill'
+        'Альтруизм':
+            $ targeted_need = 'altruism'  
+        'Могущество':
+            $ targeted_need = 'power'
+            
+    menu:
+        'Выберите силу воздействия'
+        'Минимальная':
+            $ used_force = 1
+        'Слабая':
+            $ used_force = 2
+        'Средняя':
+            $ used_force = 3
+        'Значительная':
+            $ used_force = 4
+        'Максимальная':
+            $ used_force = 5      
+            
+    return
+    
 label lbl_son_social_uni_convention:
     $ self_bonus_need = 'order'
     $ targeted_need = 'communication'            
@@ -396,24 +452,29 @@ label lbl_control_lifestyle:
     
 
 label lbl_social_mom:
+    
     menu:
-        "Давить на жалость":
-            call lbl_misery
-            
-        "Вкалывать":
-            'СКАЗАЛ МАМЕ \n @ \nЧТО БУДЕШЬ УЧИТЬСЯ НА ЧЕТВЁРКИ И ПЯТЁРКИ \n @ \nДА КОККОЕ ТЕБЕ УЧИТЬСЯ КОРЗИНОЧКА \n @ \nТЫ ЖЕ У НАС НУЛЕВОЙ!'
-            $ child.schedule.add_action('learn_good', 'single')
-        
-        "Подлизываться":
-            call lbl_asslick
-        
-        "Прорыв в отношениях (нужны AP)" if player.ap > 0:
-            call lbl_change_relations
-            
+        'Выберите тип взаимодействия'
+        'Страдать':
+            $ token_to_gain = 'conquest'
+            $ moral_burden = ['evil', 'ardent']
+            $ child.schedule.add_action('social_misery', 'single')
+            call lbl_son_social_reverse_conquest 
+        'Вести себя хорошо':
+            $ token_to_gain = 'convention'
+            $ moral_burden = ['lawful']       
+            $ child.schedule.add_action('social_intercommunion', 'single')            
+            call lbl_son_social_uni_convention 
+        'Ублажать маму':
+            $ token_to_gain = 'contribution'
+            $ moral_burden = ['good']            
+            $ child.schedule.add_action('social_pleasing', 'single')
+            call lbl_son_social_uni_contribution             
         "Назад":
-            jump lbl_son_manage
+            jump lbl_universal_menu
             
-    call lbl_surrender
+    'Готово. Неделя будет посвящена установленному плану действий.'
+    jump lbl_universal_menu            
             
     return
     
