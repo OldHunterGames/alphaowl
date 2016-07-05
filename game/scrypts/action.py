@@ -18,6 +18,23 @@ class Need_memory(object):
             set_memory(self, need, 0, t)
         return 0
 
+class Button(object):
+    def __init__(self, name, description, list_to_add, kind=None, action=None):
+        self.name = name
+        self.description = description
+        self.list_to_add = list_to_add
+        self.kind = None
+        if not action:
+            raise Exception("Button not binded to action")
+        self.action = action
+        self.active = True
+
+    def click(self):
+        self.active = False
+        if self.kind:
+            for button in self.action.buttons:
+                if button.kind == self.kind:
+                    button.active = False
 
 class Action(object):
     
@@ -67,13 +84,25 @@ class Action(object):
         self._compare_with_power = 0
         self.motivation = None
         self.morality = 0
+        self.buttons = []
 
         
         
         self.pros = []
         self.cons = []
+    def add_button(self, name, description, list_to_add, kind=None): #list to add is 'pros' or 'cons'
+        if list_to_add=='pros':
+            l = self.pros
+        elif list_to_add=='cons':
+            l = self.cons
+        else:
+            raise Exception('Wrong list added')
 
-    
+        self.buttons.append(Button(name, description, l, kind, self))
+    def is_skillcheck(self):
+        if self._skill:
+            return True
+        return False
     def set_phobias(self, *args):
         for arg in args:
             if isinstance(arg, bool):
@@ -123,13 +152,13 @@ class Action(object):
         if self.actor.vigor < 1:
             cons.append('exausted')
 
-        for p in self.pros:
-            pros.append(p)
-        for c in self.cons:
-            cons.append(c)
+        for p in pros:
+            self.pros.append(p)
+        for c in cons:
+            self.cons.append(c)
 
         if self.actor.player_controlled:
-            renpy.call_in_new_context(self._label, pros, cons, self.actor, self._skill, self.name) 
+            renpy.call_in_new_context(self._label, self) 
         else:
             if not self.motivation:
                 raise Exception("npc action activated without motivation")
@@ -137,7 +166,7 @@ class Action(object):
         result = get_action_power(self.actor, pros, cons, self._skill, self.morality)
         
         if not 'unfortunate' in self.actor.conditions:
-            if 'unlucky' in cons:
+            if 'unlucky' in self.cons:
                 self.actor.conditions.append('unfortunate')
         else:
             if result > 0:
