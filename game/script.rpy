@@ -345,6 +345,9 @@ label lbl_notify(character, effect):
 
 screen sc_skillcheck(action):
     python:
+        if action.skill:
+            sc_check_attrname = action.actor.skill(action.skill).attribute
+            sc_check_attribute = getattr(action.actor ,sc_check_attrname)
         i = len(action.pros) - len(action.cons)
         if i < 0:
             i=0
@@ -398,6 +401,7 @@ screen sc_skillcheck(action):
         xalign 0.0
         yalign 0.0
         vbox:
+            text 'cons:'
             for s in action.cons:
                 text "{color=#f00}[s]{/color}"
         vbox:
@@ -416,6 +420,7 @@ screen sc_skillcheck(action):
             vbox:
                 text "Результат действия: [text[0]]"
         vbox:
+            text 'pros:'
             for s in action.pros:
                 text "{color=#00ff00}[s]{/color}"
     hbox:
@@ -424,3 +429,13 @@ screen sc_skillcheck(action):
         textbutton "Выполнить работу" action[Return()]
         if action.is_skillcheck():
             textbutton "Саботировать" action[AddToList(action.cons, 'sabotage'), Return()]
+
+    vbox:
+        xalign 0.0
+        yalign 0.7
+        if action.skill:
+            text "Скил: [action.skill], Аттрибут: [sc_check_attribute]"
+            text "Сложность: [action.difficulty]"
+        else:
+            text "Сила: [action.power]"
+            text "Интенсивность потребности: [action._compare_to_power]"

@@ -90,6 +90,9 @@ class Action(object):
         
         self.pros = []
         self.cons = []
+    @property
+    def power(self):
+        return self._power
     def add_button(self, name, description, list_to_add, kind=None): #list to add is 'pros' or 'cons'
         if list_to_add=='pros':
             l = self.pros
@@ -126,7 +129,9 @@ class Action(object):
         self._power_text.append(pros_text)
         self._power_text.append(cons_text)
 
-
+    @property
+    def skill(self):
+        return self._skill
     def set_skill(self, skill):
         self._skill = skill
 
@@ -219,8 +224,6 @@ def phobias_check(target, phobias, pros, cons=None, inverted=False):
 def pros_cons_default():
     cons = []
     pros = []
-    cons.append('cons:')
-    pros.append('pros:')
     return pros, cons
 
 def pros_cons_skill(character, skill, difficulty, pros, cons):

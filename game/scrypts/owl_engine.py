@@ -314,11 +314,12 @@ class Engine(object):
         return result
 
 
-    def skillcheck(self, actor, skill, motivation=None, morality=0, name='template_name'):
+    def skillcheck(self, actor, skill, motivation=None, morality=0, name='template_name', difficulty=3):
         sk = Skillcheck(actor, skill)
         sk.name = name
         sk.motivation = motivation
         sk.morality = morality
+        sk.difficulty = difficulty
         result = sk.activate()
         if result >= 0:
             actor.drain_vigor()
