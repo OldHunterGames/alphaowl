@@ -332,8 +332,8 @@ class Person(object):
 
     def show_attributes(self):
         s = ""
-        for key, value in self.attributes.items():
-            s += "{0}({1})".format(key, value)
+        for key in self.attributes.keys():
+            s += "{0}({1})".format(key, getattr(self, key))
         return s
 
     def name(self):
