@@ -22,14 +22,21 @@ label shd_discipline_atrocity(character):
         game.atrocity(actor = character, target = unin_target, token = token_to_gain, target_tense = [targeted_need], skill = skill_to_use, phobias = phobias_to_use, morality = moral, name = 'Контролируемое прямое угнетение', respect_needs = ['authority', 'power'], controlled = True)
         "Наказан"
     return   
-
-
-
-
-
-
-
-
+    
+label shd_discipline_intercommunion(character):
+    python:
+        moral = character.moral_action(moral_burden, unin_target) 
+        motivation = character.motivation(needs=[(self_bonus_need, 3)], beneficiar = player, morality = moral)  
+        game.intercommunion(actor = character, target = unin_target, token = token_to_gain, skill = skill_to_use, morality = moral, name = 'Дисциплина')
+        'Неделя дисциплины прошла.'
+    return   
+    
+label shd_discipline_pleasing(character):
+    python:
+        moral = character.moral_action(moral_burden, unin_target) 
+        motivation = character.motivation(needs=[(self_bonus_need, 3)], beneficiar = player, morality = moral)  
+        game.pleasing(actor = character, target = unin_target, token = token_to_gain, skill = skill_to_use, target_please = targeted_need, morality = moral, name = 'Поощрение')
+    return   
 
 
 

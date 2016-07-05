@@ -24,7 +24,16 @@ label lbl_slave_train:
             $ moral_burden = ['evil', 'ardent'] 
             $ self_bonus_need = 'power'
             call lbl_slave_torture
-    
+        "Дисциплина":
+            $ token_to_gain = 'convention'
+            $ moral_burden = ['lawful'] 
+            $ self_bonus_need = 'order'
+            call lbl_slave_discipline            
+        "Поощрения":
+            $ token_to_gain = 'contribution'
+            $ moral_burden = ['good'] 
+            $ self_bonus_need = 'altruism'
+            call lbl_slave_encourage            
     return
 
 label lbl_slave_torture:
@@ -39,6 +48,26 @@ label lbl_slave_torture:
     jump lbl_universal_menu
     return
 
+label lbl_slave_discipline:
+    $ skill_to_use = 'conversation'
+    $ targeted_need = 'wellness'    
+    $ player.schedule.add_action('discipline_intercommunion', 'single')
+    
+    'Будем воспитывать...'
+    jump lbl_universal_menu
+    return
+
+label lbl_slave_encourage:
+    menu:
+        'Хвалить':
+            $ skill_to_use = 'conversation'
+            $ targeted_need = ['ambition', 'approval']    
+            $ player.schedule.add_action('discipline_pleasing', 'single')
+    
+    'Стратения поощрений определена'
+    jump lbl_universal_menu
+    return
+    
 label lbl_food_rules:
     menu:
         "Тётя Срака читала - кушать надо сколько душа просит":
