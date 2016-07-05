@@ -5,9 +5,8 @@ label shd_None_template(character):
 
 label shd_general_accounting(character):
     # Allways active. Calculates minor issues.
-    if game.player == mom:
-        'Мать получает зарплату (+10 тенгэ)'
-        $ game.tenge += 10
+    'Мать получает зарплату (+10 тенгэ)'
+    $ game.money += 10
     if 'dates' in child.restrictions:
         $ child.eros.set_shift(-1)
         $ child.activity.set_shift(-1)
@@ -72,22 +71,8 @@ label shd_social_misery(character):
         moral = mom.moral_action('evil', used_force) 
         motivation = character.motivation(needs=[('general', -used_force)], beneficiar = mom)  
         game.suffering(actor = child, target = batya, token = 'conquest', actor_tense = [targeted_need], power =  used_force, skill = None, phobias = [], morality = moral, name = 'Наказание', respect_needs = ['authority', 'power'], difficulty = 0, beneficiar=mom)
-    'Сыча наказан.'
     return   
-    
-label shd_help_mom(character):
-    'Мамин помощник'
-    python:  
-        result = game.gratifaction(help_skill, needs = [need_helped])       
-    'Качество подлизывания = [result]'
-    return   
-    
-label shd_batya_batya(character):
-    python:
-        game.torture(target = child, power=batya_force, needs=['comfort'])
-    'BATYA гандошит Cычу. Pain = [batya_force]. Злой поступок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
-    return   
-    
+        
 label shd_mom_abuse(character):
     python:
         game.torture(target = child, power=abuse_force, needs=['communication'])
@@ -99,8 +84,7 @@ label shd_discipline_pavsykakiy(character):
         game.train(child, pavsykakiy)
     'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n Весь борщ сожрал, падла'
 
-    return   
-    
+    return       
         
 label shd_discipline_kohana(character):
     python:
@@ -248,28 +232,13 @@ label subloc_chores_perform:
     $ mom.moral_action('lawful', target = child)   
     $ child.moral_action('lawful', 'good', target = mom)         
     return
-
-label shd_learn_good(character):
-    "ВРЕМЯ ИДТИ В ИНСТИТУТ \n @ \n ИНСТИТУТ САМ В СЕБЯ НЕ ПОЙДЁТ"
-    python:
-        child.moral_action('lawful', target = mom)
-        result = child.skillcheck('coding', needs=[('activity', -2),('amusement', -3)])
-    if result >= 0:
-        $ game.duty(target = mom, power = result)   
-        '\n @ \nИ неплохо учишься! \n @ \nКак маме обещал (confidence = [result])'
-    else:
-        '\n @ \nИ ОПЯТЬ НИЗАЧОТ! \n @ \nА ВЕДЬ МАМЕ ОБЕЩАЛ...)' 
-        $ child.independence.set_shift(2)
-        
-            
-    return    
-    
-
+   
 label shd_job_work(character):
     python:
-        mom.moral_action('lawful', target = child)
-        moral = character.check_moral('lawful', target = mom)
-        result = character.skillcheck('sport', taboos=[('submission', 2)], needs=[('activity', 2),('amusement', -3)], forced = True, moral=moral)
+        mom.moral_action('lawful', child)
+        moral = character.moral_action('lawful')
+        motivation = character.motivation('sport', [('authority', -2), ('activity', 2),('amusement', -3)], character, moral) 
+        result = game.skillcheck(character, 'sport', motivation, moral, 'разгрузка вагонов')
         if result >= 0:
             renpy.call('subloc_work_perform')   
         else:
@@ -277,7 +246,7 @@ label shd_job_work(character):
     return    
 
 label subloc_work_sabotage:
-    'Сычуля саботирует работу грузчика чувствуя свободу. ([result])\nУдовлетворяется потребность в независимости (3) \n Авторитет мамки страдает (-2)'
+    'Сычуля саботирует работу грузчика.'
     $ child.independence.set_shift(3)
     $ mom.authority.set_shift(-2)
     $ child.moral_action('chaotic', target = mom)      
@@ -286,21 +255,22 @@ label subloc_work_sabotage:
 label subloc_work_perform:
     python:
         gain = result*result*10
-        game.tenge += gain
+        game.money += gain
         child.skill('sports').get_expirience(result)
         mom.prosperity.set_shift(result+1)     
         mom.authority.set_shift(4)        
         mom.moral_action('lawful', 'ardent', target = child)       
         child.moral_action('lawful', target = mom)          
-    'Сычуля работает грузчиком чувствуя себя правильным. ([result])\n Нарушается табу на подчинение матери (2), удовлетворяется потребность в активности (2), подавляется развлечение (-3).\n Заработок (для мамы!): [gain] тенге. Мамка чувствует свою власть, порядочный и энергичный поступок.'
+    'Сычуля работает грузчиком себя правильным. ([result])\n Заработок (для мамы!): [gain] тенге.'
     return
 
 
 label shd_job_whore(character):
     python:
-        moral = character.check_moral('timid', target=mom)
-        mom.moral_action('evil', target = child)
-        result = character.skillcheck('sex', taboos=[('sexplotation', 4)], needs=[('communication', 2),('ambition', -4),('authority', -2)], forced = True, moral=moral)
+        mom.moral_action('evil', child)
+        moral = character.moral_action('timid', mom)
+        motivation = character.motivation('sex', [('eros', -4), ('communication', 2),('ambition', -4), ('authority', -2)], character, moral) 
+        result = game.skillcheck(character, 'sex', motivation, moral, 'разгрузка вагонов')        
         if result >= 0:
             renpy.call('subloc_whore_perform')   
         else:
@@ -308,7 +278,7 @@ label shd_job_whore(character):
     return    
 
 label subloc_whore_sabotage:
-    'Сычуля саботирует работу на панели. ([result])\nУдовлетворяется потребность в независимости (1) \n Авторитет мамки страдает (-1)'
+    'Сычуля саботирует работу на панели.'
     $ child.independence.set_shift(2)
     $ mom.authority.set_shift(-1)
     return
@@ -322,5 +292,5 @@ label subloc_whore_perform:
         mom.prosperity.set_shift(result+2)    
         mom.moral_action('evil', 'lawful', 'ardent', target = child)
         child.moral_action('timid', target = mom)            
-    'Сычуля работает на панели, чувствуя себя timid. ([result])\n Нарушается табу на сексуальную эксплуатацию (2), удовлетворяется потребность в общении (2), подавляются амбиции (-4) и авторитет (-2).\n Заработок (для мамы!): [gain] тенге. Мамка чувствует своё могущество, энергию и власть, злой поступок.'
+    'Сычуля работает на панели. ([result])\n Заработок (для мамы!): [gain] тенге.'
     return

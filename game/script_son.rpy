@@ -117,7 +117,7 @@ label lbl_son_minor:
             $ shedule_minor = 'пахать на даче' 
             $ child.schedule.add_action('dayoff_dacha')
             
-        'Капчевать на дваче' if mom_stance > -1 and  'pc' not in child.restrictions:
+        'Капчевать на дваче' if mom.stance(player).value > -1 and  'pc' not in child.restrictions:
             $ shedule_minor = 'капчевать на дваче' 
             $ child.schedule.add_action('dayoff_2ch')
             
