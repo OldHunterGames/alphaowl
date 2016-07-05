@@ -27,6 +27,7 @@ init python:
     batya.firstname = u"BATYA"
     batya.surname = u"Сычов"    
     batya.skill('leadership').profession()  
+    batya.skill('sport').profession()
     batya.stance(child).value = 0
     batya.stance(mom).value = 1
     
@@ -160,6 +161,7 @@ label label_quiz:
                 mom = game.mother
                 game.set_player(mom)
                 player = game.player
+                mom.skill('conversation').profession()
                 mom.alignment.morality = 'selfish'
                 mom.relations(child)    
                 mom.add_feature('female')

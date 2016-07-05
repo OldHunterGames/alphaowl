@@ -19,7 +19,7 @@ label shd_discipline_atrocity(character):
     python:
         moral = character.moral_action(moral_burden, unin_target) 
         motivation = character.motivation(needs=[(self_bonus_need, 3)], beneficiar = player, morality = moral)  
-        game.atrocity(actor = character, target = unin_target, token = token_to_gain, target_tense = [targeted_need], skill = skill_to_use, phobias = phobias_to_use, morality = moral, name = 'Контролируемое прямое угнетение', respect_needs = ['authority', 'power'], controlled = True)
+        game.atrocity(actor = character, target = unin_target, token = token_to_gain, target_tense = targeted_need, skill = skill_to_use, phobias = phobias_to_use, morality = moral, name = 'Контролируемое прямое угнетение', respect_needs = ['authority', 'power'], controlled = True)
         "Наказан"
     return   
     

@@ -41,7 +41,7 @@ label lbl_slave_torture:
         'Пороть':
             $ skill_to_use = 'sport'
             $ phobias_to_use = ['pain']
-            $ targeted_need = 'wellness'    
+            $ targeted_need = ['wellness']    
             $ player.schedule.add_action('discipline_atrocity', 'single')
             
         'Поставить в угол':
