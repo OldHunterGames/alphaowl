@@ -336,6 +336,13 @@ class Person(object):
             s += "{0}({1})".format(key, getattr(self, key))
         return s
 
+
+    def show_tokens_difficulty(self):
+        s = ""
+        for key, value in self.tokens_difficulty.items():
+            s += "{0}({1}), ".format(key, value)
+        return s
+
     def name(self):
         s = self.firstname + " " + self.surname
         return s
