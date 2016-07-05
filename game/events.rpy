@@ -335,6 +335,8 @@ label evn_do_practice_programm(event):
     if not event.skipcheck:
         if 'practice' in game.studies:
             $ event.skipcheck = True
+    if event.target != child and event.target != player:
+        $ event.skipcheck = False
 
     if not event.skipcheck:
         return False

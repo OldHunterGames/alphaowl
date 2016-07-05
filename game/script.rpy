@@ -146,6 +146,8 @@ label label_quiz:
                 child.restrictions.append('dates')
                 child.restrictions.append('friends')
                 child.restrictions.append('pc')
+                shedule_minor = 'пахать на даче' 
+                child.schedule.add_action('dayoff_dacha')                   
             jump label_new_day
         "(разработчик, игра за маму)":
             python:
@@ -253,7 +255,7 @@ label label_quiz:
             $ player = game.player
             $ player.player_controlled = True
             $ child.relations(mother)
-            $ mother.enslave(child)
+            $ mother.enslave(child)         
             jump label_new_day
             
         "Своей мамкой":
@@ -281,6 +283,7 @@ label label_new_day:
     $ study = game.choose_study()
     $ game.child.rest()
     $ game.mother.rest()
+    $ communication = '?'
     "Неделя номер [game.time]"
        
     $ gt = game.new_turn()

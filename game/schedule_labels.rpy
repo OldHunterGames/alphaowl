@@ -43,28 +43,35 @@ label shd_social_atrocity(character):
     python:
         moral = child.moral_action(moral_burden, unin_target) 
         motivation = character.motivation(needs=[(self_bonus_need, used_force)], beneficiar = child, morality = moral)  
-        game.atrocity(actor = child, target = unin_target, token = token_to_gain, target_tense = [targeted_need], power =  used_force, skill = None, phobias = [], morality = moral, name = 'тесто', respect_needs = ['authority', 'power'], difficulty = 0)
+        game.atrocity(actor = child, target = unin_target, token = token_to_gain, target_tense = [targeted_need], power =  used_force, skill = None, phobias = [], morality = moral, name = 'Угнетение с силой N', respect_needs = ['authority', 'power'], difficulty = 0)
     return   
     
 label shd_social_pleasing(character):
     python:
         moral = child.moral_action(moral_burden, unin_target) 
         motivation = character.motivation(needs=[(self_bonus_need, used_force)], beneficiar = child, morality = moral)  
-        game.pleasing(actor = child, target = unin_target, token = token_to_gain, power =  used_force, skill = None, morality = moral, name = 'тестовый плиз', respect_needs = ['communication'], difficulty = 0)
+        game.pleasing(actor = child, target = unin_target, token = token_to_gain, power =  used_force, skill = None, morality = moral, name = 'Удовлетворение с силой N', respect_needs = ['communication'], difficulty = 0)
+    return   
+    
+label shd_social_skillpleasing(character):
+    python:
+        moral = child.moral_action(moral_burden, unin_target) 
+        motivation = character.motivation(needs=[(self_bonus_need, 2)], beneficiar = child, morality = moral)  
+        game.pleasing(actor = child, target = unin_target, token = token_to_gain, power =  0, skill = chosen_skill, morality = moral, name = 'Удовлетворение с силой N', respect_needs = ['communication'], difficulty = 3)
     return   
     
 label shd_social_intercommunion(character):
     python:
         moral = child.moral_action(moral_burden, unin_target) 
         motivation = character.motivation(needs=[(self_bonus_need, 3)], beneficiar = child, morality = moral)  
-        game.intercommunion(actor = child, target = unin_target, token = token_to_gain, power =  0, skill = used_skill, morality = moral, name = 'тестовый интеркомушен', respect_needs = ['authority', 'power'], difficulty = 3)
+        game.intercommunion(actor = child, target = unin_target, token = token_to_gain, power =  0, skill = used_skill, morality = moral, name = 'интеркомушен', respect_needs = ['authority', 'power'], difficulty = 3)
     return   
     
 label shd_social_misery(character):
     python:
         moral = mom.moral_action('evil', used_force) 
         motivation = character.motivation(needs=[('general', -used_force)], beneficiar = mom)  
-        game.suffering(actor = child, target = batya, token = 'conquest', actor_tense = [targeted_need], power =  used_force, skill = None, phobias = [], morality = moral, name = 'batya', respect_needs = ['authority', 'power'], difficulty = 0, beneficiar=mom)
+        game.suffering(actor = child, target = batya, token = 'conquest', actor_tense = [targeted_need], power =  used_force, skill = None, phobias = [], morality = moral, name = 'Наказание', respect_needs = ['authority', 'power'], difficulty = 0, beneficiar=mom)
     'Сыча наказан.'
     return   
     

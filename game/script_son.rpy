@@ -117,11 +117,11 @@ label lbl_son_minor:
             $ shedule_minor = 'пахать на даче' 
             $ child.schedule.add_action('dayoff_dacha')
             
-        'Капчевать на дваче':
+        'Капчевать на дваче' if mom_stance > -1 and  'pc' not in child.restrictions:
             $ shedule_minor = 'капчевать на дваче' 
             $ child.schedule.add_action('dayoff_2ch')
             
-        'Сычевать на хате':
+        'Сычевать на хате' if mom_stance > 0:
             $ shedule_minor = 'сычевать' 
             $ child.schedule.add_action('dayoff_owled')
             
@@ -340,6 +340,59 @@ label lbl_son_social_uni_contribution:
             
     return
     
+label lbl_son_social_skill_contribution:
+    $ self_bonus_need = 'altruism'
+    
+    menu:
+        'Выберите какую потребность объекта вы хотите удовлетворить'
+        'Смысл жизни':
+            $ targeted_need = 'purpose'
+        'Питание':
+            $ targeted_need = 'nutrition'
+        'Здоровье':
+            $ targeted_need = 'wellness'
+        'Комфорт':
+            $ targeted_need = 'comfort'
+        'Подвижность':
+            $ targeted_need = 'activity'
+        'Общение':
+            $ targeted_need = 'communication'            
+        'Развлечения':
+            $ targeted_need = 'amusement'
+        'Богатство':
+            $ targeted_need = 'prosperity'   
+        'Авторитет':
+            $ targeted_need = 'authority'
+        'Амбиции':
+            $ targeted_need = 'ambition'   
+        'Секс':
+            $ targeted_need = 'eros'
+        'Стабильность':
+            $ targeted_need = 'order'   
+        'Независимость':
+            $ targeted_need = 'independence'
+        'Моральная поддержка':
+            $ targeted_need = 'approval'   
+        'Адреналин':
+            $ targeted_need = 'thrill'
+        'Альтруизм':
+            $ targeted_need = 'altruism'  
+        'Могущество':
+            $ targeted_need = 'power'
+
+    menu:
+        'Выберите ключевой навык'
+        'Сексуальность':
+            $ chosen_skill = 'sex'
+        'Общение':
+            $ chosen_skill = 'conversation'
+        'Спорт':
+            $ chosen_skill = 'sports'
+        'Быдлокодинг':
+            $ chosen_skill = 'coding'
+            
+    return
+    
 label lbl_control_lifestyle:
     $ mom_stance = mom.stance(player).value
     menu:
@@ -405,7 +458,7 @@ label lbl_control_lifestyle:
                     $ child.restrictions.append('friends')
                 'Разрешить общаться с друзьями' if 'friends' in child.restrictions and mom_stance > -1:
                     $ child.restrictions.remove('friends')
-                'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in child.restrictions:
+                'Конплюхтерн для очобы! Не нужОн нам интернет! (блокировать интернет)' if 'pc' not in child.restrictions:
                     $ child.restrictions.append('pc')
                 'Ну и сиди за своим комплюктером' if 'pc' in child.restrictions and mom_stance > -1:
                     $ child.restrictions.remove('pc')                
@@ -468,8 +521,8 @@ label lbl_social_mom:
         'Ублажать маму':
             $ token_to_gain = 'contribution'
             $ moral_burden = ['good']            
-            $ child.schedule.add_action('social_pleasing', 'single')
-            call lbl_son_social_uni_contribution             
+            $ child.schedule.add_action('social_skillpleasing', 'single')
+            call lbl_son_social_skill_contribution             
         "Назад":
             jump lbl_universal_menu
             
@@ -541,7 +594,7 @@ label lbl_change_relations:
                 'Назад':
                     jump lbl_change_relations  
                     
-        'Conquest' if target.has_token("conquest"):
+        'Завоевание (Conquest)' if target.has_token("conquest"):
             menu:
                 'Наладить отношения глобально' if target.stance(player).value == -1:
                     $ player.ap -= 1
@@ -567,7 +620,7 @@ label lbl_change_relations:
                 'Назад':
                     jump lbl_change_relations  
                     
-        'Confidence' if target.has_token("convention"):
+        'Договор (Convention)' if target.has_token("convention"):
             menu:
                 'Наладить отношения глобально' if target.stance(player).value == -1:
                     $ player.ap -= 1
@@ -593,7 +646,7 @@ label lbl_change_relations:
                 'Назад':
                     jump lbl_change_relations  
                     
-        'Craving' if target.has_token("contribution"):
+        'Ублажение (Contribution)' if target.has_token("contribution"):
             menu:
                 'Наладить отношения глобально' if target.stance(player).value == 0 and target.stance(player).respect() > 3:                    
                     $ player.ap -= 1
