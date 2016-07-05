@@ -219,8 +219,6 @@ def phobias_check(target, phobias, pros, cons=None, inverted=False):
 def pros_cons_default():
     cons = []
     pros = []
-    cons.append('cons:')
-    pros.append('pros:')
     return pros, cons
 
 def pros_cons_skill(character, skill, difficulty, pros, cons):

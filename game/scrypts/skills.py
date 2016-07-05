@@ -2,7 +2,7 @@
 
 skills_data = {
     'coding': 'mind',
-    'sports': 'physique',
+    'sport': 'physique',
     'sex': 'sensitivity',
     'conversation': 'spirit',
 }

@@ -398,6 +398,7 @@ screen sc_skillcheck(action):
         xalign 0.0
         yalign 0.0
         vbox:
+            text 'cons:'
             for s in action.cons:
                 text "{color=#f00}[s]{/color}"
         vbox:
@@ -416,6 +417,7 @@ screen sc_skillcheck(action):
             vbox:
                 text "Результат действия: [text[0]]"
         vbox:
+            text 'pros:'
             for s in action.pros:
                 text "{color=#00ff00}[s]{/color}"
     hbox:
