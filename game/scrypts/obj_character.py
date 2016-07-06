@@ -97,6 +97,8 @@ class Alignment(object):
         return self.show_orderliness(), self.show_activity(), self.show_morality()
 
 
+
+
 class Person(object):
 
     def __init__(self, age='adolescent', gender='male'):
@@ -947,3 +949,15 @@ class Person(object):
             return types
         else:
             return []
+
+
+    def attitude_tendency(self):
+        n = 0
+        token = None
+        for k, v in self.tokens_difficulty:
+            if v > n:
+                n = v
+                token = k
+        if self.tokens_difficulty.values().count(n) > 1:
+            return None
+        return token

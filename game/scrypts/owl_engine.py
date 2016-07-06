@@ -159,11 +159,11 @@ class Engine(object):
 
     def atrocity(self, actor, target, token='conquest', target_tense=['general'], power=0, 
                 skill=None, phobias=[], morality=0, name='template_name', controlled=False,
-                respect_needs=['authority', 'power'], difficulty=0, motivation=None):
+                difficulty=0, motivation=None, respect_needs=[]):
 
         memory = False
         torture = Action(actor, target, name)
-        torture.difficulty = difficulty if difficulty else target.spirit
+        torture.difficulty = difficulty if difficulty else 5+target.spirit-Action.max_intensity(target, target_tense)[0]
         torture.motivation = motivation
         torture.morality = morality
         torture.compare_two(0, target.mood()[0], 'misery', 'hope')
@@ -171,9 +171,6 @@ class Engine(object):
         torture.set_skill(skill)
         torture.compare_two(target.stance(self.player).value, 0, 'wilingness', 'contradiction')
         torture.compare_two(morality, 0, 'morally sure', 'moral doubts')
-        torture.compare_two(Action.max_intensity(actor, respect_needs)[0], target.stance(self.player).respect(),
-                            'rigor', 'indulgence')
-        torture.set_power(power, 6, Action.max_intensity(target, target_tense)[0], 'severe suffering', 'minor concern')
         if controlled:
             torture.add_button('minor', 'minor', 'cons', 'intensity')
             torture.add_button('severe', 'severe', 'pros', 'intensity')
@@ -208,15 +205,14 @@ class Engine(object):
             raise Exception('Suffering_power is not for check with skill')
         return self.suffering(*args, **kwargs)
     def suffering(self, actor, target, token='conquest', actor_tense=['general'], power=0, 
-                skill=None, phobias=[], morality=0, name='template_name',
-                respect_needs=['authority', 'power'], difficulty=0, motivation=None, beneficiar=None):
+                skill=None, phobias=[], morality=0, name='template_name', controlled=False,
+                respect_needs=[], difficulty=0, motivation=None, beneficiar=None):
 
         memory = False
         suffering = Action(actor, target, name, name)
         suffering.motivation = motivation
         suffering.morality = morality
-        suffering.difficulty = difficulty if difficulty else actor.spirit
-        suffering.set_power(power, 6, Action.max_intensity(actor, actor_tense)[0], 'severe suffering', 'minor concern')
+        suffering.difficulty = difficulty if difficulty else 5+actor.spirit-Action.max_intensity(actor, actor_tense)[0]
         suffering.set_skill(skill)
         suffering.set_phobias(*phobias)
         if not skill:
@@ -224,9 +220,12 @@ class Engine(object):
         suffering.compare_two(target.stance(self.player).value, 0, 'wilingness', 'contradiction')
         suffering.compare_two(0, actor.mood()[0], 'miserable victim', 'cheerful victim')
         suffering.compare_two(0, morality, 'mercy', 'sadism')
-        suffering.compare_two(target.stance(self.player).respect(), Action.max_intensity(target, respect_needs)[0],
-                            'indulgence', 'rigor')
+        if controlled:
+            torture.add_button('minor', 'minor', 'cons', 'intensity')
+            torture.add_button('severe', 'severe', 'pros', 'intensity')
         result = suffering.activate()
+        if 'severe' in torture.pros:
+            target.general.set_shift(-5)
         if beneficiar:
             target = beneficiar
         if result < 1:
@@ -241,7 +240,7 @@ class Engine(object):
         
         for need in actor_tense:
             n = getattr(actor, need)
-            if result > 0:
+            if result > 0 and not 'minor' in torture.cons:
                 n.set_shift(-result)
             if memory:
                 Action.set_memory(self.player, target, need, result, 'suffering')
@@ -253,19 +252,17 @@ class Engine(object):
     def pleasing_power(self, *args, **kwargs):
         return self.pleasing(*args, **kwargs)
     def pleasing(self, actor, target, token='contribution', target_please=['general'], power=0, difficulty=0, name='template_name',
-                skill=None, actor_needs=[], respect_needs=['authority', 'altruism'], morality=0, motivation=None):
+                skill=None, actor_needs=[], respect_needs=[], morality=0, motivation=None):
 
         memory = False
         please = Action(actor, target, name)
         please.motivation = motivation
         please.morality = morality
-        please.difficulty = difficulty if difficulty else target.sensitivity
-        please.set_power(power, 6, Action.max_intensity(target, target_please)[0], 'desire', 'unconcerned')
+        please.difficulty = difficulty if difficulty else 5+target.sensitivity-Action.max_intensity(target, target_please)[0]
         please.set_skill(skill)
         please.compare_two(target.stance(self.player).value, 0, 'wilingness', 'contradiction')
         please.compare_two(morality, 0, 'ardour', 'composure')
         please.compare_two(0, target.mood()[0], 'sorrow', 'already happy')
-        please.compare_two(target.stance(self.player).respect(), Action.max_intensity(actor, respect_needs)[0], 'well-earned', 'connivance')
         result = please.activate()
         if result < 1:
             target.add_token('antagonism')
@@ -290,14 +287,13 @@ class Engine(object):
     def intercommunion_power(self, *args, **kwargs):
         return self.intercommunion(*args, **kwargs)
     def intercommunion(self, actor, target, token='convention', power=0, skill=None, difficulty=0,
-                        morality=0, motivation=None, name='template_name'):
+                        morality=0, motivation=None, name='template_name', key_needs=['communication'], respect_needs=[]):
 
         commun = Action(actor, target, name)
-        commun.difficulty = difficulty if difficulty else target.mind
+        commun.difficulty = difficulty if difficulty else 5+target.mind-Action.max_intensity(target, key_needs)[0]
         commun.motivation = motivation
         commun.morality = morality
         commun.set_skill(skill)
-        commun.set_power(power, 6, Action.max_intensity(actor, respect_needs), 'confidence', 'disbelief')
         if not skill:
             commun.compare_two(actor.mood()[0], 0, 'mood', 'mood')
         commun.compare_two(target.stance(self.player).value, 0, 'wilingness', 'contradiction')

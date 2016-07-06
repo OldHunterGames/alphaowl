@@ -121,3 +121,52 @@ class Relations(object):
                 ax = 0
 
 
+    def harmony(self):
+        value = 0
+        if not self.is_player_relations():
+            return value
+        tendence = self.npc.attitude_tendency()
+        activity = self.npc.alignment.activity
+        orderliness = self.npc.alignment.orderliness
+        morality = self.npc.alignment.morality
+        if tendence == 'conquest':
+            if activity == 0:
+                activity = -1
+            if morality == 0:
+                morality = -1
+        if tendence == 'contribution':
+            if orderliness == 0:
+                orderliness = -1
+            if morality == 0:
+                morality = 1
+        if tendence == 'convention':
+            if orderliness == 0:
+                orderliness == 1
+            if activity == 0:
+                activity = 1
+
+        difference = self.fervor + activity
+        if abs(difference) > 1:
+            value += 1
+        elif difference == 0:
+            if self.fervor != 0:
+                value -= 1
+        
+        difference = self.distance + orderliness
+        if abs(difference) > 1:
+            value += 1
+        elif difference == 0:
+            if self.fervor != 0:
+                value -= 1
+        
+        difference = self.congruence + morality
+        if abs(difference) > 1:
+            value += 1
+        elif difference == 0:
+            if self.fervor != 0:
+                value -= 1
+
+        return value
+
+
+

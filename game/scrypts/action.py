@@ -23,7 +23,7 @@ class Button(object):
         self.name = name
         self.description = description
         self.list_to_add = list_to_add
-        self.kind = None
+        self.kind = kind
         if not action:
             raise Exception("Button not binded to action")
         self.action = action
@@ -82,10 +82,6 @@ class Action(object):
         
         self._skill = None
         self._label = 'lbl_skill_check'
-        self._power = 0
-        self._reduced = 0
-        self._power_text = []
-        self._compare_with_power = 0
         self.motivation = None
         self.morality = 0
         self.buttons = []
@@ -104,8 +100,8 @@ class Action(object):
             l = self.cons
         else:
             raise Exception('Wrong list added')
-
-        self.buttons.append(Button(name, description, l, kind, self))
+        button = Button(name, description, l, kind, self)
+        self.buttons.append(button)
     def is_skillcheck(self):
         if self._skill:
             return True
@@ -126,12 +122,6 @@ class Action(object):
                 self._respect_needs.append(arg)
     
 
-    def set_power(self, power, reduced, compare_value, pros_text, cons_text):
-        self._power = power
-        self._reduced = reduced
-        self._compare_with_power = compare_value
-        self._power_text.append(pros_text)
-        self._power_text.append(cons_text)
 
     @property
     def skill(self):
@@ -189,11 +179,8 @@ class Action(object):
         pros, cons = pros_cons_default()
         if self._skill:
             pros_cons_skill(self.actor, self._skill, self.difficulty, pros, cons)
-        elif self._power > 0:
-            self.compare_two(self._compare_with_power, self._reduced-self._power,
-                            self._power_text[0], self._power_text[1])
         else:
-            raise Exception("Action activated without power or skill")
+            raise Exception("Action activated without skill")
         phobias_check(self.target, self.phobias, pros, cons, self.phobias_inverted)
         return pros, cons
 
@@ -233,7 +220,7 @@ def pros_cons_default():
 def pros_cons_skill(character, skill, difficulty, pros, cons):
     skill = character.skill(skill)
     if difficulty-skill.attribute_value > 1:
-        for i in range(difficulty-1):
+        for i in range(difficulty-skill.attribute_value-1):
             cons.append('very')
         cons.append('difficult')
     if difficulty-skill.attribute_value == 1:
