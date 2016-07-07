@@ -4,7 +4,7 @@ import renpy.exports as renpy
 
 
 class Relations(object):
-    _fervor = {-1: "intense", 0: "plain", 1: "delicate"}
+    _fervor = {-1: "delicate", 0: "plain", 1: "passionate"}
     _distance = {-1: "intimate", 0: "close", 1: "formal"}
     _congruence = {-1: "contradictor", 0: "associate", 1: "supporter"}
     def __init__(self, person1, person2):
@@ -12,6 +12,7 @@ class Relations(object):
         self._fervor = 0
         self._distance = 0
         self._congruence = 0
+        self.stability = 0
         self.is_player_relations()
             
 
@@ -84,45 +85,17 @@ class Relations(object):
         if direction == "+":
             ax += 1
             if ax > 1:
-                if axis == 'distance':
-                    if self.npc.alignment.orderliness == 'chaotic':
-                        self.npc.add_token('accordance')
-                    elif self.npc.alignment.orderliness == 'lawful':
-                        self.npc.add_token('antagonism')
-                if axis == 'fervor':
-                    if self.npc.alignment.activity == 'timid':
-                        self.npc.add_token('accordance')
-                    elif self.npc.alignment.activity == 'ardent':
-                        self.npc.add_token('antagonism')
-                if axis == 'congruence':
-                    if self.npc.alignment.morality == 'good':
-                        self.npc.add_token('accordance')
-                    elif self.npc.alignment.morality  == 'evil':
-                        self.npc.add_token('antagonism')
-                ax = 2
+                ax = 1
         elif direction == '-':
             ax -= 1
             if ax < -1:
-                if axis == 'distance':
-                    if self.npc.alignment.orderliness == 'chaotic':
-                        self.npc.add_token('antagonism')
-                    elif self.npc.alignment.orderliness == 'lawful':
-                        self.npc.add_token('accordance')
-                if axis == 'fervor':
-                    if self.npc.alignment.activity == 'timid':
-                        self.npc.add_token('antagonism')
-                    elif self.npc.alignment.activity == 'ardent':
-                        self.npc.add_token('accordance')
-                if axis == 'congruence':
-                    if self.npc.alignment.morality == 'good':
-                        self.npc.add_token('antagonism')
-                    elif self.npc.alignment.morality == 'evil':
-                        self.npc.add_token('accordance')
-                ax = 0
+                ax = -1
+        self.set_axis(axis, ax)
 
 
     def harmony(self):
         value = 0
+        axis = []
         if not self.is_player_relations():
             return value
         tendence = self.npc.attitude_tendency()
@@ -148,6 +121,7 @@ class Relations(object):
         difference = self.fervor + activity
         if abs(difference) > 1:
             value += 1
+            axis.append(('fervor', self.show_fervor()))
         elif difference == 0:
             if self.fervor != 0:
                 value -= 1
@@ -155,18 +129,20 @@ class Relations(object):
         difference = self.distance + orderliness
         if abs(difference) > 1:
             value += 1
+            axis.append(('distance', self.show_distance()))
         elif difference == 0:
-            if self.fervor != 0:
+            if self.distance != 0:
                 value -= 1
         
         difference = self.congruence + morality
         if abs(difference) > 1:
             value += 1
+            axis.append(('congruence', self.show_congruence()))
         elif difference == 0:
-            if self.fervor != 0:
+            if self.congruence != 0:
                 value -= 1
 
-        return value
+        return value, axis
 
 
 

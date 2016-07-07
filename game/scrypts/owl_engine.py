@@ -310,13 +310,28 @@ class Engine(object):
         return result
 
 
-    def skillcheck(self, actor, skill, motivation=None, morality=0, name='template_name', difficulty=3):
-        sk = Skillcheck(actor, skill)
-        sk.name = name
-        sk.motivation = motivation
-        sk.morality = morality
-        sk.difficulty = difficulty
-        result = sk.activate()
-        if result >= 0:
-            actor.drain_vigor()
+    def skillcheck(self, actor, skill, difficulty, motivation=0, morality=0, success_threshold=0):
+        skill = actor.skill(skill)
+        # factors['attraction'] and equipment bonuses not implemented yet
+        factors = {'level': 1+skill_level,
+                    'attr': skill.attribute_value(),
+                    'focus': skill.focus,
+                    'mood': actor.mood,
+                    'motivation': motivation,
+                    'vitality': actor.vitality,
+                    'bonus': actor.count_modifiers(skill.name)}
+        result = 1+skill.level
+
+        while result != 0:
+            if difficulty < factors.values().count(result):
+                break
+            else:
+                result -= 1
+        if success_threshold:
+            if result > success_threshold:
+                result = True
+            else:
+                result = False
         return result
+
+        

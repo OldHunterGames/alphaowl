@@ -66,37 +66,31 @@ label lbl_info_new(target):
         alignment = target.alignment.description() 
         job = dname[target.job['name']]
         desu = target.description()
-        needs_overflow = target.show_needs('overflow')
-        needs_tense = target.show_needs('tense')
-        needs_relevant = target.show_needs('relevant')
-        needs_statisfied = target.show_needs('satisfied')
         # taboos = child.show_taboos()
         features = target.show_features()
+        tokens = target.tokens
         focus = target.show_focus()
         rel = target.relations(player).description() if target!=player else None
         stance = target.stance(player).level if target!=player else None
         skills = target.show_skills()
-        tokens = target.show_tokens_difficulty()
-        txt = "Настроение: " + str(target.mood())
+        tendency = target.attitude_tendency()
+        txt = "Настроение: " + str(target.mood)
         if stance:
             txt += " | Отношение: " + str(stance) +'\n'
-        txt += " | Энергия: %s \n "%(target.vigor)
+        txt += " | Здоровье: %s \n "%(target.vitality)
         txt += "Запреты: %s \n "%(target.restrictions)
         txt += "Условия сна: %s  |  %s       \n"%(target.accommodation, job)
         txt += "Характер: %s, %s, %s\n"%(target.alignment.description())
         if rel:
             txt += "Отношение: %s, %s, %s\n"%(rel)
+            txt += "Гармония: %s, %s\n"%(target.relations(player).harmony()[0], target.relations(player).harmony()[1])
         else:
             txt += "Деньги: %s, Провизия: %s, Вещества: %s \n"%(game.money, game.resource("provision"), game.resource("drugs"))
         txt += "Фокус: %s\n"%(focus)
-        txt += "Напряжения: %s\n"%(needs_tense)
-        txt += "Актуальные нужды: %s\n"%(needs_relevant)
-        txt += "Удовлетворённые: %s\n"%(needs_statisfied)
-        txt += "Пресыщения: %s\n"%(needs_overflow)
         txt += "Особенности: %s\n"%(features)
-        if stance:
-            txt += "Респект: %s\n"%(target.stance(player).respect())
         txt += "Аттрибуты: %s\n"%(target.show_attributes())
+        if tendency:
+            txt += "Тенденция: %s\n"(tendency)
         if skills:
             txt += "Навыки: %s\n"%(skills)
         if tokens:

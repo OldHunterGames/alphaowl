@@ -12,21 +12,84 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 from stance import Stance
-accommodation_types = {'makeshift bad': {'vigor': 2, 'comfort': -3},
-                       'campfire': {'vigor': 3, 'comfort': -1},
-                       'chained': {'vigor': 0, 'comfort': -4, 'activity': -4, 'wellness': -3},
-                       'jailed': {'vigor': 0, 'comfort': -3, 'activity': -3, 'wellness': -2},
-                       'confined': {'vigor': 0, 'comfort': -5, 'activity': -5, 'wellness': -4},
-                       'rough mat': {'vigor': 2, 'comfort': -2, 'prosperity': -1, 'wellness': -1},
-                       'cot and blanket': {'vigor': 4},
-                       'appartament': {'vigor': 5, 'comfort': 3},
-                       'love nest': {'vigor': 6, 'comfort': 5, 'prosperity': 2, 'communication': 2, 'eros': 2}
+accommodation_types = {'makeshift bad': {'comfort': -3},
+                       'campfire': {'comfort': -1},
+                       'chained': {'comfort': -4, 'activity': -4, 'wellness': -3},
+                       'jailed': {'comfort': -3, 'activity': -3, 'wellness': -2},
+                       'confined': {'comfort': -5, 'activity': -5, 'wellness': -4},
+                       'rough mat': {'comfort': -2, 'prosperity': -1, 'wellness': -1},
+                       'cot and blanket': {},
+                       'appartament': {'comfort': 3},
+                       'love nest': {'comfort': 5, 'prosperity': 2, 'communication': 2, 'eros': 2}
                        }
+class Modifiers(object):
+    def __init__(self):
+        self._names = []
+        self._attributes = []
+        self._times = []
+    
+
+    def tick_time(self):
+        for i in range(len(self.times)):
+            try:
+                self._times[i] -= 1
+                if self._times[i] < 1:
+                    self.del_item(i)
+            except TypeError:
+                pass
+
+   
+    def del_item(self, index):
+        if isinstance(index, str):
+            for name in self._names:
+                if name == index:
+                    index = self._names.index(name)
+        self._names.pop(index)
+        self._attributes.pop(index)
+        self._times.pop(index)
+
+
+    def add_item(self, name, attributes, time=None):
+        if not name in self._names:
+            self._names.append(name)
+            self._attributes.append(attributes)
+            self._times.append(time)
+        else:
+            index = self._names.index(name)
+            self._names[index] = name
+            self._attributes[index] = attributes
+            self._times[index] = time
+
+
+    def get_modified_attribute(self, attribute):
+        mod = 0
+        for d in self._attributes:
+            for k, v in d.items():
+                if k == attribute:
+                    mod += v
+        return mod
+
+
+    def get_modifier(self, name):
+        index = None
+        for n in self._names:
+            if n == name:
+                index = self._names.index(name)
+        try:
+            return name, self._attributes[index], self._times[index]
+        except TypeError:
+            return None
 
 class Alignment(object):
+    _needs = {'orderliness': {-1: 'independence', 1:'stability'},
+            'activity': {-1: 'approval', 1: 'trill'},
+            'morality': {-1: 'power', 1: 'altruism'}
+            }
+
     _orderliness = {-1: "chaotic", 0: "conformal", 1: "lawful"}
     _activity = {-1: "timid", 0: "reasonable", 1: "ardent"}
     _morality = {-1: "evil", 0: "selfish", 1: "good"}
+    _relation_binding = {'activity': 'fervor', 'morality': 'congruence', 'orderliness': 'distance'}
     def __init__(self):
         self._orderliness = 0
         self._activity = 0
@@ -42,7 +105,7 @@ class Alignment(object):
                 if v == value:
                     self._orderliness = k
                     return
-            raise Exception("Orderliness set with non-int value or not valid string value")
+            raise Exception("Orderliness set with string value, but %s is not valid for this axis"%(value))
         if value < -1:
             value = -1
         elif value > 1:
@@ -60,7 +123,7 @@ class Alignment(object):
                 if v == value:
                     self._activity = k
                     return
-            raise Exception("Activity set with non-int value or not valid string value")
+            raise Exception("Activity set with string value, but %s is not valid for this axis"%(value))
         if value < -1:
             value = -1
         elif value > 1:
@@ -78,7 +141,7 @@ class Alignment(object):
                 if v == value:
                     self._morality = k
                     return
-            raise Exception("Morality set with non-int value or not valid string value")
+            raise Exception("Morality set with string value, but %s is not valid for this axis"%(value))
         if value < -1:
             value = -1
         elif value > 1:
@@ -97,6 +160,20 @@ class Alignment(object):
         return self.show_orderliness(), self.show_activity(), self.show_morality()
 
 
+    def special_needs(self):
+        n = Alignment._needs
+        needs = []
+        zero_needs = []
+        for k in n.keys():
+            try:
+                val = getattr(self, k)
+                needs.append(n[k][val])
+                zero_needs.append(n[k][val - val*2])
+            except KeyError:
+                pass
+        return needs, zero_needs
+
+
 
 
 class Person(object):
@@ -109,7 +186,7 @@ class Person(object):
         self.alignment = Alignment()
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.tokens = []             # Special resources to activate various events
-        self.tokens_difficulty = {}
+        self.relations_tendency = {'convention': 0, 'conquest': 0, 'contribution': 0}
 
         #obedience, dependecy and respect stats
         self._stance = []
@@ -120,7 +197,7 @@ class Person(object):
         self.subordinates = []
         self.ap = 1
         self.schedule = Schedule(self)
-        self.modifiers = []
+        self.modifiers = Modifiers()
         # init starting features
         self.add_feature(age)
         self.add_feature(gender)
@@ -155,8 +232,9 @@ class Person(object):
             'sensitivity':3
         }
         self.university = {'name': 'study', 'effort': 'bad', 'auto': False}
-        self.vigor = self.attributes['physique']
+        self.mood = 0
         self.fatigue = 0
+        self._vitality = 0
         self.taboos = init_taboos(self)
         self.appetite = 0
         self.calorie_storage = 0
@@ -173,11 +251,7 @@ class Person(object):
         self.conditions = []
     
     def count_modifiers(self, key):
-        val = 0
-        for mod in self.__dict__['modifiers']:
-            for k in mod:
-                if k==key:
-                    val += mod[k]
+        val = self.__dict__['modifiers'].get_modified_attribute(key)
         return val
     def __getattr__(self, key):
         if key in self.attributes:
@@ -220,6 +294,28 @@ class Person(object):
         self._anxiety = value
         if self._anxiety < 0:
             self_anxiety = 0
+    @property
+    def vitality(self):
+        l = [self.physique, self.count_modifiers('shape'), self.count_modifiers('fitness'), self.mood,
+            self.count_modifiers('therapy'), self.count_modifiers('vitality')]
+        max_slot = 5
+        val = 1
+        ll = [i for i in l if i > -1]
+        bad = len(l) - len(ll)
+        ll = list(set(ll))
+        ll.sort()
+        for i in range(bad):
+            ll.pop(0)
+        for i in range(1, max_slot+1):
+            if len(ll) < 1:
+                break
+            if not i < min(ll):
+                val += 1
+                ll.remove(min(ll))
+        val += self._vitality
+        if val > 5:
+            val = 5
+        return val
 
 
     @property
@@ -235,55 +331,6 @@ class Person(object):
             if isinstance(feature, Phobia):
                 l.append(feature.object_of_fear)
         return l
-
-    def insurgensy(self):
-        val = self.vigor - self.obedience()
-        if val < 0:
-            val = 0
-        return val
-
-    def gain_vigor(self, power):
-        if power > self.vigor:
-            self.vigor += 1
-    def drain_vigor(self):
-        v = self.vigor
-        self.appetite += 1
-        if self.vigor > 0:
-            self.vigor -= 1
-        else:
-            self.fatigue += 1
-        return v
-    def calc_vigor(self):
-        mood = self.mood()
-        vigor_left = self.vigor
-        self.vigor = 0
-        if mood[0] < 0:
-            self.vigor -= 1
-        if self.fatigue > 0:
-            self.fatigue = 0
-            self.vigor -= 1
-        if mood[0] > 0:
-            self.gain_vigor(mood[1])
-        if vigor_left > 0:
-            self.gain_vigor(vigor_left)
-        self.gain_vigor(self.physique)
-        self.gain_vigor(self.spirit)
-        to_remove = []
-        for cond in self.conditions:
-            if isinstance(cond, tuple):
-                if cond[0] == 'vigor':
-                    if cond[1] > 0:
-                        self.gain_vigor(cond[1])
-                    elif cond[1] < 0:
-                        self.vigor += cond[1]
-                    to_remove.append(cond)
-        for cond in to_remove:
-            self.conditions.remove(cond)
-        if self.vigor < 0:
-            self.fatigue = self.vigor
-            self.vigor = 0
-
-
 
 
     def show_taboos(self):
@@ -385,47 +432,88 @@ class Person(object):
 
     def calc_focus(self):
         if self.focused_skill:
-            if self.focused_skill.name in self.skills_used:
-                self.focus += 1
+            if self.focused_skill in self.skills_used:
+                self.focused_skill.focus += 1
                 self.skills_used = []
                 return
+        try:
+            self.focused_skill.focus = 0
+        except AttributeError:
+            pass
+
         if len(self.skills_used) > 0:
             from collections import Counter
             counted = Counter()
-            for s in self.skills_used:
+            for s.name in self.skills_used:
                 counted[s]+=1
             maximum = max(counted.values())
             result = []
             for skill in counted:
                 if counted[skill] == maximum:
-                    result.append(skill)
-            if self.focused_skill in result:
-                self.focus += 1
-                self.skills_used = []
-                return
+                    result.append(self.skill(skill))
             self.skill(choice(result)).set_focus()
             self.focus = 1
         else:
             self.focused_skill = None
+        
         self.skills_used = []
 
-    def mood(self):
+    def recalculate_mood(self):
         mood = 0
+        happines = []
+        dissapointment = []
         for need in self.needs:
-            if need.status == "tense":
-                mood -= 1
-            elif need.status == "satisfied":
-                mood += 1
-        if self.selfesteem > 0:
-            mood += 1
-        elif self.selfesteem < 0:
-            mood -= 1
-        if mood < (-self.determination-self.sensitivity):
-            return (-1, mood)
-        elif mood > self.sensitivity:
-            return (1, mood)
+            if need.tension and need.level > 0:
+                dissapointment.append(need.level)
+            if need.satisfaction > 0:
+                happines.append(need.satisfaction)
+                if need.level == 3:
+                    happines.append(need.satisfaction)
+            need.satisfaction = 0
+            need.tension = False
+        for i in range(self.determination):
+            happines.append(1)
+        for i in range(self.anxiety):
+            dissapointment.append(1)
 
-        return (0, mood)
+        hlen = len(happines)
+        dlen = len(dissapointment)
+        happines.sort()
+        dissapointment.sort()
+        
+        if hlen > dlen:
+            dissapointment = []
+            for i in range(dlen):
+                happines.pop(0)
+            threshold = happines.count(5)
+            sens = 5-self.sensitivity
+            if threshold > sens:
+                mood = 5
+            elif threshold+happines.count(4) > sens:
+                mood = 4
+            elif threshold+happines.count(4)+happines.count(3) > sens:
+                mood = 3
+            elif threshold+happines.count(4)+happines.count(3)+happines.count(2) > sens:
+                mood = 2
+            elif threshold+happines.count(4)+happines.count(3)+happines.count(2)+happines.count(1) > sens:
+                mood = 1
+
+        elif hlen < dlen:
+            happines = []
+            for i in range(hlen):
+                dissapointment.pop(0)
+            dissapointment = [i for i in dissapointment if i > 1]
+            despair = 6-setnsitivity-dissapointment.count(2)-dissapointment.count(3)*3
+            if despair < 0:
+                mood = -1
+            else:
+                mood = 0
+            return
+        
+        else:
+            mood = 0
+        self.mood = mood
+
 
 
     
@@ -453,7 +541,6 @@ class Person(object):
 
     def motivation(self, skill=None, needs=[], beneficiar = None, morality=0, special=[]):# needs should be a list of tuples[(need, shift)]
         motiv = 0
-        motiv += self.mood()[0]
         motiv += morality
         for i in special:
             motiv += i
@@ -462,45 +549,35 @@ class Person(object):
                 motiv += 1
             elif self.skill(skill).inability:
                 motiv -= 1
-        if self.vigor < 1:
-            motiv -= 1
-            motiv -= self.fatigue
-        elif self.vigor > 3:
-            motiv += 1
 
-
+        intense = []
         for need in needs:
             n = getattr(self, need[0])
             status = n.status
             shift = need[1]
             if shift < 0:
-                if status == 'relevant':
-                    motiv -= 2
-            if shift > 0:
-                if status == 'tense': 
-                    motiv += 2
-                elif status == 'relevant':
-                    motiv += 1
-                elif status == 'overflow':
-                    motiv -= 1
+                motiv -= 1
+            else:
+                intense.append(need.level)
+            motiv += max(intense)
+
         if beneficiar:
             if beneficiar == self:
-                motiv += 1
-            elif beneficiar.player_controlled:
-                if self.stance(beneficiar).value == 3:
-                    motiv += 1
-                elif self.stance(beneficiar).value == 0:
-                    return -10
-                elif self.stance(beneficiar).value == 1:
-                    motiv -= 1
-            if beneficiar == self.master or beneficiar == self.supervisor:
-                if self.stance(beneficiar).value == 1:
-                    if motiv < 0:
-                        motiv += self.stance(beneficiar).respect()
-                    if motiv > 0:
-                        motiv = 0
-                elif self.stance(beneficiar).value >= 2:
-                    motiv += self.stance(beneficiar).respect()
+                motiv += 2
+            else:
+                motiv += self.stance(beneficiar).value
+        if self.stance(beneficiar) < 0:
+            motiv = 0
+        if beneficiar == self.master or beneficiar == self.supervisor:
+            if self.stance(beneficiar).value == 0:
+                motiv = min(beneficiar.mind, beneficiar.spirit)
+            elif self.stance(beneficiar).value == 2:
+                motiv = 5
+        if motiv < 0:
+            motiv = 0
+        if motiv > 5:
+            motiv = 5
+
         return motiv
 
     
@@ -547,13 +624,13 @@ class Person(object):
             need.status_change()
         self.reduce_overflow()
         self.calc_focus()
-        self.calc_vigor()
         self.reduce_esteem()
         if not self.player_controlled and self.mood()[0] > 0:
             if self.determination < 1:
                 self.determination = 1
         if self.feature('obese') or self.feature('emaciated'):
             self.vigor -= 1
+        self.modifiers.tick_time()
 
 
 
@@ -725,26 +802,11 @@ class Person(object):
 
     def add_reward(self, name, need):
         self.rewards.append((name, need))
-
-    
-    def bribe_threshold(self):
-        dif = self.tokens_difficulty['dependence'] if self.master else 0
-        threshold = 3 + self.spirit - self.sensitivity + dif
-        return threshold
-
-
-    def training_resistance(self):
-        dif = self.tokens_difficulty['discipline'] if self.master else 0
-        return self.insurgensy() + self.mind - 1 + dif
     
 
     def use_token(self, token):
         if self.has_token(token):
             self.tokens.remove(token)
-            if token in self.tokens_difficulty.keys():
-                self.tokens_difficulty[token] += 1
-            else:
-                self.tokens_difficulty[token] = 1
         else:
             return "%s has no token named %s"%(self.name(), token)
 
@@ -760,27 +822,24 @@ class Person(object):
             return True
         return False
 
-
-    def token_difficulty(self, token):
-        if token in self.tokens_difficulty.keys():
-            return self.tokens_difficulty[token]
-        else:
-            self.tokens_difficulty[token] = 0
-            return 0
-
     
     def add_token(self, token, power=-1):
         if not self.has_token(token):
-            if power >= 0:
-                if token not in self.tokens_difficulty.keys():
-                    self.tokens_difficulty[token] = 0
-                if power > self.tokens_difficulty[token]:
-                    self.tokens.append(token)
-            else:
+            if power > self.player_relations().stability:
                 self.tokens.append(token)
-            renpy.call_in_new_context('lbl_notify', self, token)
+                self.player_relations().stability += 1
+                if token not in ('accordance', 'antagonism'):
+                    self.relations_tendency[token] += 1
+                renpy.call_in_new_context('lbl_notify', self, token)
 
 
+    def player_relations(self):
+        for rel in self.relations:
+            if rel.is_player_relations():
+                return rel
+        return None
+
+    
     def moral_action(self, *args, **kwargs):
         for arg in args:
             if isinstance(arg, int):
@@ -796,17 +855,21 @@ class Person(object):
         act = {'ardent': 1, 'reasonable': 0, 'timid': -1}
         moral = {'good': 1, 'selfish': 0, 'evil': -1}
         order = {'lawful': 1, 'conformal': 0, 'chaotic': -1}
+        action_tones = {'activity': None, 'morality': None, 'orderliness': None}
         activity = None
         morality = None
         orderliness = None
         target = None
+        
         if 'target' in kwargs:
             if isinstance(kwargs['target'], Person):
                 target = kwargs['target']
+        
         else:
             for arg in args:
                 if isinstance(arg, Person):
                     target=arg
+        
         for arg in args:
             if arg in act.keys():
                 activity = arg
@@ -814,72 +877,21 @@ class Person(object):
                 morality = arg
             if arg in order.keys():
                 orderliness = arg
-        for arg in args:
-            if isinstance(arg, list):
-                for i in arg:
-                    if i in act.keys():
-                        activity = i
-                    if i in moral.keys():
-                        morality = i
-                    if i in order.keys():
-                        orderliness = i
-        if orderliness:
-            valself = self.alignment.orderliness
-            valact = order[orderliness]
-            if valself != 0:
-                if valself + valact == 0:
-                    result -= 1
-                elif abs(valself + valact) == 2:
-                    result += 1
-            elif target:
-                if valact == 1:
-                    if self.relations(target).distance == 'formal':
-                        result += 1
-                    elif self.relations(target).distance == 'intimate':
+        for k, v in action_tones.items():
+            if v:
+                valself = getattr(self.alignment, k)
+                valact = v
+                if valself != 0:
+                    if valself + valact == 0:
                         result -= 1
-                elif valact == -1:
-                    if self.relations(target).distance == 'formal':
-                        result -= 1
-                    elif self.relations(target).distance == 'intimate':
+                    elif abs(valself + valact) == 2:
                         result += 1
-        if activity:
-            valself = self.alignment.activity
-            valact = act[activity]
-            if valself != 0:
-                if valself + valact == 0:
-                    result -= 1
-                elif abs(valself + valact) == 2:
-                    result += 1
-            elif target:
-                if valact == 1:
-                    if self.relations(target).fervor == 'intense':
-                        result += 1
-                    elif self.relations(target).fervor == 'delicate':
-                        result -= 1
-                elif valact == -1:
-                    if self.relations(target).fervor == 'delicate':
-                        result -= 1
-                    elif self.relations(target).fervor == 'intense':
-                        result += 1
-        if morality:
-            valself = self.alignment.morality
-            valact = moral[morality]
-            if valself != 0:
-                if valself + valact == 0:
-                    result -= 1
-                elif abs(valself + valact) == 2:
-                    result += 1
-            elif target:
-                if valact == 1:
-                    if self.relations(target).congruence == 'supporter':
-                        result += 1
-                    elif self.relations(target).congruence == 'contradictor':
-                        result -= 1
-                elif valact == -1:
-                    if self.relations(target).congruence == 'contradictor':
-                        result -= 1
-                    elif self.relations(target).congruence == 'supporter':
-                        result += 1
+                elif target:
+                    if valact != 0:
+                        if getattr(self.relations(target), Alignment.relation_binding[k]) != valact:
+                            result -= 1
+                        else:
+                            result += 1
         return result
 
     def reduce_esteem(self):
@@ -954,10 +966,10 @@ class Person(object):
     def attitude_tendency(self):
         n = 0
         token = None
-        for k, v in self.tokens_difficulty:
+        for k, v in self.relations_tendency.items():
             if v > n:
                 n = v
                 token = k
-        if self.tokens_difficulty.values().count(n) > 1:
+        if self.relations_tendency.values().count(n) > 1:
             return None
         return token

@@ -23,8 +23,9 @@ class Feature(object):
         self.add()
 
     def remove(self):
-        if self.modifiers in self.owner.modifiers:
-            self.owner.modifiers.remove(self.modifiers)
+        if self.modifiers:
+            name = self.slot if self.slot else self.name
+            self.owner.modifiers.del_item(name)
         self.owner.features.remove(self)
 
     def add(self):
@@ -33,14 +34,16 @@ class Feature(object):
         if self.slot == None:
             self.owner.features.append(self)
             if self.modifiers:
-                self.owner.modifiers.append(self.modifiers)
+                name = self.slot if self.slot else self.name
+                self.owner.modifiers.add_item(name, self.modifiers)
             return
         else:
             for feature in self.owner.features:
                 if feature.slot == self.slot:
                     feature.remove()
             if self.modifiers:
-                self.owner.modifiers.append(self.modifiers)
+                name = self.slot if self.slot else self.name
+                self.owner.modifiers.add_item(name, self.modifiers)
             self.owner.features.append(self)
             
 class Phobia(Feature):
