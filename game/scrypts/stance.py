@@ -71,20 +71,6 @@ class Stance(object):
         return Stance._types[self._type][self.value+1]
 
 
-    def respect(self):
-        if not self.is_player_stance():
-            values = {-1:0, 0:1, 1:5, 2:10}
-            return values[self.value]
-        alig_relations = {'lawful': self.convention*2, 'conformal': self.convention, 'chaotic': self.convention/2,
-                            'timid': self.conquest*2, 'reasonable': self.conquest, 'ardent': self.conquest/2,
-                            'evil': self.contribution*2, 'selfish': self.contribution, 'good': self.contribution/2}
-        alig = self.npc.alignment.description()
-        val = 0
-        for i in alig:
-            val += alig_relations[i]        
-        return val
-
-
     def change_stance(self, stance):
         if stance not in Stance._types.keys():
             raise Exception("Wrong stance: %s"%(t))

@@ -18,20 +18,17 @@ def register_actions():
 
 
 class ScheduledAction(object):
-    def __init__(self, owner, name, lbl, slot, target=None, single=False):
+    def __init__(self, owner, name, lbl, slot, single=False, special_values={}):
         self.owner = owner
         self.slot = slot
         self.name = name
         self.lbl = lbl
-        self.target = target
         self.single = single
+        self.special_values = special_values
 
     def call(self):
-        if self.target:
-            renpy.call_in_new_context(self.lbl, self.owner, self.target)
-        else:
-            renpy.call_in_new_context(self.lbl, self.owner)
-        return
+        renpy.call_in_new_context(self.lbl, self)
+
 
 
 class Schedule(object):
@@ -39,9 +36,9 @@ class Schedule(object):
         self.actions = []
         self.owner = person
     
-    def add_action(self, action, single=False, target=None):
+    def add_action(self, action, single=False, special_values={}):
         if action in actions.keys():
-            act = ScheduledAction(self.owner, action, actions[action][0], actions[action][1], target, single)
+            act = ScheduledAction(self.owner, action, actions[action][0], actions[action][1], single, special_values)
             if act.slot != None:
                 for a in self.actions:
                     if a.slot == act.slot:
@@ -57,35 +54,27 @@ class Schedule(object):
                 to_remove.append(action)
         for a in to_remove:
             self.actions.remove(a)
-    def remove_action(self, action, target=None):
-        if target:
-            for a in self.actions:
-                if a.name == action and a.target == target:
-                    self.actions.remove(a)
-        else:
-            for a in self.actions:
-                if a.name == action:
-                    self.actions.remove(a)
-    def remove_by_slot(self, slot, taget=None):
-        if target:
-            for a in self.actions:
-                if a.slot == slot and a.target == target:
-                    self.actions.remove(a)
-        else:
-            for a in self.actions:
-                if a.slot == slot:
-                    self.actions.remove(a)
+    def remove_action(self, action):
+        for a in self.actions:
+            if a.name == action:
+                self.actions.remove(a)
+    def remove_by_slot(self, slot):
+        for a in self.actions:
+            if a.slot == slot:
+                self.actions.remove(a)
 
-    def has_action(self, action, target=None):
-        if target:
-            for a in self.actions:
-                if a.name == action and a.target == target:
-                    return True
-        else:
-            for a in self.actions:
-                if a.name == action:
-                    return True
-        return False
+
+    def find_by_slot(self, slot):
+        for a in self.actions:
+            if a.slot==slot:
+                return a
+
+
+    def find_by_name(self, name):
+        for a in self.actions:
+            if a.name == name:
+                return a
+
 
 
 

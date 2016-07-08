@@ -213,7 +213,6 @@ class Person(object):
             "overfeed": 0,
         }
         self.accommodation = 'makeshift'
-        self.job = {'name': 'idle', 'efficiency': 0,'skill': None, 'effort': "bad"}     #effort can be "bad", "good", "will" or "full"
         self.skills = []
         self.specialized_skill = None
         self.focused_skill = None
@@ -221,7 +220,7 @@ class Person(object):
         self.skills_used = []
         self.factors = []
         self.restrictions = []
-        self.needs = init_needs(self)
+        self._needs = init_needs(self)
 
 
         self.attributes = {
@@ -253,6 +252,27 @@ class Person(object):
     def count_modifiers(self, key):
         val = self.__dict__['modifiers'].get_modified_attribute(key)
         return val
+    
+
+    @property
+    def job(self):
+        job = self.schedule.find_by_slot('job')
+        if not job:
+            return 'idle'
+        else:
+            return job
+
+
+    def show_job(self):
+        job = self.schedule.find_by_slot('job')
+        if not job:
+            return 'idle'
+        else:
+            values = [(k, v) for k, v in job.special_values.items()]
+            return job, values
+
+
+
     def __getattr__(self, key):
         if key in self.attributes:
             value = self.attributes[key]
@@ -262,9 +282,9 @@ class Person(object):
             if value > 5:
                 value = 5
             return value
-        for need in self.needs:
-            if need.name == key:
-                return need
+        n = self.get_all_needs()
+        if key in n.keys():
+            return n[key]
         else:
             raise AttributeError(key)
 
@@ -331,8 +351,18 @@ class Person(object):
             if isinstance(feature, Phobia):
                 l.append(feature.object_of_fear)
         return l
+    def get_needs(self):
+        d = {}
+        for need in self._needs:
+            if need.level > 0:
+                d[need.name] = need
+        return d
 
-
+    def get_all_needs(self):
+        d = {}
+        for need in self._needs:
+            d[need.name] = need
+        return d
     def show_taboos(self):
         s = ""
         for taboo in self.taboos:
@@ -341,15 +371,10 @@ class Person(object):
         return s
 
 
-    def show_needs(self, key=None):
+    def show_needs(self):
         s = ""
-        if not key:
-            for need in self.needs:
-                s += "{need.name}({need.level}), ".format(need=need)
-        elif key:
-            for need in self.needs:
-                if need.status == key:
-                    s += "{need.name}({need.level}), ".format(need=need)
+        for need in self.get_needs().values():
+            s += "{need.name}({need.level}), ".format(need=need)
         return s
 
     def show_features(self):
@@ -417,17 +442,6 @@ class Person(object):
         self.skills.append(skill)
         return skill
 
-
-    def action(self, needs=[], moral=0, beneficiar=None):
-        if self.player_controlled:
-            result = renpy.call_in_new_context('lbl_action_check')
-        else:
-            result = self.motivation(beneficiar=beneficiar, needs=needs, morality=moral)
-        if result > 0:
-            for need in needs:
-                getattr(self, need[0]).set_shift(need[1])
-        return result
-
     
 
     def calc_focus(self):
@@ -462,7 +476,7 @@ class Person(object):
         mood = 0
         happines = []
         dissapointment = []
-        for need in self.needs:
+        for need in self.get_needs().values():
             if need.tension and need.level > 0:
                 dissapointment.append(need.level)
             if need.satisfaction > 0:
@@ -516,29 +530,6 @@ class Person(object):
 
 
 
-    
-    def reduce_overflow(self):
-        max_level = 4
-        needs_list = []
-        for need in self.needs:
-            if need.status == 'overflow':
-                needs_list.append(need)
-        if self.determination > len(needs_list):
-            return
-        needs_list = []
-        while True:
-            for need in self.needs:
-                if need.level == max_level and need.status == 'overflow':
-                    needs_list.append(need)
-            if len(needs_list) > 0:
-                n = choice(needs_list)
-                n.status = 'relevant'
-                return
-            max_level -= 1
-            if max_level < 1:
-                return
-
-
     def motivation(self, skill=None, needs=[], beneficiar = None, morality=0, special=[]):# needs should be a list of tuples[(need, shift)]
         motiv = 0
         motiv += morality
@@ -551,28 +542,31 @@ class Person(object):
                 motiv -= 1
 
         intense = []
+        self_needs = self.get_needs()
         for need in needs:
-            n = getattr(self, need[0])
-            status = n.status
-            shift = need[1]
-            if shift < 0:
-                motiv -= 1
-            else:
-                intense.append(need.level)
-            motiv += max(intense)
+            if need[0] in self_needs.keys():
+                if need[1] < 0:
+                    motiv -= 1
+                else:
+                    intense.append(need.level)
+        try:
+            maximum = max(intense)
+        except ValueError:
+            maximum = 0
+        motiv += maximum
 
         if beneficiar:
             if beneficiar == self:
                 motiv += 2
             else:
                 motiv += self.stance(beneficiar).value
-        if self.stance(beneficiar) < 0:
-            motiv = 0
-        if beneficiar == self.master or beneficiar == self.supervisor:
-            if self.stance(beneficiar).value == 0:
-                motiv = min(beneficiar.mind, beneficiar.spirit)
-            elif self.stance(beneficiar).value == 2:
-                motiv = 5
+                if self.stance(beneficiar) < 0:
+                    motiv = 0
+                if beneficiar == self.master or beneficiar == self.supervisor:
+                    if self.stance(beneficiar).value == 0:
+                        motiv = min(beneficiar.mind, beneficiar.spirit)
+                    elif self.stance(beneficiar).value == 2:
+                        motiv = 5
         if motiv < 0:
             motiv = 0
         if motiv > 5:
@@ -616,20 +610,17 @@ class Person(object):
             txt += ','
 
         return txt
-    
+    def reset_needs(self):
+        for need in self.get_all_needs().values():
+            need.reset()
     def rest(self):
         self.schedule.use_actions()
         self.fatness_change()
-        for need in self.needs:
-            need.status_change()
+        self.recalculate_mood()
+        self.reset_needs()
         self.reduce_overflow()
         self.calc_focus()
         self.reduce_esteem()
-        if not self.player_controlled and self.mood()[0] > 0:
-            if self.determination < 1:
-                self.determination = 1
-        if self.feature('obese') or self.feature('emaciated'):
-            self.vigor -= 1
         self.modifiers.tick_time()
 
 

@@ -64,7 +64,7 @@ label lbl_make_shedule:
 label lbl_info_new(target):
     python:
         alignment = target.alignment.description() 
-        job = dname[target.job['name']]
+        job = target.show_job()
         desu = target.description()
         # taboos = child.show_taboos()
         features = target.show_features()

@@ -46,3 +46,8 @@ class Need(object):
         elif self.name in n[1]:
             return 0
         return self._level
+
+
+    def reset(self):
+        self._satisfaction = 0
+        self.tension = False
