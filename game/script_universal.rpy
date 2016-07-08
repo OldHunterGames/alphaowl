@@ -39,7 +39,7 @@ label lbl_universal_menu:
     
 label lbl_make_shedule:
         
-    $ shedule_major = dname[player.job['name']]
+    $ schedule_major = dname[player.job]
     
     menu:
         "По вечерам: [shedule_major]":
@@ -60,7 +60,45 @@ label lbl_make_shedule:
             
     jump lbl_make_shedule
         
+    
+label lbl_make_shedule:
         
+    $ schedule_major = dname[player.job]
+    
+    menu:
+        "По вечерам: [shedule_major]":
+            if player == child:
+                call lbl_son_major
+            else:
+                call lbl_shedule_major
+        "В выходные: [shedule_minor]":
+            if player == child:
+                call lbl_son_minor
+            else:
+                $ pass
+        "Общение: [communication]" if player != mom:
+            call lbl_universal_interaction
+            
+        'Назад':
+            jump lbl_universal_menu    
+            
+    jump lbl_make_shedule
+        
+label lbl_shedule_major:
+    menu:
+        'Воспитывать Сыченьку' if target != child:
+            $ pass
+        'Безделье':
+            $ target.schedule.add_action('job_idle') 
+        'Подрабатывать уборщицей' if target == mom:
+            $ target.schedule.add_action('job_janitor') 
+        'Делать уроки' if target == child:
+            $ target.schedule.add_action('job_study') 
+        "Назад":
+            call lbl_make_shedule
+    
+    return
+    
 label lbl_info_new(target):
     python:
         alignment = target.alignment.description() 

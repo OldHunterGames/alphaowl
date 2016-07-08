@@ -15,6 +15,38 @@ label shd_general_accounting(character):
         
     return
 
+
+label shd_job_janitor(action.actor):
+    python:
+        moral = action.actor.moral_action('lawful')
+        result = game.skillcheck(action.actor, 'communication', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=action.actor, morality=moral, special_motivators=[], success_threshold=0)
+        actor = action.actor    
+
+        if result >= 0:
+            renpy.call('subloc_work_perform')   
+        else:
+            renpy.call('subloc_work_sabotage')       
+    return    
+
+
+[1:38:00] Михаил Медведев: делать action.special_values['beneficiar'].moral_action
+
+
+label subloc_work_sabotage:
+    'Сабантуй.'
+  
+    return
+
+label subloc_work_perform:
+    python:
+        gain = result*result*10
+        game.money += gain
+        actor.skill('communication').get_expirience(result)
+    'Качество работы = [result]\n Заработок: [gain] тенге.'
+    return
+
+
+
 label shd_discipline_atrocity(character):
     python:
         moral = character.moral_action(moral_burden, unin_target) 
