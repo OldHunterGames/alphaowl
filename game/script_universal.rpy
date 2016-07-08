@@ -74,5 +74,6 @@ label lbl_shedule_major:
         "Назад":
             call lbl_make_shedule
     
-    return
+        job = target.show_job()
     
+    return
