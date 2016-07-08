@@ -15,6 +15,13 @@ label shd_general_accounting(character):
         
     return
 
+label shd_job_janitor(character):
+    'Мама работает уборщицей'
+    return
+
+
+
+
 label shd_discipline_atrocity(character):
     python:
         moral = character.moral_action(moral_burden, unin_target) 
@@ -48,7 +55,17 @@ label shd_discipline_pleasing(character):
 
 
 
-    
+
+
+
+
+
+
+
+
+
+
+   
 label shd_dayoff_dacha(character):
     python:
         child.comfort.set_shift(-3)

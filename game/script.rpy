@@ -446,3 +446,58 @@ screen sc_skillcheck(action):
         else:
             text "Сила: [action.power]"
             text "Интенсивность потребности: [action._compare_to_power]"
+
+
+label lbl_info_new(target):
+    python:
+        alignment = target.alignment.description() 
+        job = dname[target.job['name']]
+        desu = target.description()
+        # taboos = child.show_taboos()
+        features = target.show_features()
+        tokens = target.tokens
+        focus = target.show_focus()
+        rel = target.relations(player).description() if target!=player else None
+        stance = target.stance(player).level if target!=player else None
+        skills = target.show_skills()
+        tendency = target.attitude_tendency()
+        txt = "Настроение: " + str(target.mood)
+        if stance:
+            txt += " | Отношение: " + str(stance) +'\n'
+        txt += " | Здоровье: %s \n "%(target.vitality)
+        txt += "Запреты: %s \n "%(target.restrictions)
+        txt += "Условия сна: %s  |  %s       \n"%(target.accommodation, job)
+        txt += "Характер: %s, %s, %s\n"%(target.alignment.description())
+        if rel:
+            txt += "Отношение: %s, %s, %s\n"%(rel)
+            txt += "Гармония: %s, %s\n"%(target.relations(player).harmony()[0], target.relations(player).harmony()[1])
+        else:
+            txt += "Деньги: %s, Провизия: %s, Вещества: %s \n"%(game.money, game.resource("provision"), game.resource("drugs"))
+        txt += "Фокус: %s\n"%(focus)
+        txt += "Особенности: %s\n"%(features)
+        txt += "Аттрибуты: %s\n"%(target.show_attributes())
+        if tendency:
+            txt += "Тенденция: %s\n"(tendency)
+        if skills:
+            txt += "Навыки: %s\n"%(skills)
+        if tokens:
+            txt += "Токены: %s\n"%(tokens)
+        txt += "Ангст: %s, Решимость: %s"%(target.anxiety, target.determination)
+    "[txt]"
+
+    return
+
+
+screen sc_choose_character():
+    python:
+        plist = [person for person in player.known_characters]
+        plist.append(player)
+        ileft = 0
+        iright = 4 if len(plist) > 4 else len(plist)-1
+        def change_i(value):
+            ileft += value
+            iright += value
+    vbox:
+        for i in plist:
+            $ t = i.name()
+            textbutton t action Return(i)
