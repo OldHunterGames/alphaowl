@@ -260,7 +260,7 @@ class Person(object):
         if not job:
             return 'idle'
         else:
-            return job
+            return job.name
 
 
     def show_job(self):
@@ -271,6 +271,13 @@ class Person(object):
             values = [(k, v) for k, v in job.special_values.items()]
             return job, values
 
+
+    def job_object(self):
+        job = self.schedule.find_by_slot('job')
+        if not job:
+            return None
+        else:
+            return job, values
 
 
     def __getattr__(self, key):

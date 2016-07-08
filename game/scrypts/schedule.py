@@ -18,8 +18,8 @@ def register_actions():
 
 
 class ScheduledAction(object):
-    def __init__(self, owner, name, lbl, slot, single=False, special_values={}):
-        self.owner = owner
+    def __init__(self, actor, name, lbl, slot, single=False, special_values={}):
+        self.actor = actor
         self.slot = slot
         self.name = name
         self.lbl = lbl
