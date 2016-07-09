@@ -5,29 +5,30 @@ label lbl_universal_menu:
     $ info_drugs = game.resource('drugs')
     menu:
         'Тенгэ: [game.money] | Жратва: [info_provision] | Вещества: [info_drugs]'
-        "Информация":
+        
+        "Взаимодействия с...":
             $ target = renpy.call_screen('sc_choose_character')
             call lbl_info_new(target)
-            
-        "Условия":
             menu:
-                "Личные" if player == child:
-                    call lbl_control_lifestyle
-                "Сычик" if player == mom:
-                    call lbl_mom_manage    
-       
-        "Общение" if player == mom:
-            call lbl_universal_interaction
-            
-        "Расписание" if player == child:
-            call lbl_make_shedule
-                    
-        "Особые события ([player.ap])" if player.ap > 0:
-            if player == child:
-                call lbl_son_events
-            else:
-                call lbl_developement 
-                
+                "Расписание":
+                    call lbl_make_shedule
+                "Бытовые уловия":
+                    $ pass
+                "Правила":
+                    $ pass
+                "Питание":
+                    $ pass
+                "Одежда":
+                    $ pass
+                "Карманные деньги":
+                    $ pass
+                "Особые события ([player.ap])" if player.ap > 0:
+                    $ pass
+                "Информация":
+                    call lbl_info_new(target)
+                "Назад":
+                    jump lbl_universal_menu
+               
         "Магазин" if player == mom:
             call lbl_shop         
             
