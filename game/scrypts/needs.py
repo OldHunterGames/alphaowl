@@ -32,6 +32,8 @@ class Need(object):
             value = 0
         if value > levels[self.level]:
             value = levels[self.level]
+        if value < self._satisfaction:
+            return
         self._satisfaction = value
     
     def set_tension(self):

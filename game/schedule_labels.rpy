@@ -8,10 +8,10 @@ label shd_general_accounting(character):
     'Мать получает зарплату (+10 тенгэ)'
     $ game.money += 10
     if 'dates' in child.restrictions:
-        $ child.eros.set_shift(-1)
-        $ child.activity.set_shift(-1)
+        $ child.eros.set_tension()
+        $ child.activity.set_tension()
     if 'friends' in child.restrictions:
-        $ child.communication.set_shift(-2)
+        $ child.communication.set_tension()
         
     return
 
@@ -79,13 +79,12 @@ label shd_discipline_pleasing(character):
     
 label shd_dayoff_dacha(character):
     python:
-        child.comfort.set_shift(-3)
-        child.amusement.set_shift(-2)
-        child.ambition.set_shift(-2)
-        child.wellness.set_shift(-1)
-        child.altruism.set_shift(2)        
-        child.activity.set_shift(2)
-        child.conditions.append(('vigor', -1))
+        child.comfort.set_tension()
+        child.amusement.set_tension()
+        child.ambition.set_tension()
+        child.wellness.set_tension()
+        child.altruism.satisfaction = 2        
+        child.activity.satisfaction = 2
         effect = child.physique * 2
         game.res_add('provision', effect)
     'Завтра рано вставать, а то опоздаем на поезд \n @\nПоможешь бабушке на даче \n @\nНадо огород вскопать, сорняки прополот, колорада потравить \n @\n(Ресурсы: провизия +[effect])'
@@ -93,8 +92,8 @@ label shd_dayoff_dacha(character):
     
 label shd_dayoff_2ch(character):
     python:
-        child.amusement.set_shift(2)
-        child.communication.set_shift(2)        
+        child.amusement.satisfaction = 2
+        child.communication.satisfaction = 2       
     'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
     return  
 
@@ -164,62 +163,57 @@ label shd_discipline_hystery(character):
     
 label shd_outfit_lame(character):
     python:
-        child.authority.set_shift(-3)
+        child.authority.set_tension()
     return  
     
 label shd_outfit_normal(character):
     python:
-        child.prosperity.set_shift(-2)
+        child.prosperity.set_tension()
     return  
     
 label shd_outfit_cool(character):
     python:
-        child.prosperity.set_shift(4)
+        child.prosperity.satisfaction = 4
     return  
     
 label shd_living_appartment(character):
     python:
-        child.comfort.set_shift(5)
-        child.prosperity.set_shift(2)
-        child.conditions.append(('vigor', 5))
+        child.comfort.set_tension()
+        child.prosperity.satisfaction = 2
     return  
     
 label shd_living_cot(character):
-    python:
-        child.conditions.append(('vigor', 4))
     return  
     
 label shd_living_mat(character):
     python:
-        child.comfort.set_shift(-2)
-        child.prosperity.set_shift(-1)
-        child.wellness.set_shift(-1)
-        child.conditions.append(('vigor', 2))
+        child.comfort.set_tension()
+        child.prosperity.set_tension()
+        child.wellness.set_tension()
     return  
     
 label shd_living_confined(character):
     python:
-        child.comfort.set_shift(-3)
-        child.activity.set_shift(-3)
-        child.wellness.set_shift(-2)
-        child.conditions.append(('vigor', -1))
+        child.comfort.set_tension()
+        child.activity.set_tension()
+        child.wellness.set_tension()
     return  
     
 label shd_living_jailed(character):
     python:
-        child.comfort.set_shift(-5)
-        child.activity.set_shift(-4)
-        child.wellness.set_shift(-3)
+        child.comfort.set_tension()
+        child.activity.set_tension()
+        child.wellness.set_tension()
     return  
     
 label shd_fap_no(character):
     python:
-        child.eros.set_shift(-1)
+        child.eros.set_tension()
     return  
     
 label shd_fap_yes(character):
     python:
-        child.eros.set_shift(1)
+        child.eros.satisfaction = 1
     return  
     
 label shd_alcohol_no(character):
@@ -229,8 +223,8 @@ label shd_alcohol_no(character):
     
 label shd_alcohol_yes(character):
     python:
-        child.general.set_shift(3)
-        child.wellness.set_shift(-1)
+        child.general.satisfaction = 3
+        child.wellness.set_tension()
     return  
     
 label shd_smoke_no(character):
@@ -240,8 +234,8 @@ label shd_smoke_no(character):
     
 label shd_smoke_yes(character):
     python:
-        child.comfort.set_shift(3)
-        child.wellness.set_shift(-1)
+        child.comfort.satisfaction = 3
+        child.wellness.set_tension()
     return  
 
 label shd_weed_no(character):
@@ -252,13 +246,11 @@ label shd_weed_no(character):
 label shd_weed_yes(character):
     python:
         
-        child.wellness.set_shift(-2)
+        child.wellness.set_tension()
     return  
 
 
 label shd_job_idle(character):
-    python:
-        child.conditions.append(('vigor', 3))
         
     return    
     

@@ -170,8 +170,8 @@ label evn_dvach_b(event):
         return False
         
     python:
-        event.target.amusement.set_shift(2)
-        event.target.communication.set_shift(2)        
+        event.target.amusement.satisfaction = 2
+        event.target.communication.satisfaction = 2     
     'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
     return True
 
@@ -187,7 +187,7 @@ label evn_dvach_fap(event):
     if not event.skipcheck:
         return False
         
-    $ event.target.eros.set_shift(1)
+    $ event.target.eros.satisfaction = 1
     'Обмалафился. Половое удовлетворение (1)'
     return True
 
