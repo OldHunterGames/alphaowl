@@ -43,7 +43,7 @@ label lbl_make_shedule:
     $ schedule_major = dname[player.job]
     
     menu:
-        "По вечерам: [shedule_major]":
+        "По вечерам: [schedule_major]":
             if player == child:
                 call lbl_son_major
             else:
