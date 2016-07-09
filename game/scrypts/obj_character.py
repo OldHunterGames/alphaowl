@@ -537,7 +537,7 @@ class Person(object):
 
 
 
-    def motivation(self, skill=None, needs=[], beneficiar = None, morality=0, special=[]):# needs should be a list of tuples[(need, shift)]
+    def motivation(self, skill=None, tense_needs=[], satisfy_needs=[], beneficiar = None, morality=0, special=[]):# needs should be a list of tuples[(need, shift)]
         motiv = 0
         motiv += morality
         for i in special:
@@ -550,12 +550,11 @@ class Person(object):
 
         intense = []
         self_needs = self.get_needs()
-        for need in needs:
-            if need[0] in self_needs.keys():
-                if need[1] < 0:
-                    motiv -= 1
-                else:
-                    intense.append(need.level)
+        for need in tense_needs:
+            if need in self_needs.keys():
+                motiv -= 1
+        for need in satisfy_needs:
+            intense.append(need.level)
         try:
             maximum = max(intense)
         except ValueError:

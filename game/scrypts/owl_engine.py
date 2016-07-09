@@ -175,9 +175,10 @@ class Engine(object):
         check -= (3-get_max_need(target, *args)[1])
         return check
 
-
-    def skillcheck(self, actor, skill, difficulty, motivation=0, success_threshold=0):
+    def skillcheck(self, actor, skill, difficulty=0, tense_needs=[], satisfy_needs=[], beneficiar=None,
+                    morality=0, special_motivators=[], success_threshold=0):
         skill = actor.skill(skill)
+        motivation = actor.motivation(skill, tense_needs, satisfy_needs, beneficiar)
         # factors['attraction'] and equipment bonuses not implemented yet
         factors = {'level': 1+skill_level,
                     'attr': skill.attribute_value(),
