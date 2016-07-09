@@ -16,21 +16,17 @@ label shd_general_accounting(character):
     return
 
 
-label shd_job_janitor(action.actor):
+label shd_job_janitor(act):
     python:
-        moral = action.actor.moral_action('lawful')
-        result = game.skillcheck(action.actor, 'communication', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=action.actor, morality=moral, special_motivators=[], success_threshold=0)
-        actor = action.actor    
+        actor = act.actor   
+        moral = actor.moral_action('lawful')
+        result = game.skillcheck(actor, 'communication', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=actor, morality=moral, special_motivators=[], success_threshold=0)
 
         if result >= 0:
             renpy.call('subloc_work_perform')   
         else:
             renpy.call('subloc_work_sabotage')       
     return    
-
-
-[1:38:00] Михаил Медведев: делать action.special_values['beneficiar'].moral_action
-
 
 label subloc_work_sabotage:
     'Сабантуй.'

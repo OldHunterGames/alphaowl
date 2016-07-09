@@ -46,30 +46,6 @@ label lbl_make_shedule:
             if player == child:
                 call lbl_son_major
             else:
-                $ pass
-        "В выходные: [shedule_minor]":
-            if player == child:
-                call lbl_son_minor
-            else:
-                $ pass
-        "Общение: [communication]":
-            call lbl_universal_interaction
-            
-        'Назад':
-            jump lbl_universal_menu    
-            
-    jump lbl_make_shedule
-        
-    
-label lbl_make_shedule:
-        
-    $ schedule_major = dname[player.job]
-    
-    menu:
-        "По вечерам: [shedule_major]":
-            if player == child:
-                call lbl_son_major
-            else:
                 call lbl_shedule_major
         "В выходные: [shedule_minor]":
             if player == child:
