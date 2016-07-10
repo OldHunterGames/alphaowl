@@ -82,6 +82,14 @@ class Modifiers(object):
         except TypeError:
             return None
 
+
+    def get_modifier_separate(self, attribute):
+        l = []
+        for d in self._attributes:
+            for k, v in d.items():
+                if k == atrribute:
+                    l.append(v)
+        return l
 class Alignment(object):
     _needs = {'orderliness': {-1: 'independence', 1:'stability'},
             'activity': {-1: 'approval', 1: 'trill'},
@@ -328,10 +336,15 @@ class Person(object):
         self._anxiety = value
         if self._anxiety < 0:
             self_anxiety = 0
+
+
+    def modifiers_separate(self, modifier):
+        return self.modifiers.get_modifier_separate(modifier)
     @property
     def vitality(self):
         l = [self.physique, self.count_modifiers('shape'), self.count_modifiers('fitness'), self.mood,
-            self.count_modifiers('therapy'), self.count_modifiers('vitality')]
+            self.count_modifiers('therapy')]
+        l += self.modifiers_separate('vitality')
         max_slot = 5
         val = 1
         ll = [i for i in l if i > -1]
