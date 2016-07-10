@@ -625,7 +625,6 @@ class Person(object):
         self.fatness_change()
         self.recalculate_mood()
         self.reset_needs()
-        self.reduce_overflow()
         self.calc_focus()
         self.reduce_esteem()
         self.modifiers.tick_time()
