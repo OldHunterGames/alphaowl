@@ -106,6 +106,8 @@ label lbl_torture_choose:
     $ special_values = {'skill': skill, 'torturer': actor, 'token': token, 'target_tension': target_tension, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
     $ target.schedule.add_action('token_check', special_values=special_values)
+    
+    jump lbl_universal_menu
     return
 
 label lbl_accommodation:

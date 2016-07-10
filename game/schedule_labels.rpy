@@ -90,7 +90,7 @@ label shd_token_check(action):
         if result > 0:
             for need in action.special_values['target_tension']:
                 getattr(action.actor, need).set_tension()
-    "Наказан, [txt]"
+    "Наказан"
     return  
 
 
