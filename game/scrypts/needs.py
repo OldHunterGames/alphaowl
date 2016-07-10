@@ -35,7 +35,15 @@ class Need(object):
         if value < self._satisfaction:
             return
         self._satisfaction = value
-    
+    def set_satisfaction(self, value):
+        levels = [0, self.owner.sensitivity, 5, 5]
+        if value < 0:
+            value = 0
+        if value > levels[self.level]:
+            value = levels[self.level]
+        if value < self._satisfaction:
+            return
+        self._satisfaction = value
     def set_tension(self):
         self.tension = True
 
