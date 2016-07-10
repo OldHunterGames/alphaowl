@@ -72,7 +72,7 @@ class Skill(object):
         self.expirience = True
         self.expirience_slot = minimum
 
-    @property
+
     def attribute_value(self):
         return getattr(self.owner, self.attribute)
 
