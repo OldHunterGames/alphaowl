@@ -37,7 +37,7 @@ class Schedule(object):
         self.actions = []
         self.owner = person
     
-    def add_action(self, action, single=False, special_values={}):
+    def add_action(self, action, single=True, special_values={}):
         if action in actions.keys():
             act = ScheduledAction(self.owner, actions[action][2], actions[action][0], actions[action][1], action, single, special_values)
             if act.slot != None:

@@ -70,7 +70,20 @@ class Modifiers(object):
         return mod
 
 
-
+    def get_all(self):
+        last_name = self._names[-1]
+        txt = ''
+        for name in self._names:
+            index = self._names.index(name)
+            attr_txt = ''
+            d = self._attributes[index]
+            for k, v in d.items():
+                attr_txt += "{0}({1})".format(k, v)
+            time_txt = self._times[index]
+            txt += "{0}: attributes: {1}, time: {2}".format(name, attr_txt, time_txt)
+            if name != last_name:
+                txt += '\n'
+        return txt
 
     def get_modifier(self, name):
         index = None
@@ -420,7 +433,7 @@ class Person(object):
     def show_skills(self):
         s = ""
         for skill in self.skills:
-            s += "{name}({skill.level}, {skill.attribute}({skill.attribute_value}))".format(name=skill.name, skill=skill)
+            s += "{name}({skill.level}, {skill.attribute}({value}))".format(name=skill.name, skill=skill, value=skill.attribute_value())
             if skill != self.skills[len(self.skills)-1]:
                 s += ', '
         return s

@@ -175,6 +175,7 @@ class Engine(object):
         check -= (3-get_max_need(target, *args)[1])
         return check
 
+
     def skillcheck(self, actor, skill, difficulty=0, tense_needs=[], satisfy_needs=[], beneficiar=None,
                     morality=0, special_motivators=[], success_threshold=0):
         skill = actor.skill(skill)
@@ -196,6 +197,11 @@ class Engine(object):
                 result -= 1
         if motivation < 1:
             result = -1
+        if result >= 0:
+            for need in tense_needs:
+                getattr(actor, need).set_tension()
+            for need in satisfy_needs:
+                getattr(actor, need).set_satisfaction(result)
         if success_threshold:
             if result > success_threshold:
                 result = True
