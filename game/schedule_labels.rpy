@@ -84,7 +84,7 @@ label shd_token_check(action):
         morality = action.actor.check_moral(*action.special_values['moral_burden'], action.special_valies['target'])
         result = game.skillcheck(action.actor, action.special_values['difficulty'], action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality = morality)
         if result > 0
-        action.target.action.special_values['target_tension'].set_tension()
+        action.target.special_values['target_tension'].set_tension()
         "Наказан"
     return  
 
