@@ -80,12 +80,17 @@ label shd_living_jailed(action):
 
 label shd_token_check(action):
     python:
-        difficulty = game.token_difficulty(action.special_values['target'], action.special_values['token'], *action.special_values['target_tension']) 
-        morality = action.actor.check_moral(*action.special_values['moral_burden'], action.special_valies['target'])
-        result = game.skillcheck(action.actor, action.special_values['difficulty'], action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality = morality)
-        if result > 0
-        action.target.special_values['target_tension'].set_tension()
-        "Наказан"
+        threshold = game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_tension']) 
+        morality = action.actor.check_moral(action.special_values['torturer'], *action.special_values['moral_burden'])
+        difficulty = action.actor.relations(action.special_values['beneficiar']).stability
+        result = game.skillcheck(action.special_values['torturer'], action.special_values['skill'], difficulty, action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality = morality)
+        if result > threshold:
+            action.actor.add_token(action.special_values['token'])
+
+        if result > 0:
+            for need in action.special_values['target_tension']:
+                getattr(action.actor, need).set_tension()
+    "Наказан, [txt]"
     return  
 
 

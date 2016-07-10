@@ -63,8 +63,8 @@ label lbl_make_shedule:
         
 label lbl_shedule_major:
     menu:
-        'Воспитывать Сыченьку' if target != child:
-            beneficiar = target.master
+        'Воспитывать Сыченьку' if target == child:
+            $ beneficiar = target.master
             menu:
                 'Кто этим займётся?'
                 'Маман':
@@ -77,7 +77,7 @@ label lbl_shedule_major:
                 'Какой подход выборать?'
                 'Запугивание':
                     $ moral_burden = ['evil', 'intense', 'chaotic']
-                    $ token = conquer
+                    $ token = 'conquest'
                     jump lbl_torture_choose
                 'Передумать':
                     jump lbl_shedule_major                    
@@ -97,13 +97,14 @@ label lbl_torture_choose:
     menu:
         'Выберите основной способ давления.'
         'Бить ремнём':
-            $ self_statisfy = ['power', 'authority']
+            $ self_satisfy = ['power', 'authority']
             $ self_tension = ['altruism']
             $ skill = 'sport'
             $ target_tension = ['wellness']
     
     
-    $ special_values = {'skill': skill, 'target': target, 'token': token, 'target_tension': target_tension, 'self_tension': self_tension, ...}
+    $ special_values = {'skill': skill, 'torturer': actor, 'token': token, 'target_tension': target_tension, 'self_tension': self_tension,
+                        'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
     $ target.schedule.add_action('token_check', special_values=special_values)
     return
 
@@ -151,7 +152,7 @@ label lbl_info_new(target):
         txt += "Особенности: %s\n"%(features)
         txt += "Аттрибуты: %s\n"%(target.show_attributes())
         if tendency:
-            txt += "Тенденция: %s\n"(tendency)
+            txt += "Тенденция: %s\n"%(tendency)
         if skills:
             txt += "Навыки: %s\n"%(skills)
         if tokens:

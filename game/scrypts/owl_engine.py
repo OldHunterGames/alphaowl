@@ -201,7 +201,7 @@ class Engine(object):
             for need in tense_needs:
                 getattr(actor, need).set_tension()
             for need in satisfy_needs:
-                getattr(actor, need).set_satisfaction(result)
+                getattr(actor, need).satisfaction = result
         if success_threshold:
             if result > success_threshold:
                 result = True

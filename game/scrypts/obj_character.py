@@ -100,7 +100,7 @@ class Modifiers(object):
         l = []
         for d in self._attributes:
             for k, v in d.items():
-                if k == atrribute:
+                if k == attribute:
                     l.append(v)
         return l
 class Alignment(object):
@@ -859,18 +859,17 @@ class Person(object):
         return False
 
     
-    def add_token(self, token, power=-1):
+    def add_token(self, token):
         if not self.has_token(token):
-            if power > self.player_relations().stability:
-                self.tokens.append(token)
-                self.player_relations().stability += 1
-                if token not in ('accordance', 'antagonism'):
-                    self.relations_tendency[token] += 1
-                renpy.call_in_new_context('lbl_notify', self, token)
+            self.tokens.append(token)
+            self.player_relations().stability += 1
+            if token not in ('accordance', 'antagonism'):
+                self.relations_tendency[token] += 1
+            renpy.call_in_new_context('lbl_notify', self, token)
 
 
     def player_relations(self):
-        for rel in self.relations:
+        for rel in self._relations:
             if rel.is_player_relations():
                 return rel
         return None
