@@ -30,7 +30,7 @@ class Modifiers(object):
     
 
     def tick_time(self):
-        for i in range(len(self.times)):
+        for i in range(len(self._times)):
             try:
                 self._times[i] -= 1
                 if self._times[i] < 1:
