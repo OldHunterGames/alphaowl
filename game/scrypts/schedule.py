@@ -14,14 +14,15 @@ def register_actions():
         key = '{slot}_{name}'.format(slot=action[1], name=action[2])
         z = '_'
         z = z.join(action)
-        actions[key] = (z, action[1])
+        actions[key] = (z, action[1], action[2])
 
 
 class ScheduledAction(object):
-    def __init__(self, actor, name, lbl, slot, single=False, special_values={}):
+    def __init__(self, actor, name, lbl, slot, store_name, single=False, special_values={}):
         self.actor = actor
         self.slot = slot
         self.name = name
+        self.store_name = store_name
         self.lbl = lbl
         self.single = single
         self.special_values = special_values
@@ -38,7 +39,7 @@ class Schedule(object):
     
     def add_action(self, action, single=False, special_values={}):
         if action in actions.keys():
-            act = ScheduledAction(self.owner, action, actions[action][0], actions[action][1], single, special_values)
+            act = ScheduledAction(self.owner, actions[action][2], actions[action][0], actions[action][1], action, single, special_values)
             if act.slot != None:
                 for a in self.actions:
                     if a.slot == act.slot:
@@ -56,7 +57,7 @@ class Schedule(object):
             self.actions.remove(a)
     def remove_action(self, action):
         for a in self.actions:
-            if a.name == action:
+            if a.store_name == action:
                 self.actions.remove(a)
     def remove_by_slot(self, slot):
         for a in self.actions:
@@ -72,7 +73,7 @@ class Schedule(object):
 
     def find_by_name(self, name):
         for a in self.actions:
-            if a.name == name:
+            if a.store_name == name:
                 return a
 
 

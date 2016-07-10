@@ -17,6 +17,24 @@ def get_event(name):
     for event in events_list:
         if event.name == name:
             return event
+
+
+def registration_check():
+    l = renpy.get_all_labels()
+    ll = []
+    for label in l:
+        if label.split('_')[0] == 'evn':
+            ll.append(label)
+    names = [event.name for event in events_list]
+    bad = []
+    for name in ll:
+        if name not in names:
+            bad.append(name)
+    if len(bad) > 0:
+        txt = ""
+        for name in bad:
+            txt += "label for event(%s) is created, but not registered\n"%(name)
+        raise Exception(txt)
 class Event(object):
 
     def __init__(self, name, location):
