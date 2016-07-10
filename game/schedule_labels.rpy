@@ -41,7 +41,43 @@ label subloc_work_perform:
     'Качество работы = [result]\n Заработок: [gain] тенге.'
     return
 
-
+    
+label shd_living_appartment(action):
+    python:
+        action.actor.comfort.satisfaction = 3
+        action.actor.add_modifier('beauty_sleep', {'vitality': 2}, 1)        
+    return  
+    
+label shd_living_cot(character):
+    $ action.actor.comfort.satisfaction = 1
+    return  
+    
+label shd_living_mat(character):
+    python:
+        child.comfort.set_tension()
+        child.prosperity.set_tension()
+        child.wellness.set_tension()          
+    return  
+    
+label shd_living_confined(character):
+    python:
+        child.comfort.set_tension()
+        child.activity.set_tension()
+        child.wellness.set_tension()
+        child.amusement.set_tension()
+        child.communication.set_tension()
+        child.thrill.set_tension()
+        action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
+    return  
+    
+label shd_living_jailed(character):
+    python:
+        child.comfort.set_tension()
+        child.activity.set_tension()
+        child.wellness.set_tension()
+        action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
+    return  
+    
 
 label shd_discipline_atrocity(character):
     python:
@@ -175,37 +211,8 @@ label shd_outfit_cool(character):
     python:
         child.prosperity.satisfaction = 4
     return  
-    
-label shd_living_appartment(character):
-    python:
-        child.comfort.set_tension()
-        child.prosperity.satisfaction = 2
-    return  
-    
-label shd_living_cot(character):
-    return  
-    
-label shd_living_mat(character):
-    python:
-        child.comfort.set_tension()
-        child.prosperity.set_tension()
-        child.wellness.set_tension()
-    return  
-    
-label shd_living_confined(character):
-    python:
-        child.comfort.set_tension()
-        child.activity.set_tension()
-        child.wellness.set_tension()
-    return  
-    
-label shd_living_jailed(character):
-    python:
-        child.comfort.set_tension()
-        child.activity.set_tension()
-        child.wellness.set_tension()
-    return  
-    
+
+        
 label shd_fap_no(character):
     python:
         child.eros.set_tension()
