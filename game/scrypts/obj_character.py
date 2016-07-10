@@ -70,6 +70,8 @@ class Modifiers(object):
         return mod
 
 
+
+
     def get_modifier(self, name):
         index = None
         for n in self._names:
@@ -249,6 +251,11 @@ class Person(object):
         self.selfesteem = 0
         self.conditions = []
     
+
+    def add_modifier(self, name, attributes, time=None):
+        self.modifiers.add_item(name, attributes, time)
+    
+
     def count_modifiers(self, key):
         val = self.__dict__['modifiers'].get_modified_attribute(key)
         return val
@@ -449,6 +456,10 @@ class Person(object):
         self.skills.append(skill)
         return skill
 
+
+    def tick_features(self):
+        for feature in self.features:
+            feature.tick_time()
     
 
     def calc_focus(self):
@@ -621,13 +632,15 @@ class Person(object):
         for need in self.get_all_needs().values():
             need.reset()
     def rest(self):
+        self.modifiers.tick_time()
+        self.tick_features()
         self.schedule.use_actions()
         self.fatness_change()
         self.recalculate_mood()
         self.reset_needs()
         self.calc_focus()
         self.reduce_esteem()
-        self.modifiers.tick_time()
+
 
 
 

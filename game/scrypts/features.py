@@ -20,6 +20,7 @@ class Feature(object):
         self.value = stats['value'] if 'value' in stats else 0    # value for feature-based actions
         self.modifiers = stats['modifiers'] if 'modifiers' in stats else None     # parameter in key will be modified by value. Example: "agility": -1
         self.visible = stats['visible'] if 'visible' in stats else False
+        self.time = kwargs['time'] if 'time' in kwargs else None
         self.add()
 
     def remove(self):
@@ -45,6 +46,15 @@ class Feature(object):
                 name = self.slot if self.slot else self.name
                 self.owner.modifiers.add_item(name, self.modifiers)
             self.owner.features.append(self)
+
+
+    def tick_time(self):
+        try:
+            self.time -= 1
+            if self.time < 1:
+                self.remove()
+        except TypeError:
+            pass
             
 class Phobia(Feature):
     def __init__(self, owner, name, fear_obj, *args, **kwargs):
