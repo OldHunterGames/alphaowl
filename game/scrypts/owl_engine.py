@@ -175,9 +175,18 @@ class Engine(object):
         check -= (3-get_max_need(target, *args)[1])
         return check
 
+    def threshold_skillcheck(self, actor, skill, difficulty=0, tense_needs=[], satisfy_needs=[], beneficiar=None,
+                            morality=0, success_threshold=0, special_motivators=[]):
+        result = self.skillcheck(actor, skill, difficulty, tense_needs, satisfy_needs, beneficiar, morality, special_motivators)
+        if success_threshold < result:
+            threshold_result = True
+        else:
+            threshold_result = False
+        return threshold_result, result
+
 
     def skillcheck(self, actor, skill, difficulty=0, tense_needs=[], satisfy_needs=[], beneficiar=None,
-                    morality=0, special_motivators=[], success_threshold=0):
+                    morality=0, special_motivators=[]):
         skill = actor.skill(skill)
         motivation = actor.motivation(skill, tense_needs, satisfy_needs, beneficiar)
         # factors['attraction'] and equipment bonuses not implemented yet
@@ -202,11 +211,6 @@ class Engine(object):
                 getattr(actor, need).set_tension()
             for need in satisfy_needs:
                 getattr(actor, need).satisfaction = result
-        if success_threshold:
-            if result > success_threshold:
-                result = True
-            else:
-                result = False
         return result
 
         
