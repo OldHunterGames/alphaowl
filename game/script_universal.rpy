@@ -12,7 +12,7 @@ label lbl_universal_menu:
             menu:
                 "Расписание":
                     call lbl_make_shedule
-                "Бытовые уловия" if player != child:
+                "Бытовые уловия" if player != child and target == child:
                     call lbl_accommodation
                 "Правила":
                     $ pass
@@ -64,7 +64,24 @@ label lbl_make_shedule:
 label lbl_shedule_major:
     menu:
         'Воспитывать Сыченьку' if target != child:
-            $ pass
+            beneficiar = target.master
+            menu:
+                'Кто этим займётся?'
+                'Маман':
+                    $ actor = mom
+                'BATYA':
+                    $ actor = batya
+                'Передумать':
+                    jump lbl_shedule_major
+            menu:
+                'Какой подход выборать?'
+                'Запугивание':
+                    $ moral_burden = ['evil', 'intense', 'chaotic']
+                    $ token = conquer
+                    jump lbl_torture_choose
+                'Передумать':
+                    jump lbl_shedule_major                    
+                
         'Безделье':
             $ target.schedule.add_action('job_idle') 
         'Подрабатывать уборщицей' if target == mom:
@@ -74,6 +91,20 @@ label lbl_shedule_major:
         "Назад":
             call lbl_make_shedule
     
+    return
+
+label lbl_torture_choose:
+    menu:
+        'Выберите основной способ давления.'
+        'Бить ремнём':
+            $ self_statisfy = ['power', 'authority']
+            $ self_tension = ['altruism']
+            $ skill = 'sport'
+            $ target_tension = ['wellness']
+    
+    
+    $ special_values = {'skill': skill, 'target': target, 'token': token, 'target_tension': target_tension, 'self_tension': self_tension, ...}
+    $ target.schedule.add_action('token_check', special_values=special_values)
     return
 
 label lbl_accommodation:

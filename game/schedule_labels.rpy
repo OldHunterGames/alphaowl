@@ -48,18 +48,18 @@ label shd_living_appartment(action):
         action.actor.add_modifier('beauty_sleep', {'vitality': 2}, 1)        
     return  
     
-label shd_living_cot(character):
+label shd_living_cot(action):
     $ action.actor.comfort.satisfaction = 1
     return  
     
-label shd_living_mat(character):
+label shd_living_mat(action):
     python:
         child.comfort.set_tension()
         child.prosperity.set_tension()
         child.wellness.set_tension()          
     return  
     
-label shd_living_confined(character):
+label shd_living_confined(action):
     python:
         child.comfort.set_tension()
         child.activity.set_tension()
@@ -70,14 +70,24 @@ label shd_living_confined(character):
         action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
     return  
     
-label shd_living_jailed(character):
+label shd_living_jailed(action):
     python:
         child.comfort.set_tension()
         child.activity.set_tension()
         child.wellness.set_tension()
         action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
     return  
-    
+
+label shd_token_check(action):
+    python:
+        difficulty = game.token_difficulty(action.special_values['target'], action.special_values['token'], *action.special_values['target_tension']) 
+        morality = action.actor.check_moral(*action.special_values['moral_burden'], action.special_valies['target'])
+        result = game.skillcheck(action.actor, action.special_values['difficulty'], action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality = morality)
+        if result > 0
+        action.target.action.special_values['target_tension'].set_tension()
+        "Наказан"
+    return  
+
 
 label shd_discipline_atrocity(character):
     python:
