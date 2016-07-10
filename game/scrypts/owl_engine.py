@@ -180,7 +180,7 @@ class Engine(object):
         skill = actor.skill(skill)
         motivation = actor.motivation(skill, tense_needs, satisfy_needs, beneficiar)
         # factors['attraction'] and equipment bonuses not implemented yet
-        factors = {'level': 1+skill_level,
+        factors = {'level': 1+skill.level,
                     'attr': skill.attribute_value(),
                     'focus': skill.focus,
                     'mood': actor.mood,
