@@ -29,7 +29,7 @@ label shd_job_janitor(act):
     return    
 
 label subloc_work_sabotage:
-    'Сабантуй.'
+    'Маман саботирует работу и ничего не зарабатывает.'
   
     return
 

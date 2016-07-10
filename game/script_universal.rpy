@@ -12,8 +12,8 @@ label lbl_universal_menu:
             menu:
                 "Расписание":
                     call lbl_make_shedule
-                "Бытовые уловия":
-                    $ pass
+                "Бытовые уловия" if player != child:
+                    call lbl_accommodation
                 "Правила":
                     $ pass
                 "Питание":
@@ -75,7 +75,22 @@ label lbl_shedule_major:
             call lbl_make_shedule
     
     return
+
+label lbl_accommodation:
+    menu:
+        'Вечно ты в комнате запираешься от матери! Как сыч.':
+            $ child.schedule.add_action('living_appartment')  
+        'Комнату твою сдавать будем, поспишь у нас на диванчике.':
+            $ child.schedule.add_action('living_cot')  
+        'Диванчик для тёти Сраки, а тебе вот раскладушечка дедова.':
+            $ child.schedule.add_action('living_mat')  
+        'В ванной тебя запрём ночевать. Чтобы не воображал!':
+            $ child.schedule.add_action('living_jailed')    
+        'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
+            $ child.schedule.add_action('living_confined')    
     
+    return
+
 label lbl_info_new(target):
     python:
         alignment = target.alignment.description() 
