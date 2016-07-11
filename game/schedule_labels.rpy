@@ -22,7 +22,7 @@ label shd_job_supervise(action):
 label shd_job_supervise_remove(act):
     # Срабатывает в случае смены расписания c supervise на другой вариант
     python:    
-        for person in superviser.job_object.special_values['slaves']:
+        for person in act.actor.job_object().special_values['slaves']:
             person.schedule.add_action('job_idle')  
     return
     

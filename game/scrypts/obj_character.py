@@ -305,7 +305,7 @@ class Person(object):
         if not job:
             return None
         else:
-            return job, values
+            return job
 
 
     def __getattr__(self, key):
