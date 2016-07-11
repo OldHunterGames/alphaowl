@@ -297,7 +297,7 @@ class Person(object):
             return 'idle'
         else:
             values = [(k, v) for k, v in job.special_values.items()]
-            return job, values
+            return job.name, values
 
 
     def job_object(self):
