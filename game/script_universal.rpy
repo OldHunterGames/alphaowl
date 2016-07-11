@@ -9,25 +9,7 @@ label lbl_universal_menu:
         "Взаимодействия с...":
             $ target = renpy.call_screen('sc_choose_character')
             call lbl_info_new(target)
-            menu:
-                "Расписание":
-                    call lbl_make_shedule
-                "Бытовые уловия" if player != child and target == child:
-                    call lbl_accommodation
-                "Правила":
-                    $ pass
-                "Питание":
-                    call lbl_food_universal
-                "Одежда":
-                    $ pass
-                "Карманные деньги":
-                    $ pass
-                "Особые события ([player.ap])" if player.ap > 0:
-                    $ pass
-                "Информация":
-                    call lbl_info_new(target)
-                "Назад":
-                    jump lbl_universal_menu
+            call lbl_target_menu
                
         "Магазин" if player == mom:
             call lbl_shop         
@@ -36,6 +18,32 @@ label lbl_universal_menu:
             jump label_new_day
             
     jump lbl_universal_menu
+    return
+
+label lbl_target_menu:
+    menu:
+        name = target.name()
+        'Объект деятельности: [name]'
+        "Расписание":
+            call lbl_make_shedule
+        "Важные события (AP:[player.ap])" if player.ap > 0:
+            $ pass
+        "Бытовые уловия" if player != child and target == child:
+            call lbl_accommodation
+        "Питание":
+            call lbl_food_universal
+        "Правила":
+            $ pass
+        "Одежда":
+            $ pass
+        "Карманные деньги":
+            $ pass
+        "Информация":
+            call lbl_info_new(target)
+        "Назад":
+            jump lbl_universal_menu    
+    
+    jump lbl_target_menu
     return
 
 label lbl_make_shedule:
@@ -65,6 +73,7 @@ label lbl_shedule_major:
     menu:
         'Воспитывать Сыченьку' if target == child:
             $ beneficiar = target.master
+            $ code = None
             menu:
                 'Кто этим займётся? Распиание основного времени этого персонажа изменится на "Воспитание". Если вы измените потом расписание, то воспитания не произойдёт.'
                 'Маман':
@@ -82,6 +91,14 @@ label lbl_shedule_major:
                     $ moral_burden = ['evil', 'intense', 'chaotic']
                     $ token = 'conquest'
                     jump lbl_torture_choose
+                'Наказание':
+                    $ moral_burden = ['evil', 'intense', 'lawful']
+                    $ token = 'convention'
+                    jump lbl_torture_choose
+                'Поощрение':
+                    $ moral_burden = ['good', 'timid', 'lawful']
+                    $ token = 'convention'
+                    jump lbl_pleasing_choose
                 'Ублажение':
                     $ moral_burden = ['good', 'timid', 'chaotic']
                     $ token = 'contribution'
@@ -104,13 +121,22 @@ label lbl_shedule_major:
 label lbl_torture_choose:
     menu:
         'Выберите основной способ давления.'
-        'Бить ремнём':
+        'Бить ремнём (спорт)':
             $ self_satisfy = ['power', 'authority']
             $ self_tension = ['altruism']
             $ skill = 'sport'
             $ target_tension = ['wellness']
-    
-    
+        'Хуесосить (коммуникация)':
+            $ self_satisfy = ['power', 'authority']
+            $ self_tension = ['altruism']
+            $ skill = 'conversation'
+            $ target_tension = ['authority', 'ambition']    
+        'Ставить в угол (коммуникация)':
+            $ self_satisfy = ['authority', 'order']
+            $ self_tension = ['thrill']
+            $ skill = 'conversation'
+            $ target_tension = ['comfort', 'amusement', 'activity'] 
+            
     $ special_values = {'skill': skill, 'torturer': actor, 'token': token, 'target_tension': target_tension, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
     $ target.schedule.add_action('torture_check', special_values=special_values)
@@ -121,12 +147,21 @@ label lbl_torture_choose:
 label lbl_pleasing_choose:
     menu:
         'Выберите основной способ ублажения.'
-        'Похвала и доброта':
+        'Похвала и доброта (коммуникация)':
             $ self_satisfy = ['altruism', 'communication']
             $ self_tension = ['power']
             $ skill = 'conversation'
             $ target_statisfy = ['communication', 'approval']
-    
+        'Поощрить самостоятельность (коммуникация)':
+            $ self_satisfy = ['independence']
+            $ self_tension = ['order', 'authority']
+            $ skill = 'conversation'
+            $ target_statisfy = ['independence', 'authority']            
+        'Подарки (коммуникация, 5 тенгэ)':
+            $ self_satisfy = ['altruism', 'communication']
+            $ self_tension = ['power', 'prosperity']
+            $ skill = 'conversation'
+            $ target_statisfy = ['communication', 'approval']    
     
     $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
@@ -185,6 +220,116 @@ label lbl_food_universal:
             "Домашнее, тепленькое, с хлебушком":
                 $ target.ration['food_type'] = "cosine"   
                 'Пища белых людей... вкуснота (3)'    
+    
+    return
+
+label lbl_activate_ap:
+    menu:
+        'Эти действия тратят AP вашего персонажа.'
+        'Сдвиг в отношениях (нужны жетоны отношений)':
+            menu:
+                'Доступны только те опции для которых с выбранным персонажем есть непотраченные жетоны отношений: antagonism, accordance, contribution, conquer или convention.'
+                'Гармония (Accordance)' if target.has_token("accordance"):
+                    menu:
+                        'Закрепить привычку подчиняться' if target.stance(player).level == 'forced':
+                            $ player.ap -= 1
+                            $ target.use_token('accordance')
+                            $ target.stance(player).set_level('accustomed')  
+                            'Глобальное отношение ребёнка к подчинению изменилось с вынужденного подчинения на привычное подчинение'   
+                        'Гармонизовать позиции':
+                            $ player.ap -= 1
+                            $ target.use_token('accordance')
+                            $ target.relations(player).change('congruence', '+')
+                        'Создать напряжение':
+                            $ player.ap -= 1
+                            $ target.use_token('accordance')
+                            $ target.relations(player).change('congruence', '-')                            
+                        'Внушить уважение':
+                            $ player.ap -= 1
+                            $ target.use_token('accordance')
+                            $ target.relations(player).change('fervor', '+')      
+                        'Внушить спокойствие':
+                            $ player.ap -= 1
+                            $ target.use_token('accordance')
+                            $ target.relations(player).change('fervor', '-')  
+                        'Сблизиться':
+                            $ player.ap -= 1
+                            $ target.use_token('accordance')
+                            $ target.relations(player).change('distance', '+')
+                        'Формализовать отношения':
+                            $ player.ap -= 1
+                            $ target.use_token('accordance')
+                            $ target.relations(player).change('distance', '-')
+                        'Передумать':
+                            jump lbl_activate_ap    
+                'Раздор (Antagonism)' if target.has_token("antagonism"):
+                    menu:
+                        'Усилить враждебность':
+                            $ player.ap -= 1
+                            $ target.use_token('antagonism')
+                            $ target.relations(player).change('congruence', '-')                            
+                        'Накалить страсти':
+                            $ player.ap -= 1
+                            $ target.use_token('antagonism')
+                            $ target.relations(player).change('fervor', '+')      
+                        'Формализовать отношения':
+                            $ player.ap -= 1
+                            $ target.use_token('antagonism')
+                            $ target.relations(player).change('distance', '-')
+                        'Передумать':
+                            jump lbl_activate_ap                    
+                'Доминирование (conquest)' if target.has_token("conquest"):
+                    menu:
+                        'Создать напряжение':
+                            $ player.ap -= 1
+                            $ target.use_token('conquest')
+                            $ target.relations(player).change('congruence', '-')                            
+                        'Накалить страсти':
+                            $ player.ap -= 1
+                            $ target.use_token('conquest')
+                            $ target.relations(player).change('fervor', '+')      
+                        'Теперь это личное':
+                            $ player.ap -= 1
+                            $ target.use_token('conquest')
+                            $ target.relations(player).change('distance', '+')
+                        'Передумать':
+                            jump lbl_activate_ap    
+                'Сотрудничество (convention)' if target.has_token("convention"):
+                    menu:
+                        'Гармонизовать позиции':
+                            $ player.ap -= 1
+                            $ target.use_token('convention')
+                            $ target.relations(player).change('congruence', '+')
+                        'Охладить пыл':
+                            $ player.ap -= 1
+                            $ target.use_token('convention')
+                            $ target.relations(player).change('fervor', '-')  
+                        'Формализовать отношения':
+                            $ player.ap -= 1
+                            $ target.use_token('convention')
+                            $ target.relations(player).change('distance', '-')
+                        'Передумать':
+                            jump lbl_activate_ap    
+                'Благодарность (contribution)' if target.has_token("contribution"):
+                    menu:
+                        'Гармонизовать позиции':
+                            $ player.ap -= 1
+                            $ target.use_token('contribution')
+                            $ target.relations(player).change('congruence', '+')
+                        'Накалить страсти':
+                            $ player.ap -= 1
+                            $ target.use_token('contribution')
+                            $ target.relations(player).change('fervor', '+')      
+                        'Сблизиться':
+                            $ player.ap -= 1
+                            $ target.use_token('contribution')
+                            $ target.relations(player).change('distance', '+')
+                        'Передумать':
+                            jump lbl_activate_ap                                
+                'Назад':
+                    jump lbl_activate_ap
+        'Назад':
+            jump lbl_target_menu
     
     return
 
