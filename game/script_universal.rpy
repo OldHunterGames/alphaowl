@@ -124,10 +124,10 @@ label lbl_pleasing_choose:
             $ self_satisfy = ['altruism', 'communication']
             $ self_tension = ['power']
             $ skill = 'conversation'
-            $ target_statisfy = ['conversation', 'approval']
+            $ target_statisfy = ['communication', 'approval']
     
     
-    $ special_values = {'skill': skill, 'torturer': actor, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
+    $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
     $ target.schedule.add_action('pleasing_check', special_values=special_values)
     
