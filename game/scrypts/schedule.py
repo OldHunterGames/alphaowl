@@ -23,7 +23,7 @@ def register_actions():
 
 
 class ScheduledAction(object):
-    def __init__(self, actor, name, lbl, slot, store_name, single=False, special_values={}):
+    def __init__(self, actor, name, lbl, slot, store_name, single=False, special_values=None):
         self.actor = actor
         self.slot = slot
         self.name = name
@@ -58,7 +58,7 @@ class Schedule(object):
         self.actions = []
         self.owner = person
     
-    def add_action(self, action, single=True, special_values={}):
+    def add_action(self, action, single=True, special_values=None):
         if action in actions.keys():
             act = ScheduledAction(self.owner, actions[action][2], actions[action][0], actions[action][1], action, single, special_values)
             if act.slot != None:
