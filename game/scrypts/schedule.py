@@ -25,7 +25,10 @@ class ScheduledAction(object):
         self.store_name = store_name
         self.lbl = lbl
         self.single = single
-        self.special_values = special_values
+        self.special_values = {}
+        if special_values:
+            for key in special_values:
+                self.special_values[key] = special_values[key]
 
     def call(self):
         renpy.call_in_new_context(self.lbl, self)
@@ -75,6 +78,13 @@ class Schedule(object):
         for a in self.actions:
             if a.store_name == name:
                 return a
+
+
+    def add_special_list_value(self, key, value):
+        try:
+            self.special_values[key].append(value)
+        except KeyError:
+            self.special_values[key] = [value]
 
 
 
