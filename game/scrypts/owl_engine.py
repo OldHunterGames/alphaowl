@@ -82,23 +82,26 @@ class Engine(object):
 
     def resource_consumption(self, res):
         value = 0
-        for i in self._resoruces_consumption:
+        for i in self._resources_consumption:
             if i[0] == res:
-                value += i[1]
+                try:
+                    value += i[1]()
+                except TypeError:
+                    value += i[1]
         return value
     
 
     def resource_consumption_remove(self, name):
-        for i in self._resoruces_consumption:
+        for i in self._resources_consumption:
             if i[3] == name:
                 self.resources.remove(i)
 
     def resource_consumption_tick(self):
-        for i in self._resoruces_consumption:
+        for i in self._resources_consumption:
             try:
                 i[2] -= 1
                 if i[2] < 1:
-                    self._resoruces_consumption.remove(i)
+                    self._resources_consumption.remove(i)
             except TypeError:
                 pass
     
@@ -108,11 +111,11 @@ class Engine(object):
     
 
     def res_add_consumption(self, name, res, value, time=1):
-        for res in self._resoruces_consumption:
+        for res in self._resources_consumption:
             if res[3] == name:
-                self._resoruces_consumption.remove(res)
+                self._resources_consumption.remove(res)
                 break
-        self._resoruces_consumption.append([res, value, time, name])
+        self._resources_consumption.append([res, value, time, name])
     
 
 

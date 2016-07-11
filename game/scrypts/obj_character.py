@@ -716,20 +716,12 @@ class Person(object):
             desire = 1
 
         return desire
-    def calculate_regime_consumption(self):
-        fatness = self.feature_by_slot('shape')
-        if fatness:
-            fatness = fatness.name
-        flist = ['emaciated' ,'slim', None, 'chubby', 'obese']
-        val = flist.index(fatness)
-        food_consumed = self.food_demand()
-        if self.ration['target'] > val:
-            food_consumed += 1+self.appetite
-        if self.ration['target'] < val:
-            food_consumed = self.food_demand() - 1
-        if self.ration['target'] == val:
-            food_consumed = self.food_demand()
-        return food_consumed
+
+    def get_food_consumption(self):
+        types = {'sperm': 0, 'forage': 0, 'dry': 1, 'canned': 2, 'cousine': 2}
+        value = self.consume_food()
+        multiplier = types[self.ration['food_type']]
+        return value * multiplier
     def consume_food(self):
         food_consumed = self.food_desire()
         fatness = self.feature_by_slot('shape')
