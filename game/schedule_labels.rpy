@@ -98,7 +98,7 @@ label shd_torture_check(action):
 
 label shd_pleasing_check(action):
     python:
-        threshold = game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_tension']) 
+        threshold = game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_statisfy']) 
         morality = action.actor.check_moral(action.special_values['torturer'], *action.special_values['moral_burden'])
         difficulty = action.actor.relations(action.special_values['beneficiar']).stability
         result = game.threshold_skillcheck(action.special_values['torturer'], action.special_values['skill'], difficulty, action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality, threshold)
@@ -106,8 +106,8 @@ label shd_pleasing_check(action):
             action.actor.add_token(action.special_values['token'])
 
         if result[1] > 0:
-            for need in action.special_values['target_tension']:
-                getattr(action.actor, need).set_tension()
+            for need in action.special_values['target_statisfy']:
+                getattr(action.actor, need).set_satisfaction(result[1])
                 action.actor.need.satisfaction = result
     "Ублажен"
     return  
