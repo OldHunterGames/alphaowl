@@ -297,19 +297,25 @@ class Person(object):
             return 'idle'
         else:
             values = []
+            s = ''
             for k, v in job.special_values.items():
+                s += '%s: '%(k)
                 try:
                     l = [i for i in v]
                     try:
-                        values.append((k, [i.description() for i in l]))
+                        for i in l:
+                            s += '%s, '%(i.name())
                     except KeyError:
-                        values.append((k, l))
+                        for i in l:
+                            s += '%s, '%(i)
                 except TypeError:
                     try:
-                        values.append((k, v.description()))
+                        s += '%s, '%(v.name())
                     except KeyError:
-                        values.append((k, v))
-            return job.name, values
+                        s += '%s, '%(v)
+                if k not in job.special_values.items()[-1]:
+                    s += '\n'
+            return '%s, %s'%(job.name, s)
 
 
     def job_object(self):
