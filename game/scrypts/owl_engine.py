@@ -83,7 +83,7 @@ class Engine(object):
                 i[2] -= 1
                 if i[2] < 1:
                     self.resources_waste.remove(i)
-            except:
+            except TypeError:
                 pass
     
 
