@@ -45,6 +45,13 @@ class ScheduledAction(object):
             renpy.call_in_new_context(removal_label, self)
 
 
+    def add_special_list_value(self, key, value):
+        try:
+            self.special_values[key].append(value)
+        except KeyError:
+            self.special_values[key] = [value]
+
+
 
 class Schedule(object):
     def __init__(self, person):
@@ -94,11 +101,7 @@ class Schedule(object):
                 return a
 
 
-    def add_special_list_value(self, key, value):
-        try:
-            self.special_values[key].append(value)
-        except KeyError:
-            self.special_values[key] = [value]
+    
 
 
 
