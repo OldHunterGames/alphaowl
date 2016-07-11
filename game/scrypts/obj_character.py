@@ -296,7 +296,19 @@ class Person(object):
         if not job:
             return 'idle'
         else:
-            values = [(k, v) for k, v in job.special_values.items()]
+            values = []
+            for k, v in job.special_values.items():
+                try:
+                    l = [i for i in v]
+                    try:
+                        values.append((k, [i.description() for i in l]))
+                    except KeyError:
+                        values.append((k, l))
+                except TypeError:
+                    try:
+                        values.append((k, v.description()))
+                    except KeyError:
+                        values.append((k, v))
             return job.name, values
 
 
@@ -658,6 +670,7 @@ class Person(object):
         for need in self.get_all_needs().values():
             need.reset()
     def rest(self):
+        self.tick_conditions()
         self.modifiers.tick_time()
         self.tick_features()
         self.schedule.use_actions()
@@ -724,11 +737,6 @@ class Person(object):
 
     def fatness_change(self):
         calorie_difference = self.consume_food() - self.food_demand()
-        if calorie_difference > -1:
-            power = 5 - calorie_difference
-            if power < 1:
-                power = 1
-            self.conditions.append(('vigor', power))
         if calorie_difference < self.food_desire():
             self.nutrition.set_tension()
         if self.ration['amount'] != 'starvation':
@@ -943,11 +951,26 @@ class Person(object):
                 val = 0
     
 
-    def add_condition(self, name):
+    def add_condition(self, name, time=1):
         if not name in self.conditions:
-            self.conditions.append(name)
+            self.conditions.append((name, time))
         return
 
+    def has_condition(self, name):
+        for cond in self.conditions:
+            if name in cond:
+                return True
+        return False
+
+
+    def tick_conditions(self):
+        for cond in self.conditions:
+            try:
+                cond[1] -= 1
+                if cond[1] < 1:
+                    self.conditions.remove(cond)
+            except TypeError:
+                pass
 
     def enslave(self, target):
         if target.player_controlled:

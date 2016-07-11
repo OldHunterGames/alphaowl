@@ -38,10 +38,8 @@ class Engine(object):
             'practice',
         ]
         self.evn_skipcheck = True
-        self.resources = {'drugs': {'waste':0, 'current':0}, 'provision': {'waste': 0, 'current': 0}}
-        self._drugs_per_turn = 0
-        self._provision_per_turn = 0
-        self.money = 0
+        self.resources_waste = []
+        self.resources = {'drugs': 0, 'money': 0, 'provision': 0}
 
 
     @property
@@ -50,6 +48,12 @@ class Engine(object):
             raise Exception("Player person is not selected")
         return self._player
 
+    @property
+    def money(self):
+        return self.resources['money']
+    @money.setter
+    def money(self, value):
+        self.resources['money'] = value
 
     def set_player(self, person):
         self._player = person
@@ -57,37 +61,68 @@ class Engine(object):
 
 
     def resource(self, res):
-        return self.resources[res]['current']
+        return self.resources[res]
+    
+
+    def resource_waste(self, res):
+        value = 0
+        for i in self.resources_waste:
+            if i[0] == res:
+                value += i[1]
+        return value
+    
+
+    def resource_waste_remove(self, name):
+        for i in self.resources_waste:
+            if i[3] == name:
+                self.resources.remove(i)
+
+    def resource_waste_tick(self):
+        for i in self.resources_waste:
+            i[2] -= 1
+            if i[2] < 1:
+                self.resources_waste.remove(i)
+    
+
     def res_to_money(self, res):
-        return -(self.resources[res]['current']-self.resources[res]['waste'])*3
-    def res_set_waste(self, res, value):
-        if value < 0:
-            return
-        self.resources[res]['waste'] = value
+        return -(self.resources[res]-self.resource_waste(res))*3
+    
+
+    def res_add_waste(self, name, res, value, time=1):
+        self.resources_waste.append([res, value, time, name])
+    
+
     def res_set(self, res, value):
-        self.resources[res]['current'] = value
+        self.resources[res] = value
+    
+
     def res_add(self, res, value):
-        self.resources[res]['current'] = self.resources[res]['current'] + value
+        self.resources[res] = self.resources[res]['current'] + value
 
 
     def can_waste(self, res):
-        if self.resources[res]['current'] - self.resources[res]['waste'] >= 0:
+        if self.resources[res] - self.resource_waste(res) >= 0:
             return True
         else:
             return False
+    
+
     def res_waste(self):
         for res in self.resources.keys():
             if self.can_waste(res):
-                self.resources[res]['current'] -= self.resources[res]['waste']
+                self.resources[res] -= self.resource_waste(res)
             elif self.has_money(self.res_to_money(res)):
                 self.res_set(res, 0)
                 self.use_money(self.res_to_money(res))
 
+    
     def has_money(self, value):
         if self.money >= value:
             return True
         else:
             return False
+    
+
     def use_money(self, value):
         if self.has_money(value):
             self.money -= value
@@ -118,6 +153,7 @@ class Engine(object):
 
     def new_turn(self):
         self.res_waste()
+        self.resource_waste_tick()
         self.time += 1
         self.player.ap = 1
         return "label_new_day"
