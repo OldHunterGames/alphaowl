@@ -19,6 +19,13 @@ label shd_job_supervise(action):
     $ pass
     return  
     
+label shd_job_supervise_remove(act):
+    # Срабатывает в случае смены расписания c supervise на другой вариант
+    python:    
+        for person in superviser.job_object.special_values['slaves']:
+            person.schedule.add_action('job_idle')  
+    return
+    
 label shd_job_janitor(act):
     python:
         actor = act.actor   
@@ -30,7 +37,7 @@ label shd_job_janitor(act):
         else:
             renpy.call('subloc_work_sabotage')       
     return    
-
+    
 label subloc_work_sabotage:
     'Маман саботирует работу и ничего не зарабатывает.'
   
@@ -91,7 +98,7 @@ label shd_torture_check(action):
             action.actor.add_token(action.special_values['token'])
 
         if result[1] > 0:
-            for need in action.special_values['target_statisfy']:
+            for need in action.special_values['target_tension']:
                 getattr(action.actor, need).set_tension()
     "Наказан"
     return  
