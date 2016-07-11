@@ -79,9 +79,12 @@ class Engine(object):
 
     def resource_waste_tick(self):
         for i in self.resources_waste:
-            i[2] -= 1
-            if i[2] < 1:
-                self.resources_waste.remove(i)
+            try:
+                i[2] -= 1
+                if i[2] < 1:
+                    self.resources_waste.remove(i)
+            except:
+                pass
     
 
     def res_to_money(self, res):
