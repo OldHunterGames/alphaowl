@@ -14,7 +14,12 @@ def register_actions():
         key = '{slot}_{name}'.format(slot=action[1], name=action[2])
         z = '_'
         z = z.join(action)
-        actions[key] = (z, action[1], action[2])
+        try:
+            special = action[3]
+        except IndexError:
+            special = None
+        if not special:
+            actions[key] = [z, action[1], action[2]]
 
 
 class ScheduledAction(object):
@@ -32,6 +37,12 @@ class ScheduledAction(object):
 
     def call(self):
         renpy.call_in_new_context(self.lbl, self)
+
+
+    def call_on_remove(self):
+        removal_label = self.lbl + '_' + 'remove'
+        if renpy.has_label(removal_label):
+            renpy.call_in_new_context(removal_label, self)
 
 
 
@@ -57,15 +68,18 @@ class Schedule(object):
             if action.single:
                 to_remove.append(action)
         for a in to_remove:
-            self.actions.remove(a)
+            self.remove_by_handle(a)
+    def remove_by_handle(self, action):
+        action.call_on_remove()
+        self.actions.remove(action)
     def remove_action(self, action):
         for a in self.actions:
             if a.store_name == action:
-                self.actions.remove(a)
+                self.remove_by_handle(a)
     def remove_by_slot(self, slot):
         for a in self.actions:
             if a.slot == slot:
-                self.actions.remove(a)
+                self.remove_by_handle(a)
 
 
     def find_by_slot(self, slot):
