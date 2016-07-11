@@ -38,7 +38,7 @@ class Engine(object):
             'practice',
         ]
         self.evn_skipcheck = True
-        self.resources_waste = []
+        self._resources_consumption = []
         self.resources = {'drugs': 0, 'money': 0, 'provision': 0}
 
 
@@ -57,7 +57,7 @@ class Engine(object):
             self.resources['money'] = value
     @property
     def drugs(self):
-        return self.resoruces['drugs']
+        return self.resources['drugs']
     @drugs.setter
     def drugs(self, value):
         if not value < 0:
@@ -82,23 +82,23 @@ class Engine(object):
 
     def resource_consumption(self, res):
         value = 0
-        for i in self.resources_waste:
+        for i in self._resoruces_consumption:
             if i[0] == res:
                 value += i[1]
         return value
     
 
     def resource_consumption_remove(self, name):
-        for i in self.resources_waste:
+        for i in self._resoruces_consumption:
             if i[3] == name:
                 self.resources.remove(i)
 
     def resource_consumption_tick(self):
-        for i in self.resources_waste:
+        for i in self._resoruces_consumption:
             try:
                 i[2] -= 1
                 if i[2] < 1:
-                    self.resources_waste.remove(i)
+                    self._resoruces_consumption.remove(i)
             except TypeError:
                 pass
     
@@ -108,7 +108,11 @@ class Engine(object):
     
 
     def res_add_consumption(self, name, res, value, time=1):
-        self.resources_waste.append([res, value, time, name])
+        for res in self._resoruces_consumption:
+            if res[3] == name:
+                self._resoruces_consumption.remove(res)
+                break
+        self._resoruces_consumption.append([res, value, time, name])
     
 
 
