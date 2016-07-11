@@ -9,3 +9,4 @@ init python:
     dname['study'] = 'очоба'
     dname['work'] = 'работать грузчиком'    
     dname['whore'] = 'работать гейшлюхой'
+    dname['supervise'] = 'воспитывать Сычика'

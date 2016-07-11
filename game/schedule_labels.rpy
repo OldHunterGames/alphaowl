@@ -15,12 +15,15 @@ label shd_general_accounting(character):
         
     return
 
-
+label shd_job_supervise(action):
+    $ pass
+    return  
+    
 label shd_job_janitor(act):
     python:
         actor = act.actor   
         moral = actor.moral_action('lawful')
-        result = game.skillcheck(actor, 'communication', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=actor, morality=moral, special_motivators=[], success_threshold=0)
+        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=actor, morality=moral, special_motivators=[], success_threshold=0)
 
         if result >= 0:
             renpy.call('subloc_work_perform')   
@@ -37,7 +40,7 @@ label subloc_work_perform:
     python:
         gain = result*result*10
         game.money += gain
-        actor.skill('communication').get_expirience(result)
+        actor.skill('conversation').get_expirience(result)
     'Качество работы = [result]\n Заработок: [gain] тенге.'
     return
 
@@ -78,7 +81,22 @@ label shd_living_jailed(action):
         action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
     return  
 
-label shd_token_check(action):
+label shd_torture_check(action):
+    python:
+        threshold = game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_tension']) 
+        morality = action.actor.check_moral(action.special_values['torturer'], *action.special_values['moral_burden'])
+        difficulty = action.actor.relations(action.special_values['beneficiar']).stability
+        result = game.threshold_skillcheck(action.special_values['torturer'], action.special_values['skill'], difficulty, action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality, threshold)
+        if result[0]:
+            action.actor.add_token(action.special_values['token'])
+
+        if result[1] > 0:
+            for need in action.special_values['target_statisfy']:
+                getattr(action.actor, need).set_tension()
+    "Наказан"
+    return  
+
+label shd_pleasing_check(action):
     python:
         threshold = game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_tension']) 
         morality = action.actor.check_moral(action.special_values['torturer'], *action.special_values['moral_burden'])
@@ -90,10 +108,10 @@ label shd_token_check(action):
         if result[1] > 0:
             for need in action.special_values['target_tension']:
                 getattr(action.actor, need).set_tension()
-    "Наказан"
+                action.actor.need.satisfaction = result
+    "Ублажен"
     return  
-
-
+    
 label shd_discipline_atrocity(character):
     python:
         moral = character.moral_action(moral_burden, unin_target) 
