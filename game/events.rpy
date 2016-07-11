@@ -5,24 +5,29 @@ python:
     
 # !!!!!! REGISTER EACH EVENT HERE !!!!
 label init_events:
-    $ register_event('evn_dvach_coding')
-    $ register_event('evn_dvach_conversation')
-    $ register_event('evn_dvach_sex')
-    $ register_event('evn_dvach_sports')
+    # $ register_event('evn_dvach_coding')
+    # $ register_event('evn_dvach_conversation')
+    # $ register_event('evn_dvach_sex')
+    # $ register_event('evn_dvach_sports')
     # $ register_event('evn_dvach_b')
     # $ register_event('evn_dvach_fap')
     # $ register_event('evn_dvach_olgino')
 
-    $ register_event('evn_do_practice_programm_chat')
-    $ register_event('evn_do_practice_programm')
-    $ register_event('evn_do_practice_labs_chat')
-    $ register_event('evn_do_practice_labs')
-    $ register_event('evn_do_practice_military_chat')
-    $ register_event('evn_do_practice_military')
-    $ register_event('evn_do_gym')
-    $ register_event('evn_do_major')
+    # $ register_event('evn_do_practice_programm_chat')
+    # $ register_event('evn_do_practice_programm')
+    # $ register_event('evn_do_practice_labs_chat')
+    # $ register_event('evn_do_practice_labs')
+    # $ register_event('evn_do_practice_military_chat')
+    # $ register_event('evn_do_practice_military')
+    # $ register_event('evn_do_gym')
+    # $ register_event('evn_do_major')
 
     $ register_event('evn_bugurt_gazeta') 
+    $ register_event('evn_bugurt_dildak') 
+    $ register_event('evn_bugurt_dindin') 
+    $ register_event('evn_bugurt_topor') 
+    $ register_event('evn_bugurt_church')     
+    
     return True
     
 #TESTS & TEMPLATES 
@@ -462,50 +467,36 @@ label evn_do_practice_programm_chat(event):
    
 label evn_bugurt_gazeta(event):
    "К НАМ СКОРО ЕРОХИНЫ ПРИДУТ \n @ \nГАЗЕТКИ ИЗ ТУАЛЕТА УБЕРИ \n @ \nПОЛОЖИ БУМАГУ ТУАЛЕТНУЮ \n @ \n И САМ В ТУАЛЕТЕ ОСТАВАЙСЯ\n @ \n ЧТОБЫ МАТЕРИ ЗА ТЕБЯ НЕ СТЫДИТЬСЯ"
-   python:
-       pass
    
    return True
 
-label evn_bugurt_dildak:
+label evn_bugurt_dildak(event):
    "СЫНА, Я У ТЕБЯ В ШКАФУ НАШЕЛ КОЕ-ЧТО\n @ \nЗАЧЕМ ТЕБЕ ЭТО?\n @ \n  ТЫ ЧТО ГОМОСЕК? ЗАЧЕМ ТЕБЕ ЧЛЕН РЕЗИНОВЫЙ? \n @ \nМАТЕРИ НЕ СКАЖУ, НО ЗАБИРАЮ!"
-   python:
-       pass
    
    return True
 
-label evn_bugurt_dindin:
+label evn_bugurt_dindin(event):
    "У ТЕБЯ ХОТЬ С ДЕВОЧКОЙ-ТО БЫЛО \n @ \nНУ ЭТО, ДИНЬ-ДИНЬ ТАМ \n @ \nИЛИ ТОЛЬКО С ЛОШАДЬМИ ЦВЕТНЫМИ?"
-   python:
-       pass
    
    return True
    
-label evn_bugurt_topor:
+label evn_bugurt_topor(event):
    "ОТКРОЙ! НЕМЕДЛЕННО ОТКРОЙ!\n @ \n Я ДОЛЖНА ЗНАТЬ, МОЙ СЫН ДЕЛОМ ЗАНЯТ ИЛИ ОПЯТЬ БАЛДУ ПИНАЕШЬ!\n @ \n ТАК, НУ ВСЕ, ОТЕЦ ЗА ТОПОРОМ ПОШЕЛ\n @ \n СЕЙЧАС ДВЕРЬ ВЫНОСИТЬ БУДЕМ!"
-   python:
-       pass
    
    return True
    
-label evn_bugurt_church:
-   "ЗАВТРА ИДЕШЬ В ЦЕРКОВЬ ИСПОВЕДЫВАТЬСЯ\n @ \nРАСКАЖЕШЬ БАТЮШКЕ ПРО ВСЕ СВОИ ТЕМНЫЕ ДЕЛА\n @ \nИ КАК ЧЕРТЕЙ ПО ЭКРАНУ ГОНЯЕШЬ\n @ \nИ КАК ТИЛИБОНЬКАЕШЬ\n @ \nИ КАК У ДЕДА ПОСЛЕДНИЙ КУСОК ХЛЕБА ОТОБРАЛ!"
-   python:
-       pass
-   
+label evn_bugurt_church(event):
+   "ЗАВТРА ИДЕШЬ В ЦЕРКОВЬ ИСПОВЕДЫВАТЬСЯ\n @ \nРАСКАЖЕШЬ БАТЮШКЕ ПРО ВСЕ СВОИ ТЕМНЫЕ ДЕЛА\n @ \nИ КАК ЧЕРТЕЙ ПО ЭКРАНУ ГОНЯЕШЬ\n @ \nИ КАК ТИЛИБОНЬКАЕШЬ\n @ \nИ КАК У ДЕДА ПОСЛЕДНЮЮ КОСТЬ ОТОБРАЛ!"
+
    return True
    
 label evn_bugurt_build:
    "СВОЙ ДОМ ОН ХОЧЕТ\n @ \n ЧТО ТЫ ПОСТРОИШЬ?! НИЧЕГО ТЫ НЕ ПОСТРОИШЬ!\n @ \n ПОСТРОИТ ОН\n @ \n ТЫ ХОТЬ КОПЕЕЧКУ ТО В ДОМ ПРИНЁС?"
-   python:
-       pass
    
    return True
    
 label evn_bugurt_stulchak:
    "ОПЯТЬ СТУЛЬЧАК ОБОССАЛ\n @ \nНЕ ТЫ КОНЕЧНО!ОТЕЦ СИДЯ СИКАЕТ\n @ \nА ТЫ ВСЁ ОБОССЫВАЕШЬ В ТУАЛЕТЕ \n @ \nЯ ВЫТИРАТЬ ЗА ТОБОЙ ДОЛЖНА?!"
-   python:
-       pass
    
    return True
    

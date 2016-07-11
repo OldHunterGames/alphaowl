@@ -3,8 +3,9 @@
 label lbl_universal_menu:
     $ info_provision = game.resource('provision')
     $ info_drugs = game.resource('drugs')
+    $ money_consumption = game.resource_waste('resource')
     menu:
-        'Тенгэ: [game.money] | Жратва: [info_provision] | Вещества: [info_drugs]'
+        'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [info_provision] | Вещества: [info_drugs]'
         
         "Взаимодействия с...":
             $ target = renpy.call_screen('sc_choose_character')
@@ -21,20 +22,18 @@ label lbl_universal_menu:
     return
 
 label lbl_target_menu:
+    $ name = target.name()
     menu:
-        name = target.name()
         'Объект деятельности: [name]'
         "Расписание":
             call lbl_make_shedule
         "Важные события (AP:[player.ap])" if player.ap > 0:
-            $ pass
+            call lbl_activate_ap
         "Бытовые уловия" if player != child and target == child:
             call lbl_accommodation
         "Питание":
             call lbl_food_universal
         "Правила":
-            $ pass
-        "Одежда":
             $ pass
         "Карманные деньги":
             $ pass
@@ -105,7 +104,7 @@ label lbl_shedule_major:
                     jump lbl_pleasing_choose
                 'Передумать':
                     jump lbl_shedule_major                    
-        "Назначить воспитателем" if player == mom:
+        "Назначить воспитателем" if player == mom and target != child:
             $ target.schedule.add_action('job_supervise')
         'Безделье':
             $ target.schedule.add_action('job_idle') 
@@ -158,6 +157,7 @@ label lbl_pleasing_choose:
             $ skill = 'conversation'
             $ target_statisfy = ['independence', 'authority']            
         'Подарки (коммуникация, 5 тенгэ)':
+            $ game.res_add_waste("gifts", 'money', 5, time=1)
             $ self_satisfy = ['altruism', 'communication']
             $ self_tension = ['power', 'prosperity']
             $ skill = 'conversation'
@@ -173,15 +173,15 @@ label lbl_pleasing_choose:
 label lbl_accommodation:
     menu:
         'Вечно ты в комнате запираешься от матери! Как сыч.':
-            $ child.schedule.add_action('living_appartment')  
+            $ target.schedule.add_action('living_appartment')  
         'Комнату твою сдавать будем, поспишь у нас на диванчике.':
-            $ child.schedule.add_action('living_cot')  
+            $ target.schedule.add_action('living_cot')  
         'Диванчик для тёти Сраки, а тебе вот раскладушечка дедова.':
-            $ child.schedule.add_action('living_mat')  
+            $ target.schedule.add_action('living_mat')  
         'В ванной тебя запрём ночевать. Чтобы не воображал!':
-            $ child.schedule.add_action('living_jailed')    
+            $ target.schedule.add_action('living_jailed')    
         'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
-            $ child.schedule.add_action('living_confined')    
+            $ target.schedule.add_action('living_confined')    
     
     return
 

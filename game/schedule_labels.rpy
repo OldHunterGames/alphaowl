@@ -115,7 +115,6 @@ label shd_pleasing_check(action):
         if result[1] > 0:
             for need in action.special_values['target_statisfy']:
                 getattr(action.actor, need).set_satisfaction(result[1])
-                action.actor.need.satisfaction = result
     "Ублажен"
     return  
     
