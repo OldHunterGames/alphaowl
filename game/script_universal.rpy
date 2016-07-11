@@ -17,7 +17,7 @@ label lbl_universal_menu:
                 "Правила":
                     $ pass
                 "Питание":
-                    $ pass
+                    call lbl_food_universal
                 "Одежда":
                     $ pass
                 "Карманные деньги":
@@ -37,7 +37,7 @@ label lbl_universal_menu:
             
     jump lbl_universal_menu
     return
-    
+
 label lbl_make_shedule:
         
     $ schedule_major = dname[player.job]
@@ -69,6 +69,7 @@ label lbl_shedule_major:
                 'Кто этим займётся? Распиание основного времени этого персонажа изменится на "Воспитание". Если вы измените потом расписание, то воспитания не произойдёт.'
                 'Маман':
                     $ mom.schedule.add_action('job_supervise')
+                    $ mom.job_object().add_special_list_value('slaves', child)
                     $ actor = mom
                 'BATYA':
                     $ batya.schedule.add_action('job_supervise')
@@ -146,6 +147,44 @@ label lbl_accommodation:
             $ child.schedule.add_action('living_jailed')    
         'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
             $ child.schedule.add_action('living_confined')    
+    
+    return
+
+label lbl_food_universal:
+    menu:
+        'Размер пайки.'
+        '"Не кормить (starvation)"':
+            $ target.ration['amount'] = "starvation"   
+            $ target.ration['food_type'] = "forage"   
+            $ target.ration['target'] = 0           
+            $ target.ration['limit'] = None      
+        "На худобу (regime 1)":
+            $ target.ration['amount'] = "regime" 
+            $ target.ration['target'] = 1
+        "На норму (regime 2)":
+            $ target.ration['amount'] = "regime" 
+            $ target.ration['target'] = 2     
+        "На своё усмотрение (unlimited)":
+            $ target.ration['amount'] = "unlimited"     
+        "На ЖЫРЧИК (regime 3)":
+            $ target.ration['amount'] = "regime" 
+            $ target.ration['target'] = 3               
+  
+    if target.ration['amount'] != "starvation":    
+        menu:
+            "Качество питания."
+            "Отбросы":
+                $ target.ration['food_type'] = "sperm" 
+                'Как земля... совсем невкусно (-3)'
+            "Бичпакеты":
+                $ target.ration['food_type'] = "dry" 
+                'Мивина с майонезом... не вкусно (-1)'
+            "Консервы":
+                $ target.ration['food_type'] = "canned" 
+                'Из банки... нормальный вкус'
+            "Домашнее, тепленькое, с хлебушком":
+                $ target.ration['food_type'] = "cosine"   
+                'Пища белых людей... вкуснота (3)'    
     
     return
 
