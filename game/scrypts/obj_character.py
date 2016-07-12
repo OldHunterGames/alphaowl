@@ -589,7 +589,7 @@ class Person(object):
             for i in range(hlen):
                 dissapointment.pop(0)
             dissapointment = [i for i in dissapointment if i > 1]
-            despair = 6-sensitivity-dissapointment.count(2)-dissapointment.count(3)*3
+            despair = 6-self.sensitivity-dissapointment.count(2)-dissapointment.count(3)*3
             if despair < 0:
                 mood = -1
             else:
@@ -727,10 +727,12 @@ class Person(object):
 
         return desire
 
-    def get_food_consumption(self):
+    def get_food_consumption(self, show_multi=False):
         types = {'sperm': 0, 'forage': 0, 'dry': 1, 'canned': 2, 'cousine': 2}
         value = self.consume_food()
         multiplier = types[self.ration['food_type']]
+        if show_multi:
+            return value*multiplier, self.ration['food_type']
         return value * multiplier
     def consume_food(self):
         food_consumed = self.food_desire()
