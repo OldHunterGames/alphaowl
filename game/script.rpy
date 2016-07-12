@@ -20,6 +20,7 @@ init python:
     check_results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
                     '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
     communication = '?'
+    game.res_add_consumption('mom_food', 'provision', mom.get_food_consumption, None)
     
     #BATYA
     batya = Person()

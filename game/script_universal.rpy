@@ -5,7 +5,7 @@ label lbl_universal_menu:
     $ consumption_drugs = game.resource_consumption('drugs')
     $ money_consumption = game.resource_consumption('resource')
     menu:
-        'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs])/n Жратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя не снизив его.'
+        'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs]) \nЖратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя не снизив его.'
         
         "Взаимодействия с...":
             $ target = renpy.call_screen('sc_choose_character')
@@ -235,8 +235,6 @@ label lbl_food_universal:
                 $ target.ration['food_type'] = "cosine"   
                 'Пища белых людей... вкуснота (3)'    
     
-    $ nm = target.name() + '_ration'
-    $ game.res_add_consumption("nm", 'provision', target.calculate_regime_consumption(), time=None) 
     return
 
 label lbl_activate_ap:

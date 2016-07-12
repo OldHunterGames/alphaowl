@@ -44,7 +44,7 @@ label shd_job_chores(action):
         actor = action.actor
         name = actor.name()
         moral = actor.moral_action('lawful') 
-        motivation = actor.motivation(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], beneficiar = mom, morality = moral)        
+        motivation = game.skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)        
         if motivation >= 0:
             renpy.call('subloc_chores_perform')   
         else:
