@@ -109,12 +109,12 @@ class Engine(object):
     def res_to_money(self, res):
         return -(self.resources[res]-self.resource_consumption(res))*3
     
-
-    def res_add_consumption(self, name, res, value, time=1):
+    def consumption_remove_by_name(self, name):
         for res in self._resources_consumption:
             if res[3] == name:
                 self._resources_consumption.remove(res)
-                break
+    def res_add_consumption(self, name, res, value, time=1):
+        self.consumption_remove_by_name(name)
         self._resources_consumption.append([res, value, time, name])
     
 
