@@ -13,7 +13,8 @@ init python:
     mother = game.mother
     child.master = mother
     register_actions()
-    mom = mother
+    mom = game.mother
+    mom.enslave(child)    
     mom.firstname = u"Маман"
     mom.surname = u"Сычова"        
     check_results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
@@ -30,6 +31,7 @@ init python:
     batya.skill('sport').profession()
     batya.stance(child).value = 0
     batya.stance(mom).value = 1
+    game.res_add_consumption('batya_food', 'provision', batya.get_food_consumption, None)
     
     #ЕНОТОВА
     eot = Person()
@@ -85,8 +87,7 @@ init python:
     kohana.stance(child).value = 0 
     kohana.firstname = u"Кисель"
     kohana.surname = u"Телеведущев"      
-    
-    
+
     
 # Игра начинается здесь.
 label start:
@@ -99,7 +100,6 @@ label start:
     return
     
 label label_quiz:
-    $ child.schedule.add_action('general_accounting')
     $ child.accommodation = "appartment"
     $ child.schedule.add_action('living_appartment')
     $ child.ration['food_type'] = "canned" 
@@ -114,6 +114,7 @@ label label_quiz:
     $ child.appearance = 'normal'
     $ child.schedule.add_action('outfit_normal')    
     $ shedule_minor = '?'
+    $ game.res_add_consumption('child_food', 'provision', child.get_food_consumption, None)
     
     menu:
         "Ты мальчик или девочка-внутри?"
@@ -127,8 +128,6 @@ label label_quiz:
                 child.skill('coding').profession()
                 game.set_player(child)
                 player = game.player
-                mom = game.mother
-                mom.enslave(child)
                 mom.alignment.morality = 'evil'
                 mom.relations(child)    
                 mom.add_feature('female')
@@ -148,7 +147,8 @@ label label_quiz:
                 child.restrictions.append('friends')
                 child.restrictions.append('pc')
                 shedule_minor = 'пахать на даче' 
-                child.schedule.add_action('dayoff_dacha')                   
+                child.schedule.add_action('dayoff_dacha')    
+                player.schedule.add_action('general_accounting', False)
             jump label_new_day
         "(разработчик, игра за маму)":
             python:
@@ -158,7 +158,6 @@ label label_quiz:
                 child.alignment.activity = "reasonable"
                 child.alignment.morality = "selfish"
                 child.skill('coding').profession()
-                mom = game.mother
                 game.set_player(mom)
                 player = game.player
                 mom.skill('conversation').profession()
@@ -173,6 +172,7 @@ label label_quiz:
                 mom.ration['food_type'] = "cousine"
                 mom.accommodation = "appartment"
                 mom.schedule.add_action('living_appartment')
+                player.schedule.add_action('general_accounting', False)
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
@@ -262,7 +262,8 @@ label label_quiz:
             $ player = game.player
             $ player.player_controlled = True
             $ child.relations(mother)
-            $ mother.enslave(child)         
+            $ mother.enslave(child)    
+            $ player.schedule.add_action('general_accounting', False)
             jump label_new_day
             
         "Своей мамкой":
@@ -271,7 +272,8 @@ label label_quiz:
             $ player = game.player
             $ player.player_controlled = True
             $ child.relations(mother)
-            $ mother.enslave(child)           
+            $ mother.enslave(child)    
+            $ player.schedule.add_action('general_accounting', False)
             jump label_new_day
 
     return

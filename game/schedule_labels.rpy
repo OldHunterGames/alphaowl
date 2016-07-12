@@ -25,6 +25,42 @@ label shd_job_supervise_remove(act):
         for person in act.actor.job_object().special_values['slaves']:
             person.schedule.add_action('job_idle')  
     return
+
+label shd_job_idle(action):
+    $ name = action.actor.name()
+    $ action.actor.add_modifier('rest', {'vitality': 4}, 1)  
+    '[name] отдыхает по вечерам восстанавливая силы (vitality-фактор 4)'
+    return    
+    
+label shd_job_study(action):
+    python:
+        child.skills_used.append('coding')
+    'Домашка сделана. Порядочный и добрый поступок матери по отношению к нему.'
+    $ mom.moral_action('lawful', 'good', target = child)  
+    return    
+    
+label shd_job_chores(action):
+    python:
+        actor = action.actor
+        name = actor.name()
+        moral = actor.moral_action('lawful') 
+        motivation = actor.motivation(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], beneficiar = mom, morality = moral)        
+        if motivation >= 0:
+            renpy.call('subloc_chores_perform')   
+        else:
+            renpy.call('subloc_chores_sabotage')       
+    return    
+
+label subloc_chores_sabotage:
+    "[name] уборка саботирована."
+
+    return
+
+label subloc_chores_perform:
+    $ game.money += 5
+    "[name] уборка выполнена. Тяжелый ручной труд сэкономил нам аж целых 5 тенгэ!"
+
+    return
     
 label shd_job_janitor(act):
     python:
@@ -33,23 +69,116 @@ label shd_job_janitor(act):
         result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=actor, morality=moral, special_motivators=[], success_threshold=0)
 
         if result >= 0:
-            renpy.call('subloc_work_perform')   
+            renpy.call('subloc_janitor_perform')   
         else:
-            renpy.call('subloc_work_sabotage')       
+            renpy.call('subloc_janitor_sabotage')       
     return    
     
-label subloc_work_sabotage:
-    'Маман саботирует работу и ничего не зарабатывает.'
-  
+label subloc_janitor_sabotage:
+    'Маман саботирует работу и ничего не зарабатывает. Зато удовлетворяет потребности в независимости и комфорте с силой 2.'  
+    $ actor.comfort.satisfaction = 2
+    $ actor.independence.satisfaction = 2
+    $ actor.prosperity.set_tension()
     return
 
-label subloc_work_perform:
+label subloc_janitor_perform:
     python:
-        gain = result*result*10
+        gain = result*result*10+5
         game.money += gain
         actor.skill('conversation').get_expirience(result)
     'Качество работы = [result]\n Заработок: [gain] тенге.'
     return
+   
+label shd_job_porter(action):
+    python:
+        actor = action.actor
+        mom.moral_action('lawful', child)
+        moral = actor.moral_action('lawful')
+        result = game.skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement', 'ambition'], satisfy_needs=['activity'], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)
+        
+        if result >= 0:
+            renpy.call('subloc_porter_perform')   
+        else:
+            renpy.call('subloc_porter_sabotage')       
+    return    
+
+label subloc_porter_sabotage:
+    'Сычуля саботирует работу грузчика, что стоит матери денег и авторитета. Это хаотичный поступок по отношению к ней. Зато Сычик удовлетворяет потребность в незавивсимости и комфорте с силой 3.'
+    $ actor.comfort.satisfaction = 3
+    $ actor.independence.satisfaction = 3
+    $ mom.prosperity.set_tension()
+    $ mom.authority.set_tension()
+    $ child.moral_action('chaotic', target = mom)      
+    return
+
+label subloc_porter_perform:
+    python:
+        gain = result*result*10+5
+        game.money += gain
+        child.skill('sports').get_expirience(result)
+        mom.prosperity.satisfaction = result  
+    '([result]) Сычуля работает грузчиком себя послушным и активным. Угнетены амбиции и вообще работа скучная. \n Заработок (для мамы!): [gain] тенге.'
+    return
+
+label shd_job_whore(action):
+    python:
+        actor = action.actor
+        mom.moral_action('evil', target = child)
+        moral = character.moral_action('timid', mom)
+        result = game.skillcheck(actor, 'sex', difficulty = 0, tense_needs=['eros', 'ambition'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)
+        
+        if result >= 0:
+            renpy.call('subloc_whore_perform')   
+        else:
+            renpy.call('subloc_whore_sabotage')       
+    return    
+
+label subloc_whore_sabotage:
+    'Сычуля не желает быть гей-шлюхой и игнорирует приказ злой мамки чувствуя себя независимым (2). Это ударит по авторитету и богатству мамки!'
+    $ actor.independence.satisfaction = 2
+    $ mom.prosperity.set_tension()
+    $ mom.authority.set_tension()
+    return
+
+label subloc_whore_perform:
+    python:
+        gain = result*result*20+10
+        game.tenge += gain
+        child.skill('sex').get_expirience(result)
+        mom.prosperity.satisfaction = result         
+        child.moral_action('timid', target = mom)            
+    '([result]) Сычуля работает на панели по приказу злой мамки. Это удар по его сексуальности и амбиициям, но по крайней мере это общение... (1)\n Заработок (для мамы!): [gain] тенге.'
+    return
+    
+label shd_job_pusher(act):
+    python:
+        actor = act.actor   
+        name = actor.name()
+        moral = actor.moral_action('chaotic', 'ardent')
+        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['comfort', 'wellnes'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)
+
+        if result >= 0:
+            renpy.call('subloc_pusher_perform')   
+        else:
+            renpy.call('subloc_pusher_sabotage')       
+    return    
+    
+label subloc_pusher_sabotage:
+    '[name] решает не влезать в тёмные мутки. Это порядочное (1) поведение, но веществ так не намутишь...'  
+    $ actor.order.satisfaction = 2
+    return
+
+label subloc_pusher_perform:
+    python:
+        gain = result*result*5+1
+        game.drugs += gain
+        actor.skill('conversation').get_expirience(result)
+    '[] мутит вещества - аптеку, бадягу, бухло, всё сойдёт. Напряжная и вредная для самочувствия работа, зато общение ([result]). Качество работы [result]\n Вымучено: [gain] веществ.'
+    return
+
+
+
+
 
     
 label shd_living_appartment(action):
@@ -173,47 +302,6 @@ label shd_dayoff_2ch(character):
     return  
 
     
-label shd_social_atrocity(character):
-    python:
-        moral = child.moral_action(moral_burden, unin_target) 
-        motivation = character.motivation(needs=[(self_bonus_need, used_force)], beneficiar = child, morality = moral)  
-        game.atrocity(actor = child, target = unin_target, token = token_to_gain, target_tense = [targeted_need], power =  used_force, skill = None, phobias = [], morality = moral, name = 'Угнетение с силой N', respect_needs = ['authority', 'power'], difficulty = 0)
-    return   
-    
-label shd_social_pleasing(character):
-    python:
-        moral = child.moral_action(moral_burden, unin_target) 
-        motivation = character.motivation(needs=[(self_bonus_need, used_force)], beneficiar = child, morality = moral)  
-        game.pleasing(actor = child, target = unin_target, token = token_to_gain, power =  used_force, skill = None, morality = moral, name = 'Удовлетворение с силой N', respect_needs = ['communication'], difficulty = 0)
-    return   
-    
-label shd_social_skillpleasing(character):
-    python:
-        moral = child.moral_action(moral_burden, unin_target) 
-        motivation = character.motivation(needs=[(self_bonus_need, 2)], beneficiar = child, morality = moral)  
-        game.pleasing(actor = child, target = unin_target, token = token_to_gain, power =  0, skill = chosen_skill, morality = moral, name = 'Удовлетворение с силой N', respect_needs = ['communication'], difficulty = 3)
-    return   
-    
-label shd_social_intercommunion(character):
-    python:
-        moral = child.moral_action(moral_burden, unin_target) 
-        motivation = character.motivation(needs=[(self_bonus_need, 3)], beneficiar = child, morality = moral)  
-        game.intercommunion(actor = child, target = unin_target, token = token_to_gain, power =  0, skill = used_skill, morality = moral, name = 'интеркомушен', respect_needs = ['authority', 'power'], difficulty = 3)
-    return   
-    
-label shd_social_misery(character):
-    python:
-        moral = mom.moral_action('evil', used_force) 
-        motivation = character.motivation(needs=[('general', -used_force)], beneficiar = mom)  
-        game.suffering(actor = child, target = batya, token = 'conquest', actor_tense = [targeted_need], power =  used_force, skill = None, phobias = [], morality = moral, name = 'Наказание', respect_needs = ['authority', 'power'], difficulty = 0, beneficiar=mom)
-    return   
-        
-label shd_mom_abuse(character):
-    python:
-        game.torture(target = child, power=abuse_force, needs=['communication'])
-    'Мамка хуесосит Cычу. Abuse = [abuse_force]. Пылкий поступок мамки в отношении Сычи. Самооценка: [mom.selfesteem]'
-    return   
-    
 label shd_discipline_pavsykakiy(character):
     python:  
         game.train(child, pavsykakiy)
@@ -225,13 +313,6 @@ label shd_discipline_kohana(character):
     python:
         game.train(child, kohana)
     'Антоша Сычов до сих пор писает в кровать\n @\nМы это исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
-
-    return   
-    
-label shd_discipline_hystery(character):
-    python:    
-        power = game.train(child)
-    'Дисциплинарная эффекктивность мамкиной истерики = [power].'
 
     return   
 
@@ -294,102 +375,3 @@ label shd_weed_yes(character):
         
         child.wellness.set_tension()
     return  
-
-
-label shd_job_idle(character):
-        
-    return    
-    
-label shd_job_study(character):
-    python:
-        character.skills_used.append('coding')
-    'Домашка сделана. Порядочный и добрый поступок матери. Порядочный и кроткий поступок Сычи.'
-    $ mom.moral_action('lawful', 'good', target = child)       
-    $ child.moral_action('lawful', 'timid', target = mom)    
-    return    
-    
-label shd_job_chores(character):
-    python:
-        moral = character.moral_action('lawful') 
-        motivation = character.motivation(needs=[('altruism', 2),('amusement', -1), ('authority', -1)], beneficiar = mom, morality = moral)        
-        if motivation >= 0:
-            renpy.call('subloc_chores_perform')   
-        else:
-            renpy.call('subloc_chores_sabotage')       
-    return    
-
-label subloc_chores_sabotage:
-    'Сычуля саботирует уборку чувствуя себя свободным и могучим. ([moral])\nУдовлетворяется потребность в независимости (4) \n Авторитет мамки страдает (-3)'
-    $ child.independence.set_shift(4)
-    $ mom.authority.set_shift(-3)    
-    $ child.moral_action('chaotic', 'evil', target = mom)     
-    return
-
-label subloc_chores_perform:
-    'Сычуля убирается в доме чувствуя себя правильным и хорошим. ([moral])\n Нарушается табу на подчинение матери (1), удовлетворяется альтруизм (2), подавляется развлечение (-1), усталость. Порядочный поступок матери.'
-    $ child.drain_vigor()
-    $ mom.moral_action('lawful', target = child)   
-    $ child.moral_action('lawful', 'good', target = mom)         
-    return
-   
-label shd_job_work(character):
-    python:
-        mom.moral_action('lawful', child)
-        moral = character.moral_action('lawful')
-        motivation = character.motivation('sport', [('authority', -2), ('activity', 2),('amusement', -3)], character, moral) 
-        result = game.skillcheck(character, 'sport', motivation, moral, 'разгрузка вагонов')
-        if result >= 0:
-            renpy.call('subloc_work_perform')   
-        else:
-            renpy.call('subloc_work_sabotage')       
-    return    
-
-label subloc_work_sabotage:
-    'Сычуля саботирует работу грузчика.'
-    $ child.independence.set_shift(3)
-    $ mom.authority.set_shift(-2)
-    $ child.moral_action('chaotic', target = mom)      
-    return
-
-label subloc_work_perform:
-    python:
-        gain = result*result*10
-        game.money += gain
-        child.skill('sports').get_expirience(result)
-        mom.prosperity.set_shift(result+1)     
-        mom.authority.set_shift(4)        
-        mom.moral_action('lawful', 'ardent', target = child)       
-        child.moral_action('lawful', target = mom)          
-    'Сычуля работает грузчиком себя правильным. ([result])\n Заработок (для мамы!): [gain] тенге.'
-    return
-
-
-label shd_job_whore(character):
-    python:
-        mom.moral_action('evil', child)
-        moral = character.moral_action('timid', mom)
-        motivation = character.motivation('sex', [('eros', -4), ('communication', 2),('ambition', -4), ('authority', -2)], character, moral) 
-        result = game.skillcheck(character, 'sex', motivation, moral, 'разгрузка вагонов')        
-        if result >= 0:
-            renpy.call('subloc_whore_perform')   
-        else:
-            renpy.call('subloc_whore_sabotage')       
-    return    
-
-label subloc_whore_sabotage:
-    'Сычуля саботирует работу на панели.'
-    $ child.independence.set_shift(2)
-    $ mom.authority.set_shift(-1)
-    return
-
-label subloc_whore_perform:
-    python:
-        gain = result*result*20
-        game.tenge += gain
-        child.skill('sex').get_expirience(result)
-        mom.power.set_shift(5)           
-        mom.prosperity.set_shift(result+2)    
-        mom.moral_action('evil', 'lawful', 'ardent', target = child)
-        child.moral_action('timid', target = mom)            
-    'Сычуля работает на панели. ([result])\n Заработок (для мамы!): [gain] тенге.'
-    return

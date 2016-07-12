@@ -1,11 +1,11 @@
 #Универсальное меню управления 
 
 label lbl_universal_menu:
-    $ info_provision = game.resource('provision')
-    $ info_drugs = game.resource('drugs')
-    $ money_consumption = game.resource_waste('resource')
+    $ consumption_provision = game.resource_consumption('provision')
+    $ consumption_drugs = game.resource_consumption('drugs')
+    $ money_consumption = game.resource_consumption('resource')
     menu:
-        'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [info_provision] | Вещества: [info_drugs]'
+        'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs])/n Жратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя не снизив его.'
         
         "Взаимодействия с...":
             $ target = renpy.call_screen('sc_choose_character')
@@ -76,11 +76,12 @@ label lbl_shedule_major:
             menu:
                 'Кто этим займётся? Распиание основного времени этого персонажа изменится на "Воспитание". Если вы измените потом расписание, то воспитания не произойдёт.'
                 'Маман':
-                    $ mom.schedule.add_action('job_supervise')
+                    $ mom.schedule.add_action('job_supervise', False)
                     $ mom.job_object().add_special_list_value('slaves', child)
                     $ actor = mom
                 'BATYA':
-                    $ batya.schedule.add_action('job_supervise')
+                    $ batya.schedule.add_action('job_supervise', False)
+                    $ batya.job_object().add_special_list_value('slaves', child)
                     $ actor = batya
                 'Передумать':
                     jump lbl_shedule_major
@@ -105,13 +106,21 @@ label lbl_shedule_major:
                 'Передумать':
                     jump lbl_shedule_major                    
         "Назначить воспитателем" if player == mom and target != child:
-            $ target.schedule.add_action('job_supervise')
+            $ target.schedule.add_action('job_supervise', False)
         'Безделье':
-            $ target.schedule.add_action('job_idle') 
+            $ target.schedule.add_action('job_idle', False) 
         'Подрабатывать уборщицей' if target == mom:
-            $ target.schedule.add_action('job_janitor') 
+            $ target.schedule.add_action('job_janitor', False) 
         'Делать уроки' if target == child:
-            $ target.schedule.add_action('job_study') 
+            $ target.schedule.add_action('job_study', False) 
+        'Бытовое рабство (+5 тенге/нед)':
+            $ target.schedule.add_action('job_chores', False)     
+        'Тёмные мутки (коммуникация, +вещества)':
+            $ target.schedule.add_action('job_pusher', False)               
+        'Работать грузчиком (спорт, малый заработок)' if target == child:
+            $ target.schedule.add_action('job_porter', False)    
+        'Работать гей-шлюхой (секс, хороший заработок)' if target == child:
+            $ target.schedule.add_action('job_whore', False)                
         "Назад":
             call lbl_make_shedule
     
@@ -157,7 +166,7 @@ label lbl_pleasing_choose:
             $ skill = 'conversation'
             $ target_statisfy = ['independence', 'authority']            
         'Подарки (коммуникация, 5 тенгэ)':
-            $ game.res_add_waste("gifts", 'money', 5, time=1)
+            $ game.res_add_consumption("gifts", 'money', 5, time=1)
             $ self_satisfy = ['altruism', 'communication']
             $ self_tension = ['power', 'prosperity']
             $ skill = 'conversation'
@@ -172,16 +181,21 @@ label lbl_pleasing_choose:
     
 label lbl_accommodation:
     menu:
-        'Вечно ты в комнате запираешься от матери! Как сыч.':
+        'Вечно ты в комнате запираешься от матери! Как сыч. (25 тенгэ/нед)':
             $ target.schedule.add_action('living_appartment')  
-        'Комнату твою сдавать будем, поспишь у нас на диванчике.':
+            $ game.res_add_consumption("rent", 'money', 25, time=None)
+        'Комнату твою сдавать будем, поспишь у нас на диванчике. (10 тенгэ/нед)':
             $ target.schedule.add_action('living_cot')  
-        'Диванчик для тёти Сраки, а тебе вот раскладушечка дедова.':
+            $ game.res_add_consumption("rent", 'money', 10, time=None)
+        'Диванчик для тёти Сраки, а тебе вот раскладушечка дедова. (5 тенгэ/нед)':
             $ target.schedule.add_action('living_mat')  
+            $ game.res_add_consumption("rent", 'money', 5, time=None)
         'В ванной тебя запрём ночевать. Чтобы не воображал!':
             $ target.schedule.add_action('living_jailed')    
+            $ game.res_add_consumption("rent", 'money', 0, time=None)
         'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
             $ target.schedule.add_action('living_confined')    
+            $ game.res_add_consumption("rent", 'money', 0, time=None)
     
     return
 
@@ -201,9 +215,9 @@ label lbl_food_universal:
             $ target.ration['target'] = 2     
         "На своё усмотрение (unlimited)":
             $ target.ration['amount'] = "unlimited"     
-        "На ЖЫРЧИК (regime 3)":
+        "На ЖРЧИК (regime 3)":
             $ target.ration['amount'] = "regime" 
-            $ target.ration['target'] = 3               
+            $ target.ration['target'] = 4               
   
     if target.ration['amount'] != "starvation":    
         menu:
@@ -221,6 +235,8 @@ label lbl_food_universal:
                 $ target.ration['food_type'] = "cosine"   
                 'Пища белых людей... вкуснота (3)'    
     
+    $ nm = target.name() + '_ration'
+    $ game.res_add_consumption("nm", 'provision', target.calculate_regime_consumption(), time=None) 
     return
 
 label lbl_activate_ap:
