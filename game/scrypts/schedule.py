@@ -23,7 +23,7 @@ def register_actions():
 
 
 class ScheduledAction(object):
-    def __init__(self, actor, name, lbl, slot, store_name, single=False, special_values=None):
+    def __init__(self, actor, name, lbl, slot, store_name, single=True, special_values=None):
         self.actor = actor
         self.slot = slot
         self.name = name
