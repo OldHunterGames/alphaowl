@@ -44,7 +44,7 @@ label shd_job_chores(action):
         actor = action.actor
         name = actor.name()
         moral = actor.moral_action('lawful') 
-        motivation = game.skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)        
+        motivation = game.threshold_skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)        
         if motivation >= 0:
             renpy.call('subloc_chores_perform')   
         else:
@@ -66,7 +66,7 @@ label shd_job_janitor(act):
     python:
         actor = act.actor   
         moral = actor.moral_action('lawful')
-        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=actor, morality=moral, special_motivators=[], success_threshold=0)
+        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=actor, morality=moral, special_motivators=[])
 
         if result >= 0:
             renpy.call('subloc_janitor_perform')   
@@ -94,7 +94,7 @@ label shd_job_porter(action):
         actor = action.actor
         mom.moral_action('lawful', child)
         moral = actor.moral_action('lawful')
-        result = game.skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement', 'ambition'], satisfy_needs=['activity'], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)
+        result = game.skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement', 'ambition'], satisfy_needs=['activity'], beneficiar=player, morality=moral, special_motivators=[])
         
         if result >= 0:
             renpy.call('subloc_porter_perform')   
@@ -125,7 +125,7 @@ label shd_job_whore(action):
         actor = action.actor
         mom.moral_action('evil', target = child)
         moral = character.moral_action('timid', mom)
-        result = game.skillcheck(actor, 'sex', difficulty = 0, tense_needs=['eros', 'ambition'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)
+        result = game.skillcheck(actor, 'sex', difficulty = 0, tense_needs=['eros', 'ambition'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[])
         
         if result >= 0:
             renpy.call('subloc_whore_perform')   
@@ -155,7 +155,7 @@ label shd_job_pusher(act):
         actor = act.actor   
         name = actor.name()
         moral = actor.moral_action('chaotic', 'ardent')
-        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['comfort', 'wellnes'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)
+        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['comfort', 'wellnes'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[])
 
         if result >= 0:
             renpy.call('subloc_pusher_perform')   

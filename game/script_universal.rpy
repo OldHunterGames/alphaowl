@@ -47,7 +47,7 @@ label lbl_target_menu:
 
 label lbl_make_shedule:
         
-    $ schedule_major = dname[player.job]
+    $ schedule_major = dname[target.job]
     
     menu:
         "По вечерам: [schedule_major]":
@@ -232,7 +232,7 @@ label lbl_food_universal:
                 $ target.ration['food_type'] = "canned" 
                 'Из банки... нормальный вкус'
             "Домашнее, тепленькое, с хлебушком":
-                $ target.ration['food_type'] = "cosine"   
+                $ target.ration['food_type'] = "cousine"   
                 'Пища белых людей... вкуснота (3)'    
     
     return
