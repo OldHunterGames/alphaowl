@@ -96,6 +96,8 @@ label start:
     define gray = Solid("#ccc")
     show image gray as bg
     #call evn_init
+    $ a = encolor_text('хренобула', 0)
+    '[a]'
     call label_quiz
     
     return
@@ -138,7 +140,6 @@ label label_quiz:
                 child.ration['target'] = 1
                 child.accommodation = "jailed"      
                 child.schedule.add_action('living_jailed')
-                child.job['name'] = 'chores'
                 child.schedule.add_action('job_chores')  
                 child.restrictions.append('masturbation')
                 child.schedule.add_action('fap_no')        

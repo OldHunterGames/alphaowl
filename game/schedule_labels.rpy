@@ -45,7 +45,7 @@ label shd_job_chores(action):
         name = actor.name()
         moral = actor.moral_action('lawful') 
         motivation = game.threshold_skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)        
-        if motivation >= 0:
+        if motivation[1]:
             renpy.call('subloc_chores_perform')   
         else:
             renpy.call('subloc_chores_sabotage')       
@@ -58,7 +58,7 @@ label subloc_chores_sabotage:
 
 label subloc_chores_perform:
     $ game.money += 5
-    "[name] уборка выполнена. Тяжелый ручной труд сэкономил нам аж целых 5 тенгэ!"
+    "[name] уборка дома выполнена. Тяжелый ручной труд сэкономил нам аж целых 5 тенгэ!"
 
     return
     
@@ -86,7 +86,8 @@ label subloc_janitor_perform:
         gain = result*result*10+5
         game.money += gain
         actor.skill('conversation').get_expirience(result)
-    'Качество работы = [result]\n Заработок: [gain] тенге.'
+        show = show_quality[result]
+    'Маман [show] выкладывается на работе уборщицей. \n Заработок: [gain] тенге.'
     return
    
 label shd_job_porter(action):
