@@ -96,12 +96,20 @@ class Modifiers(object):
             return None
 
 
-    def get_modifier_separate(self, attribute):
-        l = []
-        for d in self._attributes:
-            for k, v in d.items():
-                if k == attribute:
-                    l.append(v)
+    def get_modifier_separate(self, attribute, names=False):
+        if not names:
+            l = []
+            for d in self._attributes:
+                for k, v in d.items():
+                    if k == attribute:
+                        l.append(v)
+        else:
+            l = []
+            for i in range(len(self._attributes)):
+                d = self._attributes[i]
+                for k, v in d.items():
+                    if k == attribute:
+                        l.append((self._names[i], v))
         return l
 class Alignment(object):
     _needs = {'orderliness': {-1: 'independence', 1:'stability'},
@@ -187,14 +195,16 @@ class Alignment(object):
         n = Alignment._needs
         needs = []
         zero_needs = []
+        default = []
         for k in n.keys():
             try:
                 val = getattr(self, k)
                 needs.append(n[k][val])
                 zero_needs.append(n[k][val - val*2])
             except KeyError:
-                pass
-        return needs, zero_needs
+                for val in n[k].values():
+                    default.append(val)
+        return needs, zero_needs, default
 
 
 
@@ -579,7 +589,7 @@ class Person(object):
             for i in range(hlen):
                 dissapointment.pop(0)
             dissapointment = [i for i in dissapointment if i > 1]
-            despair = 6-setnsitivity-dissapointment.count(2)-dissapointment.count(3)*3
+            despair = 6-sensitivity-dissapointment.count(2)-dissapointment.count(3)*3
             if despair < 0:
                 mood = -1
             else:

@@ -5,7 +5,7 @@ from copy import deepcopy
 needs_names = ["general", 'purpose', "nutrition", "wellness", "comfort", "activity", "communication", "amusement",
              "prosperity", "authority", "ambition", "eros", "order", "independence", "approval", "thrill", "altruism", "power"]
 
-_default_need = {"level": 1}
+_default_need = {"level": 2}
 
 def init_needs(owner):
     l = []
@@ -51,6 +51,8 @@ class Need(object):
     @property
     def level(self):
         n = self.owner.alignment.special_needs()
+        if self.name in n[2]:
+            return 1
         if self.name in n[0]:
             return 3
         elif self.name in n[1]:
