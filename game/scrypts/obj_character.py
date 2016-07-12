@@ -610,7 +610,7 @@ class Person(object):
                 motiv -= 1
         for need in satisfy_needs:
             if need in self_needs.keys():
-                intense.append(need.level)
+                intense.append(self_needs[need].level)
         try:
             maximum = max(intense)
         except ValueError:

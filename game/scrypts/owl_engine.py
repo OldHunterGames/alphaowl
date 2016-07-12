@@ -18,6 +18,11 @@ def get_max_need(target, *args):
                 maxn = level
                 maxn_name = arg
     return maxn, maxn_value
+
+
+def encolor_text(text, value):
+    colors = ['ff0000', 'ff00ff', '00ffff', '0000FF', '00ff00', 'DAA520']
+    return '{b}{color=#%s}%s{/color}{/b}'%(colors[value], text)
 class Engine(object):
 
     def __init__(self):
@@ -152,7 +157,7 @@ class Engine(object):
         money = 0
         for res in self.resources.keys():
             if res!='money':
-                if not self.can_consume(res) or not self.has_money(self.res_to_money(res)):
+                if not self.can_consume(res) and not self.has_money(self.res_to_money(res)):
                     return False
                 else:
                     money += self.res_to_money(res)
@@ -233,7 +238,7 @@ class Engine(object):
 
     def threshold_skillcheck(self, actor, skill, difficulty=0, tense_needs=[], satisfy_needs=[], beneficiar=None,
                             morality=0, success_threshold=0, special_motivators=[]):
-        result = self.skillcheck(actor, skill, difficulty, tense_needs, satisfy_needs, beneficiar, morality, special_motivators)
+        result = self.skillcheck(actor, skill, difficulty, tense_needs, satisfy_needs, beneficiar, morality, special_motivators, success_threshold)
         if success_threshold < result:
             threshold_result = True
         else:
@@ -242,31 +247,43 @@ class Engine(object):
 
 
     def skillcheck(self, actor, skill, difficulty=0, tense_needs=[], satisfy_needs=[], beneficiar=None,
-                    morality=0, special_motivators=[]):
+                    morality=0, special_motivators=[], threshold=None):
         skill = actor.skill(skill)
         motivation = actor.motivation(skill, tense_needs, satisfy_needs, beneficiar)
         # factors['attraction'] and equipment bonuses not implemented yet
         factors = {'level': 1+skill.level,
-                    'attr': skill.attribute_value(),
+                    skill.attribute: skill.attribute_value(),
                     'focus': skill.focus,
                     'mood': actor.mood,
                     'motivation': motivation,
                     'vitality': actor.vitality,
                     'bonus': actor.count_modifiers(skill.name)}
         result = 1+skill.level
-
+        used = []
+        found = False
         while result != 0:
-            if difficulty < factors.values().count(result):
-                break
-            else:
+            difficulty_check = 1
+            used = []
+            for k, v in factors.items():
+                if difficulty < difficulty_check:
+                    found = True
+                elif k != 'level' and v >= result:
+                    difficulty_check += 1
+                    used.append(k)
+            if difficulty < difficulty_check:
+                found = True
+            if not found:
                 result -= 1
+            else:
+                break
         if motivation < 1:
             result = -1
+        renpy.call_in_new_context('lbl_skillcheck_info', result, factors, skill, used, threshold)
         if result >= 0:
             for need in tense_needs:
                 getattr(actor, need).set_tension()
             for need in satisfy_needs:
                 getattr(actor, need).satisfaction = result
-        return result
+        return 
 
         
