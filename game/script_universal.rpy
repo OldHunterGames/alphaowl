@@ -360,6 +360,7 @@ label lbl_info_new(target):
         stance = target.stance(player).level if target!=player else None
         skills = target.show_skills()
         tendency = target.attitude_tendency()
+        needs = target.get_needs()
         txt = "Настроение: " + str(target.mood)
         if stance:
             txt += " | Отношение: " + str(stance) +'\n'
@@ -381,6 +382,10 @@ label lbl_info_new(target):
             txt += "Навыки: %s\n"%(skills)
         if tokens:
             txt += "Токены: %s\n"%(tokens)
+        txt += 'Потребности: '
+        for need in needs:
+            txt += '%s: [%s, %s, %s], '%(need, needs[need].level, needs[need].satisfaction, needs[need].tension)
+        txt += '\n'
         txt += "Ангст: %s, Решимость: %s"%(target.anxiety, target.determination)
     "[txt]"
 
