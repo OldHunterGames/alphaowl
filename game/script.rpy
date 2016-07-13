@@ -470,8 +470,6 @@ label mood_recalc_result(diss_inf=None, satisfy_inf=None, determination=None, an
                     break
             info = InfoStorage(diss_inf, satisfy_inf, determination, anxiety, target)
             recalc_result.append(info)
-        if target.player_controlled:
-            renpy.call_screen('sc_mood_recalculation_result', target)
 screen sc_mood_recalculation_result(target=None):
     python:
         for i in recalc_result:
