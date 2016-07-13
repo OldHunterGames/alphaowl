@@ -232,9 +232,9 @@ label shd_living_jailed(action):
 
 label shd_torture_check(action):
     python:
-        threshold = game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_tension']) 
+        threshold = action.actor.relations(action.special_values['beneficiar']).stability
         morality = action.actor.check_moral(action.special_values['torturer'], *action.special_values['moral_burden'])
-        difficulty = action.actor.relations(action.special_values['beneficiar']).stability
+        difficulty = game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_tension']) 
         result = game.threshold_skillcheck(action.special_values['torturer'], action.special_values['skill'], difficulty, action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality, threshold)
         if result[0]:
             action.actor.add_token(action.special_values['token'])

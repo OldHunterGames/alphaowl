@@ -21,6 +21,8 @@ def get_max_need(target, *args):
 
 
 def encolor_text(text, value):
+    if value < 0:
+        value = 0
     colors = ['ff0000', 'ff00ff', '00ffff', '0000FF', '00ff00', 'DAA520']
     return '{b}{color=#%s}%s{/color}{/b}'%(colors[value], text)
 class Engine(object):

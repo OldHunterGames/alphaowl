@@ -361,7 +361,7 @@ label lbl_info_new(target):
         skills = target.show_skills()
         tendency = target.attitude_tendency()
         needs = target.get_needs()
-        txt = "Настроение: " + str(target.show_mood())
+        txt = "Настроение: " + encolor_text(target.show_mood(), target.mood)
         if stance:
             txt += " | Поза: " + str(stance) +'\n'
         txt += " | Здоровье: %s \n "%(target.vitality)
