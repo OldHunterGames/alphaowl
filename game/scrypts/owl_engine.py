@@ -181,6 +181,9 @@ class Engine(object):
 
     def new_turn(self):
         self.res_consume()
+        self.child.rest()
+        self.mother.rest()
+        self.batya.rest()
         self.resource_consumption_tick()
         self.time += 1
         self.player.ap = 1
@@ -281,7 +284,7 @@ class Engine(object):
                 break
         if motivation < 1:
             result = -1
-        renpy.call_in_new_context('lbl_skillcheck_info', result, factors, skill, used, threshold)
+        renpy.call_in_new_context('lbl_skillcheck_info', result, factors, skill, used, threshold, difficulty)
         if result >= 0:
             for need in tense_needs:
                 getattr(actor, need).set_tension()

@@ -24,6 +24,7 @@ init python:
     
     #BATYA
     batya = Person()
+    game.batya = batya
     batya.add_feature('male')
     batya.add_feature('mature')
     batya.firstname = u"BATYA"
@@ -292,8 +293,6 @@ label label_new_day:
     
     ### ЕСЛИ ИГРА НЕ ОКОНЧЕНА
     $ study = game.choose_study()
-    $ game.child.rest()
-    $ game.mother.rest()
     $ communication = '?'
     "Неделя номер [game.time]"
        
