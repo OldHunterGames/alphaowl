@@ -477,7 +477,7 @@ class Person(object):
         return s
 
     def show_mood(self):
-        m = {-1: 'crushed', 0: 'gloomy', 1: 'tense', 2:'content', 3: 'serene', 4: 'jouful', 5:'enthusiastic'}
+        m = {-1: '!!!CRUSHED!!!', 0: 'Gloomy', 1: 'Tense', 2:'Content', 3: 'Serene', 4: 'Jouful', 5:'Enthusiastic'}
         mood = self.mood
         return "{mood}({val})".format(mood=m[mood], val=mood)
 
