@@ -6,7 +6,7 @@
     from schedule import *
 
 init python:
-    
+    recalc_result = []
     renpy.block_rollback()
     game = Engine()
     child = game.child
@@ -451,3 +451,72 @@ screen sc_skillcheck(action):
         else:
             text "Сила: [action.power]"
             text "Интенсивность потребности: [action._compare_to_power]"
+
+label mood_recalc_result(diss_inf=None, satisfy_inf=None, determination=None, anxiety=None, recalc=False, target=None):
+    python:
+        info = None 
+        class InfoStorage(object):
+            def __init__(self, diss_inf, satisfy_inf, determination, anxiety, target):
+                self.diss_inf = diss_inf
+                self.satisfy_inf = satisfy_inf
+                self.determination = determination
+                self.anxiety = anxiety
+                self.target = target
+        
+        if recalc and target != None:
+            for i in recalc_result:
+                if i.target == target:
+                    recalc_result.remove(i)
+                    break
+            info = InfoStorage(diss_inf, satisfy_inf, determination, anxiety, target)
+            recalc_result.append(info)
+        if target.player_controlled:
+            renpy.call_screen('sc_mood_recalculation_result', target)
+screen sc_mood_recalculation_result(target=None):
+    python:
+        for i in recalc_result:
+            if i.target==target:
+                info = i
+    if info == None:
+        vbox:
+            xalign 0.0
+            yalign 0.0
+            text 'Для этого персонажа инфы нет'
+        hbox:
+            xalign 0.5
+            yalign 0.5
+            textbutton 'Покинуть экран' action Return()
+    else:
+        python:
+            key = 5
+            txt = []
+            txt_bad = []
+            while key > 0:
+                for need in info.satisfy_inf[key]:
+                    text = encolor_text('%s(%s)'%(need.name, need.level), key)
+                    txt.append(text)
+                key -= 1
+            for i in info.determination:
+                text = encolor_text(i, 1)
+                txt.append(text)
+            for need in info.diss_inf:
+                text = encolor_text('%s(%s)'%(need.name, need.level), 0)
+                txt_bad.append(text)
+            for i in info.anxiety:
+                text = encolor_text(i, 0)
+                txt_bad.append(i)
+        vbox:
+            xalign 0.0
+            yalign 0.0
+            for i in txt:
+                text [i]
+
+        vbox:
+            xalign 0.5
+            yalign 0.0
+            for i in txt_bad:
+                text [i]
+        hbox:
+            xalign 0.5
+            yalign 0.5
+            textbutton 'Покинуть экран' action Return()
