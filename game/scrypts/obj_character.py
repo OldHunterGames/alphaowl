@@ -477,7 +477,7 @@ class Person(object):
         return s
 
     def show_mood(self):
-        m = {-1: 'crushed', 0: 'gloomy', 1: 'tense', 2:'content', 3: 'serene', 4: 'jouful', 5:'enthusiastic'}
+        m = {-1: '!!!CRUSHED!!!', 0: 'Gloomy', 1: 'Tense', 2:'Content', 3: 'Serene', 4: 'Jouful', 5:'Enthusiastic'}
         mood = self.mood
         return "{mood}({val})".format(mood=m[mood], val=mood)
 
@@ -571,14 +571,13 @@ class Person(object):
                 satisfactions_inf[need.satisfaction].append(need)
                 if need.level == 3:
                     happines.append(need.satisfaction)
-        
+                    satisfactions_inf[need.satisfaction].append(need)
         for i in range(self.determination):
             happines.append(1)
             determination.append('determination')
         for i in range(self.anxiety):
             dissapointment.append(1)
             anxiety.append('anxiety')
-
         hlen = len(happines)
         dlen = len(dissapointment)
         happines.sort()
@@ -602,16 +601,23 @@ class Person(object):
                 mood = 1
 
         elif hlen < dlen:
+            axniety_holder = self.anxiety
             happines = []
             for i in range(hlen):
                 dissapointment.pop(0)
             dissapointment = [i for i in dissapointment if i > 1]
-            despair = 6-self.sensitivity-dissapointment.count(2)-dissapointment.count(3)*3
+            despair = 6-self.sensitivity-dissapointment.count(2)
+            despair2 = dissapointment.count(3)
             if despair < 0:
-                mood = -1
+                if abs(despair) > self.anxiety:
+                    self.anxiety += 1
+                    mood = -1
             else:
-                mood = 0
-            return
+                despair2 -= despair
+            if despair2 > 0:
+                self.anxiety += despair2
+                mood = -1
+
         
         else:
             mood = 0
