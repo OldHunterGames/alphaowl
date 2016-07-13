@@ -419,7 +419,8 @@ label lbl_skillcheck_info(result, stats, skill, used, threshold=None, difficulty
                             encolor_text('удовлетворительно', 2),
                             encolor_text('хорошо', 3),
                             encolor_text('отлично', 4),
-                            encolor_text('идеально', 5)]
+                            encolor_text('идеально', 5),
+                            encolor_text('Impossible', 6)]
         txt = 'Сложность: %s\n'%(difficulty)
         txt += 'Результат: %s\n'%(info_show_quality[result])
         if threshold != None:

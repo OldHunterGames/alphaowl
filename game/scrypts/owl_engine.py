@@ -23,7 +23,7 @@ def get_max_need(target, *args):
 def encolor_text(text, value):
     if value < 0:
         value = 0
-    colors = ['ff0000', 'ff00ff', '00ffff', '0000FF', '00ff00', 'DAA520']
+    colors = ['ff0000', 'ff00ff', '00ffff', '0000FF', '00ff00', 'DAA520', '000000']
     return '{b}{color=#%s}%s{/color}{/b}'%(colors[value], text)
 class Engine(object):
 
@@ -241,13 +241,18 @@ class Engine(object):
             check -= 1
         if target.mood < 1:
             check -= 1
-        check -= (3-get_max_need(target, *args)[1])
+        check += (3-get_max_need(target, *args)[1])
+        check -= target.stance(self.player).value
+        harmony = target.relations(self.player).harmony()[0]
+        if harmony > 0:
+            check -= harmony
         if check < 0:
             check = 0
         return check
 
     def threshold_skillcheck(self, actor, skill, difficulty=0, tense_needs=[], satisfy_needs=[], beneficiar=None,
                             morality=0, success_threshold=0, special_motivators=[]):
+        success_threshold += 1
         result = self.skillcheck(actor, skill, difficulty, tense_needs, satisfy_needs, beneficiar, morality, special_motivators, success_threshold)
         if success_threshold < result:
             threshold_result = True
