@@ -22,6 +22,8 @@ accommodation_types = {'makeshift bad': {'comfort': -3},
                        'appartament': {'comfort': 3},
                        'love nest': {'comfort': 5, 'prosperity': 2, 'communication': 2, 'eros': 2}
                        }
+
+
 class Modifiers(object):
     def __init__(self):
         self._names = []
@@ -35,7 +37,7 @@ class Modifiers(object):
             try:
                 self._times[i] -= 1
                 if self._times[i] < 1:
-                    to_del.append(i)
+                    to_del.append(self._names[i])
             except TypeError:
                 pass
         for i in to_del:
