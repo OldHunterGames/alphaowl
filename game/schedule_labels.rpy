@@ -5,8 +5,8 @@ label shd_None_template(character):
 
 label shd_general_accounting(character):
     # Allways active. Calculates minor issues.
-    'Мать получает зарплату (+10 тенгэ)'
-    $ game.money += 10
+    'BATYA получает зарплату (+100 тенгэ)'
+    $ game.money += 100
     if 'dates' in child.restrictions:
         $ child.eros.set_tension()
         $ child.activity.set_tension()
@@ -52,13 +52,13 @@ label shd_job_chores(action):
     return    
 
 label subloc_chores_sabotage:
-    "[name] уборка саботирована."
+    "[name] саботирует работу по дому ничего не делает."
 
     return
 
 label subloc_chores_perform:
-    $ game.money += 5
-    "[name] уборка дома выполнена. Тяжелый ручной труд сэкономил нам аж целых 5 тенгэ!"
+    $ game.money += 10
+    "[name] занимается делами по хозяйству. Тяжелый ручной труд сэкономил нам аж целых 10 тенгэ!"
 
     return
     
@@ -75,7 +75,7 @@ label shd_job_janitor(act):
     return    
     
 label subloc_janitor_sabotage:
-    'Маман саботирует работу и ничего не зарабатывает. Зато удовлетворяет потребности в независимости и комфорте с силой 2.'  
+    'Маман саботирует подработку и ничего не зарабатывает. Зато удовлетворяет потребности в независимости и комфорте с силой 2.'  
     $ actor.comfort.satisfaction = 2
     $ actor.independence.satisfaction = 2
     $ actor.prosperity.set_tension()
@@ -118,7 +118,8 @@ label subloc_porter_perform:
         game.money += gain
         child.skill('sports').get_expirience(result)
         mom.prosperity.satisfaction = result  
-    '([result]) Сычуля работает грузчиком себя послушным и активным. Угнетены амбиции и вообще работа скучная. \n Заработок (для мамы!): [gain] тенге.'
+        show = show_quality[result]
+    'Сычуля [show] работает грузчиком себя послушным и активным. Угнетены амбиции и вообще работа скучная. \n Заработок (для мамы!): [gain] тенге.'
     return
 
 label shd_job_whore(action):
@@ -147,8 +148,9 @@ label subloc_whore_perform:
         game.tenge += gain
         child.skill('sex').get_expirience(result)
         mom.prosperity.satisfaction = result         
-        child.moral_action('timid', target = mom)            
-    '([result]) Сычуля работает на панели по приказу злой мамки. Это удар по его сексуальности и амбиициям, но по крайней мере это общение... (1)\n Заработок (для мамы!): [gain] тенге.'
+        child.moral_action('timid', target = mom)  
+        show = show_quality[result]
+    'Сычуля [show] работает на панели по приказу злой мамки. Это удар по его сексуальности и амбиициям, но по крайней мере это общение... (1)\n Заработок (для мамы!): [gain] тенге.'
     return
     
 label shd_job_pusher(act):
@@ -156,7 +158,7 @@ label shd_job_pusher(act):
         actor = act.actor   
         name = actor.name()
         moral = actor.moral_action('chaotic', 'ardent')
-        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['comfort', 'wellnes'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[])
+        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['comfort', 'wellness'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[])
 
         if result >= 0:
             renpy.call('subloc_pusher_perform')   

@@ -96,8 +96,8 @@ label start:
     define gray = Solid("#ccc")
     show image gray as bg
     #call evn_init
-    $ a = encolor_text('хренобула', 0)
-    '[a]'
+    # $ a = encolor_text('хренобула', 0)
+    # '[a]'
     call label_quiz
     
     return

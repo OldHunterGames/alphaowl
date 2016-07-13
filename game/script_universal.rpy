@@ -113,7 +113,7 @@ label lbl_shedule_major:
             $ target.schedule.add_action('job_janitor', False) 
         'Делать уроки' if target == child:
             $ target.schedule.add_action('job_study', False) 
-        'Бытовое рабство (+5 тенге/нед)':
+        'Бытовое рабство (+10 тенге/нед)':
             $ target.schedule.add_action('job_chores', False)     
         'Тёмные мутки (коммуникация, +вещества)':
             $ target.schedule.add_action('job_pusher', False)               
