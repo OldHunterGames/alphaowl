@@ -20,8 +20,9 @@ init python:
     check_results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
                     '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
     communication = '?'
+    mom.ration['food_type'] = "sperm" 
     game.res_add_consumption('mom_food', 'provision', mom.get_food_consumption, None)
-    
+        
     #BATYA
     batya = Person()
     batya.add_feature('male')
@@ -32,6 +33,7 @@ init python:
     batya.skill('sport').profession()
     batya.stance(child).value = 0
     batya.stance(mom).value = 1
+    batya.ration['food_type'] = "sperm" 
     game.res_add_consumption('batya_food', 'provision', batya.get_food_consumption, None)
     
     #ЕНОТОВА
@@ -117,6 +119,7 @@ label label_quiz:
     $ child.appearance = 'normal'
     $ child.schedule.add_action('outfit_normal')    
     $ shedule_minor = '?'
+    $ child.ration['food_type'] = "sperm" 
     $ game.res_add_consumption('child_food', 'provision', child.get_food_consumption, None)
     
     menu:

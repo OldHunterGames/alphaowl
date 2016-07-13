@@ -293,7 +293,6 @@ label shd_dayoff_dacha(character):
         child.altruism.satisfaction = 2        
         child.activity.satisfaction = 2
         effect = child.physique * 2
-        game.res_add('provision', effect)
     'Завтра рано вставать, а то опоздаем на поезд \n @\nПоможешь бабушке на даче \n @\nНадо огород вскопать, сорняки прополот, колорада потравить \n @\n(Ресурсы: провизия +[effect])'
     return  
     
