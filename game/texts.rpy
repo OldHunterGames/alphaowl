@@ -18,3 +18,11 @@ init python:
         '{b}{color=#0000FF}хорошо{/color}{/b}',
         '{b}{color=#00ff00}отлично{/color}{/b}',
         '{b}{color=#DAA520}идеально{/color}{/b}',]
+    
+    show_mood = {'-1': '{b}{color=#ff0000}CRUSHED{/color}{/b}',
+        '0': '{b}{color=#ff0000}gloomy{/color}{/b}',
+        '1': '{b}{color=#ff00ff}tense{/color}{/b}',
+        '2': '{b}{color=#00ffff}content{/color}{/b}',
+        '3': '{b}{color=#0000FF}serene{/color}{/b}',
+        '4': '{b}{color=#00ff00}joyful{/color}{/b}',
+        '5': '{b}{color=#DAA520}enthusiastic {/color}{/b}',}

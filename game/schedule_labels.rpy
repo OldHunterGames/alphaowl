@@ -195,7 +195,7 @@ label shd_living_appartment(action):
     
 label shd_living_cot(action):
     $ action.actor.comfort.satisfaction = 1
-    name = action.actor.name()
+    $ name = action.actor.name()
     '[name] спит на кушеточке'    
     return  
     
