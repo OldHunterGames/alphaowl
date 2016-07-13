@@ -495,7 +495,7 @@ screen sc_mood_recalculation_result(target=None):
             txt_bad = []
             while key > 0:
                 for need in info.satisfy_inf[key]:
-                    text = encolor_text('%s(%s)'%(need.name, need.level), key)
+                    text = encolor_text('%s'%(need.name), key)
                     txt.append(text)
                 key -= 1
             for i in info.determination:

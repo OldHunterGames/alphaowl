@@ -571,14 +571,13 @@ class Person(object):
                 satisfactions_inf[need.satisfaction].append(need)
                 if need.level == 3:
                     happines.append(need.satisfaction)
-        
+                    satisfactions_inf[need.satisfaction].append(need)
         for i in range(self.determination):
             happines.append(1)
             determination.append('determination')
         for i in range(self.anxiety):
             dissapointment.append(1)
             anxiety.append('anxiety')
-
         hlen = len(happines)
         dlen = len(dissapointment)
         happines.sort()
@@ -611,7 +610,6 @@ class Person(object):
                 mood = -1
             else:
                 mood = 0
-            return
         
         else:
             mood = 0
