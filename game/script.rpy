@@ -470,6 +470,10 @@ label mood_recalc_result(diss_inf=None, satisfy_inf=None, determination=None, an
                     break
             info = InfoStorage(diss_inf, satisfy_inf, determination, anxiety, target)
             recalc_result.append(info)
+    return
+label lb_recalc_result_glue():
+    call screen sc_mood_recalculation_result(recalc_result_target)
+    return
 screen sc_mood_recalculation_result(target=None):
     python:
         for i in recalc_result:
