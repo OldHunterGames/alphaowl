@@ -1,7 +1,10 @@
 # -*- coding: UTF-8 -*-
 from random import *
+import collections
+
 import renpy.store as store
 import renpy.exports as renpy
+
 from features import Feature, Phobia, person_features
 from skills import Skill, skills_data
 from needs import init_needs
@@ -12,6 +15,8 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 from stance import Stance
+
+
 accommodation_types = {'makeshift bad': {'comfort': -3},
                        'campfire': {'comfort': -1},
                        'chained': {'comfort': -4, 'activity': -4, 'wellness': -3},
@@ -553,25 +558,32 @@ class Person(object):
         mood = 0
         happines = []
         dissapointment = []
+        dissapointments_inf = []
+        satisfactions_inf = collections.defaultdict(list)
+        determination = []
+        anxiety = []
         for need in self.get_needs().values():
             if need.tension and need.level > 0:
                 dissapointment.append(need.level)
+                dissapointments_inf.append(need)
             if need.satisfaction > 0:
                 happines.append(need.satisfaction)
+                satisfactions_inf[need.satisfaction].append(need)
                 if need.level == 3:
                     happines.append(need.satisfaction)
-            need.satisfaction = 0
-            need.tension = False
+        
         for i in range(self.determination):
             happines.append(1)
+            determination.append('determination')
         for i in range(self.anxiety):
             dissapointment.append(1)
+            anxiety.append('anxiety')
 
         hlen = len(happines)
         dlen = len(dissapointment)
         happines.sort()
         dissapointment.sort()
-        
+        renpy.call_in_new_context('mood_recalc_result', dissapointments_inf, satisfactions_inf, anxiety, determination, True, self)
         if hlen > dlen:
             dissapointment = []
             for i in range(dlen):
@@ -603,6 +615,13 @@ class Person(object):
         
         else:
             mood = 0
+        for key in satisfactions_inf:
+            for need in satisfactions_inf[key]:
+                need.satisfaction = 0
+                need.tension = False
+        for need in dissapointments_inf:
+            need.satisfaction = 0
+            need.tension = False
         self.mood = mood
 
 

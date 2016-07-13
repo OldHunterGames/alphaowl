@@ -390,6 +390,11 @@ label lbl_info_new(target):
         consumption = target.get_food_consumption(True)
         txt += 'Жрет: %s(%s)'%(consumption[0], consumption[1])
     "[txt]"
+    menu:
+        'Покинуть инфу':
+            return
+        'Подробности настроения':
+            call screen sc_mood_recalculation_result(target)
 
     return
 
