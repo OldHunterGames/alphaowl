@@ -66,7 +66,7 @@ label shd_job_janitor(act):
     python:
         actor = act.actor   
         moral = actor.moral_action('lawful')
-        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=actor, morality=moral, special_motivators=[])
+        result = game.skillcheck(actor, 'conversation', difficulty = 1, tense_needs=['amusement'], satisfy_needs=[], beneficiar=actor, morality=moral, special_motivators=[])
 
         if result >= 0:
             renpy.call('subloc_janitor_perform')   
@@ -95,7 +95,7 @@ label shd_job_porter(action):
         actor = action.actor
         mom.moral_action('lawful', child)
         moral = actor.moral_action('lawful')
-        result = game.skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement', 'ambition'], satisfy_needs=['activity'], beneficiar=player, morality=moral, special_motivators=[])
+        result = game.skillcheck(actor, 'sport', difficulty = 1, tense_needs=['amusement', 'ambition'], satisfy_needs=['activity'], beneficiar=player, morality=moral, special_motivators=[])
         
         if result >= 0:
             renpy.call('subloc_porter_perform')   
@@ -127,7 +127,7 @@ label shd_job_whore(action):
         actor = action.actor
         mom.moral_action('evil', target = child)
         moral = character.moral_action('timid', mom)
-        result = game.skillcheck(actor, 'sex', difficulty = 0, tense_needs=['eros', 'ambition'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[])
+        result = game.skillcheck(actor, 'sex', difficulty = 2, tense_needs=['eros', 'ambition'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[])
         
         if result >= 0:
             renpy.call('subloc_whore_perform')   
@@ -158,7 +158,7 @@ label shd_job_pusher(act):
         actor = act.actor   
         name = actor.name()
         moral = actor.moral_action('chaotic', 'ardent')
-        result = game.skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['comfort', 'wellness'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[])
+        result = game.skillcheck(actor, 'conversation', difficulty = 2, tense_needs=['comfort', 'wellness'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[])
 
         if result >= 0:
             renpy.call('subloc_pusher_perform')   
@@ -176,7 +176,8 @@ label subloc_pusher_perform:
         gain = result*result*5+1
         game.drugs += gain
         actor.skill('conversation').get_expirience(result)
-    '[] мутит вещества - аптеку, бадягу, бухло, всё сойдёт. Напряжная и вредная для самочувствия работа, зато общение ([result]). Качество работы [result]\n Вымучено: [gain] веществ.'
+        show = show_quality[result]
+    '[name] [show] мутит вещества - аптеку, бадягу, бухло, всё сойдёт. Напряжная и вредная для самочувствия работа, зато общение ([result]). Качество работы [result]\n Вымучено: [gain] веществ.'
     return
 
 
@@ -188,17 +189,23 @@ label shd_living_appartment(action):
     python:
         action.actor.comfort.satisfaction = 3
         action.actor.add_modifier('beauty_sleep', {'vitality': 2}, 1)        
+        name = action.actor.name()
+        '[name] живёт в апартаментах'
     return  
     
 label shd_living_cot(action):
     $ action.actor.comfort.satisfaction = 1
+    name = action.actor.name()
+    '[name] спит на кушеточке'    
     return  
     
 label shd_living_mat(action):
     python:
         child.comfort.set_tension()
         child.prosperity.set_tension()
-        child.wellness.set_tension()          
+        child.wellness.set_tension()    
+        name = action.actor.name()
+        '[name] спит на раскладушке'          
     return  
     
 label shd_living_confined(action):
@@ -210,6 +217,8 @@ label shd_living_confined(action):
         child.communication.set_tension()
         child.thrill.set_tension()
         action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
+        name = action.actor.name()
+        '[name] живёт в ванной'  
     return  
     
 label shd_living_jailed(action):
@@ -218,6 +227,7 @@ label shd_living_jailed(action):
         child.activity.set_tension()
         child.wellness.set_tension()
         action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
+        '[name] живёт в чулане' 
     return  
 
 label shd_torture_check(action):
@@ -250,29 +260,6 @@ label shd_pleasing_check(action):
     "Ублажен"
     return  
     
-label shd_discipline_atrocity(character):
-    python:
-        moral = character.moral_action(moral_burden, unin_target) 
-        motivation = character.motivation(needs=[(self_bonus_need, 3)], beneficiar = player, morality = moral)  
-        game.atrocity(actor = character, target = unin_target, token = token_to_gain, target_tense = targeted_need, skill = skill_to_use, phobias = phobias_to_use, morality = moral, name = 'Контролируемое прямое угнетение', respect_needs = ['authority', 'power'], controlled = True)
-        "Наказан"
-    return   
-    
-label shd_discipline_intercommunion(character):
-    python:
-        moral = character.moral_action(moral_burden, unin_target) 
-        motivation = character.motivation(needs=[(self_bonus_need, 3)], beneficiar = player, morality = moral)  
-        game.intercommunion(actor = character, target = unin_target, token = token_to_gain, skill = skill_to_use, morality = moral, name = 'Дисциплина')
-        'Неделя дисциплины прошла.'
-    return   
-    
-label shd_discipline_pleasing(character):
-    python:
-        moral = character.moral_action(moral_burden, unin_target) 
-        motivation = character.motivation(needs=[(self_bonus_need, 3)], beneficiar = player, morality = moral)  
-        game.pleasing(actor = character, target = unin_target, token = token_to_gain, skill = skill_to_use, target_please = targeted_need, morality = moral, name = 'Поощрение')
-    return   
-
 
 
 
