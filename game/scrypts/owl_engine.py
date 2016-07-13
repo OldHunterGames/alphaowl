@@ -61,6 +61,9 @@ class Engine(object):
         if not value < 0:
             self.resources['money'] = value
     @property
+    def provision_consumption(self):
+        return self.resource_consumption('provision')
+    @property
     def drugs(self):
         return self.resources['drugs']
     @drugs.setter

@@ -22,6 +22,8 @@ accommodation_types = {'makeshift bad': {'comfort': -3},
                        'appartament': {'comfort': 3},
                        'love nest': {'comfort': 5, 'prosperity': 2, 'communication': 2, 'eros': 2}
                        }
+
+
 class Modifiers(object):
     def __init__(self):
         self._names = []
@@ -30,13 +32,16 @@ class Modifiers(object):
     
 
     def tick_time(self):
+        to_del = []
         for i in range(len(self._times)):
             try:
                 self._times[i] -= 1
                 if self._times[i] < 1:
-                    self.del_item(i)
+                    to_del.append(self._names[i])
             except TypeError:
                 pass
+        for i in to_del:
+            self.del_item(i)
 
    
     def del_item(self, index):
@@ -589,7 +594,7 @@ class Person(object):
             for i in range(hlen):
                 dissapointment.pop(0)
             dissapointment = [i for i in dissapointment if i > 1]
-            despair = 6-sensitivity-dissapointment.count(2)-dissapointment.count(3)*3
+            despair = 6-self.sensitivity-dissapointment.count(2)-dissapointment.count(3)*3
             if despair < 0:
                 mood = -1
             else:
@@ -727,10 +732,12 @@ class Person(object):
 
         return desire
 
-    def get_food_consumption(self):
+    def get_food_consumption(self, show_multi=False):
         types = {'sperm': 0, 'forage': 0, 'dry': 1, 'canned': 2, 'cousine': 2}
         value = self.consume_food()
         multiplier = types[self.ration['food_type']]
+        if show_multi:
+            return value*multiplier, self.ration['food_type']
         return value * multiplier
     def consume_food(self):
         food_consumed = self.food_desire()
@@ -757,54 +764,66 @@ class Person(object):
         return food_consumed
 
     def fatness_change(self):
-        calorie_difference = self.consume_food() - self.food_demand()
-        if calorie_difference < self.food_desire():
+        consumed = self.consume_food()
+        demand = self.food_demand()
+        desire = self.food_desire()
+        calorie_difference = consumed-demand
+        if consumed < desire:
             self.nutrition.set_tension()
         if self.ration['amount'] != 'starvation':
             d = {'sperm': -4, 'forage': -1, 'dry': -2, 'canned': 0, 'cousine': 3}
-            self.nutrition.satisfaction = d[self.ration['food_type']]
+            if d[self.ration['food_type']] < 0:
+                self.nutrition.set_tension()
+            else:
+                self.nutrition.satisfaction = d[self.ration['food_type']]
         self.calorie_storage += calorie_difference
         fatness = self.feature_by_slot('shape')
         if fatness != None:
             fatness = fatness.name
         flist = ['emaciated' ,'slim', None, 'chubby', 'obese']
         ind = flist.index(fatness)
+        if self.calorie_storage <= 0:
+            self.remove_feature('dyspnoea')
+        if self.calorie_storage >= 0:
+            self.remove_feature('starving')
         if self.calorie_storage < 0:
             chance = randint(-10, -1)
-            self.conditions.append(('vigor', -1))
             if self.calorie_storage <= chance:
                 ind -= 1
                 if self.feature('dyspnoea'):
                     self.remove_feature('dyspnoea')
                 if ind < 0:
                     ind = 0
-                if self.feature('starving'):
-                    self.add_feature('dead')
-                else:
-                    self.add_feature('starving')
+                    if self.feature('starving'):
+                        self.add_feature('dead')
+                    else:
+                        self.add_feature('starving')
                 f = flist[ind]
                 if f:
                     self.add_feature(f)
                 else:
                     self.feature_by_slot('shape').remove()
-                self.calorie_storage = 0
-                return
+                if not self.feature('starving'):
+                    self.calorie_storage = 0
+                return 'fatness -'
         if self.calorie_storage > 0:
             chance = randint(1, 10)
             if self.calorie_storage >= chance:
                 ind += 1
                 if ind > 4:
                     ind = 4
-                if self.feature('dyspnoea'):
-                    self.add_feature('diabetes')
-                else:
-                    self.add_feature('dyspnoea')
+                    if self.feature('dyspnoea'):
+                        self.add_feature('diabetes')
+                    else:
+                        self.add_feature('dyspnoea')
                 f = flist[ind]
                 if f:
                     self.add_feature(f)
                 else:
                     self.feature_by_slot('shape').remove()
-                self.calorie_storage = 0
+                if not self.feature('dyspnoea'):
+                    self.calorie_storage = 0
+                return 'fatness +'
     def nutrition_change(self, food_consumed):
         if food_consumed < self.food_demand():
             self.ration["overfeed"] -= 1
