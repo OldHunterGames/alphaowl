@@ -601,15 +601,23 @@ class Person(object):
                 mood = 1
 
         elif hlen < dlen:
+            axniety_holder = self.anxiety
             happines = []
             for i in range(hlen):
                 dissapointment.pop(0)
             dissapointment = [i for i in dissapointment if i > 1]
-            despair = 6-self.sensitivity-dissapointment.count(2)-dissapointment.count(3)*3
+            despair = 6-self.sensitivity-dissapointment.count(2)
+            despair2 = dissapointment.count(3)
             if despair < 0:
-                mood = -1
+                if abs(despair) > self.anxiety:
+                    self.anxiety += 1
+                    mood = -1
             else:
-                mood = 0
+                despair2 -= despair
+            if despair2 > 0:
+                self.anxiety += despair2
+                mood = -1
+
         
         else:
             mood = 0
