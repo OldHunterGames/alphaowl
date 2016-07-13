@@ -477,9 +477,9 @@ class Person(object):
         return s
 
     def show_mood(self):
-        m = {-1: 'gloomy', 0: 'content', 1: 'happy'}
-        mood = self.mood()
-        return "{mood}({val})".format(mood=m[mood[0]], val=mood[1])
+        m = {-1: 'crushed', 0: 'gloomy', 1: 'tense', 2:'content', 3: 'serene', 4: 'jouful', 5:'enthusiastic'}
+        mood = self.mood
+        return "{mood}({val})".format(mood=m[mood], val=mood)
 
 
     def show_attributes(self):
