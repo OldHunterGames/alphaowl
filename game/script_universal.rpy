@@ -361,9 +361,13 @@ label lbl_info_new(target):
         skills = target.show_skills()
         tendency = target.attitude_tendency()
         needs = target.get_needs()
+<<<<<<< HEAD
         txt = "Настроение: " + str(target.show_mood())
+=======
+        txt = "Настроение: " + show_mood[str(target.mood)]
+>>>>>>> origin/master
         if stance:
-            txt += " | Отношение: " + str(stance) +'\n'
+            txt += " | Поза: " + str(stance) +'\n'
         txt += " | Здоровье: %s \n "%(target.vitality)
         txt += "Запреты: %s \n "%(target.restrictions)
         txt += "Условия сна: %s  |  %s       \n"%(target.accommodation, job)
@@ -383,9 +387,9 @@ label lbl_info_new(target):
         if tokens:
             txt += "Токены: %s\n"%(tokens)
         txt += 'Потребности: '
-        for need in needs:
-            txt += '%s: [%s, %s, %s], '%(need, needs[need].level, needs[need].satisfaction, needs[need].tension)
-        txt += '\n'
+        # for need in needs:
+        #    txt += '%s: [%s, %s, %s], '%(need, needs[need].level, needs[need].satisfaction, needs[need].tension)
+        # txt += '\n'
         txt += "Ангст: %s, Решимость: %s\n"%(target.anxiety, target.determination)
         consumption = target.get_food_consumption(True)
         txt += 'Жрет: %s(%s)'%(consumption[0], consumption[1])
