@@ -21,6 +21,8 @@ init python:
                     '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
     communication = '?'
     game.res_add_consumption('mom_food', 'provision', mom.get_food_consumption, None)
+    mom.schedule.add_action('living_appartment')
+    game.res_add_consumption("mom_rent", 'money', 25, time=None)
         
     #BATYA
     batya = Person()
@@ -35,6 +37,8 @@ init python:
     batya.stance(mom).value = 1
     batya.ration['food_type'] = "sperm" 
     game.res_add_consumption('batya_food', 'provision', batya.get_food_consumption, None)
+    batya.schedule.add_action('living_appartment')
+    game.res_add_consumption("batya_rent", 'money', 25, time=None)
     
     #ЕНОТОВА
     eot = Person()
