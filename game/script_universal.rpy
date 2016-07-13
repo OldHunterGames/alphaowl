@@ -409,7 +409,7 @@ screen sc_choose_character():
             textbutton t action Return(i)
 
 
-label lbl_skillcheck_info(result, stats, skill, used, threshold=None):
+label lbl_skillcheck_info(result, stats, skill, used, threshold=None, difficulty=0):
     python:
         if result < 0:
             result = 0
@@ -419,7 +419,8 @@ label lbl_skillcheck_info(result, stats, skill, used, threshold=None):
                             encolor_text('хорошо', 3),
                             encolor_text('отлично', 4),
                             encolor_text('идеально', 5)]
-        txt = 'Результат: %s\n'%(info_show_quality[result])
+        txt = 'Сложность: %s\n'%(difficulty)
+        txt += 'Результат: %s\n'%(info_show_quality[result])
         if threshold:
             txt += 'Требуется: %s\n'%(info_show_quality[threshold])
         txt += 'Лимитирующий фактор: %s(%s) \n'%(encolor_text(skill.name, skill.level+1), skill.level+1)
@@ -435,7 +436,7 @@ label lbl_skillcheck_info(result, stats, skill, used, threshold=None):
         for text in unused:
             txt += '%s \n'%(text)
         if stats['motivation'] <= 0:
-            txt += 'Проверка провалена из-за низкой мотивации'
+            txt = 'Проверка провалена из-за низкой мотивации'
     '[txt]'
     return
 
