@@ -386,7 +386,9 @@ label lbl_info_new(target):
         for need in needs:
             txt += '%s: [%s, %s, %s], '%(need, needs[need].level, needs[need].satisfaction, needs[need].tension)
         txt += '\n'
-        txt += "Ангст: %s, Решимость: %s"%(target.anxiety, target.determination)
+        txt += "Ангст: %s, Решимость: %s\n"%(target.anxiety, target.determination)
+        consumption = target.get_food_consumption(True)
+        txt += 'Жрет: %s(%s)'%(consumption[0], consumption[1])
     "[txt]"
 
     return
