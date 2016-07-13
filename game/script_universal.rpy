@@ -421,7 +421,7 @@ label lbl_skillcheck_info(result, stats, skill, used, threshold=None, difficulty
                             encolor_text('идеально', 5)]
         txt = 'Сложность: %s\n'%(difficulty)
         txt += 'Результат: %s\n'%(info_show_quality[result])
-        if threshold:
+        if threshold != None:
             txt += 'Требуется: %s\n'%(info_show_quality[threshold])
         txt += 'Лимитирующий фактор: %s(%s) \n'%(encolor_text(skill.name, skill.level+1), skill.level+1)
         txt += '+++++++ \n'

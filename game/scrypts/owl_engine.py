@@ -240,6 +240,8 @@ class Engine(object):
         if target.mood < 1:
             check -= 1
         check -= (3-get_max_need(target, *args)[1])
+        if check < 0:
+            check = 0
         return check
 
     def threshold_skillcheck(self, actor, skill, difficulty=0, tense_needs=[], satisfy_needs=[], beneficiar=None,
@@ -290,6 +292,6 @@ class Engine(object):
                 getattr(actor, need).set_tension()
             for need in satisfy_needs:
                 getattr(actor, need).satisfaction = result
-        return 
+        return result
 
         
