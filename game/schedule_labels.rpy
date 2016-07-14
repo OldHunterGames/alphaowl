@@ -232,13 +232,20 @@ label shd_living_jailed(action):
 
 label shd_torture_check(action):
     python:
+        failed = False
+        if is_needs_used(action.actor, action.special_values['token'], action.special_values['target_tension']):
+            failed = True
+    if failed:
+        'Это пройденный этап'
+        return
+    python:
         threshold = action.actor.relations(action.special_values['beneficiar']).stability
         morality = action.actor.check_moral(action.special_values['torturer'], *action.special_values['moral_burden'])
         difficulty = game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_tension']) 
         result = game.threshold_skillcheck(action.special_values['torturer'], action.special_values['skill'], difficulty, action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality, threshold)
         if result[0]:
             action.actor.add_token(action.special_values['token'])
-
+            remember_needs(action.actor, action.special_values['token'], action.special_values['target_tension'])
         if result[1] > 0:
             for need in action.special_values['target_tension']:
                 getattr(action.actor, need).set_tension()
@@ -247,12 +254,20 @@ label shd_torture_check(action):
 
 label shd_pleasing_check(action):
     python:
+        failed = False
+        if is_needs_used(action.actor, action.special_values['token'], action.special_values['target_tension']):
+            failed = True
+    if failed:
+        'Это пройденный этап'
+        return
+    python:
         threshold = action.actor.relations(action.special_values['beneficiar']).stability
         morality = action.actor.check_moral(action.special_values['executor'], *action.special_values['moral_burden'])
         difficulty =  game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_statisfy']) 
         result = game.threshold_skillcheck(action.special_values['executor'], action.special_values['skill'], difficulty, action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality, threshold)
         if result[0]:
             action.actor.add_token(action.special_values['token'])
+            remember_needs(action.actor, action.special_values['token'], action.special_values['target_tension'])
 
         if result[1] > 0:
             for need in action.special_values['target_statisfy']:
