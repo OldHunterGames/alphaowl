@@ -530,9 +530,17 @@ class Person(object):
             self.skills_used.append(name)
         else:
             self.skills_used.append(self.skill(name))
+    def get_used_skills(self):
+        l = []
+        for skill in self.skills_used:
+            if isinstance(skill, Skill):
+                l.append(skill)
+            else:
+                l.append(self.skill(skill))
+        return l
     def calc_focus(self):
         if self.focused_skill:
-            if self.focused_skill in self.skills_used:
+            if self.focused_skill in self.get_used_skills():
                 self.focused_skill.focus += 1
                 self.skills_used = []
                 return
@@ -544,7 +552,7 @@ class Person(object):
         if len(self.skills_used) > 0:
             from collections import Counter
             counted = Counter()
-            for skill in self.skills_used:
+            for skill in self.get_used_skills():
                 counted[skill.name]+=1
             maximum = max(counted.values())
             result = []
