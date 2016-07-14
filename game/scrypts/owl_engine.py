@@ -1,39 +1,14 @@
 # -*- coding: UTF-8 -*-
 from random import *
-import collections
-import copy
-
 import renpy.store as store
 import renpy.exports as renpy
 from obj_character import *
-
 from events import events_list
 from action import Action, Skillcheck
 
-remembered_needs = collections.defaultdict(list)
-class UsedNeeds(object):
-    def __init__(self, needs, owner):
-        self.needs = copy(needs)
-        self.owner = owner
 
-    def is_used(self, needs, target):
-        if target != self.owner:
-            return True
-        for need in needs:
-            if need not in self.needs:
-                return False
-        return True
-def remember_needs(target, token, needs):
-    if not is_needs_used(target, token, needs):
-        remembered_needs[token].append(UsedNeeds(needs, target))
-    
-def is_needs_used(target, token, needs):
-    for used in remembered_needs[token]:
-        if used.is_used(needs, target):
-            return True
-    return False
 def get_max_need(target, *args):
-    maxn_name = None
+    maxn_value = 0
     maxn = None
     needs = target.get_needs()
     for arg in args:
@@ -42,7 +17,7 @@ def get_max_need(target, *args):
             if level > maxn:
                 maxn = level
                 maxn_name = arg
-    return maxn, maxn_name
+    return maxn, maxn_value
 
 
 def encolor_text(text, value):
@@ -266,7 +241,7 @@ class Engine(object):
             check -= 1
         if target.mood < 1:
             check -= 1
-        check += (3-get_max_need(target, *args)[0])
+        check += (3-get_max_need(target, *args)[1])
         check -= target.stance(self.player).value
         harmony = target.relations(self.player).harmony()[0]
         if harmony > 0:
@@ -324,7 +299,6 @@ class Engine(object):
                 getattr(actor, need).set_tension()
             for need in satisfy_needs:
                 getattr(actor, need).satisfaction = result
-            actor.use_skill(skill)
         return result
 
         

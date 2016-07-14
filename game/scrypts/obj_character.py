@@ -525,11 +525,7 @@ class Person(object):
         for feature in self.features:
             feature.tick_time()
     
-    def use_skill(self, name):
-        if isinstance(name, Skill):
-            self.skills_used.append(name)
-        else:
-            self.skills_used.append(self.skill(name))
+
     def calc_focus(self):
         if self.focused_skill:
             if self.focused_skill in self.skills_used:
@@ -544,13 +540,13 @@ class Person(object):
         if len(self.skills_used) > 0:
             from collections import Counter
             counted = Counter()
-            for skill in self.skills_used:
-                counted[skill.name]+=1
+            for s.name in self.skills_used:
+                counted[s]+=1
             maximum = max(counted.values())
             result = []
             for skill in counted:
                 if counted[skill] == maximum:
-                    result.append(skill)
+                    result.append(self.skill(skill))
             self.skill(choice(result)).set_focus()
             self.focus = 1
         else:
