@@ -72,7 +72,7 @@ class Relations(object):
     
     def set_axis(self, axis, value):
         ax = '_%s'%(axis)
-        if hasattr(self, ax) and value in range(-1, 1):
+        if hasattr(self, ax) and value in range(-1, 2):
             self.__dict__[ax] = value
 
     def description(self):
