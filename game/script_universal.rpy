@@ -245,32 +245,32 @@ label lbl_activate_ap:
                 'Доступны только те опции для которых с выбранным персонажем есть непотраченные жетоны отношений: antagonism, accordance, contribution, conquer или convention.'
                 'Гармония (Accordance)' if target.has_token("accordance"):
                     menu:
-                        'Закрепить привычку подчиняться' if target.stance(player).level == 'forced':
+                        'Глобальный позитивный сдвиг отношений'if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
-                            $ target.stance(player).set_level('accustomed')  
-                            'Глобальное отношение ребёнка к подчинению изменилось с вынужденного подчинения на привычное подчинение'   
-                        'Гармонизовать позиции':
+                            $ target.stance(player).value +=1  
+                            'Глобальное отношение (stance) улучшилось.'   
+                        'Гармонизовать позиции' if not target.relations(player).is_max('congruence', '+'):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
                             $ target.relations(player).change('congruence', '+')
-                        'Создать напряжение':
+                        'Создать напряжение' if not target.relations(player).is_max('congruence', '-'):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
                             $ target.relations(player).change('congruence', '-')                            
-                        'Внушить уважение':
+                        'Внушить уважение' if not target.relations(player).is_max('fervor', '+'):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
                             $ target.relations(player).change('fervor', '+')      
-                        'Внушить спокойствие':
+                        'Внушить спокойствие' if not target.relations(player).is_max('fervor', '-'):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
                             $ target.relations(player).change('fervor', '-')  
-                        'Сблизиться':
+                        'Сблизиться' if not target.relations.is_max('distance', +):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
                             $ target.relations(player).change('distance', '+')
-                        'Формализовать отношения':
+                        'Формализовать отношения' if not target.relations(player).is_max('distance', '-'):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
                             $ target.relations(player).change('distance', '-')
@@ -278,15 +278,20 @@ label lbl_activate_ap:
                             jump lbl_activate_ap    
                 'Раздор (Antagonism)' if target.has_token("antagonism"):
                     menu:
-                        'Усилить враждебность':
+                        'Глобально испортить отношение' if target.stance(player).value > -1:
+                            $ player.ap -= 1
+                            $ target.use_token('antagonism')
+                            $ target.stance(player).value -=1  
+                            'Глобальное отношение (stance) улучшилось.'                           
+                        'Усилить враждебность' if not target.relations(player).is_max('congruence', '-'):
                             $ player.ap -= 1
                             $ target.use_token('antagonism')
                             $ target.relations(player).change('congruence', '-')                            
-                        'Накалить страсти':
+                        'Накалить страсти' if not target.relations(player).is_max('fervor', +):
                             $ player.ap -= 1
                             $ target.use_token('antagonism')
                             $ target.relations(player).change('fervor', '+')      
-                        'Формализовать отношения':
+                        'Формализовать отношения' if not target.relations(player).is_max('distance', '-'):
                             $ player.ap -= 1
                             $ target.use_token('antagonism')
                             $ target.relations(player).change('distance', '-')
@@ -294,47 +299,52 @@ label lbl_activate_ap:
                             jump lbl_activate_ap                    
                 'Доминирование (conquest)' if target.has_token("conquest"):
                     menu:
-                        'Создать напряжение':
+                        'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('passionate', 'contradictor'):
+                            $ player.ap -= 1
+                            $ target.use_token('conquest')
+                            $ target.stance(player).value +=1  
+                            'Глобальное отношение (stance) улучшилось.'                           
+                        'Создать напряжение' if not target.relations(player).is_max('congruence', '-'):
                             $ player.ap -= 1
                             $ target.use_token('conquest')
                             $ target.relations(player).change('congruence', '-')                            
-                        'Накалить страсти':
+                        'Накалить страсти' if not target.relations(player).is_max('fervor', '+'):
                             $ player.ap -= 1
                             $ target.use_token('conquest')
                             $ target.relations(player).change('fervor', '+')      
-                        'Теперь это личное':
+                        'Теперь это личное' if not target.relations(player).is_max('distance', '+'):
                             $ player.ap -= 1
                             $ target.use_token('conquest')
                             $ target.relations(player).change('distance', '+')
                         'Передумать':
                             jump lbl_activate_ap    
-                'Сотрудничество (convention)' if target.has_token("convention"):
+                'Сотрудничество (convention)' if target.has_token("convention") if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('formal', 'delicate'):
                     menu:
-                        'Гармонизовать позиции':
+                        'Гармонизовать позиции' if not target.relations(player).is_max('congruence', '+'):
                             $ player.ap -= 1
                             $ target.use_token('convention')
                             $ target.relations(player).change('congruence', '+')
-                        'Охладить пыл':
+                        'Охладить пыл' if not target.relations(player).is_max('fervor', '-'):
                             $ player.ap -= 1
                             $ target.use_token('convention')
                             $ target.relations(player).change('fervor', '-')  
-                        'Формализовать отношения':
+                        'Формализовать отношения' if not target.relations(player).is_max('distance', '-'):
                             $ player.ap -= 1
                             $ target.use_token('convention')
                             $ target.relations(player).change('distance', '-')
                         'Передумать':
                             jump lbl_activate_ap    
-                'Благодарность (contribution)' if target.has_token("contribution"):
+                'Благодарность (contribution)' if target.has_token("contribution") if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('supporter', 'intimate'):
                     menu:
-                        'Гармонизовать позиции':
+                        'Гармонизовать позиции' if not target.relations(player).is_max('congruence', '+'):
                             $ player.ap -= 1
                             $ target.use_token('contribution')
                             $ target.relations(player).change('congruence', '+')
-                        'Накалить страсти':
+                        'Накалить страсти' if not target.relations(player).is_max('fervor', '+'):
                             $ player.ap -= 1
                             $ target.use_token('contribution')
                             $ target.relations(player).change('fervor', '+')      
-                        'Сблизиться':
+                        'Сблизиться' if not target.relations(player).is_max('distance', '+'):
                             $ player.ap -= 1
                             $ target.use_token('contribution')
                             $ target.relations(player).change('distance', '+')

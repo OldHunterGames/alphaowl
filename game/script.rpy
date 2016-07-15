@@ -31,7 +31,6 @@ init python:
     batya.add_feature('mature')
     batya.firstname = u"BATYA"
     batya.surname = u"Сычов"    
-    batya.skill('leadership').profession()  
     batya.skill('sport').profession()
     batya.stance(child).value = 0
     batya.stance(mom).value = 1
