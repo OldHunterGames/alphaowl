@@ -184,7 +184,7 @@ class Engine(object):
             return
 
     def can_skip_turn(self):
-        money = 0
+        money = self.resource_consumption('money')
         for res in self.resources.keys():
             if res!='money':
                 if not self.can_consume(res) and not self.has_money(self.res_to_money(res)):
