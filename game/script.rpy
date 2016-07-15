@@ -6,6 +6,7 @@
     from schedule import *
 
 init python:
+    salary_timer = 0
     recalc_result = []
     renpy.block_rollback()
     game = Engine()

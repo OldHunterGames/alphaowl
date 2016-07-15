@@ -34,7 +34,9 @@ label lbl_target_menu:
         "Питание":
             call lbl_food_universal
         "Правила":
-            $ pass
+            call lbl_rules_restrictions
+        "Вещества":
+            call lbl_rules_drugs            
         "Карманные деньги":
             $ pass
         "Информация":
@@ -83,6 +85,8 @@ label lbl_shedule_major:
                     $ batya.schedule.add_action('job_supervise', False)
                     $ batya.job_object().add_special_list_value('slaves', child)
                     $ actor = batya
+                'Компетентные органы':
+                    jump lbl_special_discipline
                 'Передумать':
                     jump lbl_shedule_major
             menu:
@@ -122,9 +126,24 @@ label lbl_shedule_major:
         'Работать гей-шлюхой (секс, хороший заработок)' if target == child:
             $ target.schedule.add_action('job_whore', False)                
         "Назад":
-            call lbl_shedule_major
-    
+            call lbl_universal_menu
     return
+
+label lbl_special_discipline:
+    $ special_values = {}
+    menu:
+        'Компетентные органы могут за определённую плату дать жетон, но только при условии что стабильность отношений ещё не слишком высока и только по одному разу.'
+        'Батюшка Павсикакий (24 бутылки кагора)' if not churched:
+            $ game.res_add_consumption("discipline", 'drugs', 24, time=1)
+            $ special_values = {}
+            $ target.schedule.add_action('shd_ctoken_church', special_values=special_values)
+        '"Кохана ми вбиваємо дітей" (300 тенгэ)' if not kohaned:
+            $ game.res_add_consumption("discipline", 'money', 300, time=1)
+            $ special_values = {}
+            $ target.schedule.add_action('shd_ctoken_kohana', special_values=special_values)            
+    jump lbl_shedule_major    
+    return
+
 
 label lbl_torture_choose:
     menu:
@@ -147,7 +166,7 @@ label lbl_torture_choose:
             
     $ special_values = {'skill': skill, 'torturer': actor, 'token': token, 'target_tension': target_tension, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
-    $ target.schedule.add_action('torture_check', special_values=special_values)
+    $ target.schedule.add_action('shd_ctoken_torture', special_values=special_values)
     
     jump lbl_universal_menu
     return
@@ -174,9 +193,9 @@ label lbl_pleasing_choose:
     
     $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
-    $ target.schedule.add_action('pleasing_check', special_values=special_values)
+    $ target.schedule.add_action('shd_ctoken_pleasing', special_values=special_values)
     
-    jump lbl_universal_menu
+    jump lbl_shedule_major
     return
     
 label lbl_accommodation:
@@ -318,8 +337,13 @@ label lbl_activate_ap:
                             $ target.relations(player).change('distance', '+')
                         'Передумать':
                             jump lbl_activate_ap    
-                'Сотрудничество (convention)' if target.has_token("convention") and target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('formal', 'delicate'):
+                'Сотрудничество (convention)' if target.has_token("convention"):
                     menu:
+                        'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('formal', 'delicate'):
+                            $ player.ap -= 1
+                            $ target.use_token('convention')
+                            $ target.stance(player).value +=1  
+                            'Глобальное отношение (stance) улучшилось.'                                    
                         'Гармонизовать позиции' if not target.relations(player).is_max('congruence', '+'):
                             $ player.ap -= 1
                             $ target.use_token('convention')
@@ -334,8 +358,13 @@ label lbl_activate_ap:
                             $ target.relations(player).change('distance', '-')
                         'Передумать':
                             jump lbl_activate_ap    
-                'Благодарность (contribution)' if target.has_token("contribution") and target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('supporter', 'intimate'):
+                'Благодарность (contribution)' if target.has_token("contribution") :
                     menu:
+                        'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('supporter', 'intimate'):
+                            $ player.ap -= 1
+                            $ target.use_token('contribution')
+                            $ target.stance(player).value +=1  
+                            'Глобальное отношение (stance) улучшилось.'                          
                         'Гармонизовать позиции' if not target.relations(player).is_max('congruence', '+'):
                             $ player.ap -= 1
                             $ target.use_token('contribution')
@@ -357,6 +386,80 @@ label lbl_activate_ap:
     
     return
 
+label lbl_rules_drugs:
+    menu:
+        'Запретить курить' if 'tobacco' not in child.restrictions:
+            $ target.restrictions.append('tobacco')
+            $ resname = str(target.name()) + '_tobacco'
+            $ game.res_add_consumption(resname, 'drugs', 0, time=None)            
+            $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
+        'Парю где хочу, не запрещено (1/нед)' if 'tobacco' in child.restrictions:
+            $ target.restrictions.remove('tobacco')
+            $ target.schedule.add_action('smoke')
+            $ resname = str(target.name()) + '_tobacco'
+            $ game.res_add_consumption(resname, 'drugs', 1, time=None)            
+            $ txt = 'Сыченька то бодрячком \n @ \n Каждые пять минут в падик бегает \n @ \n Наверное друзья у него там'       
+            
+        'Cухой закон' if 'alcohol' not in child.restrictions:
+            $ target.restrictions.append('alcohol')
+            $ resname = str(target.name()) + '_alco'
+            $ game.res_add_consumption(resname, 'drugs', 0, time=None)
+            $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ишь чего удумал прохиндей \n @ \n Я алкоголиков в доме не потерплю!'
+        'Накатывать за дидов (3/нед)' if 'alcohol' in child.restrictions:
+            $ target.restrictions.remove('alcohol')
+            $ target.schedule.add_action('alcohol')
+            $ resname = str(target.name()) + '_alco'
+            $ game.res_add_consumption(resname, 'drugs', 3, time=None)
+            $ txt = 'За дидов рюмашечку надо обязательно \n @ \n Что значит "не буду стекломой пить" \n @ \n Традиции наши не уважаешь?'     
+            
+  
+        'Запретить наркотики' if 'weed' not in child.restrictions:
+            $ target.restrictions.append('weed')
+            $ resname = str(target.name()) + '_weed'
+            $ game.res_add_consumption(resname, 'drugs', 0, time=None)            
+            $ txt = 'Чтобы я тебя с этими наркоманами не видела больше \n @ \n Пообколются своей марихуанной \n @ \n А потом ябут друг-друга в жёппы'
+        'Соли, миксы, спайсы (5/нед)' if 'weed' in child.restrictions:
+            $ target.restrictions.remove('weed')
+            $ target.schedule.add_action('weed')
+            $ resname = str(target.name()) + '_weed'
+            $ game.res_add_consumption(resname, 'drugs', 5, time=None)            
+            $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
+        'Назад':
+            jump lbl_rules
+    "[txt]"
+    
+    return
+
+label lbl_rules_behavior:
+    $ txt = None
+    menu:
+        'Пресечь любую дрочку' if 'masturbation' not in child.restrictions:
+            $ child.restrictions.append('masturbation')
+            $ child.schedule.add_action('fap_no')
+            $ txt = 'Сыночка то наш, всё пиструнчик свой тилибонькает \n @ \n Скоро волосы на руках расти начнут \n @ \n В антимастурбационном кресте будещь спать, по совету отца Агапия'
+        'Игнорировать дрочку' if 'masturbation' in child.restrictions:
+            $ child.restrictions.remove('masturbation')
+            $ child.schedule.add_action('fap_yes')
+            $ txt = 'А что это ты в ванной столько времени сидишь, Сыча? \n @ \n И то хорошо \n @ \n Приучили к чистоте ребёнка то'    
+        'Запретить гулять' if 'dates' not in child.restrictions:
+            $ child.restrictions.append('dates')
+        'Разрешить гулять до поздна' if 'dates' in child.restrictions:
+            $ child.restrictions.remove('dates')
+        'Запретить общаться с друзьями' if 'friends' not in child.restrictions:
+            $ child.restrictions.append('friends')
+        'Разрешить общаться с друзьями' if 'friends' in child.restrictions:
+            $ child.restrictions.remove('friends')
+        'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in child.restrictions:
+            $ child.restrictions.append('pc')
+        'Ну и сиди за своим комплюктером' if 'pc' in child.restrictions:
+            $ child.restrictions.remove('pc')
+        'Назад':
+            jump lbl_rules
+            
+    if txt:
+        '[txt]'
+    return  
+    
 label lbl_info_new(target):
     python:
         alignment = target.alignment.description() 

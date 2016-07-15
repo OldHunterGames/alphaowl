@@ -5,9 +5,13 @@ label shd_None_template(character):
 
 label shd_general_accounting(character):
     # Allways active. Calculates minor issues.
-    'BATYA получает зарплату (+100 тенгэ)'
-    $ game.money += 100
-    if 'dates' in child.restrictions:
+    if salary_timer = 0:
+        'BATYA получает зарплату (+250 тенгэ). Следующая зарплата через месяц (4 недели).'
+        $ game.money += 100
+        $ salary_timer = 3
+    else:
+        $ salary_timer -= 1
+    if 'dates' in child.restrictions: 
         $ child.eros.set_tension()
         $ child.activity.set_tension()
     if 'friends' in child.restrictions:
@@ -83,7 +87,7 @@ label subloc_janitor_sabotage:
 
 label subloc_janitor_perform:
     python:
-        gain = result*result*10+5
+        gain = result*result*5+5
         game.money += gain
         actor.skill('conversation').get_expirience(result)
         show = show_quality[result]
@@ -180,11 +184,31 @@ label subloc_pusher_perform:
     '[name] [show] мутит вещества - аптеку, бадягу, бухло, всё сойдёт. Напряжная и вредная для самочувствия работа, зато общение ([result]). Качество работы [result]\n Вымучено: [gain] веществ.'
     return
 
+label shd_alcohol(action):
+    python:
+        action.actor.general.satisfaction = 5
+    return  
 
-
-
-
+label shd_smoke(action):
+    python:
+        action.actor.comfort.satisfaction = 5
+    return  
     
+label shd_weed(action):
+    python:        
+        action.actor.purpose.satisfaction = 5
+    return  
+       
+label shd_fap_no(character):
+    python:
+        child.eros.set_tension()
+    return  
+    
+label shd_fap_yes(character):
+    python:
+        child.eros.satisfaction = 1
+    return  
+
 label shd_living_appartment(action):
     python:
         action.actor.comfort.satisfaction = 3
@@ -230,7 +254,7 @@ label shd_living_jailed(action):
         '[name] живёт в чулане' 
     return  
 
-label shd_torture_check(action):
+label shd_ctoken_torture(action):
     python:
         failed = False
         if is_needs_used(action.actor, action.special_values['token'], action.special_values['target_tension']):
@@ -256,7 +280,7 @@ label shd_torture_check(action):
     "[txt]"
     return  
 
-label shd_pleasing_check(action):
+label shd_ctoken_pleasing(action):
     python:
         failed = False
         if is_needs_used(action.actor, action.special_values['token'], action.special_values['target_statisfy']):
@@ -282,6 +306,25 @@ label shd_pleasing_check(action):
     "[txt]"
     return  
     
+label shd_discipline_pavsykakiy(action):
+    'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n "Целуй крест! Да ты же хуже грешника-рукоблуда!"'
+    python:
+        churched = True
+        if action.actor.relations(player).stability < 4:
+            action.actor.add_token('convention')
+        else:
+            action.actor.add_token('antagonism')
+    return       
+        
+label shd_discipline_kohana(action):
+    'Антоша Сычов до сих пор писает в кровать\n @\nМы это исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
+    python:
+        kohaned = True
+        if action.actor.relations(player).stability < 5:
+            action.actor.add_token('convention')
+        else:
+            action.actor.add_token('antagonism')    
+    return      
 
 
 
@@ -311,23 +354,7 @@ label shd_dayoff_2ch(character):
         child.communication.satisfaction = 2       
     'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
     return  
-
-    
-label shd_discipline_pavsykakiy(character):
-    python:  
-        game.train(child, pavsykakiy)
-    'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n Весь борщ сожрал, падла'
-
-    return       
-        
-label shd_discipline_kohana(character):
-    python:
-        game.train(child, kohana)
-    'Антоша Сычов до сих пор писает в кровать\n @\nМы это исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
-
-    return   
-
-    
+   
 label shd_outfit_lame(character):
     python:
         child.authority.set_tension()
@@ -343,46 +370,4 @@ label shd_outfit_cool(character):
         child.prosperity.satisfaction = 4
     return  
 
-        
-label shd_fap_no(character):
-    python:
-        child.eros.set_tension()
-    return  
-    
-label shd_fap_yes(character):
-    python:
-        child.eros.satisfaction = 1
-    return  
-    
-label shd_alcohol_no(character):
-    python:
-        pass
-    return  
-    
-label shd_alcohol_yes(character):
-    python:
-        child.general.satisfaction = 3
-        child.wellness.set_tension()
-    return  
-    
-label shd_smoke_no(character):
-    python:
-        pass
-    return  
-    
-label shd_smoke_yes(character):
-    python:
-        child.comfort.satisfaction = 3
-        child.wellness.set_tension()
-    return  
 
-label shd_weed_no(character):
-    python:
-        pass
-    return  
-    
-label shd_weed_yes(character):
-    python:
-        
-        child.wellness.set_tension()
-    return  

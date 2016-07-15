@@ -191,65 +191,6 @@ label lbl_rules_clothes:
     
     return
 
-label lbl_rules_drugs:
-    menu:
-        'Пресечь любую дрочку' if 'masturbation' not in child.restrictions:
-            $ child.restrictions.append('masturbation')
-            $ child.schedule.add_action('fap_no')
-            $ txt = 'Сыночка то наш, всё пиструнчик свой тилибонькает \n @ \n Скоро волосы на руках расти начнут \n @ \n В антимастурбационном кресте будещь спать, по совету отца Агапия'
-        'Игнорировать дрочку' if 'masturbation' in child.restrictions:
-            $ child.restrictions.remove('masturbation')
-            $ child.schedule.add_action('fap_yes')
-            $ txt = 'А что это ты в ванной столько времени сидишь, Сыча? \n @ \n И то хорошо \n @ \n Приучили к чистоте ребёнка то'            
-        'Запретить алкоголь' if 'alcohol' not in child.restrictions:
-            $ child.restrictions.append('alcohol')
-            $ child.schedule.add_action('alcohol_no')
-            $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ещё нос не дорос \n @ \n Я малолетних алкоголиков в доме не потерплю'
-        'Пусть накатит с BATYей' if 'alcohol' in child.restrictions:
-            $ child.restrictions.remove('alcohol')
-            $ child.schedule.add_action('alcohol_yes')
-            $ txt = 'За дидов рюмашечку надо обязательно \n @ \n Что значит "не буду стекломой пить" \n @ \n Традиции наши не уважаешь?'                 
-        'Запретить курить' if 'tobacco' not in child.restrictions:
-            $ child.restrictions.append('tobacco')
-            $ child.schedule.add_action('smoke_no')
-            $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
-        'Пусть курит но не дома' if 'tobacco' in child.restrictions:
-            $ child.restrictions.remove('tobacco')
-            $ child.schedule.add_action('smoke_yes')
-            $ txt = 'Сыченька то бодрячком \n @ \n Каждые пять минут в падик бегает \n @ \n Наверное друзья у него там'         
-        'Запретить спайсы' if 'weed' not in child.restrictions:
-            $ child.restrictions.append('weed')
-            $ child.schedule.add_action('weed_no')
-            $ txt = 'Чтобы я тебя с этими наркоманами не видела больше \n @ \n Пообколются своей марихуанной \n @ \n А потом ябут друг-друга в жёппы'
-        'Игнорировать спайсы' if 'weed' in child.restrictions:
-            $ child.restrictions.remove('weed')
-            $ child.schedule.add_action('weed_yes')
-            $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
-        'Назад':
-            jump lbl_rules
-    "[txt]"
-    
-    return
-
-
-label lbl_rules_behavior:
-    menu:
-        'Запретить гулять' if 'dates' not in child.restrictions:
-            $ child.restrictions.append('dates')
-        'Разрешить гулять до поздна' if 'dates' in child.restrictions:
-            $ child.restrictions.remove('dates')
-        'Запретить общаться с друзьями' if 'friends' not in child.restrictions:
-            $ child.restrictions.append('friends')
-        'Разрешить общаться с друзьями' if 'friends' in child.restrictions:
-            $ child.restrictions.remove('friends')
-        'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in child.restrictions:
-            $ child.restrictions.append('pc')
-        'Ну и сиди за своим комплюктером' if 'pc' in child.restrictions:
-            $ child.restrictions.remove('pc')
-        'Назад':
-            jump lbl_rules
-            
-    return
 
 label lbl_accomodation_rules:
     menu:
