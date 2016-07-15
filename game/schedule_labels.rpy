@@ -246,10 +246,14 @@ label shd_torture_check(action):
         if result[0]:
             action.actor.add_token(action.special_values['token'])
             remember_needs(action.actor, action.special_values['token'], action.special_values['target_tension'])
+            txt = 'Наказание прошло успешно.'            
+        else:
+            action.actor.add_token('antagonism')
+            txt = 'Не получилось. Антагонизм увеличен.'            
         if result[1] > 0:
             for need in action.special_values['target_tension']:
                 getattr(action.actor, need).set_tension()
-    "Наказан"
+    "[txt]"
     return  
 
 label shd_pleasing_check(action):
@@ -268,11 +272,14 @@ label shd_pleasing_check(action):
         if result[0]:
             action.actor.add_token(action.special_values['token'])
             remember_needs(action.actor, action.special_values['token'], action.special_values['target_tension'])
-
+            txt = 'Ублажение прошло успешно.'
+        else:
+            action.actor.add_token('antagonism')
+            txt = 'Не получилось. Антагонизм увеличен.'
         if result[1] > 0:
             for need in action.special_values['target_statisfy']:
                 getattr(action.actor, need).set_satisfaction(result[1])
-    "Ублажен"
+    "[txt]"
     return  
     
 

@@ -3,7 +3,7 @@
 label lbl_universal_menu:
     $ consumption_provision = game.resource_consumption('provision')
     $ consumption_drugs = game.resource_consumption('drugs')
-    $ money_consumption = game.resource_consumption('resource')
+    $ money_consumption = game.resource_consumption('money')
     menu:
         'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs]) \nЖратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя. Урезайте потребление.'
         
@@ -115,7 +115,7 @@ label lbl_shedule_major:
             $ target.schedule.add_action('job_study', False) 
         'Бытовое рабство (+10 тенге/нед)':
             $ target.schedule.add_action('job_chores', False)     
-        'Тёмные мутки (коммуникация, +вещества)':
+        'Тёмные мутки (коммуникация, +вещества)' if target != mom:
             $ target.schedule.add_action('job_pusher', False)               
         'Работать грузчиком (спорт, малый заработок)' if target == child:
             $ target.schedule.add_action('job_porter', False)    
