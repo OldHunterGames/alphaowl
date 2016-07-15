@@ -287,7 +287,7 @@ label lbl_activate_ap:
                             $ player.ap -= 1
                             $ target.use_token('antagonism')
                             $ target.relations(player).change('congruence', '-')                            
-                        'Накалить страсти' if not target.relations(player).is_max('fervor', +):
+                        'Накалить страсти' if not target.relations(player).is_max('fervor', '+'):
                             $ player.ap -= 1
                             $ target.use_token('antagonism')
                             $ target.relations(player).change('fervor', '+')      
