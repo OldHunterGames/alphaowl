@@ -70,6 +70,8 @@ class Schedule(object):
             if act in self.actions:
                 return
             self.actions.append(act)
+        else:
+            raise Exception("add_action can't add %s. It isn't registered or maybe you should remove 'shd' at begining")
     def use_actions(self):
         to_remove = []
         for action in self.actions:
