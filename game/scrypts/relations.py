@@ -96,7 +96,9 @@ class Relations(object):
                 ax = -1
         self.set_axis(axis, ax)
 
-
+    def is_harmony_points(self, *args):
+        points = self.harmony()[1]
+        return any([point in points for point in args])
     def harmony(self):
         value = 0
         axis = []
