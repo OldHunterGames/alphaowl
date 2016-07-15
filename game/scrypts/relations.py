@@ -147,7 +147,8 @@ class Relations(object):
         elif difference == 0:
             if self.congruence != 0:
                 value -= 1
-
+        if value < 0:
+            value = 0
         return value, axis
 
 
