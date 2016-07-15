@@ -122,7 +122,7 @@ label lbl_shedule_major:
         'Работать гей-шлюхой (секс, хороший заработок)' if target == child:
             $ target.schedule.add_action('job_whore', False)                
         "Назад":
-            call lbl_make_shedule
+            call lbl_shedule_major
     
     return
 
