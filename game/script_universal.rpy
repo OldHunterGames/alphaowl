@@ -266,7 +266,7 @@ label lbl_activate_ap:
                             $ player.ap -= 1
                             $ target.use_token('accordance')
                             $ target.relations(player).change('fervor', '-')  
-                        'Сблизиться' if not target.relations.is_max('distance', +):
+                        'Сблизиться' if not target.relations.is_max('distance', '+'):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
                             $ target.relations(player).change('distance', '+')
