@@ -27,7 +27,11 @@ class Relations(object):
             return True
         else:
             return False
-
+    def is_max(self, axis, border):
+        d = {'-': -1, '+': 1}
+        if getattr(self, axis) == d[border]:
+            return True
+        return False
     @property
     def fervor(self):
         if self.is_player_relations():
