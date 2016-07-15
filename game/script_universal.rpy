@@ -318,7 +318,7 @@ label lbl_activate_ap:
                             $ target.relations(player).change('distance', '+')
                         'Передумать':
                             jump lbl_activate_ap    
-                'Сотрудничество (convention)' if target.has_token("convention") if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('formal', 'delicate'):
+                'Сотрудничество (convention)' if target.has_token("convention") and target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('formal', 'delicate'):
                     menu:
                         'Гармонизовать позиции' if not target.relations(player).is_max('congruence', '+'):
                             $ player.ap -= 1
@@ -334,7 +334,7 @@ label lbl_activate_ap:
                             $ target.relations(player).change('distance', '-')
                         'Передумать':
                             jump lbl_activate_ap    
-                'Благодарность (contribution)' if target.has_token("contribution") if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('supporter', 'intimate'):
+                'Благодарность (contribution)' if target.has_token("contribution") and target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('supporter', 'intimate'):
                     menu:
                         'Гармонизовать позиции' if not target.relations(player).is_max('congruence', '+'):
                             $ player.ap -= 1
