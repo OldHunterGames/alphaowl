@@ -947,9 +947,9 @@ class Person(object):
     def add_token(self, token):
         if not self.has_token(token):
             self.tokens.append(token)
-            self.player_relations().stability += 1
             if token not in ('accordance', 'antagonism'):
                 self.relations_tendency[token] += 1
+                self.player_relations().stability += 1
             renpy.call_in_new_context('lbl_notify', self, token)
 
 
