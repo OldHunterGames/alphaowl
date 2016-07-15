@@ -561,6 +561,7 @@ label lbl_vitality_info():
     python:
         txt_good = ""
         txt_bad = ""
+        zero_factors = ""
         d, l = vitality_info_target.vitality_info()
         items = list(d.items())
         for i in l:
@@ -570,8 +571,12 @@ label lbl_vitality_info():
                 txt_good += encolor_text(k, v) + '\n'
             elif v < 0:
                 txt_bad += encolor_text(k, 0) + '\n'
+            else:
+                if k != 'vitality':
         txt_good += '---------- \n'
         txt_good += txt_bad
+        txt_good += '---------- \n'
+        txt_good += zero_factors
     '[txt_good]'
     return
 
