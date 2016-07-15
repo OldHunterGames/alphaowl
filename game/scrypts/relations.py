@@ -4,7 +4,7 @@ import renpy.exports as renpy
 
 
 class Relations(object):
-    _fervor = {-1: "delicate""passionate", 0: "plain", 1: "passionate"}
+    _fervor = {-1: "delicate", 0: "plain", 1: "passionate"}
     _distance = {-1: "intimate", 0: "close", 1: "formal"}
     _congruence = {-1: "contradictor", 0: "associate", 1: "supporter"}
     def __init__(self, person1, person2):
