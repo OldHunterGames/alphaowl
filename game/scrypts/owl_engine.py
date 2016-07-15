@@ -279,7 +279,7 @@ class Engine(object):
                             morality=0, success_threshold=0, special_motivators=[]):
         success_threshold += 1
         result = self.skillcheck(actor, skill, difficulty, tense_needs, satisfy_needs, beneficiar, morality, special_motivators, success_threshold)
-        if success_threshold < result:
+        if success_threshold <= result:
             threshold_result = True
         else:
             threshold_result = False
