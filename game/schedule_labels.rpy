@@ -259,7 +259,7 @@ label shd_torture_check(action):
 label shd_pleasing_check(action):
     python:
         failed = False
-        if is_needs_used(action.actor, action.special_values['token'], action.special_values['target_tension']):
+        if is_needs_used(action.actor, action.special_values['token'], action.special_values['target_statisfy']):
             failed = True
     if failed:
         'Это пройденный этап'
