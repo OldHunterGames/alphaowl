@@ -561,15 +561,19 @@ label lbl_vitality_info(person):
         txt_good = ""
         txt_bad = ""
         d, l = person.vitality_info()
-        items = d.items()
+        items = list(d.items())
+        for i in l:
+            items.append(('vitality', i))
+        n = 0
         for k, v in items:
-            if v > 0:
+            if v > n:
                 txt_good += encolor_text(k, v) + '\n'
             elif v < 0:
                 txt_bad += encolor_text(k, 0) + '\n'
+            n += 1
+        txt_good += '---------- \n'
+        txt_good += txt_bad
     '[txt_good]'
-    '----------'
-    '[txt_bad]'
 
 
 

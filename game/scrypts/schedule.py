@@ -18,6 +18,8 @@ def register_actions():
             special = action[3]
         except IndexError:
             special = None
+        if action[1].lower() == 'none':
+            action[1] = None
         if not special:
             actions[key] = [z, action[1], action[2]]
 

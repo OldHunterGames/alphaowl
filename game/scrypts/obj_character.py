@@ -407,7 +407,7 @@ class Person(object):
         ll = [i for i in l if i < 0]
         bad = len(ll)
         ll = list(set(ll))
-        ll.sort()
+        l.sort()
         for i in range(bad):
             l.pop(0)
 
