@@ -412,13 +412,11 @@ class Person(object):
         l.sort()
         for i in range(bad):
             l.pop(0)
-
-        for i in range(1, max_slot+1):
-            if len(l) < 1:
-                break
-            if i <= min(l):
+        while len(l) > 0:
+            num = min(l)
+            if num > val:
                 val += 1
-                l.remove(min(l))
+            l.remove(num)
         val += self._vitality
         if val > 5:
             val = 5
