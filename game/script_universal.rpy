@@ -573,6 +573,7 @@ label lbl_vitality_info():
                 txt_bad += encolor_text(k, 0) + '\n'
             else:
                 if k != 'vitality':
+                    zero_factors += encolor_text(k, 6) + '\n'
         txt_good += '---------- \n'
         txt_good += txt_bad
         txt_good += '---------- \n'
