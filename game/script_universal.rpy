@@ -475,10 +475,11 @@ label lbl_info_new(target):
         tendency = target.attitude_tendency()
         needs = target.get_needs()
         recalc_result_target = target
+        vitality_info_target = target
         txt = "Настроение: " + encolor_text(target.show_mood(), target.mood) + '{a=lb_recalc_result_glue}?{/a}'
         if stance:
             txt += " | Поза: " + str(stance) +'\n'
-        txt += " | Здоровье: %s \n "%(target.vitality)
+        txt += " | Здоровье: %s "%(target.vitality) + '{a=lbl_vitality_info}?{/a}' + '\n'
         txt += "Запреты: %s \n "%(target.restrictions)
         txt += "Условия сна: %s  |  %s       \n"%(target.accommodation, job)
         txt += "Характер: %s, %s, %s\n"%(target.alignment.description())
@@ -556,21 +557,19 @@ label lbl_skillcheck_info(result, stats, skill, used, threshold=None, difficulty
     return
 
 
-label lbl_vitality_info(person):
+label lbl_vitality_info():
     python:
         txt_good = ""
         txt_bad = ""
-        d, l = person.vitality_info()
+        d, l = vitality_info_target.vitality_info()
         items = list(d.items())
         for i in l:
             items.append(('vitality', i))
-        n = 0
         for k, v in items:
-            if v > n:
+            if v > 0:
                 txt_good += encolor_text(k, v) + '\n'
             elif v < 0:
                 txt_bad += encolor_text(k, 0) + '\n'
-            n += 1
         txt_good += '---------- \n'
         txt_good += txt_bad
     '[txt_good]'
