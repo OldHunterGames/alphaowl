@@ -122,7 +122,7 @@ class Relations(object):
             if orderliness == 0:
                 orderliness == 1
             if activity == 0:
-                activity = 1
+                activity = -1
 
         difference = self.fervor + activity
         if abs(difference) > 1:
