@@ -60,6 +60,8 @@ class Modifiers(object):
 
 
     def add_item(self, name, attributes, time=None):
+        if any([value == 0 for value in attributes.values()]):
+            raise Exception("Modifier %s has attribute with 0 value, a.k.a useless modifier"%(name))
         if not name in self._names:
             self._names.append(name)
             self._attributes.append(attributes)
