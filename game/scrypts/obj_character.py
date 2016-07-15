@@ -391,25 +391,32 @@ class Person(object):
 
     def modifiers_separate(self, modifier):
         return self.modifiers.get_modifier_separate(modifier)
+    def vitality_info(self):
+        d = {'physique': self.physique, 'shape': self.count_modifiers('shape'), 'fitness':self.count_modifiers('fitness'),
+            'mood': self.mood, 'therapy': self.count_modifiers('therapy')}
+        l = self.modifiers_separate('vitality')
+        return d, l
     @property
     def vitality(self):
         l = [self.physique, self.count_modifiers('shape'), self.count_modifiers('fitness'), self.mood,
             self.count_modifiers('therapy')]
         l += self.modifiers_separate('vitality')
+        l = [i for i in l if i != 0]
         max_slot = 5
-        val = 1
-        ll = [i for i in l if i > -1]
-        bad = len(l) - len(ll)
+        val = 0
+        ll = [i for i in l if i < 0]
+        bad = len(ll)
         ll = list(set(ll))
         ll.sort()
         for i in range(bad):
-            ll.pop(0)
+            l.pop(0)
+
         for i in range(1, max_slot+1):
-            if len(ll) < 1:
+            if len(l) < 1:
                 break
-            if not i < min(ll):
+            if i <= min(l):
                 val += 1
-                ll.remove(min(ll))
+                l.remove(min(l))
         val += self._vitality
         if val > 5:
             val = 5

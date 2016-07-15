@@ -556,6 +556,22 @@ label lbl_skillcheck_info(result, stats, skill, used, threshold=None, difficulty
     return
 
 
+label lbl_vitality_info(person):
+    python:
+        txt_good = ""
+        txt_bad = ""
+        d, l = person.vitality_info()
+        items = d.items()
+        for k, v in items:
+            if v > 0:
+                txt_good += encolor_text(k, v) + '\n'
+            elif v < 0:
+                txt_bad += encolor_text(k, 0) + '\n'
+    '[txt_good]'
+    '----------'
+    '[txt_bad]'
+
+
 
 
 
