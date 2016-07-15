@@ -5,9 +5,9 @@ label shd_None_template(character):
 
 label shd_general_accounting(character):
     # Allways active. Calculates minor issues.
-    if salary_timer = 0:
+    if salary_timer == 0:
         'BATYA получает зарплату (+250 тенгэ). Следующая зарплата через месяц (4 недели).'
-        $ game.money += 100
+        $ game.money += 250
         $ salary_timer = 3
     else:
         $ salary_timer -= 1
@@ -184,17 +184,17 @@ label subloc_pusher_perform:
     '[name] [show] мутит вещества - аптеку, бадягу, бухло, всё сойдёт. Напряжная и вредная для самочувствия работа, зато общение ([result]). Качество работы [result]\n Вымучено: [gain] веществ.'
     return
 
-label shd_alcohol(action):
+label shd_None_alcohol(action):
     python:
         action.actor.general.satisfaction = 5
     return  
 
-label shd_smoke(action):
+label shd_None_smoke(action):
     python:
         action.actor.comfort.satisfaction = 5
     return  
     
-label shd_weed(action):
+label shd_None_weed(action):
     python:        
         action.actor.purpose.satisfaction = 5
     return  

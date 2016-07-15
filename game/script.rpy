@@ -24,6 +24,9 @@ init python:
     game.res_add_consumption('mom_food', 'provision', mom.get_food_consumption, None)
     mom.schedule.add_action('living_appartment')
     game.res_add_consumption("mom_rent", 'money', 25, time=None)
+    mom.restrictions.append('alcohol')
+    mom.restrictions.append('tobacco')
+    mom.restrictions.append('weed')    
         
     #BATYA
     batya = Person()
@@ -39,6 +42,9 @@ init python:
     game.res_add_consumption('batya_food', 'provision', batya.get_food_consumption, None)
     batya.schedule.add_action('living_appartment')
     game.res_add_consumption("batya_rent", 'money', 25, time=None)
+    batya.restrictions.append('alcohol')
+    batya.restrictions.append('tobacco')
+    batya.restrictions.append('weed')
     
     #ЕНОТОВА
     eot = Person()
@@ -115,11 +121,8 @@ label label_quiz:
     $ child.ration['amount'] = "unlimited" 
     $ child.schedule.add_action('fap_yes')
     $ child.restrictions.append('alcohol')
-    $ child.schedule.add_action('alcohol_no')    
     $ child.restrictions.append('tobacco')
-    $ child.schedule.add_action('smoke_no')      
     $ child.restrictions.append('weed')
-    $ child.schedule.add_action('weed_no')   
     $ child.appearance = 'normal'
     $ child.schedule.add_action('outfit_normal')    
     $ shedule_minor = '?'

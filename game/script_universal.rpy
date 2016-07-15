@@ -388,46 +388,47 @@ label lbl_activate_ap:
 
 label lbl_rules_drugs:
     menu:
-        'Запретить курить' if 'tobacco' not in child.restrictions:
+        'Запретить курить' if 'tobacco' not in target.restrictions:
             $ target.restrictions.append('tobacco')
-            $ resname = str(target.name()) + '_tobacco'
+            $ resname = target.name() + '_tobacco'
             $ game.res_add_consumption(resname, 'drugs', 0, time=None)            
             $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
-        'Парю где хочу, не запрещено (1/нед)' if 'tobacco' in child.restrictions:
+        'Парю где хочу, не запрещено (1/нед)' if 'tobacco' in target.restrictions:
             $ target.restrictions.remove('tobacco')
             $ target.schedule.add_action('smoke')
-            $ resname = str(target.name()) + '_tobacco'
+            $ resname = target.name() + '_tobacco'
             $ game.res_add_consumption(resname, 'drugs', 1, time=None)            
             $ txt = 'Сыченька то бодрячком \n @ \n Каждые пять минут в падик бегает \n @ \n Наверное друзья у него там'       
             
-        'Cухой закон' if 'alcohol' not in child.restrictions:
+        'Cухой закон' if 'alcohol' not in target.restrictions:
             $ target.restrictions.append('alcohol')
-            $ resname = str(target.name()) + '_alco'
+            $ resname = target.name() + '_alco'
             $ game.res_add_consumption(resname, 'drugs', 0, time=None)
             $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ишь чего удумал прохиндей \n @ \n Я алкоголиков в доме не потерплю!'
-        'Накатывать за дидов (3/нед)' if 'alcohol' in child.restrictions:
+        'Накатывать за дидов (3/нед)' if 'alcohol' in target.restrictions:
             $ target.restrictions.remove('alcohol')
             $ target.schedule.add_action('alcohol')
-            $ resname = str(target.name()) + '_alco'
+            $ resname = target.name() + '_alco'
             $ game.res_add_consumption(resname, 'drugs', 3, time=None)
             $ txt = 'За дидов рюмашечку надо обязательно \n @ \n Что значит "не буду стекломой пить" \n @ \n Традиции наши не уважаешь?'     
             
   
-        'Запретить наркотики' if 'weed' not in child.restrictions:
+        'Запретить наркотики' if 'weed' not in target.restrictions:
             $ target.restrictions.append('weed')
-            $ resname = str(target.name()) + '_weed'
+            $ resname = target.name() + '_weed'
             $ game.res_add_consumption(resname, 'drugs', 0, time=None)            
             $ txt = 'Чтобы я тебя с этими наркоманами не видела больше \n @ \n Пообколются своей марихуанной \n @ \n А потом ябут друг-друга в жёппы'
-        'Соли, миксы, спайсы (5/нед)' if 'weed' in child.restrictions:
+        'Соли, миксы, спайсы (5/нед)' if 'weed' in target.restrictions:
             $ target.restrictions.remove('weed')
             $ target.schedule.add_action('weed')
-            $ resname = str(target.name()) + '_weed'
+            $ resname = target.name() + '_weed'
             $ game.res_add_consumption(resname, 'drugs', 5, time=None)            
             $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
         'Назад':
             jump lbl_rules
     "[txt]"
     
+    jump lbl_rules_drugs
     return
 
 label lbl_rules_behavior:
