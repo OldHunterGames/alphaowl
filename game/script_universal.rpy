@@ -38,7 +38,7 @@ label lbl_target_menu:
         "Вещества":
             call lbl_rules_drugs            
         "Карманные деньги":
-            $ pass
+            call lbl_personal_wealth
         "Информация":
             call lbl_info_new(target)
         "Назад":
@@ -166,7 +166,7 @@ label lbl_torture_choose:
             
     $ special_values = {'skill': skill, 'torturer': actor, 'token': token, 'target_tension': target_tension, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
-    $ target.schedule.add_action('shd_ctoken_torture', special_values=special_values)
+    $ target.schedule.add_action('ctoken_torture', special_values=special_values)
     
     jump lbl_universal_menu
     return
@@ -193,7 +193,7 @@ label lbl_pleasing_choose:
     
     $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
-    $ target.schedule.add_action('shd_ctoken_pleasing', special_values=special_values)
+    $ target.schedule.add_action('ctoken_pleasing', special_values=special_values)
     
     jump lbl_shedule_major
     return
@@ -425,8 +425,8 @@ label lbl_rules_drugs:
             $ game.res_add_consumption(resname, 'drugs', 5, time=None)            
             $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
         'Назад':
-            jump lbl_rules
-    "[txt]"
+            jump lbl_target_menu
+    # "[txt]"
     
     jump lbl_rules_drugs
     return
@@ -434,33 +434,56 @@ label lbl_rules_drugs:
 label lbl_rules_behavior:
     $ txt = None
     menu:
-        'Пресечь любую дрочку' if 'masturbation' not in child.restrictions:
-            $ child.restrictions.append('masturbation')
-            $ child.schedule.add_action('fap_no')
+        'Пресечь любую дрочку' if 'masturbation' not in target.restrictions:
+            $ target.restrictions.append('masturbation')
+            $ target.schedule.add_action('fap_no')
             $ txt = 'Сыночка то наш, всё пиструнчик свой тилибонькает \n @ \n Скоро волосы на руках расти начнут \n @ \n В антимастурбационном кресте будещь спать, по совету отца Агапия'
-        'Игнорировать дрочку' if 'masturbation' in child.restrictions:
-            $ child.restrictions.remove('masturbation')
-            $ child.schedule.add_action('fap_yes')
+        'Игнорировать дрочку' if 'masturbation' in target.restrictions:
+            $ target.restrictions.remove('masturbation')
+            $ target.schedule.add_action('fap_yes')
             $ txt = 'А что это ты в ванной столько времени сидишь, Сыча? \n @ \n И то хорошо \n @ \n Приучили к чистоте ребёнка то'    
-        'Запретить гулять' if 'dates' not in child.restrictions:
-            $ child.restrictions.append('dates')
-        'Разрешить гулять до поздна' if 'dates' in child.restrictions:
-            $ child.restrictions.remove('dates')
-        'Запретить общаться с друзьями' if 'friends' not in child.restrictions:
-            $ child.restrictions.append('friends')
-        'Разрешить общаться с друзьями' if 'friends' in child.restrictions:
-            $ child.restrictions.remove('friends')
-        'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in child.restrictions:
-            $ child.restrictions.append('pc')
-        'Ну и сиди за своим комплюктером' if 'pc' in child.restrictions:
-            $ child.restrictions.remove('pc')
+        'Запретить гулять' if 'dates' not in target.restrictions:
+            $ target.restrictions.append('dates')
+        'Разрешить гулять до поздна' if 'dates' in target.restrictions:
+            $ target.restrictions.remove('dates')
+        'Запретить общаться с друзьями' if 'friends' not in target.restrictions:
+            $ target.restrictions.append('friends')
+        'Разрешить общаться с друзьями' if 'friends' in target.restrictions:
+            $ target.restrictions.remove('friends')
+        'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in target.restrictions:
+            $ target.restrictions.append('pc')
+        'Ну и сиди за своим комплюктером' if 'pc' in target.restrictions:
+            $ target.restrictions.remove('pc')
         'Назад':
-            jump lbl_rules
+            jump lbl_target_menu
             
     if txt:
         '[txt]'
+    jump lbl_rules_behavior    
     return  
-    
+
+label lbl_personal_wealth:
+    $ resname = target.name() + '_wealth'
+    menu:
+        'Чем больше тенгэ персонаж может тратить на личные нужды, тем выше будет его удовлетворение процветанием (prosperity)'
+        'Не жили бохато, неча и начинать!':
+            $ summ = 0
+        '5 тенгэ / нед':
+            $ summ = 5   
+        '10 тенгэ / нед':
+            $ summ = 10
+        '25 тенгэ / нед':
+            $ summ = 25  
+        '50 тенгэ / нед':
+            $ summ = 50   
+        '100 тенгэ / нед':
+            $ summ = 100 
+
+    $ game.res_add_consumption(resname, 'money', summ, time=None) 
+    $ special_values = {'summ': summ}
+    $ target.schedule.add_action('money_wealth', special_values=special_values)    
+    return
+
 label lbl_info_new(target):
     python:
         alignment = target.alignment.description() 

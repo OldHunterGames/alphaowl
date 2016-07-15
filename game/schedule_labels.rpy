@@ -208,13 +208,18 @@ label shd_fap_yes(character):
     python:
         child.eros.satisfaction = 1
     return  
+    
+label shd_money_wealth(action):
+    python:        
+        action.actor.prosperity.satisfaction = action.special_values['summ']
+    return  
 
 label shd_living_appartment(action):
     python:
         action.actor.comfort.satisfaction = 3
         action.actor.add_modifier('beauty_sleep', {'vitality': 2}, 1)        
         name = action.actor.name()
-        '[name] живёт в апартаментах'
+    '[name] живёт в апартаментах'
     return  
     
 label shd_living_cot(action):
@@ -225,33 +230,33 @@ label shd_living_cot(action):
     
 label shd_living_mat(action):
     python:
-        child.comfort.set_tension()
-        child.prosperity.set_tension()
-        child.wellness.set_tension()    
+        action.actor.comfort.set_tension()
+        action.actor.prosperity.set_tension()
+        action.actor.wellness.set_tension()    
         name = action.actor.name()
-        '[name] спит на раскладушке'          
+    '[name] спит на раскладушке'          
     return  
     
 label shd_living_confined(action):
     python:
-        child.comfort.set_tension()
-        child.activity.set_tension()
-        child.wellness.set_tension()
-        child.amusement.set_tension()
-        child.communication.set_tension()
-        child.thrill.set_tension()
+        action.actor.comfort.set_tension()
+        action.actor.activity.set_tension()
+        action.actor.wellness.set_tension()
+        action.actor.amusement.set_tension()
+        action.actor.communication.set_tension()
+        action.actor.thrill.set_tension()
         action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
         name = action.actor.name()
-        '[name] живёт в ванной'  
+    '[name] живёт в ванной'  
     return  
     
 label shd_living_jailed(action):
     python:
-        child.comfort.set_tension()
-        child.activity.set_tension()
-        child.wellness.set_tension()
+        action.actor.comfort.set_tension()
+        action.actor.activity.set_tension()
+        action.actor.wellness.set_tension()
         action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
-        '[name] живёт в чулане' 
+    '[name] живёт в чулане' 
     return  
 
 label shd_ctoken_torture(action):

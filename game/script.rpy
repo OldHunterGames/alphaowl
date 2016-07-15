@@ -26,7 +26,8 @@ init python:
     game.res_add_consumption("mom_rent", 'money', 25, time=None)
     mom.restrictions.append('alcohol')
     mom.restrictions.append('tobacco')
-    mom.restrictions.append('weed')    
+    mom.restrictions.append('weed')   
+    mom.schedule.add_action('fap_yes')
         
     #BATYA
     batya = Person()
@@ -45,6 +46,7 @@ init python:
     batya.restrictions.append('alcohol')
     batya.restrictions.append('tobacco')
     batya.restrictions.append('weed')
+    batya.schedule.add_action('fap_yes')
     
     #ЕНОТОВА
     eot = Person()
