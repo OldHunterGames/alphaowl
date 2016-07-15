@@ -573,6 +573,7 @@ label lbl_vitality_info():
         txt_good += '---------- \n'
         txt_good += txt_bad
     '[txt_good]'
+    return
 
 
 
