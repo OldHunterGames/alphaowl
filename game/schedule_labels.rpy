@@ -11,12 +11,7 @@ label shd_general_accounting(character):
         $ salary_timer = 3
     else:
         $ salary_timer -= 1
-    if 'dates' in child.restrictions: 
-        $ child.eros.set_tension()
-        $ child.activity.set_tension()
-    if 'friends' in child.restrictions:
-        $ child.communication.set_tension()
-        
+       
     return
 
 label shd_job_supervise(action):
@@ -211,7 +206,7 @@ label shd_fap_yes(character):
     
 label shd_money_wealth(action):
     python:        
-        action.actor.prosperity.satisfaction = action.special_values['summ']
+        action.actor.prosperity.satisfaction = action.special_values['num']
     return  
 
 label shd_living_appartment(action):
@@ -219,7 +214,7 @@ label shd_living_appartment(action):
         action.actor.comfort.satisfaction = 3
         action.actor.add_modifier('beauty_sleep', {'vitality': 2}, 1)        
         name = action.actor.name()
-    '[name] живёт в апартаментах'
+    # '[name] живёт в апартаментах'
     return  
     
 label shd_living_cot(action):
@@ -234,7 +229,7 @@ label shd_living_mat(action):
         action.actor.prosperity.set_tension()
         action.actor.wellness.set_tension()    
         name = action.actor.name()
-    '[name] спит на раскладушке'          
+    # '[name] спит на раскладушке'          
     return  
     
 label shd_living_confined(action):
@@ -247,7 +242,7 @@ label shd_living_confined(action):
         action.actor.thrill.set_tension()
         action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
         name = action.actor.name()
-    '[name] живёт в ванной'  
+    #'[name] живёт в ванной'  
     return  
     
 label shd_living_jailed(action):
@@ -256,7 +251,7 @@ label shd_living_jailed(action):
         action.actor.activity.set_tension()
         action.actor.wellness.set_tension()
         action.actor.add_modifier('bad_sleep', {'vitality': -1}, 1)           
-    '[name] живёт в чулане' 
+    #'[name] живёт в чулане' 
     return  
 
 label shd_ctoken_torture(action):
@@ -282,7 +277,7 @@ label shd_ctoken_torture(action):
         if result[1] > 0:
             for need in action.special_values['target_tension']:
                 getattr(action.actor, need).set_tension()
-    "[txt]"
+    #"[txt]"
     return  
 
 label shd_ctoken_pleasing(action):

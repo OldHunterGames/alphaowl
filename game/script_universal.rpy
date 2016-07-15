@@ -34,7 +34,7 @@ label lbl_target_menu:
         "Питание":
             call lbl_food_universal
         "Правила":
-            call lbl_rules_restrictions
+            call lbl_rules_behavior
         "Вещества":
             call lbl_rules_drugs            
         "Карманные деньги":
@@ -199,23 +199,25 @@ label lbl_pleasing_choose:
     return
     
 label lbl_accommodation:
+    $ nm = target.name() + '_rent'
     menu:
         'Вечно ты в комнате запираешься от матери! Как сыч. (25 тенгэ/нед)':
-            $ target.schedule.add_action('living_appartment')  
-            $ game.res_add_consumption("rent", 'money', 25, time=None)
+            $ target.schedule.add_action('living_appartment', False)  
+            $ summ = 25
         'Комнату твою сдавать будем, поспишь у нас на диванчике. (10 тенгэ/нед)':
-            $ target.schedule.add_action('living_cot')  
-            $ game.res_add_consumption("rent", 'money', 10, time=None)
+            $ target.schedule.add_action('living_cot', False)  
+            $ summ = 10
         'Диванчик для тёти Сраки, а тебе вот раскладушечка дедова. (5 тенгэ/нед)':
-            $ target.schedule.add_action('living_mat')  
-            $ game.res_add_consumption("rent", 'money', 5, time=None)
+            $ target.schedule.add_action('living_mat', False)  
+            $ summ = 5
         'В ванной тебя запрём ночевать. Чтобы не воображал!':
-            $ target.schedule.add_action('living_jailed')    
-            $ game.res_add_consumption("rent", 'money', 0, time=None)
+            $ target.schedule.add_action('living_jailed', False)    
+            $ summ = 0
         'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
-            $ target.schedule.add_action('living_confined')    
-            $ game.res_add_consumption("rent", 'money', 0, time=None)
-    
+            $ target.schedule.add_action('living_confined', False)    
+            $ summ = 0
+            
+    $ game.res_add_consumption(nm, 'money', summ, time=None)
     return
 
 label lbl_food_universal:
@@ -395,7 +397,7 @@ label lbl_rules_drugs:
             $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
         'Парю где хочу, не запрещено (1/нед)' if 'tobacco' in target.restrictions:
             $ target.restrictions.remove('tobacco')
-            $ target.schedule.add_action('smoke')
+            $ target.schedule.add_action('None_smoke', False)
             $ resname = target.name() + '_tobacco'
             $ game.res_add_consumption(resname, 'drugs', 1, time=None)            
             $ txt = 'Сыченька то бодрячком \n @ \n Каждые пять минут в падик бегает \n @ \n Наверное друзья у него там'       
@@ -407,7 +409,7 @@ label lbl_rules_drugs:
             $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ишь чего удумал прохиндей \n @ \n Я алкоголиков в доме не потерплю!'
         'Накатывать за дидов (3/нед)' if 'alcohol' in target.restrictions:
             $ target.restrictions.remove('alcohol')
-            $ target.schedule.add_action('alcohol')
+            $ target.schedule.add_action('None_alcohol', False)
             $ resname = target.name() + '_alco'
             $ game.res_add_consumption(resname, 'drugs', 3, time=None)
             $ txt = 'За дидов рюмашечку надо обязательно \n @ \n Что значит "не буду стекломой пить" \n @ \n Традиции наши не уважаешь?'     
@@ -420,7 +422,7 @@ label lbl_rules_drugs:
             $ txt = 'Чтобы я тебя с этими наркоманами не видела больше \n @ \n Пообколются своей марихуанной \n @ \n А потом ябут друг-друга в жёппы'
         'Соли, миксы, спайсы (5/нед)' if 'weed' in target.restrictions:
             $ target.restrictions.remove('weed')
-            $ target.schedule.add_action('weed')
+            $ target.schedule.add_action('None_weed', False)
             $ resname = target.name() + '_weed'
             $ game.res_add_consumption(resname, 'drugs', 5, time=None)            
             $ txt = 'Ой а что это за штучка такая у тебя, Сыча? \n @ \n Для ароматизации помещения да? \n @ \n И вот сюда вот воду заливать?'                     
@@ -436,11 +438,11 @@ label lbl_rules_behavior:
     menu:
         'Пресечь любую дрочку' if 'masturbation' not in target.restrictions:
             $ target.restrictions.append('masturbation')
-            $ target.schedule.add_action('fap_no')
+            $ target.schedule.add_action('fap_no', False)
             $ txt = 'Сыночка то наш, всё пиструнчик свой тилибонькает \n @ \n Скоро волосы на руках расти начнут \n @ \n В антимастурбационном кресте будещь спать, по совету отца Агапия'
         'Игнорировать дрочку' if 'masturbation' in target.restrictions:
             $ target.restrictions.remove('masturbation')
-            $ target.schedule.add_action('fap_yes')
+            $ target.schedule.add_action('fap_yes', False)
             $ txt = 'А что это ты в ванной столько времени сидишь, Сыча? \n @ \n И то хорошо \n @ \n Приучили к чистоте ребёнка то'    
         'Запретить гулять' if 'dates' not in target.restrictions:
             $ target.restrictions.append('dates')
@@ -467,21 +469,26 @@ label lbl_personal_wealth:
     menu:
         'Чем больше тенгэ персонаж может тратить на личные нужды, тем выше будет его удовлетворение процветанием (prosperity)'
         'Не жили бохато, неча и начинать!':
+            $ special_values = {'num': 0}
             $ summ = 0
         '5 тенгэ / нед':
+            $ special_values = {'num': 0}
             $ summ = 5   
         '10 тенгэ / нед':
+            $ special_values = {'num': 0}            
             $ summ = 10
         '25 тенгэ / нед':
+            $ special_values = {'num': 0}
             $ summ = 25  
         '50 тенгэ / нед':
+            $ special_values = {'num': 0}
             $ summ = 50   
         '100 тенгэ / нед':
+            $ special_values = {'num': 0}
             $ summ = 100 
 
     $ game.res_add_consumption(resname, 'money', summ, time=None) 
-    $ special_values = {'summ': summ}
-    $ target.schedule.add_action('money_wealth', special_values=special_values)    
+    $ target.schedule.add_action('money_wealth', False, special_values=special_values)    
     return
 
 label lbl_info_new(target):

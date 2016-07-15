@@ -235,52 +235,53 @@ label lbl_job_rules:
     
 label lbl_shop:
     menu:
+        'Маман очень хочет жить БОХАТО. Скупи весь магазин и это будет блистательный WIN.'
         'Какус "Антирадиационный" (10 тенгэ)' if "cactus" not in game.mom_stuff:
             python:
-                if game.tenge >= 10:
+                if game.money >= 10:
                     txt = "КАНПУКТЕР ОБЛУЧАЕТ РАДИАЦИЕЙ \n@\nСЫЧА, СРОЧНО ПОСТАВЬ КАКТУС К ЭКРАНУ\n@\nУЧОНЫЕ ПО РЕН-ТВ ТОЛЬКО ЧТО СКАЗАЛИ\n"
                     game.mom_stuff.append("cactus")
-                    game.tenge -= 10
+                    game.money -= 10
                 else:
                     txt = "ПРИХОДИШЬ В МАГАЗ\n @\n И ДАЖЕ СРАНЫЙ КАКТУС НЕ МОЖЕШЬ КУПИТЬ\n @\n ТЕНГЕ НЕ ХВАТАЕТ"
         'Сервиз "Мойхрусталь" (25 тенгэ)' if "service" not in game.mom_stuff:
             python:
-                if game.tenge >= 25:
+                if game.money >= 25:
                     txt = "ХРУСТАЛЬ - ЭТО ТВОЕ ПРИДАНОЕ. ПОСТАВЬ В СЕРВАНТ. \n@\nСЕЙЧАС ТАКОЙ НЕ ДЕЛАЮТ, ЭТО ВЕНГЕРСКИЙ! \n@\nИ ПЫЛЬ ПРОСТРИ С НЕГО, НЕ БЕРЕЖЕШЬ СОВСЕМ \n"
                     game.mom_stuff.append("service")
-                    game.tenge -= 25
+                    game.money -= 25
                 else:
                     txt = "ПРИХОДИШЬ В МАГАЗ\n @\n И ДАЖЕ СРАНЫЙ СЕРВИЗ НЕ МОЖЕШЬ КУПИТЬ\n @\n ТЕНГЕ НЕ ХВАТАЕТ"
         'Софа "Накройчехлом" (100 тенгэ)' if "sofa" not in game.mom_stuff:
             python:
-                if game.tenge >= 100:
+                if game.money >= 100:
                     txt = "В КОМНАТЕ НОВЫЙ ДИВАН, КРАСИВЫЙ, МЯГКИЙ. \n@\nНАКРОЙ ЧЕХЛОМ, ШОБ ОБИВОЧКУ НЕ ИСПАЧКАТЬ \n@\nНАКРЫВАЕШЬ ССАНОЙ ТРЯПКОЙ \n"
                     game.mom_stuff.append("sofa")
-                    game.tenge -= 100
+                    game.money -= 100
                 else:
                     txt = "ПРИХОДИШЬ В МАГАЗ\n @\n И ДАЖЕ СРАНЫЙ ДИВАН НЕ МОЖЕШЬ КУПИТЬ\n @\n ТЕНГЕ НЕ ХВАТАЕТ"
         'Ковёр "Какулюдей" (100 тенгэ)' if "carpet" not in game.mom_stuff:
             python:
-                if game.tenge >= 100:
+                if game.money >= 100:
                     txt = "ПРИЕХАЛИ ДЯДЯ БАФОМЕТ И ТЁТЯ СРАКА \n@\n ОЙ СЫЧА СРОЧНО НЕСИ СВОЙ ПОЛЯРОИД\n@\n НА ФОНЕ КОВРА НАС СНИМИ. КРСИВО И БОХАТО! \n"
                     game.mom_stuff.append("carpet")
-                    game.tenge -= 100
+                    game.money -= 100
                 else:
                     txt = "ПРИХОДИШЬ В МАГАЗ\n @\n И ДАЖЕ СРАНЫЙ КОВЁР НЕ МОЖЕШЬ КУПИТЬ\n @\n ТЕНГЕ НЕ ХВАТАЕТ"
         'Шубка "Кандибобер" (100 тенгэ)' if "fur" not in game.mom_stuff:
             python:
-                if game.tenge >= 100:
+                if game.money >= 100:
                     txt = "ОЙ А ЧТО ЭТО ЗА МЕХ ТАКОЙ? \n@\nЭТО МЕТИС. МЕТИС. \n@\nПАПА - НОРКА. МАМА - БОБЁР \n"
                     game.mom_stuff.append("fur")
-                    game.tenge -= 100
+                    game.money -= 100
                 else:
                     txt = "ПРИХОДИШЬ В МАГАЗ\n @\n И ДАЖЕ СРАНУЮ ШУБУ НЕ МОЖЕШЬ КУПИТЬ\n @\n ТЕНГЕ НЕ ХВАТАЕТ"
         'Гарнитур-стенка "Мечта застоя" (250 тенгэ)' if "furniture" not in game.mom_stuff:
             python:
-                if game.tenge >= 250:
+                if game.money >= 250:
                     txt = "ОЙ Я ВСЕГДА МЕЧТАЛА О ТАКОЙ РОСКОШНОЙ СТЕНКЕ \n@\nСЫЧА, НУ КА РАСЧИСТЬ ПРОСТРАНСТВО \n@\nНЕ ВЫБРАСЫВАЙ ТОЛЬКО НИЧЕГО, НА ДАЧУ УВЕЗЁМ \n"
                     game.mom_stuff.append("furniture")
-                    game.tenge -= 250
+                    game.money -= 250
                 else:
                     txt = "ПРИХОДИШЬ В МАГАЗ\n @\n И ДАЖЕ СРАНЫЙ ГАРНИТУР МОЖЕШЬ КУПИТЬ\n @\n ТЕНГЕ НЕ ХВАТАЕТ"
 

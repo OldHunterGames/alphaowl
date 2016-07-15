@@ -17,7 +17,10 @@ init python:
     mom = game.mother
     mom.enslave(child)    
     mom.firstname = u"Маман"
-    mom.surname = u"Сычова"        
+    mom.surname = u"Сычова"    
+    mom.alignment.activity = "ardent"
+    mom.alignment.orderliness = "lawful"    
+    mom.alignment.morality = 'evil'
     check_results = ['{color=#f00}failure{/color}', '{color=#ff00f3}marginal{/color}', '{color=#b700ff}normal{/color}',
                     '{color=#2600ff}fine{/color}', '{color=#2cab2c}exceptional{/color}', '{color=#dff54f}perfect{/color}']
     communication = '?'
@@ -28,7 +31,18 @@ init python:
     mom.restrictions.append('tobacco')
     mom.restrictions.append('weed')   
     mom.schedule.add_action('fap_yes')
-        
+    mom.skill('conversation').profession()
+    mom.relations(child)    
+    mom.add_feature('female')
+    mom.add_feature('mature')
+    mother.enslave(child)
+    mom.stance(child).value = -1
+    mom.ration['amount'] = "unlimited"   
+    mom.ration['food_type'] = "cousine"
+    mom.accommodation = "appartment"
+    mom.schedule.add_action('living_appartment', False)
+    mom.schedule.add_action('general_accounting', False)
+                
     #BATYA
     batya = Person()
     game.batya = batya
@@ -36,12 +50,15 @@ init python:
     batya.add_feature('mature')
     batya.firstname = u"BATYA"
     batya.surname = u"Сычов"    
+    batya.alignment.orderliness = "conformal"
+    batya.alignment.activity = "reasonable"
+    batya.alignment.morality = "selfish" 
     batya.skill('sport').profession()
     batya.stance(child).value = 0
     batya.stance(mom).value = 1
-    batya.ration['food_type'] = "sperm" 
+    batya.ration['food_type'] = "cousine" 
     game.res_add_consumption('batya_food', 'provision', batya.get_food_consumption, None)
-    batya.schedule.add_action('living_appartment')
+    batya.schedule.add_action('living_appartment', False)
     game.res_add_consumption("batya_rent", 'money', 25, time=None)
     batya.restrictions.append('alcohol')
     batya.restrictions.append('tobacco')
@@ -117,19 +134,25 @@ label start:
     return
     
 label label_quiz:
-    $ child.accommodation = "appartment"
-    $ child.schedule.add_action('living_appartment')
-    $ child.ration['food_type'] = "canned" 
-    $ child.ration['amount'] = "unlimited" 
-    $ child.schedule.add_action('fap_yes')
-    $ child.restrictions.append('alcohol')
-    $ child.restrictions.append('tobacco')
-    $ child.restrictions.append('weed')
-    $ child.appearance = 'normal'
-    $ child.schedule.add_action('outfit_normal')    
-    $ shedule_minor = '?'
-    $ child.ration['food_type'] = "sperm" 
-    $ game.res_add_consumption('child_food', 'provision', child.get_food_consumption, None)
+    python:
+        child.ration['food_type'] = "cousine" 
+        child.ration['amount'] = "unlimited" 
+        child.schedule.add_action('fap_yes')
+        child.restrictions.append('alcohol')
+        child.restrictions.append('tobacco')
+        child.restrictions.append('weed')
+        child.appearance = 'normal'
+        child.schedule.add_action('outfit_normal')    
+        shedule_minor = 'безделье'
+        child.ration['food_type'] = "sperm" 
+        game.res_add_consumption('child_food', 'provision', child.get_food_consumption, None)
+        child.accommodation = "appartment"
+        child.schedule.add_action('living_appartment', False)
+        nm = child.name() + '_rent'
+        game.res_add_consumption(nm, 'money', 25, time=None)
+        child.alignment.activity = "timid"
+        child.alignment.orderliness = "chaotic"
+        child.alignment.morality = "selfish" 
     
     menu:
         "Ты мальчик или девочка-внутри?"
@@ -143,11 +166,7 @@ label label_quiz:
                 child.skill('coding').profession()
                 game.set_player(child)
                 player = game.player
-                mom.alignment.morality = 'evil'
                 mom.relations(child)    
-                mom.add_feature('female')
-                mom.add_feature('mature')
-                mom.stance(child).value = -1
                 child.ration['food_type'] = "sperm"
                 child.ration['target'] = 1
                 child.accommodation = "jailed"      
@@ -168,25 +187,9 @@ label label_quiz:
             python:
                 child.add_feature('male')
                 child.add_feature('adolescent')
-                child.alignment.orderliness = "conformal"
-                child.alignment.activity = "reasonable"
-                child.alignment.morality = "selfish"
                 child.skill('coding').profession()
                 game.set_player(mom)
                 player = game.player
-                mom.skill('conversation').profession()
-                mom.alignment.morality = 'selfish'
-                mom.relations(child)    
-                mom.add_feature('female')
-                mom.add_feature('mature')
-                mother.enslave(child)
-                mom.stance(child).value = -1
-                shedule_minor = 'безделье'
-                mom.ration['amount'] = "unlimited"   
-                mom.ration['food_type'] = "cousine"
-                mom.accommodation = "appartment"
-                mom.schedule.add_action('living_appartment')
-                player.schedule.add_action('general_accounting', False)
             jump label_new_day
         "Я самец - даже не смей сомневаться!":
             $ child.add_feature('male')
