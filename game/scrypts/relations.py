@@ -125,7 +125,7 @@ class Relations(object):
         difference = self.fervor + activity
         if abs(difference) > 1:
             value += 1
-            axis.append(('fervor', self.show_fervor()))
+            axis.append(self.show_fervor())
         elif difference == 0:
             if self.fervor != 0:
                 value -= 1
@@ -133,7 +133,7 @@ class Relations(object):
         difference = self.distance + orderliness
         if abs(difference) > 1:
             value += 1
-            axis.append(('distance', self.show_distance()))
+            axis.append(self.show_distance())
         elif difference == 0:
             if self.distance != 0:
                 value -= 1
@@ -141,7 +141,7 @@ class Relations(object):
         difference = self.congruence + morality
         if abs(difference) > 1:
             value += 1
-            axis.append(('congruence', self.show_congruence()))
+            axis.append(self.show_congruence())
         elif difference == 0:
             if self.congruence != 0:
                 value -= 1
