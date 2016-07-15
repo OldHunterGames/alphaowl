@@ -4,7 +4,7 @@ import renpy.exports as renpy
 
 
 class Relations(object):
-    _fervor = {-1: "passionate", 0: "plain", 1: "delicate"}
+    _fervor = {-1: "delicate""passionate", 0: "plain", 1: "passionate"}
     _distance = {-1: "intimate", 0: "close", 1: "formal"}
     _congruence = {-1: "contradictor", 0: "associate", 1: "supporter"}
     def __init__(self, person1, person2):
@@ -110,7 +110,7 @@ class Relations(object):
         morality = self.npc.alignment.morality
         if tendence == 'conquest':
             if activity == 0:
-                activity = -1
+                activity = 1
             if morality == 0:
                 morality = -1
         if tendence == 'contribution':
