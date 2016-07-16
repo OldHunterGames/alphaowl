@@ -106,6 +106,8 @@ label lbl_shedule_major:
                     jump lbl_pleasing_choose
                 'Передумать':
                     jump lbl_shedule_major                    
+        "Обучение навыкам":
+            call lbl_skill_train
         "Назначить воспитателем" if player == mom and target != child:
             $ target.schedule.add_action('job_supervise', False)
         'Безделье':
@@ -156,6 +158,21 @@ label lbl_special_discipline:
     jump lbl_shedule_major    
     return
 
+label lbl_skill_train:
+    menu:
+        'ЗОЖ' if not target.skill('sport').training:
+            $ target.schedule.add_action('train_sport')            
+        'Социоблядство' if not target.skill('conversation').training:
+            $ target.schedule.add_action('train_conversation')   
+        'Быдлокодинг' if not target.skill('coding').training:
+            $ target.schedule.add_action('train_coding')   
+        'Пикап' if not target.skill('sex').training:
+            $ target.schedule.add_action('train_sex')               
+        'Назад':
+            jump lbl_shedule_major
+            
+    jump lbl_target_menu
+    return
 
 label lbl_torture_choose:
     menu:
@@ -277,7 +294,6 @@ label lbl_food_universal:
 
 label lbl_activate_ap:
     $ a = target.relations(player).harmony()[0] - 1
-    'Гармония - 1 = [a]'
     menu:
         'Эти действия тратят AP вашего персонажа.'
         'Сдвиг в отношениях (нужны жетоны отношений)':

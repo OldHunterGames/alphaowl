@@ -344,18 +344,70 @@ label shd_minor_fun(action):
 label shd_minor_sport(action):
     python:
         action.actor.activity.satisfaction = 4
-        action.actor..skills_used.append('sport')
+        action.actor.skills_used.append('sport')
     return
 
 label shd_minor_chat(action):
     python:
         action.actor.communication.satisfaction = 4
-        action.actor..skills_used.append('conversation')
+        action.actor.skills_used.append('conversation')
     return
 
+label shd_train_sport(action):
+    python:
+        actor = action.actor
+        name = actor.name()
+        motivation = game.threshold_skillcheck(actor, 'sport', difficulty = 0, tense_needs=['comfort'], satisfy_needs=['activity'], beneficiar=player, success_threshold=0)        
+    if motivation[0]:
+        $ actor.skill('sport').training = True
+        $ actor.ambition.satisfaction = action.actor.physique  
+        'Соблюдает дня режим - дЖым ([name])! Получены базовые знания о ЗОЖ, амбиции удовлетворены.' 
+    else:
+        '[name] не хочет ничему учиться...'             
+  
+    return
 
+label shd_train_coding(action):
+    python:
+        actor = action.actor
+        name = actor.name()
+        motivation = game.threshold_skillcheck(actor, 'coding', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=player, success_threshold=0)        
+    if motivation[0]:
+        $ actor.skill('coding').training = True
+        $ actor.ambition.satisfaction = action.actor.mind  
+        '"RenPy для пускающих слюни дегенератов". [name] получает базовый навык программирования, амбиции удовлетворены.'
+    else:
+        '[name] не хочет ничему учиться...'             
+  
+    return
 
+label shd_train_conversation(action):
+    python:
+        actor = action.actor
+        name = actor.name()
+        motivation = game.threshold_skillcheck(actor, 'conversation', difficulty = 0, tense_needs=['authority'], satisfy_needs=['communication'], beneficiar=player, success_threshold=0)        
+    if motivation[0]:
+        $ actor.skill('conversation').training = True
+        $ actor.ambition.satisfaction = action.actor.spirit  
+        'Чтобы справиться с Ерохой, надо мыслить как Ероха! [name] получает базовый навык социоблядства, амбиции удовлетворены.'
+    else:
+        '[name] не хочет ничему учиться...'             
+  
+    return
 
+label shd_train_sex(action):
+    python:
+        actor = action.actor
+        name = actor.name()
+        motivation = game.threshold_skillcheck(actor, 'sex', difficulty = 0, tense_needs=['wellness'], satisfy_needs=['eros'], beneficiar=player, success_threshold=0)        
+    if motivation[0]:
+        $ actor.skill('sex').training = True
+        $ actor.ambition.satisfaction = action.actor.sensitivity  
+        'Теперь [name] знает как долго не кончать! Получена базовая сексуальная грамотность, амбиции удовлетворены.'
+    else:
+        '[name] не хочет ничему учиться...'             
+  
+    return
 
     
 label shd_dayoff_dacha(character):
