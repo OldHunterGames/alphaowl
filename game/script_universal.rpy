@@ -631,15 +631,14 @@ label lbl_vitality_info():
         d, l = vitality_info_target.vitality_info()
         items = list(d.items())
         for i in l:
-            items.append(('vitality', i))
+            items.append(i)
         for k, v in items:
             if v > 0:
                 txt_good += encolor_text(k, v) + '\n'
             elif v < 0:
                 txt_bad += encolor_text(k, 0) + '\n'
             else:
-                if k != 'vitality':
-                    zero_factors += encolor_text(k, 6) + '\n'
+                zero_factors += encolor_text(k, 6) + '\n'
         txt_good += '---------- \n'
         txt_good += txt_bad
         txt_good += '---------- \n'

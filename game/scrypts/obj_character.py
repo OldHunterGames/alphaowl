@@ -391,12 +391,12 @@ class Person(object):
             self_anxiety = 0
 
 
-    def modifiers_separate(self, modifier):
-        return self.modifiers.get_modifier_separate(modifier)
+    def modifiers_separate(self, modifier, names=False):
+        return self.modifiers.get_modifier_separate(modifier, names)
     def vitality_info(self):
         d = {'physique': self.physique, 'shape': self.count_modifiers('shape'), 'fitness':self.count_modifiers('fitness'),
             'mood': self.mood, 'therapy': self.count_modifiers('therapy')}
-        l = self.modifiers_separate('vitality')
+        l = self.modifiers_separate('vitality', True)
         return d, l
     @property
     def vitality(self):
