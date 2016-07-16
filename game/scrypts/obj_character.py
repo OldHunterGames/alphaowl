@@ -921,10 +921,17 @@ class Person(object):
         elif not self.know_person(person):
             self._set_relations(person)
             stance = self._set_stance(person)
+
         else:
             for s in self._stance:
                 if self in s.persons and person in s.persons:
                     stance = s
+        if person in self.slaves:
+            stance._type = 'master'
+        elif person == self.master:
+            stance._type = 'slave'
+        else:
+            stance._type = 'neutral'
         return stance
 
 
@@ -1057,10 +1064,6 @@ class Person(object):
                 pass
 
     def enslave(self, target):
-        if target.player_controlled:
-            target.stance(self).change_stance('master')
-        else:
-            target.stance(self).change_stance('slave')
         target.master = self
         target.supervisor = self
         self.slaves.append(target)
