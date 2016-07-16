@@ -206,7 +206,10 @@ label shd_fap_yes(character):
     
 label shd_money_wealth(action):
     python:        
-        action.actor.prosperity.satisfaction = action.special_values['num']
+        if action.special_values['num'] >= 0:
+            action.actor.prosperity.satisfaction = action.special_values['num']
+        else:
+            child.prosperity.set_tension()
     return  
 
 label shd_living_appartment(action):
@@ -330,7 +333,7 @@ label shd_minor_nap(action):
     python:
         action.actor.comfort.satisfaction = 1
         action.actor.add_modifier('beauty_sleep', {'vitality': 1}, 1)       
-    'Легкий отдых. Фактор здоровья 1'
+    # 'Легкий отдых. Фактор здоровья 1'
 
     return
 
@@ -353,6 +356,17 @@ label shd_minor_chat(action):
         action.actor.skills_used.append('conversation')
     return
 
+label shd_minor_dacha(action):
+    python:
+        action.actor.amusement.set_tension()
+        action.actor.wellness.set_tension()
+        action.actor.independence.set_tension()        
+        action.actor.thrill.set_tension()   
+        nyam = action.actor.physique + action.actor.mood + action.actor.vitality
+        game.provision += nyam
+    '[name] проводит все выходные на даче, словно негр на плантациях. Скучно, всё тело болит и никакой свободы или новизны. Зато своё, с огрода, витамины (продукты +[nyam]) '
+    return
+    
 label shd_train_sport(action):
     python:
         actor = action.actor

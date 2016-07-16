@@ -11,7 +11,13 @@ init python:
     dname['whore'] = 'работать гейшлюхой'
     dname['supervise'] = 'воспитывать Сычика'
     dname['pusher'] = 'тёмные мутки'
-    
+
+    dname['nap'] = 'отдых'
+    dname['fun'] = 'развлечения'
+    dname['sport'] = 'ЗОЖ'
+    dname['chat'] = 'социоблядство'
+    dname['dacha'] = 'негр на плантациях'    
+
     show_quality = ['{b}{color=#ff0000}провально{/color}{/b}',
         '{b}{color=#ff00ff}слабенько{/color}{/b}',
         '{b}{color=#00ffff}удовлетворительно{/color}{/b}',

@@ -50,6 +50,7 @@ label lbl_target_menu:
 label lbl_make_shedule:
         
     $ schedule_major = dname[target.job]
+    # $ schedule_minor = dname[target.minor]
     
     menu:
         "По вечерам: [schedule_major]":
@@ -140,6 +141,8 @@ label lbl_shedule_minor:
             $ target.schedule.add_action('minor_chat', False)  
         'Брусья-брусья-турнички':
             $ target.schedule.add_action('minor_sport', False)   
+        'Еду на дачу и батрачу, еды нахуячу':
+            $ target.schedule.add_action('minor_dacha', False)
               
     return
     
@@ -504,24 +507,27 @@ label lbl_personal_wealth:
     menu:
         'Чем больше тенгэ персонаж может тратить на личные нужды, тем выше будет его удовлетворение процветанием (prosperity)'
         'Не жили бохато, неча и начинать!':
-            $ special_values = {'num': 0}
+            $ special_values = {'num': -1}
             $ summ = 0
         '5 тенгэ / нед':
             $ special_values = {'num': 0}
             $ summ = 5   
         '10 тенгэ / нед':
-            $ special_values = {'num': 0}            
+            $ special_values = {'num': 1}            
             $ summ = 10
         '25 тенгэ / нед':
-            $ special_values = {'num': 0}
+            $ special_values = {'num': 2}
             $ summ = 25  
         '50 тенгэ / нед':
-            $ special_values = {'num': 0}
+            $ special_values = {'num': 3}
             $ summ = 50   
         '100 тенгэ / нед':
-            $ special_values = {'num': 0}
+            $ special_values = {'num': 4}
             $ summ = 100 
-
+        '250 тенгэ / нед':
+            $ special_values = {'num': 5}
+            $ summ = 100 
+            
     $ game.res_add_consumption(resname, 'money', summ, time=None) 
     $ target.schedule.add_action('money_wealth', False, special_values=special_values)    
     return

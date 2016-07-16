@@ -44,7 +44,10 @@ init python:
     mom.accommodation = "appartment"
     mom.schedule.add_action('living_appartment', False)
     mom.schedule.add_action('general_accounting', False)
-                
+    mom.schedule.add_action('money_wealth', False, special_values={'num': -1}) 
+    mom.schedule.add_action('minor_nap', False)
+    mom.schedule.add_action('job_idle', False) 
+    
     #BATYA
     batya = Person()
     game.batya = batya
@@ -66,6 +69,9 @@ init python:
     batya.restrictions.append('tobacco')
     batya.restrictions.append('weed')
     batya.schedule.add_action('fap_yes')
+    batya.schedule.add_action('money_wealth', False, special_values={'num': -1}) 
+    batya.schedule.add_action('minor_nap', False)
+    batya.schedule.add_action('job_idle', False) 
     
     #ЕНОТОВА
     eot = Person()
@@ -146,7 +152,7 @@ label label_quiz:
         child.appearance = 'normal'
         child.schedule.add_action('outfit_normal')    
         shedule_minor = 'безделье'
-        child.ration['food_type'] = "sperm" 
+        child.ration['food_type'] = "cousine" 
         game.res_add_consumption('child_food', 'provision', child.get_food_consumption, None)
         child.accommodation = "appartment"
         child.schedule.add_action('living_appartment', False)
@@ -155,40 +161,40 @@ label label_quiz:
         child.alignment.activity = "timid"
         child.alignment.orderliness = "chaotic"
         child.alignment.morality = "selfish" 
-    
+        child.add_feature('male')
+        child.add_feature('adolescent')
+        mom.relations(child)  
+        mom.relations(batya) 
+        batya.relations(child) 
+        child.schedule.add_action('money_wealth', False, special_values={'num': -1}) 
+        child.schedule.add_action('minor_nap', False) 
+           
     menu:
         "Ты мальчик или девочка-внутри?"
         "(я не человек уже, я разработчик нахуй)":
             python:
-                child.add_feature('male')
-                child.add_feature('adolescent')
-                child.alignment.orderliness = "conformal"
-                child.alignment.activity = "reasonable"
-                child.alignment.morality = "selfish"
                 child.skill('coding').profession()
                 game.set_player(child)
-                player = game.player
-                mom.relations(child)    
-                child.ration['food_type'] = "sperm"
-                child.ration['target'] = 1
+                player = game.player                
+                
                 child.accommodation = "jailed"      
                 child.schedule.add_action('living_jailed')
-                child.schedule.add_action('job_chores')  
+                nm = child.name() + '_rent'
+                game.res_add_consumption(nm, 'money', 0, time=None)
+        
+                child.ration['food_type'] = "sperm"
+                child.ration['target'] = 1
+
+                child.schedule.add_action('job_chores', False)  
+                child.schedule.add_action('minor_dacha', False) 
                 child.restrictions.append('masturbation')
                 child.schedule.add_action('fap_no')        
-                child.appearance = 'lame'
-                child.schedule.add_action('outfit_lame')
                 child.restrictions.append('dates')
                 child.restrictions.append('friends')
                 child.restrictions.append('pc')
-                shedule_minor = 'пахать на даче' 
-                child.schedule.add_action('dayoff_dacha')    
-                player.schedule.add_action('general_accounting', False)
             jump label_new_day
         "(разработчик, игра за маму)":
             python:
-                child.add_feature('male')
-                child.add_feature('adolescent')
                 child.skill('coding').profession()
                 game.set_player(mom)
                 player = game.player
