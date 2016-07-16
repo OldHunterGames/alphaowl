@@ -33,7 +33,7 @@ label lbl_target_menu:
             call lbl_accommodation
         "Питание":
             call lbl_food_universal
-        "Правила":
+        "Правила" if target == child:
             call lbl_rules_behavior
         "Вещества":
             call lbl_rules_drugs            
@@ -58,10 +58,7 @@ label lbl_make_shedule:
             else:
                 call lbl_shedule_major
         "В выходные: [shedule_minor]":
-            if player == child:
-                call lbl_son_minor
-            else:
-                $ pass
+            call lbl_shedule_minor
         "Общение: [communication]" if player != mom:
             call lbl_universal_interaction
             
@@ -127,8 +124,23 @@ label lbl_shedule_major:
             $ target.schedule.add_action('job_whore', False)                
         "Назад":
             call lbl_universal_menu
+            
+    jump lbl_target_menu
     return
-
+        
+label lbl_shedule_minor:
+    menu:
+        'Отдыхать':
+            $ target.schedule.add_action('minor_nap', False)   
+        'Развлекаться':
+            $ target.schedule.add_action('minor_fun', False)   
+        'Общаться':
+            $ target.schedule.add_action('minor_chat', False)  
+        'Брусья-брусья-турнички':
+            $ target.schedule.add_action('minor_sport', False)   
+              
+    return
+    
 label lbl_special_discipline:
     $ special_values = {}
     menu:
@@ -136,11 +148,11 @@ label lbl_special_discipline:
         'Батюшка Павсикакий (24 бутылки кагора)' if not churched:
             $ game.res_add_consumption("discipline", 'drugs', 24, time=1)
             $ special_values = {}
-            $ target.schedule.add_action('shd_ctoken_church', special_values=special_values)
+            $ target.schedule.add_action('ctoken_church', special_values=special_values)
         '"Кохана ми вбиваємо дітей" (300 тенгэ)' if not kohaned:
             $ game.res_add_consumption("discipline", 'money', 300, time=1)
             $ special_values = {}
-            $ target.schedule.add_action('shd_ctoken_kohana', special_values=special_values)            
+            $ target.schedule.add_action('ctoken_kohana', special_values=special_values)            
     jump lbl_shedule_major    
     return
 
@@ -202,18 +214,23 @@ label lbl_accommodation:
     $ nm = target.name() + '_rent'
     menu:
         'Вечно ты в комнате запираешься от матери! Как сыч. (25 тенгэ/нед)':
+            $ target.accommodation = "appartment"
             $ target.schedule.add_action('living_appartment', False)  
             $ summ = 25
         'Комнату твою сдавать будем, поспишь у нас на диванчике. (10 тенгэ/нед)':
+            $ target.accommodation = "cot"
             $ target.schedule.add_action('living_cot', False)  
             $ summ = 10
         'Диванчик для тёти Сраки, а тебе вот раскладушечка дедова. (5 тенгэ/нед)':
+            $ target.accommodation = "mat"
             $ target.schedule.add_action('living_mat', False)  
             $ summ = 5
         'В ванной тебя запрём ночевать. Чтобы не воображал!':
+            $ target.accommodation = "jailed"
             $ target.schedule.add_action('living_jailed', False)    
             $ summ = 0
         'Ты у меня в шкафу сидеть будешь. Пока мать любить не научишься.':
+            $ target.accommodation = "confined"
             $ target.schedule.add_action('living_confined', False)    
             $ summ = 0
             
@@ -259,6 +276,8 @@ label lbl_food_universal:
     return
 
 label lbl_activate_ap:
+    $ a = target.relations(player).harmony()[0] - 1
+    'Гармония - 1 = [a]'
     menu:
         'Эти действия тратят AP вашего персонажа.'
         'Сдвиг в отношениях (нужны жетоны отношений)':
@@ -320,7 +339,7 @@ label lbl_activate_ap:
                             jump lbl_activate_ap                    
                 'Доминирование (conquest)' if target.has_token("conquest"):
                     menu:
-                        'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('passionate', 'contradictor'):
+                        'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, a) and target.relations(player).is_harmony_points('passionate', 'contradictor'):
                             $ player.ap -= 1
                             $ target.use_token('conquest')
                             $ target.stance(player).value +=1  
@@ -341,7 +360,7 @@ label lbl_activate_ap:
                             jump lbl_activate_ap    
                 'Сотрудничество (convention)' if target.has_token("convention"):
                     menu:
-                        'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('formal', 'delicate'):
+                        'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, a) and target.relations(player).is_harmony_points('formal', 'delicate'):
                             $ player.ap -= 1
                             $ target.use_token('convention')
                             $ target.stance(player).value +=1  
@@ -362,7 +381,7 @@ label lbl_activate_ap:
                             jump lbl_activate_ap    
                 'Благодарность (contribution)' if target.has_token("contribution") :
                     menu:
-                        'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, target.relations(player).harmony()[0] - 1) and target.relations(player).is_harmony_points('supporter', 'intimate'):
+                        'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, a) and target.relations(player).is_harmony_points('supporter', 'intimate'):
                             $ player.ap -= 1
                             $ target.use_token('contribution')
                             $ target.stance(player).value +=1  

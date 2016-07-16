@@ -6,6 +6,8 @@
     from schedule import *
 
 init python:
+    churched = False
+    kohaned = False
     salary_timer = 0
     recalc_result = []
     renpy.block_rollback()
@@ -297,11 +299,14 @@ label label_quiz:
 
 label label_new_day:
     ### ПРОВЕРКА НА ЗАВЕРШЕНИЕ ИГРЫ ###
-    if child.feature('dead'):
+    if child.feature('dead') or  mom.feature('dead') or  batya.feature('dead'):
+        'Кто-то умер. Видимо от голода...'
         jump game_over
     elif len(game.mom_stuff) > 5:
+        'Теперича БОХАТО заживём!/n @ /nМамка победила.'
         jump win_wealth
     elif not game.studies:
+        'Я думала ты нулёвый, а ты институт закончил!/n @ /nАнтон Сычов подебил.'        
         jump win_study
         
     

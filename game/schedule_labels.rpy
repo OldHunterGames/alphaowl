@@ -326,10 +326,32 @@ label shd_discipline_kohana(action):
             action.actor.add_token('antagonism')    
     return      
 
+label shd_minor_nap(action):
+    python:
+        action.actor.comfort.satisfaction = 1
+        action.actor.add_modifier('beauty_sleep', {'vitality': 1}, 1)       
+    'Легкий отдых. Фактор здоровья 1'
 
+    return
 
+label shd_minor_fun(action):
+    python:
+        action.actor.amusement.satisfaction = 4
+        action.actor.independence.satisfaction = 1
+        action.actor.general.satisfaction = 1
+    return
 
+label shd_minor_sport(action):
+    python:
+        action.actor.activity.satisfaction = 4
+        action.actor..skills_used.append('sport')
+    return
 
+label shd_minor_chat(action):
+    python:
+        action.actor.communication.satisfaction = 4
+        action.actor..skills_used.append('conversation')
+    return
 
 
 
