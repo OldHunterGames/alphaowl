@@ -25,11 +25,11 @@ label lbl_target_menu:
     $ name = target.name()
     menu:
         'Объект деятельности: [name]'
-        "Расписание":
+        "Расписание" if player == mom or target == child:
             call lbl_make_shedule
         "Важные события (AP:[player.ap])" if player.ap > 0:
             call lbl_activate_ap
-        "Бытовые уловия" if player != child and target == child:
+        "Бытовые уловия" if target == child:
             call lbl_accommodation
         "Питание":
             call lbl_food_universal
@@ -54,10 +54,7 @@ label lbl_make_shedule:
     
     menu:
         "По вечерам: [schedule_major]":
-            if player == child:
-                call lbl_son_major
-            else:
-                call lbl_shedule_major
+            call lbl_shedule_major
         "В выходные: [schedule_minor]":
             call lbl_shedule_minor
         "Общение: [communication]" if player != mom:
@@ -70,7 +67,7 @@ label lbl_make_shedule:
         
 label lbl_shedule_major:
     menu:
-        'Воспитывать Сыченьку' if target == child:
+        'Воспитывать Сыченьку' if target == child and player == mom:
             $ beneficiar = target.master
             $ code = None
             menu:
@@ -97,11 +94,11 @@ label lbl_shedule_major:
                     $ moral_burden = ['evil', 'ardent', 'chaotic']
                     $ token = 'conquest'
                     jump lbl_torture_choose
-                'Наказание':
+                'Наказание (есть грех)' if target.has_condition('sin'):
                     $ moral_burden = ['evil', 'ardent', 'lawful']
                     $ token = 'convention'
                     jump lbl_torture_choose
-                'Поощрение':
+                'Поощрение (есть заслуга)' if target.has_condition('merit'):
                     $ moral_burden = ['good', 'timid', 'lawful']
                     $ token = 'convention'
                     jump lbl_pleasing_choose
@@ -110,7 +107,38 @@ label lbl_shedule_major:
                     $ token = 'contribution'
                     jump lbl_pleasing_choose
                 'Передумать':
-                    jump lbl_shedule_major                    
+                    jump lbl_shedule_major           
+                    
+        'Подвергаться воспитанию' if target == child and player == child:
+            $ beneficiar = target.master
+            $ code = None
+            menu:
+                'Ну и кто тебя решил воспитать?'
+                'Маман':
+                    $ actor = mom
+                'BATYA':
+                    $ actor = batya
+                'Компетентные органы':
+                    jump lbl_special_discipline
+                'Передумать':
+                    jump lbl_shedule_major
+            menu:
+                'Какой подход выборать?'
+                'Страдать и плакать':
+                    $ moral_burden = ['ardent', 'chaotic']
+                    $ token = 'conquest'
+                    jump lbl_suffer_choose
+                'Соблюдать правила' if target.has_condition('merit'):
+                    $ moral_burden = ['timid', 'lawful']
+                    $ token = 'convention'
+                    jump lbl_obey_choose
+                'Ублажать и подлизываться':
+                    $ moral_burden = ['good', 'timid']
+                    $ token = 'contribution'
+                    jump lbl_fawn_choose
+                'Передумать':
+                    jump lbl_shedule_major                         
+                    
         "Обучение навыкам":
             call lbl_skill_train
         "Назначить воспитателем" if player == mom and target != child:
@@ -232,7 +260,33 @@ label lbl_pleasing_choose:
     
     jump lbl_target_menu
     return
+
+label lbl_suffer_choose:
+    menu:
+        'От чего страдаем?'
+        'Избиения':
+            $ actor_satisfy = ['power', 'authority']
+            $ actor_tension = ['altruism']
+            $ skill = 'conversation'
+            $ self_tension = ['wellness']
+        'Унижения':
+            $ actor_satisfy = ['power', 'authority']
+            $ actor_tension = ['altruism']
+            $ skill = 'conversation'
+            $ self_tension = ['authority', 'ambition']    
+        'Ограничения':
+            $ actor_satisfy = ['authority', 'order']
+            $ actor_tension = ['thrill']
+            $ skill = 'conversation'
+            $ self_tension = ['comfort', 'amusement', 'activity'] 
+            
+    $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'self_tension': self_tension, 'actor_tension': actor_tension,
+                        'actor_satisfy': actor_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
+    $ target.schedule.add_action('job_torture', special_values=special_values)
     
+    jump lbl_target_menu
+    return
+
 label lbl_accommodation:
     $ nm = target.name() + '_rent'
     menu:
@@ -302,6 +356,10 @@ label lbl_activate_ap:
     $ a = target.relations(player).harmony()[0] - 1
     menu:
         'Эти действия тратят AP вашего персонажа.'
+        'Найти к чему придраться':
+            $ player.ap -= 1
+            $ target.add_condition('sin')
+            'Теперь можно наказывать.'
         'Сдвиг в отношениях (нужны жетоны отношений)':
             menu:
                 'Доступны только те опции для которых с выбранным персонажем есть непотраченные жетоны отношений: antagonism, accordance, contribution, conquer или convention.'

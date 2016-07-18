@@ -7,7 +7,7 @@ label shd_general_accounting(character):
     # Allways active. Calculates minor issues.
     if salary_timer == 0:
         'BATYA получает зарплату (+250 тенгэ). Следующая зарплата через месяц (4 недели).'
-        $ game.money += 250
+        $ game.money += 1250
         $ salary_timer = 3
     else:
         $ salary_timer -= 1
@@ -28,12 +28,13 @@ label shd_job_supervise_remove(act):
 label shd_job_idle(action):
     $ name = action.actor.name()
     $ action.actor.add_modifier('rest', {'vitality': 4}, 1)  
-    '[name] отдыхает по вечерам восстанавливая силы (vitality-фактор 4)'
+    # '[name] отдыхает по вечерам восстанавливая силы (vitality-фактор 4)'
     return    
     
 label shd_job_study(action):
     python:
         child.skills_used.append('coding')
+        actor.add_condition('merit') 
     'Домашка сделана. Порядочный и добрый поступок матери по отношению к нему.'
     $ mom.moral_action('lawful', 'good', target = child)  
     return    
@@ -51,14 +52,16 @@ label shd_job_chores(action):
     return    
 
 label subloc_chores_sabotage:
+    $ actor.add_condition('sin')
     "[name] саботирует работу по дому ничего не делает."
 
     return
 
 label subloc_chores_perform:
-    actor = action.actor
-    name = actor.name()    
+    $ actor = action.actor
+    $ name = actor.name()    
     $ game.money += 10
+    $ actor.add_condition('merit') 
     "[name] занимается делами по хозяйству. Тяжелый ручной труд сэкономил нам аж целых 10 тенгэ!"
 
     return
@@ -106,6 +109,7 @@ label shd_job_porter(action):
 
 label subloc_porter_sabotage:
     'Сычуля саботирует работу грузчика, что стоит матери денег и авторитета. Это хаотичный поступок по отношению к ней. Зато Сычик удовлетворяет потребность в незавивсимости и комфорте с силой 3.'
+    $ actor.add_condition('sin')
     $ actor.comfort.satisfaction = 3
     $ actor.independence.satisfaction = 3
     $ mom.prosperity.set_tension()
@@ -120,6 +124,7 @@ label subloc_porter_perform:
         child.skill('sports').get_expirience(result)
         mom.prosperity.satisfaction = result  
         show = show_quality[result]
+        actor.add_condition('merit') 
     'Сычуля [show] работает грузчиком себя послушным и активным. Угнетены амбиции и вообще работа скучная. \n Заработок (для мамы!): [gain] тенге.'
     return
 
@@ -138,6 +143,7 @@ label shd_job_whore(action):
 
 label subloc_whore_sabotage:
     'Сычуля не желает быть гей-шлюхой и игнорирует приказ злой мамки чувствуя себя независимым (2). Это ударит по авторитету и богатству мамки!'
+    $ actor.add_condition('sin')
     $ actor.independence.satisfaction = 2
     $ mom.prosperity.set_tension()
     $ mom.authority.set_tension()
@@ -151,6 +157,7 @@ label subloc_whore_perform:
         mom.prosperity.satisfaction = result         
         child.moral_action('timid', target = mom)  
         show = show_quality[result]
+        actor.add_condition('merit') 
     'Сычуля [show] работает на панели по приказу злой мамки. Это удар по его сексуальности и амбиициям, но по крайней мере это общение... (1)\n Заработок (для мамы!): [gain] тенге.'
     return
     
@@ -178,6 +185,7 @@ label subloc_pusher_perform:
         game.drugs += gain
         actor.skill('conversation').get_expirience(result)
         show = show_quality[result]
+        actor.add_condition('merit')        
     '[name] [show] мутит вещества - аптеку, бадягу, бухло, всё сойдёт. Напряжная и вредная для самочувствия работа, зато общение ([result]). Качество работы [result]\n Вымучено: [gain] веществ.'
     return
 
@@ -275,14 +283,11 @@ label shd_job_torture(action):
         if result[0]:
             action.actor.add_token(action.special_values['token'])
             remember_needs(action.actor, action.special_values['token'], action.special_values['target_tension'])
-            txt = 'Наказание прошло успешно.'            
         else:
             action.actor.add_token('antagonism')
-            txt = 'Не получилось. Антагонизм увеличен.'            
         if result[1] > 0:
             for need in action.special_values['target_tension']:
                 getattr(action.actor, need).set_tension()
-    #"[txt]"
     return  
 
 label shd_job_pleasing(action):
@@ -301,15 +306,35 @@ label shd_job_pleasing(action):
         if result[0]:
             action.actor.add_token(action.special_values['token'])
             remember_needs(action.actor, action.special_values['token'], action.special_values['target_tension'])
-            txt = 'Ублажение прошло успешно.'
         else:
             action.actor.add_token('antagonism')
-            txt = 'Не получилось. Антагонизм увеличен.'
         if result[1] > 0:
             for need in action.special_values['target_statisfy']:
                 getattr(action.actor, need).set_satisfaction(result[1])
-    "[txt]"
     return  
+
+label lbl_job_suffer(action):
+    python:
+        failed = False
+        if is_needs_used(action.actor, action.special_values['token'], action.special_values['self_tension']):
+            failed = True
+    if failed:
+        'Это пройденный этап'
+        return
+    python:
+        threshold = action.actor.relations(action.special_values['beneficiar']).stability
+        morality = action.actor.check_moral(action.special_values['beneficiar'], *action.special_values['moral_burden'])
+        difficulty =  game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_statisfy']) 
+        result = game.threshold_skillcheck(action.actor, action.special_values['skill'], difficulty, action.special_values['actor_tension'], action.special_values['actor_satisfy'], action.special_values['beneficiar'], morality, threshold)
+        if result[0]:
+            action.actor.add_token(action.special_values['token'])
+            remember_needs(action.actor, action.special_values['token'], action.special_values['self_tension'])
+        else:
+            action.actor.add_token('antagonism')
+        if result[1] > 0:
+            for need in action.special_values['self_tension']:
+                getattr(action.actor, need).set_satisfaction(result[1])
+    return 
     
 label shd_job_pavsykakiy(action):
     'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n "Целуй крест! Да ты же хуже грешника-рукоблуда!"'
