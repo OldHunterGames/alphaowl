@@ -327,11 +327,11 @@ label lbl_activate_ap:
                         'Сблизиться' if not target.relations.is_max('distance', '+'):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
-                            $ target.relations(player).change('distance', '+')
+                            $ target.relations(player).change('distance', '-')
                         'Формализовать отношения' if not target.relations(player).is_max('distance', '-'):
                             $ player.ap -= 1
                             $ target.use_token('accordance')
-                            $ target.relations(player).change('distance', '-')
+                            $ target.relations(player).change('distance', '+')
                         'Передумать':
                             jump lbl_activate_ap    
                 'Раздор (Antagonism)' if target.has_token("antagonism"):
@@ -352,7 +352,7 @@ label lbl_activate_ap:
                         'Формализовать отношения' if not target.relations(player).is_max('distance', '-'):
                             $ player.ap -= 1
                             $ target.use_token('antagonism')
-                            $ target.relations(player).change('distance', '-')
+                            $ target.relations(player).change('distance', '+')
                         'Передумать':
                             jump lbl_activate_ap                    
                 'Доминирование (conquest)' if target.has_token("conquest"):
@@ -370,7 +370,7 @@ label lbl_activate_ap:
                             $ player.ap -= 1
                             $ target.use_token('conquest')
                             $ target.relations(player).change('fervor', '+')      
-                        'Теперь это личное' if not target.relations(player).is_max('distance', '+'):
+                        'Теперь это личное' if not target.relations(player).is_max('distance', '-'):
                             $ player.ap -= 1
                             $ target.use_token('conquest')
                             $ target.relations(player).change('distance', '+')
@@ -391,7 +391,7 @@ label lbl_activate_ap:
                             $ player.ap -= 1
                             $ target.use_token('convention')
                             $ target.relations(player).change('fervor', '-')  
-                        'Формализовать отношения' if not target.relations(player).is_max('distance', '-'):
+                        'Формализовать отношения' if not target.relations(player).is_max('distance', '+'):
                             $ player.ap -= 1
                             $ target.use_token('convention')
                             $ target.relations(player).change('distance', '-')
@@ -412,7 +412,7 @@ label lbl_activate_ap:
                             $ player.ap -= 1
                             $ target.use_token('contribution')
                             $ target.relations(player).change('fervor', '+')      
-                        'Сблизиться' if not target.relations(player).is_max('distance', '+'):
+                        'Сблизиться' if not target.relations(player).is_max('distance', '-'):
                             $ player.ap -= 1
                             $ target.use_token('contribution')
                             $ target.relations(player).change('distance', '+')
