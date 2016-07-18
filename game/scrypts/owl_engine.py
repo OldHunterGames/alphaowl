@@ -34,7 +34,7 @@ def is_needs_used(target, token, needs):
     return False
 def get_max_need(target, *args):
     maxn_name = None
-    maxn = None
+    maxn = 0
     needs = target.get_needs()
     for arg in args:
         if arg in needs.keys():
