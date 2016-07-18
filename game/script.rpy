@@ -529,7 +529,7 @@ screen sc_mood_recalculation_result(target=None):
                 txt_bad.append(text)
             for i in info.anxiety:
                 text = encolor_text(i, 0)
-                txt_bad.append(i)
+                txt_bad.append(text)
         vbox:
             xalign 0.0
             yalign 0.0

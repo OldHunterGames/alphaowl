@@ -608,7 +608,7 @@ class Person(object):
         dlen = len(dissapointment)
         happines.sort()
         dissapointment.sort()
-        renpy.call_in_new_context('mood_recalc_result', dissapointments_inf, satisfactions_inf, anxiety, determination, True, self)
+        renpy.call_in_new_context('mood_recalc_result', dissapointments_inf, satisfactions_inf, determination, anxiety, True, self)
         if hlen > dlen:
             dissapointment = []
             for i in range(dlen):
