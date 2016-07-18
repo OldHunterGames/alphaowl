@@ -50,7 +50,7 @@ label lbl_target_menu:
 label lbl_make_shedule:
         
     $ schedule_major = dname[target.job]
-    # $ schedule_minor = dname[target.minor]
+    $ schedule_minor = dname[target.minor]
     
     menu:
         "По вечерам: [schedule_major]":
@@ -126,9 +126,8 @@ label lbl_shedule_major:
         'Работать гей-шлюхой (секс, хороший заработок)' if target == child:
             $ target.schedule.add_action('job_whore', False)                
         "Назад":
-            call lbl_universal_menu
+            call lbl_make_shedule
             
-    jump lbl_target_menu
     return
         
 label lbl_shedule_minor:
