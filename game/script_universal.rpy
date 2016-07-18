@@ -58,7 +58,7 @@ label lbl_make_shedule:
                 call lbl_son_major
             else:
                 call lbl_shedule_major
-        "В выходные: [shedule_minor]":
+        "В выходные: [schedule_minor]":
             call lbl_shedule_minor
         "Общение: [communication]" if player != mom:
             call lbl_universal_interaction
@@ -163,13 +163,13 @@ label lbl_special_discipline:
 label lbl_skill_train:
     menu:
         'ЗОЖ' if not target.skill('sport').training:
-            $ target.schedule.add_action('train_sport')            
+            $ target.schedule.add_action('job_sport')            
         'Социоблядство' if not target.skill('conversation').training:
-            $ target.schedule.add_action('train_conversation')   
+            $ target.schedule.add_action('job_conversation')   
         'Быдлокодинг' if not target.skill('coding').training:
-            $ target.schedule.add_action('train_coding')   
+            $ target.schedule.add_action('job_coding')   
         'Пикап' if not target.skill('sex').training:
-            $ target.schedule.add_action('train_sex')               
+            $ target.schedule.add_action('job_sex')               
         'Назад':
             jump lbl_shedule_major
             

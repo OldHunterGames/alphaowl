@@ -367,7 +367,7 @@ label shd_minor_dacha(action):
     '[name] проводит все выходные на даче, словно негр на плантациях. Скучно, всё тело болит и никакой свободы или новизны. Зато своё, с огрода, витамины (продукты +[nyam]) '
     return
     
-label shd_train_sport(action):
+label shd_job_sport(action):
     python:
         actor = action.actor
         name = actor.name()
@@ -381,7 +381,7 @@ label shd_train_sport(action):
   
     return
 
-label shd_train_coding(action):
+label shd_job_coding(action):
     python:
         actor = action.actor
         name = actor.name()
@@ -395,7 +395,7 @@ label shd_train_coding(action):
   
     return
 
-label shd_train_conversation(action):
+label shd_job_conversation(action):
     python:
         actor = action.actor
         name = actor.name()
@@ -409,7 +409,7 @@ label shd_train_conversation(action):
   
     return
 
-label shd_train_sex(action):
+label shd_job_sex(action):
     python:
         actor = action.actor
         name = actor.name()

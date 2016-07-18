@@ -11,6 +11,10 @@ init python:
     dname['whore'] = 'работать гейшлюхой'
     dname['supervise'] = 'воспитывать Сычика'
     dname['pusher'] = 'тёмные мутки'
+    dname['sport'] = 'обучение ЗОЖ'
+    dname['coding'] = 'обучение быдлокодингу'
+    dname['conversation'] = 'обучение общению'
+    dname['sex'] = 'обучение сексу'    
 
     dname['nap'] = 'отдых'
     dname['fun'] = 'развлечения'
