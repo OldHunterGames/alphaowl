@@ -264,7 +264,7 @@ class Engine(object):
         check = getattr(target, d[token])
         if target.vitality < 1:
             check -= 1
-        if target.mood < 1:
+        if target.mood < 0:
             check -= 1
         check += (3-get_max_need(target, *args)[0])
         check -= target.stance(self.player).value
