@@ -56,6 +56,8 @@ label subloc_chores_sabotage:
     return
 
 label subloc_chores_perform:
+    actor = action.actor
+    name = actor.name()    
     $ game.money += 10
     "[name] занимается делами по хозяйству. Тяжелый ручной труд сэкономил нам аж целых 10 тенгэ!"
 
@@ -358,6 +360,7 @@ label shd_minor_chat(action):
 
 label shd_minor_dacha(action):
     python:
+        name = action.actor.name()
         action.actor.amusement.set_tension()
         action.actor.wellness.set_tension()
         action.actor.independence.set_tension()        
