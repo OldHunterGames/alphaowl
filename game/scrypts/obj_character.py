@@ -307,10 +307,17 @@ class Person(object):
     @property
     def job(self):
         job = self.schedule.find_by_slot('job')
-        if not job:
+        if job == None:
             return 'idle'
         else:
             return job.name
+    @property
+    def minor_action(self):
+        minor = self.schedule.find_by_slot('minor')
+        if minor == None:
+            return 'idle'
+        else:
+            return minor.name
 
 
     def show_job(self):
