@@ -50,10 +50,8 @@ class ScheduledAction(object):
 
 
     def add_special_list_value(self, key, value):
-        try:
+        if value not in self.special_values[key]:
             self.special_values[key].append(value)
-        except KeyError:
-            self.special_values[key] = [value]
 
 
 
@@ -65,12 +63,12 @@ class Schedule(object):
     def add_action(self, action, single=True, special_values=None):
         if action in actions.keys():
             act = ScheduledAction(self.owner, actions[action][2], actions[action][0], actions[action][1], action, single, special_values)
+            
             if act.slot != None:
                 for a in self.actions:
-                    if a.slot == act.slot and a.lbl != act.lbl:
+                    if a.slot == act.slot:
                         self.remove_by_handle(a)
-            if act in self.actions:
-                return
+            
             self.actions.append(act)
         else:
             raise Exception("add_action can't add %s. It isn't registered or maybe you should remove 'shd' at begining")

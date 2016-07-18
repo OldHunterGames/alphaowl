@@ -76,11 +76,15 @@ label lbl_shedule_major:
             menu:
                 'Кто этим займётся? Распиание основного времени этого персонажа изменится на "Воспитание". Если вы измените потом расписание, то воспитания не произойдёт.'
                 'Маман':
-                    $ mom.schedule.add_action('job_supervise', False)
+                    python:
+                        if mom.job != 'supervise':
+                            mom.schedule.add_action('job_supervise', False)
                     $ mom.job_object().add_special_list_value('slaves', child)
                     $ actor = mom
                 'BATYA':
-                    $ batya.schedule.add_action('job_supervise', False)
+                    python:
+                        if batya.job != 'supervise':
+                            batya.schedule.add_action('job_supervise', False)
                     $ batya.job_object().add_special_list_value('slaves', child)
                     $ actor = batya
                 'Компетентные органы':
@@ -90,11 +94,11 @@ label lbl_shedule_major:
             menu:
                 'Какой подход выборать?'
                 'Запугивание':
-                    $ moral_burden = ['evil', 'intense', 'chaotic']
+                    $ moral_burden = ['evil', 'ardent', 'chaotic']
                     $ token = 'conquest'
                     jump lbl_torture_choose
                 'Наказание':
-                    $ moral_burden = ['evil', 'intense', 'lawful']
+                    $ moral_burden = ['evil', 'ardent', 'lawful']
                     $ token = 'convention'
                     jump lbl_torture_choose
                 'Поощрение':
