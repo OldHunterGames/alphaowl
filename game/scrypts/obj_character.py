@@ -742,7 +742,7 @@ class Person(object):
         for need in self.get_all_needs().values():
             need.reset()
     def rest(self):
-        self.tick_conditions()
+        self.conditions = []
         self.modifiers.tick_time()
         self.tick_features()
         self.schedule.use_actions()
@@ -1047,28 +1047,7 @@ class Person(object):
             self.selfesteem += val
             if val > 0:
                 val = 0
-    
 
-    def add_condition(self, name, time=1):
-        if not name in self.conditions:
-            self.conditions.append((name, time))
-        return
-
-    def has_condition(self, name):
-        for cond in self.conditions:
-            if name in cond:
-                return True
-        return False
-
-
-    def tick_conditions(self):
-        for cond in self.conditions:
-            try:
-                cond[1] -= 1
-                if cond[1] < 1:
-                    self.conditions.remove(cond)
-            except TypeError:
-                pass
 
     def enslave(self, target):
         target.master = self
@@ -1125,3 +1104,21 @@ class Person(object):
         if self.relations_tendency.values().count(n) > 1:
             return None
         return token
+
+
+    def add_condition(self, condition):
+        if not self.has_condition(condition):
+            self.conditions.append(condition)
+
+
+    def has_condition(self, condition):
+        if condition in self.conditions:
+            return True
+        return False
+
+
+    def remove_condition(self, condition):
+        try:
+            self.conditions.remove(condition)
+        except ValueError:
+            pass
