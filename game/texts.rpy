@@ -10,6 +10,8 @@ init python:
     dname['porter'] = 'работать грузчиком'    
     dname['whore'] = 'работать гейшлюхой'
     dname['supervise'] = 'воспитывать Сычика'
+    dname['torture'] = 'страдать'
+    dname['pleasing'] = 'наслаждаться'    
     dname['pusher'] = 'тёмные мутки'
     dname['sport'] = 'обучение ЗОЖ'
     dname['coding'] = 'обучение быдлокодингу'

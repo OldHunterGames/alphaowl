@@ -152,11 +152,11 @@ label lbl_special_discipline:
         'Батюшка Павсикакий (24 бутылки кагора)' if not churched:
             $ game.res_add_consumption("discipline", 'drugs', 24, time=1)
             $ special_values = {}
-            $ target.schedule.add_action('ctoken_church', special_values=special_values)
+            $ target.schedule.add_action('job_church', special_values=special_values)
         '"Кохана ми вбиваємо дітей" (300 тенгэ)' if not kohaned:
             $ game.res_add_consumption("discipline", 'money', 300, time=1)
             $ special_values = {}
-            $ target.schedule.add_action('ctoken_kohana', special_values=special_values)            
+            $ target.schedule.add_action('job_kohana', special_values=special_values)            
     jump lbl_shedule_major    
     return
 
@@ -197,9 +197,9 @@ label lbl_torture_choose:
             
     $ special_values = {'skill': skill, 'torturer': actor, 'token': token, 'target_tension': target_tension, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
-    $ target.schedule.add_action('ctoken_torture', special_values=special_values)
+    $ target.schedule.add_action('job_torture', special_values=special_values)
     
-    jump lbl_universal_menu
+    jump lbl_target_menu
     return
 
 label lbl_pleasing_choose:
@@ -224,9 +224,9 @@ label lbl_pleasing_choose:
     
     $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
-    $ target.schedule.add_action('ctoken_pleasing', special_values=special_values)
+    $ target.schedule.add_action('job_pleasing', special_values=special_values)
     
-    jump lbl_shedule_major
+    jump lbl_target_menu
     return
     
 label lbl_accommodation:

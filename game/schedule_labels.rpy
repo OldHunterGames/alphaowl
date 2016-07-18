@@ -257,7 +257,7 @@ label shd_living_jailed(action):
     #'[name] живёт в чулане' 
     return  
 
-label shd_ctoken_torture(action):
+label shd_job_torture(action):
     python:
         failed = False
         if is_needs_used(action.actor, action.special_values['token'], action.special_values['target_tension']):
@@ -283,7 +283,7 @@ label shd_ctoken_torture(action):
     #"[txt]"
     return  
 
-label shd_ctoken_pleasing(action):
+label shd_job_pleasing(action):
     python:
         failed = False
         if is_needs_used(action.actor, action.special_values['token'], action.special_values['target_statisfy']):
@@ -309,7 +309,7 @@ label shd_ctoken_pleasing(action):
     "[txt]"
     return  
     
-label shd_discipline_pavsykakiy(action):
+label shd_job_pavsykakiy(action):
     'Батюшка павсикакий накатывает стопарик\n @\n "Мать уважать надо, отрок!"\n @\n "Целуй крест! Да ты же хуже грешника-рукоблуда!"'
     python:
         churched = True
@@ -319,7 +319,7 @@ label shd_discipline_pavsykakiy(action):
             action.actor.add_token('antagonism')
     return       
         
-label shd_discipline_kohana(action):
+label shd_job_kohana(action):
     'Антоша Сычов до сих пор писает в кровать\n @\nМы это исправим дорогие телезрители\n @\nСмотрите в эту субботу\n @\n"Кохана, ми вбиваємо дітей".'
     python:
         kohaned = True
