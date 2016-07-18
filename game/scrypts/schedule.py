@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 from random import *
+import collections
+
 import renpy.store as store
 import renpy.exports as renpy
 actions = {}
@@ -32,7 +34,7 @@ class ScheduledAction(object):
         self.store_name = store_name
         self.lbl = lbl
         self.single = single
-        self.special_values = {}
+        self.special_values = collections.defaultdict(list)
         if special_values:
             for key in special_values:
                 self.special_values[key] = special_values[key]
@@ -65,8 +67,8 @@ class Schedule(object):
             act = ScheduledAction(self.owner, actions[action][2], actions[action][0], actions[action][1], action, single, special_values)
             if act.slot != None:
                 for a in self.actions:
-                    if a.slot == act.slot:
-                        self.actions.remove(a)
+                    if a.slot == act.slot and a.lbl != act.lbl:
+                        self.remove_by_handle(a)
             if act in self.actions:
                 return
             self.actions.append(act)
