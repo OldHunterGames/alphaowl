@@ -334,13 +334,13 @@ class Person(object):
                     try:
                         for i in l:
                             s += '%s, '%(i.name())
-                    except KeyError:
+                    except AttributeError:
                         for i in l:
                             s += '%s, '%(i)
                 except TypeError:
                     try:
                         s += '%s, '%(v.name())
-                    except KeyError:
+                    except AttributeError:
                         s += '%s, '%(v)
                 if k not in job.special_values.items()[-1]:
                     s += '\n'
