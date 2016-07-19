@@ -4,12 +4,13 @@ label lbl_universal_menu:
     $ consumption_provision = game.resource_consumption('provision')
     $ consumption_drugs = game.resource_consumption('drugs')
     $ money_consumption = game.resource_consumption('money')
+    if player == mom:
+        $ txt = 'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs]) \nЖратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя. Урезайте потребление.'
+    else:
+        $ txt = 'Доступные варианты действий зависят от отношения хозяина дома - мамки. При улучшении отношений станет доступно больше вариантов.'
+    
     menu:
-        if player = mom:
-            'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs]) \nЖратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя. Урезайте потребление.'
-        else:
-            'Доступные варианты действий зависят от отношения хозяина дома - мамки. При улучшении отношений станет доступно больше вариантов.'
-        
+        "[txt]"
         "Взаимодействия с...":
             $ target = renpy.call_screen('sc_choose_character')
             call lbl_info_new(target)
