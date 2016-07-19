@@ -942,10 +942,6 @@ class Person(object):
         return stance
 
 
-    def add_reward(self, name, need):
-        self.rewards.append((name, need))
-    
-
     def use_token(self, token):
         if self.has_token(token):
             self.tokens.remove(token)
@@ -965,12 +961,13 @@ class Person(object):
         return False
 
     
-    def add_token(self, token):
+    def add_token(self, token, free=False):
         if not self.has_token(token):
             self.tokens.append(token)
             if token not in ('accordance', 'antagonism'):
+                if not free:
+                    self.player_relations().stability += 1
                 self.relations_tendency[token] += 1
-                self.player_relations().stability += 1
             renpy.call_in_new_context('lbl_notify', self, token)
 
 
