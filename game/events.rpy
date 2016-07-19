@@ -13,14 +13,14 @@ label init_events:
     # $ register_event('evn_dvach_fap')
     # $ register_event('evn_dvach_olgino')
 
-    # $ register_event('evn_do_practice_programm_chat')
-    # $ register_event('evn_do_practice_programm')
-    # $ register_event('evn_do_practice_labs_chat')
-    # $ register_event('evn_do_practice_labs')
-    # $ register_event('evn_do_practice_military_chat')
-    # $ register_event('evn_do_practice_military')
-    # $ register_event('evn_do_gym')
-    # $ register_event('evn_do_major')
+    $ register_event('evn_do_practice_programm_chat')
+    $ register_event('evn_do_practice_programm')
+    $ register_event('evn_do_practice_labs_chat')
+    $ register_event('evn_do_practice_labs')
+    $ register_event('evn_do_practice_military_chat')
+    $ register_event('evn_do_practice_military')
+    $ register_event('evn_do_gym')
+    $ register_event('evn_do_major')
 
     $ register_event('evn_bugurt_gazeta') 
     $ register_event('evn_bugurt_dildak') 
@@ -122,7 +122,9 @@ label evn_do_major(event):
         if result[0]:
             txt = "Берешь себя за задницу покрепче \n @ \n Делаешь курсач как надо  \n @ \n Потом ещё неделю ловишь научрука... "
             game.studies.remove('major')        
-            event.target.skill('coding').get_expirience(3)
+            event.target.skill('coding').get_expirience(4)
+            actor.merit = 5
+            actor.add_condition('merit')
         else:
             txt = "Твёрдо решаешь засесть за курсовую \n @ \n Что-то сложновато  \n @ \n Завтра сделаю  \n @ \n За неделю - два параграфа..."
    
@@ -142,17 +144,21 @@ label evn_do_gym(event):
         return False
         
     'Зачёт по физре'
-    $ moral = event.target.moral_action('ardent') 
-    $ motivation = event.target.motivation('sport', [('ambition', 2),('comfort', -1),('activity', 3)], event.target, moral)
-    $ result = game.skillcheck(event.target, 'sport', motivation, moral)    
-   
     python:
-       if result < 3:
-           txt = "Лазаем по канату \n @ \n Ебнулся на копчик  \n @ \n Группа ржёт как стадо гиен"
-       else:
-           txt = "Четко подтягиваешься \n @ \n Стометровка в нормативе  \n @ \n Фазген-семпай хвалит - ай, братуха-борцуха!"
-           game.studies.remove('gym')       
-           event.target.skill('sports').get_expirience(1)
+        actor = event.target
+        threshold = 2
+        difficulty = 1 
+        morality = actor.check_moral('ardent')
+        result = game.threshold_skillcheck(actor = actor, skill = 'sport', difficulty = difficulty, tense_needs=['comfort'], satisfy_needs=['activity','ambition'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        
+        if not result[0]:
+            txt = "Лазаем по канату \n @ \n Ебнулся на копчик  \n @ \n Группа ржёт как стадо гиен"
+            actor.add_condition('sin')
+        else:
+            txt = "Четко подтягиваешься \n @ \n Стометровка в нормативе  \n @ \n Фазген-семпай хвалит - ай, братуха-борцуха!"
+            game.studies.remove('gym')       
+            event.target.skill('sports').get_expirience(2)
+            actor.add_condition('merit')
    
     '[txt]'
    
@@ -170,17 +176,21 @@ label evn_do_practice_military(event):
         return False
    
     'Зачёт на военной кафедре (строевая)'
-    $ moral = event.target.moral_action('lawful')
-    $ motivation = event.target.motivation('sport', [('activity', 2), ('amusement', -2), ('comfort', -1)], event.target, moral) 
-    $ result = game.skillcheck(event.target, 'sport', motivation, moral) 
-   
     python:
-       if result < 3:
-           txt = "В колонну по двое \n @ \n Равнение на знамя \n @ \n Отдавил ноги впереди идущему \n @ \n Из-за тебя вся группа идет на пересдачу"
-       else:
-           txt = "Вспоминаешь видос про парад в лучшей Корее \n @ \n В голове играет hellmarch \n @ \n Шаг печаетается сам собой "
-           game.studies.remove('military')  
-           event.target.skill('sports').get_expirience(1)
+        actor = event.target
+        threshold = 2
+        difficulty = 1 
+        morality = actor.check_moral('lawful')
+        result = game.threshold_skillcheck(actor = actor, skill = 'sport', difficulty = difficulty, tense_needs=['comfort'], satisfy_needs=['activity','ambition'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        
+        if not result[0]:
+            txt = "В колонну по двое \n @ \n Равнение на знамя \n @ \n Отдавил ноги впереди идущему \n @ \n Из-за тебя вся группа идет на пересдачу"
+            actor.add_condition('sin')
+        else:
+            txt = "Вспоминаешь видос про парад в лучшей Корее \n @ \n В голове играет hellmarch \n @ \n Шаг печаетается сам собой "
+            game.studies.remove('military')  
+            event.target.skill('sports').get_expirience(2)
+            actor.add_condition('merit')
    
     '[txt]'
    
@@ -198,17 +208,22 @@ label evn_do_practice_military_chat(event):
         return False
    
     'Зачёт на военной кафедре (общение)'
-    $ moral = event.target.moral_action('chaotic')
-    $ motivation = event.target.motivation('communication', [('communication', 1)], event.target, moral) 
-    $ result = game.skillcheck(event.target, 'communication', motivation, moral)
    
     python:
-       if result < 4:
-           txt = "Пытаешься подружиться с подполканом \n @ \n А он вообще контуженный \n @ \n По итогам разговора - драишь до вечера очки"
-       else:
-           txt = "Расспрашиваешь старого подполкана про боевой опыт \n @ \n Он пускает скупую слезу по авганским друзьям \n @ \n И рисует тебе зачёт автоматом"
-           game.studies.remove('military')    
-           event.target.skill('conversation').get_expirience(2)
+        actor = event.target
+        threshold = 2
+        difficulty = 2 
+        morality = actor.check_moral('chaotic')
+        result = game.threshold_skillcheck(actor = actor, skill = 'communication', difficulty = difficulty, tense_needs=[], satisfy_needs=['communication'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        
+        if not result[0]:
+            txt = "Пытаешься подружиться с подполканом \n @ \n А он вообще контуженный \n @ \n По итогам разговора - драишь до вечера очки"
+            actor.add_condition('sin')
+        else:
+            txt = "Расспрашиваешь старого подполкана про боевой опыт \n @ \n Он пускает скупую слезу по авганским друзьям \n @ \n И рисует тебе зачёт автоматом"
+            game.studies.remove('military')    
+            event.target.skill('conversation').get_expirience(3)
+            actor.add_condition('merit')
    
     '[txt]'
    
@@ -226,17 +241,22 @@ label evn_do_practice_labs(event):
         return False
         
     'Лабораторная по программированию (брутфорс)'
-    $ moral = event.target.moral_action('lawful', 'timid')
-    $ motivation = event.target.motivation('coding', [('ambition', 3),('amusement', -2)], event.target, moral) 
-    $ result = game.skillcheck(event.target, 'coding', motivation, moral)
    
     python:
-       if result < 3:
-           txt = "Пытаешься понять как это вообще работает \n @ \n Создаёшь велосипед на костыльной тяге  \n @ \n Но у тебя даже баги не фурычат"
-       else:
-           txt = "Вспоминаешь чему вас учили \n @ \n Сдаёшь профессору кривое но рабочее решение  \n @ \n А он и не против!"
-           game.studies.remove('labs')     
-           event.target.skill('coding').get_expirience(1)
+        actor = event.target
+        threshold = 2
+        difficulty = 1 
+        morality = actor.check_moral('lawful', 'timid')
+        result = game.threshold_skillcheck(actor = actor, skill = 'coding', difficulty = difficulty, tense_needs=['amusement'], satisfy_needs=['ambition'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        
+        if not result[0]:
+            txt = "Пытаешься понять как это вообще работает \n @ \n Создаёшь велосипед на костыльной тяге  \n @ \n Но у тебя даже баги не фурычат"
+            actor.add_condition('sin')
+        else:
+            txt = "Вспоминаешь чему вас учили \n @ \n Сдаёшь профессору кривое но рабочее решение  \n @ \n А он и не против!"
+            game.studies.remove('labs')     
+            event.target.skill('coding').get_expirience(2)
+            actor.add_condition('merit')
    
     '[txt]'
    
@@ -259,12 +279,20 @@ label evn_do_practice_labs_chat(event):
     $ result = game.skillcheck(event.target, 'communication', motivation, moral)
    
     python:
-       if result < 4:
-           txt = "Просишь у ботанов решение \n @ \n Послан нахуй  \n @ \n Даже ебаные задроты считают что они лучше тебя"
-       else:
-           txt = "Среди ботанов все свои \n @ \n Один из них такой же некрофил как профессор \n @ \n Можно самому и не напрягаться"
-           game.studies.remove('labs')  
-           event.target.skill('conversation').get_expirience(2)
+        actor = event.target
+        threshold = 3
+        difficulty = 2 
+        morality = actor.check_moral('chaotic', 'ardent')
+        result = game.threshold_skillcheck(actor = actor, skill = 'communication', difficulty = difficulty, tense_needs=['ambition'], satisfy_needs=['communication'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        
+        if not result[0]:
+            txt = "Просишь у ботанов решение \n @ \n Послан нахуй  \n @ \n Даже ебаные задроты считают что они лучше тебя"
+            actor.add_condition('sin')
+        else:
+            txt = "Среди ботанов все свои \n @ \n Один из них такой же некрофил как профессор \n @ \n Можно самому и не напрягаться"
+            game.studies.remove('labs')  
+            event.target.skill('conversation').get_expirience(3)
+            actor.add_condition('merit')
    
     '[txt]'
    
@@ -286,12 +314,20 @@ label evn_do_practice_programm(event):
     $ result = game.skillcheck(event.target, 'coding', motivation, moral)    
    
     python:
-       if result < 4:
-           txt = "Весь день носишь ящики с перфокартами \n @ \n Роняешь один себе на ногу  \n @ \n Ренген показывает трещину \n @ \n  Неделю свободен"
-       else:
-           txt = "Скармлваешь Эльбрусу ящик перфокарт \n @ \n Понимаешь что это прикольно \n @ \n Как рулон бумаги в унитаз смыть  \n @ \n Руководитель подмахивает зачёт за усидчивость"
-           game.studies.remove('practice')   
-           event.target.skill('coding').get_expirience(2)
+        actor = event.target
+        threshold = 3
+        difficulty = 2 
+        morality = actor.check_moral('lawful', 'timid')
+        result = game.threshold_skillcheck(actor = actor, skill = 'coding', difficulty = difficulty, tense_needs=['amusement'], satisfy_needs=['ambition'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        
+        if not result[0]:
+            txt = "Весь день носишь ящики с перфокартами \n @ \n Роняешь один себе на ногу  \n @ \n Ренген показывает трещину \n @ \n  Неделю свободен"
+            actor.add_condition('sin')
+        else:
+            txt = "Скармлваешь Эльбрусу ящик перфокарт \n @ \n Понимаешь что это прикольно \n @ \n Как рулон бумаги в унитаз смыть  \n @ \n Руководитель подмахивает зачёт за усидчивость"
+            game.studies.remove('practice')   
+            event.target.skill('coding').get_expirience(3)
+            actor.add_condition('merit')
    
     '[txt]'
    
@@ -313,12 +349,20 @@ label evn_do_practice_programm_chat(event):
     $ result = game.skillcheck(event.target, 'communication', motivation, moral)
    
     python:
-       if result < 3:
-           txt = "Коллектив в перерыве расслабляется \n @ \n Пьют технические жидкости \n @ \nСблеванул \n @ \ncлабоват ещё для взрослой работы"
-       else:
-           txt = "Забухал с коллективом в подсобке \n @ \n Рассказал охуительных историй с учёбы \n @ \n Подписали весь лист практики на год вперёд"
-           game.studies.remove('practice')        
-           event.target.skill('conversation').get_expirience(1)
+        actor = event.target
+        threshold = 2
+        difficulty = 1 
+        morality = actor.check_moral('chaotic', 'ardent')
+        result = game.threshold_skillcheck(actor = actor, skill = 'communication', difficulty = difficulty, tense_needs=[], satisfy_needs=['communication'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        
+        if not result[0]:
+            txt = "Коллектив в перерыве расслабляется \n @ \n Пьют технические жидкости \n @ \nСблеванул \n @ \ncлабоват ещё для взрослой работы"
+            actor.add_condition('sin')
+        else:
+            txt = "Забухал с коллективом в подсобке \n @ \n Рассказал охуительных историй с учёбы \n @ \n Подписали весь лист практики на год вперёд"
+            game.studies.remove('practice')        
+            event.target.skill('conversation').get_expirience(2)
+            actor.add_condition('merit')
    
     '[txt]'
    
