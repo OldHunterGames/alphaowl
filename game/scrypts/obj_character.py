@@ -416,10 +416,12 @@ class Person(object):
         val = 0
         ll = [i for i in l if i < 0]
         bad = len(ll)
-        ll = list(set(ll))
         l.sort()
         for i in range(bad):
-            l.pop(0)
+            try:
+                l.pop(0)
+            except IndexError:
+                return 0
         while len(l) > 0:
             num = min(l)
             if num > val:
@@ -523,11 +525,14 @@ class Person(object):
   
 
     def skill(self, skillname):
+        if skillname in self.skills:
+            return skillname
         skill = None
         for i in self.skills:
             if i.name == skillname:
                 skill = i
                 return skill
+            
         if skillname in skills_data:
             skill = Skill(self, skillname, skills_data[skillname])
         else:
