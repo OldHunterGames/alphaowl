@@ -325,6 +325,9 @@ class Engine(object):
             for need in satisfy_needs:
                 getattr(actor, need).satisfaction = result
             actor.use_skill(skill)
+            if actor == self.player and beneficiar == actor.master:
+                if result > actor.merit:
+                    actor.merit = result
         return result
 
         
