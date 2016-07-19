@@ -325,7 +325,7 @@ label shd_job_slavepleasing(action):
     python:
         master = action.actor.master
         threshold = action.actor.relations(master).stability
-        morality = action.actor.check_moral(action.actor, *action.special_values['moral_burden'])
+        morality = action.actor.check_moral(master, *action.special_values['moral_burden'])
         difficulty =  game.token_difficulty(master, action.special_values['token'], *action.special_values['target_statisfy']) 
         result = game.threshold_skillcheck(action.actor, action.special_values['skill'], difficulty, action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality, threshold)
         if result[0]:
@@ -350,7 +350,7 @@ label shd_job_suffer(action):
     python:
         master = action.actor.master
         threshold = action.actor.relations(master).stability
-        morality = action.actor.check_moral(master, *action.special_values['moral_burden'])
+        morality = master.moral_action(action.actor, *action.special_values['moral_burden'])
         difficulty =  game.token_difficulty(master, action.special_values['token'], *action.special_values['self_tension']) 
         result = game.threshold_skillcheck(action.actor, action.special_values['skill'], difficulty, action.special_values['self_tension'], [], action.special_values['beneficiar'], 0, threshold)
         if result[0]:
