@@ -5,7 +5,7 @@ label shd_None_template(character):
 
 label shd_general_accounting(character):
     # Allways active. Calculates minor issues.
-    if player = child:
+    if player == child:
         if salary_timer == 0:
             'BATYA получает зарплату (+250 тенгэ). Следующая зарплата через месяц (4 недели).'
             $ game.money += 250
