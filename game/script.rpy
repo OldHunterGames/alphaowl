@@ -150,7 +150,6 @@ label label_quiz:
         child.restrictions.append('tobacco')
         child.restrictions.append('weed')
         child.appearance = 'normal'
-        child.schedule.add_action('outfit_normal')    
         shedule_minor = 'безделье'
         child.ration['food_type'] = "cousine" 
         game.res_add_consumption('child_food', 'provision', child.get_food_consumption, None)

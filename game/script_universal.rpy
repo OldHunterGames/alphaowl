@@ -112,18 +112,10 @@ label lbl_shedule_major:
         'Подвергаться воспитанию' if target == child and player == child:
             $ beneficiar = target.master
             $ code = None
+            if mom.stance(player).value == -1 and mom.relations(child).stability == 0:
+                jump lbl_first_impression
             menu:
-                'Ну и кто тебя решил воспитать?'
-                'Маман':
-                    $ actor = mom
-                'BATYA':
-                    $ actor = batya
-                'Компетентные органы':
-                    jump lbl_special_discipline
-                'Передумать':
-                    jump lbl_shedule_major
-            menu:
-                'Какой подход выборать?'
+                'Что будем делать?'
                 'Страдать и плакать':
                     $ moral_burden = ['ardent', 'chaotic']
                     $ token = 'conquest'
@@ -208,6 +200,80 @@ label lbl_skill_train:
     jump lbl_target_menu
     return
 
+label lbl_first_impression:
+    menu:
+        'Мамка относится к Сычуле просто невыносимо. Что будем делать?'
+        'Макимальная агрессия и конфликт':
+            $ token = 'conquest'
+            $ txt = 'Первое впечатление - враждебное. Нейтральные тенденции мамки изменены на страсть и злобу. Заработан жетон доминирования.'
+        'Разумный и взвешенный подход':
+            $ token = 'convention'
+            $ txt = 'Первое впечатление - рациональное. Нейтральные тенденции мамки изменены на вкрадчивость и порядочность. Заработан жетон сотрудничества.'
+        'Любить маму несмотря ни на что':
+            $ token = 'contribution'
+            $ txt = 'Первое впечатление - мягкое. Нейтральные тенденции мамки изменены на близость и доброту. Заработан жетон благодарности.' 
+    $ special_values = {'token': token, 'txt': txt}        
+    $ target.schedule.add_action('job_impress', special_values=special_values)
+            
+    jump lbl_make_shedule
+    return
+
+label lbl_free_stance:
+    menu:
+        'Мамка имеет слишком много власти. Идти против неё значит испортить себе жизнь. Если сдаться - есть надежда смягчить её.'
+        'Обещать быть послушным':
+            if player.master.alignment.orderliness > 0 or child.attitude_tendency() == 'convention':
+                $ player.ap -= 1
+                $ mom.stance(child).value = 0  
+                "Сычик нашёл правильный подход и теперь у них с мамкой терпимые отношения... но расслабляться рано."    
+            else:
+                $ player.ap -= 1
+                "Мамка непреклонна. Надо найти к ней другой подход..."   
+        'Подстраиваться под настроение мамки':
+            if player.master.alignment.orderliness < 0 or child.attitude_tendency() == 'contribution':
+                $ player.ap -= 1
+                $ mom.stance(child).value = 0  
+                "Сычик нашёл правильный подход и теперь у них с мамкой терпимые отношения... но расслабляться рано."
+            else:
+                $ player.ap -= 1
+                "Мамка непреклонна. Надо найти к ней другой подход..." 
+        'Доказать свою полезность':
+            if player.master.alignment.activity > 0 or child.attitude_tendency() == 'conquest':
+                $ player.ap -= 1
+                $ mom.stance(child).value = 0  
+                "Сычик нашёл правильный подход и теперь у них с мамкой терпимые отношения... но расслабляться рано."
+            else:
+                $ player.ap -= 1
+                "Мамка непреклонна. Надо найти к ней другой подход..." 
+        'Покориться и смириться':
+            if player.master.alignment.activity < 0 or child.attitude_tendency() == 'convention':
+                $ player.ap -= 1
+                $ mom.stance(child).value = 0  
+                "Сычик нашёл правильный подход и теперь у них с мамкой терпимые отношения... но расслабляться рано."
+            else:
+                $ player.ap -= 1
+                "Мамка непреклонна. Надо найти к ней другой подход..." 
+        'Униженно умолять о пощаде':
+            if player.master.alignment.morality < 0 or child.attitude_tendency() == 'conquest':
+                $ player.ap -= 1
+                $ mom.stance(child).value = 0  
+                "Сычик нашёл правильный подход и теперь у них с мамкой терпимые отношения... но расслабляться рано."
+            else:
+                $ player.ap -= 1
+                "Мамка непреклонна. Надо найти к ней другой подход..." 
+        'Вести себя хорошо':
+            if player.master.alignment.morality > 0 or child.attitude_tendency() == 'contribution':
+                $ player.ap -= 1
+                $ mom.stance(child).value = 0  
+                "Сычик нашёл правильный подход и теперь у них с мамкой терпимые отношения... но расслабляться рано."
+            else:
+                $ player.ap -= 1
+                "Мамка непреклонна. Надо найти к ней другой подход..."                     
+        'Nyet, Molotoff!':
+            jump lbl_shedule_major
+                
+    return
+
 label lbl_torture_choose:
     menu:
         'Выберите основной способ давления.'
@@ -280,9 +346,9 @@ label lbl_suffer_choose:
             $ skill = 'conversation'
             $ self_tension = ['comfort', 'amusement', 'activity'] 
             
-    $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'self_tension': self_tension, 'actor_tension': actor_tension,
+    $ special_values = {'skill': skill, 'executor': beneficiar, 'token': token, 'self_tension': self_tension, 'actor_tension': actor_tension,
                         'actor_satisfy': actor_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
-    $ target.schedule.add_action('job_torture', special_values=special_values)
+    $ target.schedule.add_action('job_suffer', special_values=special_values)
     
     jump lbl_target_menu
     return
@@ -356,11 +422,13 @@ label lbl_activate_ap:
     $ a = target.relations(player).harmony()[0] - 1
     menu:
         'Эти действия тратят AP вашего персонажа.'
-        'Найти к чему придраться':
+        'Найти к чему придраться' if player == mom and target == child:
             $ player.ap -= 1
             $ target.add_condition('sin')
             'Теперь можно наказывать.'
         'Сдвиг в отношениях (нужны жетоны отношений)':
+            if mom.stance(player).value == -1:
+                jump lbl_free_stance
             menu:
                 'Доступны только те опции для которых с выбранным персонажем есть непотраченные жетоны отношений: antagonism, accordance, contribution, conquer или convention.'
                 'Гармония (Accordance)' if target.has_token("accordance"):

@@ -313,7 +313,7 @@ label shd_job_pleasing(action):
                 getattr(action.actor, need).set_satisfaction(result[1])
     return  
 
-label lbl_job_suffer(action):
+label shd_job_suffer(action):
     python:
         failed = False
         if is_needs_used(action.actor, action.special_values['token'], action.special_values['self_tension']):
@@ -324,13 +324,13 @@ label lbl_job_suffer(action):
     python:
         threshold = action.actor.relations(action.special_values['beneficiar']).stability
         morality = action.actor.check_moral(action.special_values['beneficiar'], *action.special_values['moral_burden'])
-        difficulty =  game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_statisfy']) 
+        difficulty =  game.token_difficulty(action.actor.master, action.special_values['token'], *action.special_values['target_statisfy']) 
         result = game.threshold_skillcheck(action.actor, action.special_values['skill'], difficulty, action.special_values['actor_tension'], action.special_values['actor_satisfy'], action.special_values['beneficiar'], morality, threshold)
         if result[0]:
             action.actor.add_token(action.special_values['token'])
             remember_needs(action.actor, action.special_values['token'], action.special_values['self_tension'])
         else:
-            action.actor.add_token('antagonism')
+            action.actor.master.add_token('antagonism')
         if result[1] > 0:
             for need in action.special_values['self_tension']:
                 getattr(action.actor, need).set_satisfaction(result[1])
@@ -451,39 +451,9 @@ label shd_job_sex(action):
   
     return
 
-    
-label shd_dayoff_dacha(character):
-    python:
-        child.comfort.set_tension()
-        child.amusement.set_tension()
-        child.ambition.set_tension()
-        child.wellness.set_tension()
-        child.altruism.satisfaction = 2        
-        child.activity.satisfaction = 2
-        effect = child.physique * 2
-    'Завтра рано вставать, а то опоздаем на поезд \n @\nПоможешь бабушке на даче \n @\nНадо огород вскопать, сорняки прополот, колорада потравить \n @\n(Ресурсы: провизия +[effect])'
-    return  
-    
-label shd_dayoff_2ch(character):
-    python:
-        child.amusement.satisfaction = 2
-        child.communication.satisfaction = 2       
-    'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
-    return  
-   
-label shd_outfit_lame(character):
-    python:
-        child.authority.set_tension()
-    return  
-    
-label shd_outfit_normal(character):
-    python:
-        child.prosperity.set_tension()
-    return  
-    
-label shd_outfit_cool(character):
-    python:
-        child.prosperity.satisfaction = 4
-    return  
-
+label shd_job_impress(action):
+    $ mom.add_token(action.special_values['token'])
+    $ txt = action.special_values['txt']
+    "[txt]"
+    return
 
