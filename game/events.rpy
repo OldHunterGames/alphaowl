@@ -274,9 +274,6 @@ label evn_do_practice_labs_chat(event):
         return False
         
     'Лабораторная по программированию (попытка списать)'
-    $ moral = event.target.moral_action('chaotic', 'ardent') 
-    $ motivation = event.target.motivation('communication', [('communication', 2), ('ambition', -1)], event.target, moral) 
-    $ result = game.skillcheck(event.target, 'communication', motivation, moral)
    
     python:
         actor = event.target
@@ -309,9 +306,6 @@ label evn_do_practice_programm(event):
         return False
         
     'Производственная практика'
-    $ moral = event.target.moral_action('lawful', 'timid') 
-    $ motivation = event.target.motivation('coding', [('ambition', 2),('amusement', -2)], event.target, moral) 
-    $ result = game.skillcheck(event.target, 'coding', motivation, moral)    
    
     python:
         actor = event.target
@@ -344,10 +338,6 @@ label evn_do_practice_programm_chat(event):
         return False
         
     'Производственная практика (общение)'
-    $ moral = event.target.moral_action('chaotic', 'ardent') 
-    $ motivation = event.target.motivation('communication', [('communication', 3)], event.target, moral) 
-    $ result = game.skillcheck(event.target, 'communication', motivation, moral)
-   
     python:
         actor = event.target
         threshold = 2

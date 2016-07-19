@@ -5,7 +5,10 @@ label lbl_universal_menu:
     $ consumption_drugs = game.resource_consumption('drugs')
     $ money_consumption = game.resource_consumption('money')
     menu:
-        'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs]) \nЖратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя. Урезайте потребление.'
+        if player = mom:
+            'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs]) \nЖратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя. Урезайте потребление.'
+        else:
+            'Доступные варианты действий зависят от отношения хозяина дома - мамки. При улучшении отношений станет доступно больше вариантов.'
         
         "Взаимодействия с...":
             $ target = renpy.call_screen('sc_choose_character')
@@ -22,7 +25,11 @@ label lbl_universal_menu:
     return
 
 label lbl_target_menu:
-    $ name = target.name()
+    python:
+        name = target.name()
+        permission = 3
+        if player == child:
+            permission = mom.stance(child).value      
     menu:
         'Объект деятельности: [name]'
         "Расписание" if player == mom or target == child:
@@ -136,21 +143,21 @@ label lbl_shedule_major:
                 'Передумать':
                     jump lbl_shedule_major                         
                     
-        "Обучение навыкам" if target == player or player == mom:
+        "Обучение навыкам" if (target == child and mom.stance(child).value > -1) or player == mom:
             call lbl_skill_train
         "Назначить воспитателем" if player == mom and target != child:
             $ target.schedule.add_action('job_supervise', False)
-        'Безделье':
+        'Безделье' if  mom.stance(child).value > 0:
             $ target.schedule.add_action('job_idle', False) 
         'Подрабатывать уборщицей' if target == mom and player == mom:
             $ target.schedule.add_action('job_janitor', False) 
-        'Делать уроки' if target == child:
+        'Делать уроки' if target == child and  mom.stance(child).value > -1:
             $ target.schedule.add_action('job_study', False) 
         'Бытовое рабство (+10 тенге/нед)' if player == mom or target == child:
             $ target.schedule.add_action('job_chores', False)     
         'Тёмные мутки (коммуникация, +вещества)' if target != mom:
             $ target.schedule.add_action('job_pusher', False)               
-        'Работать грузчиком (спорт, малый заработок)' if target == child:
+        'Работать грузчиком (спорт, малый заработок)' if target == child if  mom.stance(child).value > -1:
             $ target.schedule.add_action('job_porter', False)    
         'Работать гей-шлюхой (секс, хороший заработок)' if target == child:
             $ target.schedule.add_action('job_whore', False)                
@@ -160,14 +167,15 @@ label lbl_shedule_major:
     return
         
 label lbl_shedule_minor:
+ 
     menu:
-        'Отдыхать':
+        'Отдыхать' if permission > 0:
             $ target.schedule.add_action('minor_nap', False)   
-        'Развлекаться':
+        'Развлекаться' if permission > 0:
             $ target.schedule.add_action('minor_fun', False)   
-        'Общаться':
+        'Общаться' if permission > 0:
             $ target.schedule.add_action('minor_chat', False)  
-        'Брусья-брусья-турнички':
+        'Брусья-брусья-турнички' if permission > -1:
             $ target.schedule.add_action('minor_sport', False)   
         'Еду на дачу и батрачу, еды нахуячу':
             $ target.schedule.add_action('minor_dacha', False)
@@ -199,7 +207,7 @@ label lbl_skill_train:
             $ target.schedule.add_action('job_coding')   
         'Пикап' if not target.skill('sex').training:
             $ target.schedule.add_action('job_sex')               
-        'Назад':
+        'Да чему ты научишься-то, ты же нулевОй!':
             jump lbl_shedule_major
             
     jump lbl_target_menu
@@ -387,11 +395,11 @@ label lbl_fawn_choose:
 label lbl_accommodation:
     $ nm = target.name() + '_rent'
     menu:
-        'Вечно ты в комнате запираешься от матери! Как сыч. (25 тенгэ/нед)':
+        'Вечно ты в комнате запираешься от матери! Как сыч. (25 тенгэ/нед)' if permission > 0:
             $ target.accommodation = "appartment"
             $ target.schedule.add_action('living_appartment', False)  
             $ summ = 25
-        'Комнату твою сдавать будем, поспишь у нас на диванчике. (10 тенгэ/нед)':
+        'Комнату твою сдавать будем, поспишь у нас на диванчике. (10 тенгэ/нед)' if permission > -1:
             $ target.accommodation = "cot"
             $ target.schedule.add_action('living_cot', False)  
             $ summ = 10
@@ -422,12 +430,12 @@ label lbl_food_universal:
         "На худобу (regime 1)":
             $ target.ration['amount'] = "regime" 
             $ target.ration['target'] = 1
-        "На норму (regime 2)":
+        "На норму (regime 2)" if permission > -1:
             $ target.ration['amount'] = "regime" 
             $ target.ration['target'] = 2     
-        "На своё усмотрение (unlimited)":
+        "На своё усмотрение (unlimited)" if permission > 0:
             $ target.ration['amount'] = "unlimited"     
-        "На ЖРЧИК (regime 3)":
+        "На ЖРЧИК (regime 3)" if permission > 0:
             $ target.ration['amount'] = "regime" 
             $ target.ration['target'] = 4               
   
@@ -437,13 +445,13 @@ label lbl_food_universal:
             "Отбросы":
                 $ target.ration['food_type'] = "sperm" 
                 'Как земля... совсем невкусно (-3)'
-            "Бичпакеты":
+            "Бичпакеты" if permission > -1:
                 $ target.ration['food_type'] = "dry" 
                 'Мивина с майонезом... не вкусно (-1)'
-            "Консервы":
+            "Консервы" if permission > 0:
                 $ target.ration['food_type'] = "canned" 
                 'Из банки... нормальный вкус'
-            "Домашнее, тепленькое, с хлебушком":
+            "Домашнее, тепленькое, с хлебушком" if permission > 0:
                 $ target.ration['food_type'] = "cousine"   
                 'Пища белых людей... вкуснота (3)'    
     
@@ -636,7 +644,7 @@ label lbl_rules_drugs:
             $ resname = target.name() + '_tobacco'
             $ game.res_add_consumption(resname, 'drugs', 0, time=None)            
             $ txt = 'Если почую табачный запах \n @ \n Всё отцу расскажу \n @ \n Неделю у меня сидеть на жопе не сможешь'
-        'Парю где хочу, не запрещено (1/нед)' if 'tobacco' in target.restrictions:
+        'Парю где хочу, не запрещено (1/нед)' if 'tobacco' in target.restrictions and permission > 0:
             $ target.restrictions.remove('tobacco')
             $ target.schedule.add_action('None_smoke', False)
             $ resname = target.name() + '_tobacco'
@@ -648,7 +656,7 @@ label lbl_rules_drugs:
             $ resname = target.name() + '_alco'
             $ game.res_add_consumption(resname, 'drugs', 0, time=None)
             $ txt = 'Ты на пиво то не заглядвайся \n @ \n Ишь чего удумал прохиндей \n @ \n Я алкоголиков в доме не потерплю!'
-        'Накатывать за дидов (3/нед)' if 'alcohol' in target.restrictions:
+        'Накатывать за дидов (3/нед)' if 'alcohol' in target.restrictions and permission > -1:
             $ target.restrictions.remove('alcohol')
             $ target.schedule.add_action('None_alcohol', False)
             $ resname = target.name() + '_alco'
@@ -661,7 +669,7 @@ label lbl_rules_drugs:
             $ resname = target.name() + '_weed'
             $ game.res_add_consumption(resname, 'drugs', 0, time=None)            
             $ txt = 'Чтобы я тебя с этими наркоманами не видела больше \n @ \n Пообколются своей марихуанной \n @ \n А потом ябут друг-друга в жёппы'
-        'Соли, миксы, спайсы (5/нед)' if 'weed' in target.restrictions:
+        'Соли, миксы, спайсы (5/нед)' if 'weed' in target.restrictions and permission > 0:
             $ target.restrictions.remove('weed')
             $ target.schedule.add_action('None_weed', False)
             $ resname = target.name() + '_weed'
@@ -681,21 +689,21 @@ label lbl_rules_behavior:
             $ target.restrictions.append('masturbation')
             $ target.schedule.add_action('fap_no', False)
             $ txt = 'Сыночка то наш, всё пиструнчик свой тилибонькает \n @ \n Скоро волосы на руках расти начнут \n @ \n В антимастурбационном кресте будещь спать, по совету отца Агапия'
-        'Игнорировать дрочку' if 'masturbation' in target.restrictions:
+        'Игнорировать дрочку' if 'masturbation' in target.restrictions and permission > 0:
             $ target.restrictions.remove('masturbation')
             $ target.schedule.add_action('fap_yes', False)
             $ txt = 'А что это ты в ванной столько времени сидишь, Сыча? \n @ \n И то хорошо \n @ \n Приучили к чистоте ребёнка то'    
         'Запретить гулять' if 'dates' not in target.restrictions:
             $ target.restrictions.append('dates')
-        'Разрешить гулять до поздна' if 'dates' in target.restrictions:
+        'Разрешить гулять до поздна' if 'dates' in target.restrictions and permission > 0:
             $ target.restrictions.remove('dates')
         'Запретить общаться с друзьями' if 'friends' not in target.restrictions:
             $ target.restrictions.append('friends')
-        'Разрешить общаться с друзьями' if 'friends' in target.restrictions:
+        'Разрешить общаться с друзьями' if 'friends' in target.restrictions and permission > -1:
             $ target.restrictions.remove('friends')
         'Конплюхтерн для очобы! (блокировать интернет)' if 'pc' not in target.restrictions:
             $ target.restrictions.append('pc')
-        'Ну и сиди за своим комплюктером' if 'pc' in target.restrictions:
+        'Ну и сиди за своим комплюктером' if 'pc' in target.restrictions and permission > -1:
             $ target.restrictions.remove('pc')
         'Назад':
             jump lbl_target_menu
@@ -712,22 +720,22 @@ label lbl_personal_wealth:
         'Не жили бохато, неча и начинать!':
             $ special_values = {'num': -1}
             $ summ = 0
-        '5 тенгэ / нед':
+        '5 тенгэ / нед' if permission > -1:
             $ special_values = {'num': 0}
             $ summ = 5   
-        '10 тенгэ / нед':
+        '10 тенгэ / нед' if permission > 0:
             $ special_values = {'num': 1}            
             $ summ = 10
-        '25 тенгэ / нед':
+        '25 тенгэ / нед' if permission > 1:
             $ special_values = {'num': 2}
             $ summ = 25  
-        '50 тенгэ / нед':
+        '50 тенгэ / нед' if permission > 1:
             $ special_values = {'num': 3}
             $ summ = 50   
-        '100 тенгэ / нед':
+        '100 тенгэ / нед' if permission > 1:
             $ special_values = {'num': 4}
             $ summ = 100 
-        '250 тенгэ / нед':
+        '250 тенгэ / нед' if permission > 1:
             $ special_values = {'num': 5}
             $ summ = 100 
             
