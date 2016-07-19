@@ -109,11 +109,11 @@ label lbl_shedule_major:
                 'Передумать':
                     jump lbl_shedule_major           
                     
-        'Подвергаться воспитанию' if target == child and player == child:
+        'Подвергаться воспитанию' if target == player and target.master != None:
             $ beneficiar = target.master
             $ code = None
             $ mentxt = encolor_text('Добиться признания', player.merit)
-            if mom.stance(player).value == -1 and mom.relations(child).stability == 0:
+            if target.master.stance(player).value == -1 and target.master.relations(player).stability == 0:
                 jump lbl_first_impression
             menu:
                 'Что будем делать?'
@@ -336,23 +336,23 @@ label lbl_suffer_choose:
     menu:
         'От чего страдаем?'
         'Избиения':
-            $ actor_satisfy = ['power', 'authority']
-            $ actor_tension = ['altruism']
+            $ master_satisfy = ['power', 'authority']
+            $ master_tension = ['altruism']
             $ skill = 'conversation'
             $ self_tension = ['wellness']
         'Унижения':
-            $ actor_satisfy = ['power', 'authority']
-            $ actor_tension = ['altruism']
+            $ master_satisfy = ['power', 'authority']
+            $ master_tension = ['altruism']
             $ skill = 'conversation'
             $ self_tension = ['authority', 'ambition']    
         'Ограничения':
-            $ actor_satisfy = ['authority', 'order']
-            $ actor_tension = ['thrill']
+            $ master_satisfy = ['authority', 'order']
+            $ master_tension = ['thrill']
             $ skill = 'conversation'
             $ self_tension = ['comfort', 'amusement', 'activity'] 
             
-    $ special_values = {'skill': skill, 'victim': child, 'token': token, 'self_tension': self_tension, 'actor_tension': actor_tension,
-                        'actor_satisfy': actor_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
+    $ special_values = {'skill': skill, 'token': token, 'self_tension': self_tension, 'master_tension': master_tension,
+                        'master_satisfy': master_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
     $ target.schedule.add_action('job_suffer', special_values=special_values)
     
     jump lbl_target_menu
@@ -368,7 +368,7 @@ label lbl_fawn_choose:
             $ target_statisfy = ['communication', 'approval']
         'Развлекать (коммуникация)':
             $ self_satisfy = ['approval']
-            $ self_tension = ['anusement', 'independence']
+            $ self_tension = ['amusement', 'independence']
             $ skill = 'conversation'
             $ target_statisfy = ['communication', 'amusement']            
         'Делать массаж ног (секс)':
@@ -377,9 +377,9 @@ label lbl_fawn_choose:
             $ skill = 'sex'
             $ target_statisfy = ['comfort', 'eros']    
     
-    $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
+    $ special_values = {'skill': skill, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
-    $ target.schedule.add_action('job_pleasing', special_values=special_values)
+    $ target.schedule.add_action('job_slavepleasing', special_values=special_values)
     
     jump lbl_target_menu
     return
@@ -854,9 +854,4 @@ label lbl_vitality_info():
         txt_good += zero_factors
     '[txt_good]'
     return
-
-
-
-
-
 

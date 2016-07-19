@@ -328,6 +328,7 @@ class Engine(object):
             if actor == self.player and beneficiar == actor.master:
                 if result > actor.merit:
                     actor.merit = result
+            actor.moral_action(morality)
         return result
 
         

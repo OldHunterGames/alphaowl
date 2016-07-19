@@ -313,27 +313,56 @@ label shd_job_pleasing(action):
                 getattr(action.actor, need).set_satisfaction(result[1])
     return  
 
-label shd_job_suffer(action):
+
+label shd_job_slavepleasing(action):
     python:
         failed = False
-        if is_needs_used(action.actor, action.special_values['token'], action.special_values['self_tension']):
+        if is_needs_used(action.actor.master, action.special_values['token'], action.special_values['target_statisfy']):
             failed = True
     if failed:
         'Это пройденный этап'
         return
     python:
-        threshold = action.actor.relations(action.special_values['victim']).stability
-        morality = action.actor.check_moral(action.special_values['victim'], *action.special_values['moral_burden'])
-        difficulty =  game.token_difficulty(action.actor, action.special_values['token'], *action.special_values['target_statisfy']) 
-        result = game.threshold_skillcheck(action.special_values['victim'], action.special_values['skill'], difficulty, action.special_values['actor_tension'], action.special_values['actor_satisfy'], action.special_values['beneficiar'], morality, threshold)
+        master = action.actor.master
+        threshold = action.actor.relations(master).stability
+        morality = action.actor.check_moral(action.actor, *action.special_values['moral_burden'])
+        difficulty =  game.token_difficulty(master, action.special_values['token'], *action.special_values['target_statisfy']) 
+        result = game.threshold_skillcheck(action.actor, action.special_values['skill'], difficulty, action.special_values['self_tension'], action.special_values['self_satisfy'], action.special_values['beneficiar'], morality, threshold)
         if result[0]:
-            action.actor.add_token(action.special_values['token'])
-            remember_needs(action.special_values['victim'], action.special_values['token'], action.special_values['self_tension'])
+            master.add_token(action.special_values['token'])
+            remember_needs(action.actor, action.special_values['token'], action.special_values['target_tension'])
         else:
-            action.actor.add_token('antagonism')
+            master.actor.add_token('antagonism')
         if result[1] > 0:
-            for need in action.special_values['self_tension']:
-                getattr(action.actor, need).set_satisfaction(result[1])
+            for need in action.special_values['target_statisfy']:
+                getattr(master, need).set_satisfaction(result[1])
+    return  
+
+
+label shd_job_suffer(action):
+    python:
+        failed = False
+        if is_needs_used(action.actor.master, action.special_values['token'], action.special_values['self_tension']):
+            failed = True
+    if failed:
+        'Это пройденный этап'
+        return
+    python:
+        master = action.actor.master
+        threshold = action.actor.relations(master).stability
+        morality = action.actor.check_moral(master, *action.special_values['moral_burden'])
+        difficulty =  game.token_difficulty(master, action.special_values['token'], *action.special_values['self_tension']) 
+        result = game.threshold_skillcheck(action.actor, action.special_values['skill'], difficulty, action.special_values['self_tension'], [], action.special_values['beneficiar'], 0, threshold)
+        if result[0]:
+            master.add_token(action.special_values['token'])
+            remember_needs(master, action.special_values['token'], action.special_values['self_tension'])
+        else:
+            master.add_token('antagonism')
+        if result[1] > 0:
+            for need in action.special_values['master_tension']:
+                getattr(master, need).set_tension()
+            for need in action.special_values['master_satisfy']:
+                getattr(master, need).set_satisfaction(result[1])
     return 
     
 label shd_job_pavsykakiy(action):
