@@ -287,6 +287,7 @@ class Person(object):
         self._anxiety = 0
         self.rewards = []
         self.used_rewards = []
+        self.merit = 0 # player only var for storing work result
 
         # Other persons known and relations with them, value[1] = [needed points, current points]
         self._relations = []
