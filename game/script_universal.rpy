@@ -109,7 +109,7 @@ label lbl_shedule_major:
                 'Передумать':
                     jump lbl_shedule_major           
                     
-        'Подвергаться воспитанию' if target == child and player == child:
+        'Подвергаться воспитанию' if target == mom and player == child:
             $ beneficiar = target.master
             $ code = None
             if mom.stance(player).value == -1 and mom.relations(child).stability == 0:
@@ -120,7 +120,7 @@ label lbl_shedule_major:
                     $ moral_burden = ['ardent', 'chaotic']
                     $ token = 'conquest'
                     jump lbl_suffer_choose
-                'Соблюдать правила' if target.has_condition('merit'):
+                'Использовать заслуги':
                     $ moral_burden = ['timid', 'lawful']
                     $ token = 'convention'
                     jump lbl_obey_choose
@@ -131,17 +131,17 @@ label lbl_shedule_major:
                 'Передумать':
                     jump lbl_shedule_major                         
                     
-        "Обучение навыкам":
+        "Обучение навыкам" if target == player or player == mom:
             call lbl_skill_train
         "Назначить воспитателем" if player == mom and target != child:
             $ target.schedule.add_action('job_supervise', False)
         'Безделье':
             $ target.schedule.add_action('job_idle', False) 
-        'Подрабатывать уборщицей' if target == mom:
+        'Подрабатывать уборщицей' if target == mom and player == mom:
             $ target.schedule.add_action('job_janitor', False) 
         'Делать уроки' if target == child:
             $ target.schedule.add_action('job_study', False) 
-        'Бытовое рабство (+10 тенге/нед)':
+        'Бытовое рабство (+10 тенге/нед)' if player == mom or target == child:
             $ target.schedule.add_action('job_chores', False)     
         'Тёмные мутки (коммуникация, +вещества)' if target != mom:
             $ target.schedule.add_action('job_pusher', False)               
@@ -318,7 +318,7 @@ label lbl_pleasing_choose:
             $ self_satisfy = ['altruism', 'communication']
             $ self_tension = ['power', 'prosperity']
             $ skill = 'conversation'
-            $ target_statisfy = ['communication', 'approval']    
+            $ target_statisfy = ['prosperity']    
     
     $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
                         'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
@@ -346,13 +346,39 @@ label lbl_suffer_choose:
             $ skill = 'conversation'
             $ self_tension = ['comfort', 'amusement', 'activity'] 
             
-    $ special_values = {'skill': skill, 'executor': beneficiar, 'token': token, 'self_tension': self_tension, 'actor_tension': actor_tension,
+    $ special_values = {'skill': skill, 'victim': child, 'token': token, 'self_tension': self_tension, 'actor_tension': actor_tension,
                         'actor_satisfy': actor_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
     $ target.schedule.add_action('job_suffer', special_values=special_values)
     
     jump lbl_target_menu
     return
 
+label lbl_fawn_choose:
+    menu:
+        'Выберите основной способ ублажения мамки.'
+        'Льстить (коммуникация)':
+            $ self_satisfy = []
+            $ self_tension = ['authority']
+            $ skill = 'conversation'
+            $ target_statisfy = ['communication', 'approval']
+        'Развлекать (коммуникация)':
+            $ self_satisfy = ['approval']
+            $ self_tension = ['anusement', 'independence']
+            $ skill = 'conversation'
+            $ target_statisfy = ['communication', 'amusement']            
+        'Делать массаж ног (секс)':
+            $ self_satisfy = ['altruism']
+            $ self_tension = ['eros', 'independence']
+            $ skill = 'sex'
+            $ target_statisfy = ['comfort', 'eros']    
+    
+    $ special_values = {'skill': skill, 'executor': actor, 'token': token, 'target_statisfy': target_statisfy, 'self_tension': self_tension,
+                        'self_satisfy': self_satisfy, 'moral_burden': moral_burden, 'beneficiar': beneficiar}
+    $ target.schedule.add_action('job_pleasing', special_values=special_values)
+    
+    jump lbl_target_menu
+    return
+    
 label lbl_accommodation:
     $ nm = target.name() + '_rent'
     menu:
