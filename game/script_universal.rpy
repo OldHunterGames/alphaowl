@@ -112,6 +112,7 @@ label lbl_shedule_major:
         'Подвергаться воспитанию' if target == mom and player == child:
             $ beneficiar = target.master
             $ code = None
+            $ mentxt = encolor_text('Добиться признания', player.merit)
             if mom.stance(player).value == -1 and mom.relations(child).stability == 0:
                 jump lbl_first_impression
             menu:
@@ -120,10 +121,14 @@ label lbl_shedule_major:
                     $ moral_burden = ['ardent', 'chaotic']
                     $ token = 'conquest'
                     jump lbl_suffer_choose
-                'Использовать заслуги':
-                    $ moral_burden = ['timid', 'lawful']
-                    $ token = 'convention'
-                    jump lbl_obey_choose
+                '[mentxt] (AP, заслуга)' if player.merit > 0 and player.ap > 0:
+                    $ player.ap -= 1
+                    if player.merit > mom.relations(player).stability:
+                        mom.add_token('convention')
+                    else:
+                        'Этого не достаточно чтобы продвинуть отношения. Нужно добиться более серьёзных успехов.'
+                    player.merit = 0
+                    jump lbl_shedule_major
                 'Ублажать и подлизываться':
                     $ moral_burden = ['good', 'timid']
                     $ token = 'contribution'
