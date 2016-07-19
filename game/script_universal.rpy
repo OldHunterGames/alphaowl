@@ -158,7 +158,7 @@ label lbl_shedule_major:
             $ target.schedule.add_action('job_chores', False)     
         'Тёмные мутки (коммуникация, +вещества)' if target != mom:
             $ target.schedule.add_action('job_pusher', False)               
-        'Работать грузчиком (спорт, малый заработок)' if target == child if  mom.stance(child).value > -1:
+        'Работать грузчиком (спорт, малый заработок)' if target == child and mom.stance(child).value > -1:
             $ target.schedule.add_action('job_porter', False)    
         'Работать гей-шлюхой (секс, хороший заработок)' if target == child:
             $ target.schedule.add_action('job_whore', False)                
