@@ -109,7 +109,7 @@ label lbl_shedule_major:
                 'Передумать':
                     jump lbl_shedule_major           
                     
-        'Подвергаться воспитанию' if target == mom and player == child:
+        'Подвергаться воспитанию' if target == child and player == child:
             $ beneficiar = target.master
             $ code = None
             $ mentxt = encolor_text('Добиться признания', player.merit)
@@ -124,10 +124,10 @@ label lbl_shedule_major:
                 '[mentxt] (AP, заслуга)' if player.merit > 0 and player.ap > 0:
                     $ player.ap -= 1
                     if player.merit > mom.relations(player).stability:
-                        mom.add_token('convention')
+                        $ mom.add_token('convention')
                     else:
                         'Этого не достаточно чтобы продвинуть отношения. Нужно добиться более серьёзных успехов.'
-                    player.merit = 0
+                    $ player.merit = 0
                     jump lbl_shedule_major
                 'Ублажать и подлизываться':
                     $ moral_burden = ['good', 'timid']
