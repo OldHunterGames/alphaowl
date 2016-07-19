@@ -450,14 +450,57 @@ label lbl_food_universal:
     return
 
 label lbl_activate_ap:
-    $ a = target.relations(player).harmony()[0] - 1
+    if target != player:
+        $ a = target.relations(player).harmony()[0] - 1
     menu:
         'Эти действия тратят AP вашего персонажа.'
         'Найти к чему придраться' if player == mom and target == child:
             $ player.ap -= 1
             $ target.add_condition('sin')
             'Теперь можно наказывать.'
-        'Сдвиг в отношениях (нужны жетоны отношений)':
+        "Очоба" if game.studies and target == child:
+            menu:
+                'Запилить курсач' if 'major' in game.studies:
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_do_major").trigger(child)
+                            
+                'Сдать нормативы по физре' if study == 'gym':
+                    $ player.ap -= 1
+                    $ EVGeneric(game, "evn_do_gym").trigger(child)                            
+
+                'Производственная практика' if study == 'practice':
+                    'На заводе по сборке вёдер  \n @ \n Наша инновационная ЭВМ "Эдьбрус-М"  \n @ \n  На перфокартах'
+                    menu:
+                        'Отпахать по честному':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_programm").trigger(child)    
+                        'Закорешиться с коллективом':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_programm_chat").trigger(child)    
+
+                'Зачет на военной кафедре' if study == 'military':
+                    'Офицеры уже с утра бухие  \n @ \n Муштра на плацу как при Павле I \n @ \n Вечером зачет по строевой'
+                    menu:
+                        'Держать равнение налево':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_military").trigger(child)    
+                        'Подлизаться к товарищу подполковнику':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_military_chat").trigger(child)    
+
+                'Лабы по программированию' if study == 'labs':
+                    'Старый профессор-некрофил  \n @ \n Задача на фортране  \n @ \n  Как буд-то кто-то им пользуется вообще'
+                    menu:
+                        'Накодить убер-алгоритм':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_labs").trigger(child)    
+                        'Скатать решение у ботанов':
+                            $ player.ap -= 1
+                            $ EVGeneric(game, "evn_do_practice_labs_chat").trigger(child)    
+                            
+                'Забить':
+                    jump lbl_universal_menu                                        
+        'Сдвиг в отношениях (нужны жетоны отношений)' if target != player:
             if mom.stance(player).value == -1:
                 jump lbl_free_stance
             menu:

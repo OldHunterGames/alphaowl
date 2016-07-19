@@ -98,119 +98,8 @@ label evn_teach_sports(event):
     return True
     
 
-label evn_dvach_coding(event):
-    if not event.target.skill('coding').training and event.target == event.target and 'pc' not in event.target.restrictions:
-        $ event.skipcheck = True
-    
-    if event.target != child:
-        $ event.skipcheck = False    
-            
+#################### ОЧОБА #########################
 
-    if not event.skipcheck:
-        return False
-        
-    python:
-        event.target.skill('coding').training = True
-    'Двач = образовательный! Получен базовый навык программирования.'
-    return True
-
-label evn_dvach_conversation(event):
-    if not event.skipcheck:
-        if not event.target.skill('conversation').training and 'pc' not in event.target.restrictions:
-            $ event.skipcheck = True
-    
-    if event.target != child:
-        $ event.skipcheck = False    
-            
-    
-    if not event.skipcheck:
-        return False
-        
-    python:
-        event.target.skill('conversation').training = True
-    'Двач = образовательный! Получен базовый навык социоблядства.'
-    return True
-
-label evn_dvach_sex(event):
-    if not event.skipcheck:
-        if not event.target.skill('sex').training and 'pc' not in event.target.restrictions:
-            $ event.skipcheck = True
-    if event.target != child:
-        $ event.skipcheck = False    
-            
-    
-    if not event.skipcheck:
-        return False
-        
-    python:
-        event.target.skill('sex').training = True
-    'Двач = образовательный! Получена базовая сексуальная грамотность.'
-    return True
-
-label evn_dvach_sports(event):
-    if not event.skipcheck:
-        if not event.target.skill('sports').training and 'pc' not in event.target.restrictions:
-            $ event.skipcheck = True
-    if event.target != child:
-        $ event.skipcheck = False    
-            
-    
-    if not event.skipcheck:
-        return False
-        
-    python:
-        event.target.skill('sports').training = True
-    'Двач = образовательный! Получены базовые знания о ЗОЖ.'
-    return True
-
-label evn_dvach_b(event):
-    if not event.skipcheck:
-        if 'pc' not in event.target.restrictions:
-            $ event.skipcheck = True
-    if event.target != child:
-        $ event.skipcheck = False    
-            
-    
-    if not event.skipcheck:
-        return False
-        
-    python:
-        event.target.amusement.satisfaction = 2
-        event.target.communication.satisfaction = 2     
-    'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
-    return True
-
-label evn_dvach_fap(event):
-    if not event.skipcheck:
-        if 'pc' not in event.target.restrictions:
-            $ event.skipcheck = True
-
-    if event.target != child:
-        $ event.skipcheck = False    
-            
-    
-    if not event.skipcheck:
-        return False
-        
-    $ event.target.eros.satisfaction = 1
-    'Обмалафился. Половое удовлетворение (1)'
-    return True
-
-label evn_dvach_olgino(event):
-    if not event.skipcheck:
-        if 'pc' not in event.target.restrictions:
-            $ event.skipcheck = True
-    if event.target != child:
-        $ event.skipcheck = False    
-            
-    
-    if not event.skipcheck:
-        return False
-        
-    python:
-        game.tenge += 15
-    'Понадусёровые швайнокараси порвались. +15!'
-    return True
 
 label evn_do_major(event):
     if not event.skipcheck:
@@ -223,17 +112,19 @@ label evn_do_major(event):
     if not event.skipcheck:
         return False 
     'Пора делать курсовую, курсовая сама себя не сделает.'
-    $ moral = event.target.moral_action('lawful') 
-    $ motivation = event.target.motivation('coding', [('ambition', 2),('amusement', -2),('activity', -1)], event.target, moral)
-    $ result = game.skillcheck(event.target, 'coding', motivation, moral)    
     
     python:
-       if result < 4:
-           txt = "Твёрдо решаешь засесть за курсовую \n @ \n Что-то сложновато  \n @ \n Завтра сделаю  \n @ \n За неделю - два параграфа..."
-       else:
-           txt = "Берешь себя за задницу покрепче \n @ \n Делаешь курсач как надо  \n @ \n Потом ещё неделю ловишь научрука... "
-           game.studies.remove('major')        
-           event.target.skill('coding').get_expirience(3)
+        actor = event.target
+        threshold = 3
+        difficulty = 2 
+        morality = actor.check_moral('lawful')
+        result = game.threshold_skillcheck(actor = actor, skill = 'coding', difficulty = difficulty, tense_needs=['amusement', 'activity'], satisfy_needs=['ambition'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        if result[0]:
+            txt = "Берешь себя за задницу покрепче \n @ \n Делаешь курсач как надо  \n @ \n Потом ещё неделю ловишь научрука... "
+            game.studies.remove('major')        
+            event.target.skill('coding').get_expirience(3)
+        else:
+            txt = "Твёрдо решаешь засесть за курсовую \n @ \n Что-то сложновато  \n @ \n Завтра сделаю  \n @ \n За неделю - два параграфа..."
    
     '[txt]'
    
@@ -432,6 +323,142 @@ label evn_do_practice_programm_chat(event):
     '[txt]'
    
     return True   
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+label evn_dvach_coding(event):
+    if not event.target.skill('coding').training and event.target == event.target and 'pc' not in event.target.restrictions:
+        $ event.skipcheck = True
+    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
+
+    if not event.skipcheck:
+        return False
+        
+    python:
+        event.target.skill('coding').training = True
+    'Двач = образовательный! Получен базовый навык программирования.'
+    return True
+
+label evn_dvach_conversation(event):
+    if not event.skipcheck:
+        if not event.target.skill('conversation').training and 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
+    
+    if event.target != child:
+        $ event.skipcheck = False    
+            
+    
+    if not event.skipcheck:
+        return False
+        
+    python:
+        event.target.skill('conversation').training = True
+    'Двач = образовательный! Получен базовый навык социоблядства.'
+    return True
+
+label evn_dvach_sex(event):
+    if not event.skipcheck:
+        if not event.target.skill('sex').training and 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
+    if event.target != child:
+        $ event.skipcheck = False    
+            
+    
+    if not event.skipcheck:
+        return False
+        
+    python:
+        event.target.skill('sex').training = True
+    'Двач = образовательный! Получена базовая сексуальная грамотность.'
+    return True
+
+label evn_dvach_sports(event):
+    if not event.skipcheck:
+        if not event.target.skill('sports').training and 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
+    if event.target != child:
+        $ event.skipcheck = False    
+            
+    
+    if not event.skipcheck:
+        return False
+        
+    python:
+        event.target.skill('sports').training = True
+    'Двач = образовательный! Получены базовые знания о ЗОЖ.'
+    return True
+
+label evn_dvach_b(event):
+    if not event.skipcheck:
+        if 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
+    if event.target != child:
+        $ event.skipcheck = False    
+            
+    
+    if not event.skipcheck:
+        return False
+        
+    python:
+        event.target.amusement.satisfaction = 2
+        event.target.communication.satisfaction = 2     
+    'Сосач \n @ \nЛамповый. Твой. (2) \n @ \nТут все твои друзья (общение +2).'
+    return True
+
+label evn_dvach_fap(event):
+    if not event.skipcheck:
+        if 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
+
+    if event.target != child:
+        $ event.skipcheck = False    
+            
+    
+    if not event.skipcheck:
+        return False
+        
+    $ event.target.eros.satisfaction = 1
+    'Обмалафился. Половое удовлетворение (1)'
+    return True
+
+label evn_dvach_olgino(event):
+    if not event.skipcheck:
+        if 'pc' not in event.target.restrictions:
+            $ event.skipcheck = True
+    if event.target != child:
+        $ event.skipcheck = False    
+            
+    
+    if not event.skipcheck:
+        return False
+        
+    python:
+        game.tenge += 15
+    'Понадусёровые швайнокараси порвались. +15!'
+    return True
+
    
 #################### ИЗМЕНЕНИЯ ОТНОШЕНИЙ   
    
