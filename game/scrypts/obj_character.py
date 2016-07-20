@@ -814,7 +814,16 @@ class Person(object):
         :return:
         """
         desire = self.food_demand()
-        desire += self.nutrition.level
+        if self.nutrition.level == 0:
+            desire -= 1
+        elif self.nutrition.level == 3:
+            desire += 1
+        if self.feature('obese'):
+            desire -= 1
+        elif self.feature('emaciated'):
+            desire += 2
+        elif self.feature('slim'):
+            desire += 1
         desire += self.count_modifiers("food_desire")
 
         if desire < 1:
