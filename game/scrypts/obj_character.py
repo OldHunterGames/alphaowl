@@ -412,21 +412,26 @@ class Person(object):
             self.count_modifiers('therapy')]
         l += self.modifiers_separate('vitality')
         l = [i for i in l if i != 0]
-        max_slot = 5
+        lgood = []
+        lbad = []
+        for i in l:
+            if i > 0:
+                lgood.append(i)
+            elif i < 0:
+                lbad.append(i)
         val = 0
-        ll = [i for i in l if i < 0]
-        bad = len(ll)
-        l.sort()
+        bad = len(lbad)
+        lgood.sort()
         for i in range(bad):
             try:
-                l.pop(0)
+                lgood.pop(0)
             except IndexError:
                 return 0
-        while len(l) > 0:
-            num = min(l)
+        while len(lgood) > 0:
+            num = min(lgood)
             if num > val:
                 val += 1
-            l.remove(num)
+            lgood.remove(num)
         val += self._vitality
         if val > 5:
             val = 5
