@@ -11,6 +11,7 @@ init python:
     dname['whore'] = 'работать гейшлюхой'
     dname['supervise'] = 'воспитывать Сычика'
     dname['torture'] = 'страдать'
+    dname['suffer'] = 'страдать'
     dname['pleasing'] = 'наслаждаться'    
     dname['pusher'] = 'тёмные мутки'
     dname['sport'] = 'обучение ЗОЖ'
@@ -18,7 +19,8 @@ init python:
     dname['conversation'] = 'обучение общению'
     dname['sex'] = 'обучение сексу'    
     dname['impress'] = 'впечатлить мамку'    
-    dname['depress'] = 'прокрастинация' 
+    dname['depress'] = 'прокрастинация'
+    dname['slavepleasing'] = 'подлизываться' 
 
     dname['nap'] = 'отдых'
     dname['fun'] = 'развлечения'

@@ -554,6 +554,7 @@ screen sc_mood_recalculation_result(target=None):
         for i in recalc_result:
             if i.target==target:
                 info = i
+        threshold = 5-target.sensitivity
     if info == None:
         vbox:
             xalign 0.0
@@ -589,10 +590,14 @@ screen sc_mood_recalculation_result(target=None):
                 text [i]
 
         vbox:
-            xalign 0.5
+            xalign 0.3
             yalign 0.0
             for i in txt_bad:
                 text [i]
+        vbox:
+            xalign 0.6
+            yalign 0.0
+            text 'Порог: [threshold]'
         hbox:
             xalign 0.5
             yalign 0.5
