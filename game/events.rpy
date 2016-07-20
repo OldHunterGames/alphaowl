@@ -96,7 +96,7 @@ label evn_teach_sports(event):
     if not event.skipcheck:
         return False            
     python:
-        event.target.skill('sports').training = True
+        event.target.skill('sport').training = True
     'Соблюдает дня режим - дЖым! Получены базовые знания о ЗОЖ.'
     return True
     
@@ -108,7 +108,7 @@ label evn_do_major(event):
     if not event.skipcheck:
         if 'major' in game.studies:
             $ event.skipcheck = True
-    if event.target != child:
+    if event.target != child or 'major' not in game.studies:
         $ event.skipcheck = False    
             
     
@@ -139,7 +139,7 @@ label evn_do_gym(event):
     if not event.skipcheck:
         if 'gym' in game.studies:
             $ event.skipcheck = True
-    if event.target != child:
+    if event.target != child or 'gym' not in game.studies:
         $ event.skipcheck = False    
             
     
@@ -160,7 +160,7 @@ label evn_do_gym(event):
         else:
             txt = "Четко подтягиваешься \n @ \n Стометровка в нормативе  \n @ \n Фазген-семпай хвалит - ай, братуха-борцуха!"
             game.studies.remove('gym')       
-            event.target.skill('sports').get_expirience(2)
+            event.target.skill('sport').get_expirience(2)
             actor.add_condition('merit')
    
     '[txt]'
@@ -171,7 +171,7 @@ label evn_do_practice_military(event):
     if not event.skipcheck:
         if 'military' in game.studies:
             $ event.skipcheck = True
-    if event.target != child:
+    if event.target != child or 'military' not in game.studies:
         $ event.skipcheck = False    
             
     
@@ -192,7 +192,7 @@ label evn_do_practice_military(event):
         else:
             txt = "Вспоминаешь видос про парад в лучшей Корее \n @ \n В голове играет hellmarch \n @ \n Шаг печаетается сам собой "
             game.studies.remove('military')  
-            event.target.skill('sports').get_expirience(2)
+            event.target.skill('sport').get_expirience(2)
             actor.add_condition('merit')
    
     '[txt]'
@@ -203,7 +203,7 @@ label evn_do_practice_military_chat(event):
     if not event.skipcheck:
         if 'military' in game.studies:
             $ event.skipcheck = True
-    if event.target != child:
+    if event.target != child or 'military' not in game.studies:
         $ event.skipcheck = False    
             
     
@@ -217,7 +217,7 @@ label evn_do_practice_military_chat(event):
         threshold = 2
         difficulty = 2 
         morality = actor.check_moral('chaotic')
-        result = game.threshold_skillcheck(actor = actor, skill = 'communication', difficulty = difficulty, tense_needs=[], satisfy_needs=['communication'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        result = game.threshold_skillcheck(actor = actor, skill = 'conversation', difficulty = difficulty, tense_needs=[], satisfy_needs=['communication'], beneficiar=actor, morality=morality, success_threshold=threshold)
         
         if not result[0]:
             txt = "Пытаешься подружиться с подполканом \n @ \n А он вообще контуженный \n @ \n По итогам разговора - драишь до вечера очки"
@@ -236,7 +236,7 @@ label evn_do_practice_labs(event):
     if not event.skipcheck:
         if 'labs' in game.studies:
             $ event.skipcheck = True
-    if event.target != child:
+    if event.target != child or 'labs' not in game.studies:
         $ event.skipcheck = False    
             
     
@@ -269,7 +269,7 @@ label evn_do_practice_labs_chat(event):
     if not event.skipcheck:
       if 'labs' in game.studies:
           $ event.skipcheck = True
-    if event.target != child:
+    if event.target != child or 'labs' not in game.studies:
         $ event.skipcheck = False    
             
 
@@ -283,7 +283,7 @@ label evn_do_practice_labs_chat(event):
         threshold = 3
         difficulty = 2 
         morality = actor.check_moral('chaotic', 'ardent')
-        result = game.threshold_skillcheck(actor = actor, skill = 'communication', difficulty = difficulty, tense_needs=['ambition'], satisfy_needs=['communication'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        result = game.threshold_skillcheck(actor = actor, skill = 'conversation', difficulty = difficulty, tense_needs=['ambition'], satisfy_needs=['communication'], beneficiar=actor, morality=morality, success_threshold=threshold)
         
         if not result[0]:
             txt = "Просишь у ботанов решение \n @ \n Послан нахуй  \n @ \n Даже ебаные задроты считают что они лучше тебя"
@@ -302,7 +302,7 @@ label evn_do_practice_programm(event):
     if not event.skipcheck:
         if 'practice' in game.studies:
             $ event.skipcheck = True
-    if event.target != child:
+    if event.target != child or 'practice' not in game.studies:
         $ event.skipcheck = False
 
     if not event.skipcheck:
@@ -334,7 +334,7 @@ label evn_do_practice_programm_chat(event):
     if not event.skipcheck:
         if 'practice' in game.studies:
             $ event.skipcheck = True
-    if event.target != child:
+    if event.target != child or 'practice' not in game.studies:
         $ event.skipcheck = False
 
     if not event.skipcheck:
@@ -346,7 +346,7 @@ label evn_do_practice_programm_chat(event):
         threshold = 2
         difficulty = 1 
         morality = actor.check_moral('chaotic', 'ardent')
-        result = game.threshold_skillcheck(actor = actor, skill = 'communication', difficulty = difficulty, tense_needs=[], satisfy_needs=['communication'], beneficiar=actor, morality=morality, success_threshold=threshold)
+        result = game.threshold_skillcheck(actor = actor, skill = 'conversation', difficulty = difficulty, tense_needs=[], satisfy_needs=['communication'], beneficiar=actor, morality=morality, success_threshold=threshold)
         
         if not result[0]:
             txt = "Коллектив в перерыве расслабляется \n @ \n Пьют технические жидкости \n @ \nСблеванул \n @ \ncлабоват ещё для взрослой работы"
@@ -571,7 +571,7 @@ label evn_dvach_sex(event):
 
 label evn_dvach_sports(event):
     if not event.skipcheck:
-        if not event.target.skill('sports').training and 'pc' not in event.target.restrictions:
+        if not event.target.skill('sport').training and 'pc' not in event.target.restrictions:
             $ event.skipcheck = True
     if event.target != child:
         $ event.skipcheck = False    
@@ -581,7 +581,7 @@ label evn_dvach_sports(event):
         return False
         
     python:
-        event.target.skill('sports').training = True
+        event.target.skill('sport').training = True
     'Двач = образовательный! Получены базовые знания о ЗОЖ.'
     return True
 

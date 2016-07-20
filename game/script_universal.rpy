@@ -131,6 +131,7 @@ label lbl_shedule_major:
                     jump lbl_suffer_choose
                 '[mentxt] (AP, заслуга)' if player.merit > 0 and player.ap > 0:
                     $ player.ap -= 1
+                    $ player.merit = 0
                     if player.merit > mom.relations(player).stability:
                         $ mom.add_token('convention')
                     else:
@@ -146,6 +147,8 @@ label lbl_shedule_major:
                     
         "Обучение навыкам" if (target == child and mom.stance(child).value > -1) or player == mom:
             call lbl_skill_train
+        "Депрессовать и прокрастинировать" if target.anxiety > 0:
+            $ target.schedule.add_action('job_depress')
         "Назначить воспитателем" if player == mom and target != child:
             $ target.schedule.add_action('job_supervise', False)
         'Безделье' if  mom.stance(child).value > 0:
@@ -467,6 +470,12 @@ label lbl_activate_ap:
             $ player.ap -= 1
             $ target.add_condition('sin')
             'Теперь можно наказывать.'
+        'Закатить истерику' if child.anxiety > 0:
+            $ player.ap -= 1
+            $ target.add_condition('sin')     
+            $ mom.add_token('antagonism')
+            $ child.anxiety -= 1
+            'Антон Сычов ссорится с родителями. Ангст уменьшен, но возник антагонизм.'
         "Очоба" if game.studies and target == child:
             menu:
                 'Запилить курсач' if 'major' in game.studies:
@@ -570,6 +579,12 @@ label lbl_activate_ap:
                             jump lbl_activate_ap                    
                 'Доминирование (conquest)' if target.has_token("conquest"):
                     menu:
+                        'Жестко продавить на подчинение' if target.stance(player).value == -1:
+                            $ player.ap -= 1
+                            $ target.use_token('conquest')
+                            $ target.stance(player).value +=1  
+                            $ target.add_token('antagonism')
+                            'Глобальное отношение (stance) улучшилось. Из за жесткости воздействия добавлен антагонизм.'                         
                         'Глобальный позитивный сдвиг отношений' if target.stance(player).value < min(1, a) and target.relations(player).is_harmony_points('passionate', 'contradictor'):
                             $ player.ap -= 1
                             $ target.use_token('conquest')

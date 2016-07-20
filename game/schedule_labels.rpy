@@ -33,6 +33,14 @@ label shd_job_idle(action):
     $ action.actor.add_modifier('rest', {'vitality': 4}, 1)  
     # '[name] отдыхает по вечерам восстанавливая силы (vitality-фактор 4)'
     return    
+
+label shd_job_depress(action):
+    $ name = action.actor.name()
+    $ mom.add_token('antagonism')
+    $ child.anxiety -= 1
+    $ child.add_condition('sin')
+    '[name] всю неделю в жуткой депрессии. Постепнно ангст уходит, но отношения с мамкой портятся (получен antagonism)'
+    return    
     
 label shd_job_study(action):
     python:
@@ -104,7 +112,7 @@ label shd_job_porter(action):
         actor = action.actor
         mom.moral_action('lawful', child)
         moral = actor.moral_action('lawful')
-        result = game.skillcheck(actor, 'sport', difficulty = 1, tense_needs=['amusement', 'ambition'], satisfy_needs=['activity'], beneficiar=player, morality=moral, special_motivators=[])
+        result = game.skillcheck(actor, 'sport', difficulty = 1, tense_needs=['amusement', 'ambition'], satisfy_needs=['activity'], beneficiar=mom, morality=moral, special_motivators=[])
         
         if result >= 0:
             renpy.call('subloc_porter_perform')   
@@ -137,8 +145,8 @@ label shd_job_whore(action):
     python:
         actor = action.actor
         mom.moral_action('evil', target = child)
-        moral = character.moral_action('timid', mom)
-        result = game.skillcheck(actor, 'sex', difficulty = 2, tense_needs=['eros', 'ambition'], satisfy_needs=['communication'], beneficiar=player, morality=moral, special_motivators=[])
+        moral = action.actor.moral_action('timid', mom)
+        result = game.skillcheck(actor, 'sex', difficulty = 2, tense_needs=['eros', 'ambition'], satisfy_needs=['communication'], beneficiar=mom, morality=moral, special_motivators=[])
         
         if result >= 0:
             renpy.call('subloc_whore_perform')   

@@ -18,6 +18,7 @@ init python:
     dname['conversation'] = 'обучение общению'
     dname['sex'] = 'обучение сексу'    
     dname['impress'] = 'впечатлить мамку'    
+    dname['depress'] = 'прокрастинация' 
 
     dname['nap'] = 'отдых'
     dname['fun'] = 'развлечения'
