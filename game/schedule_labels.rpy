@@ -345,7 +345,7 @@ label shd_job_slavepleasing(action):
             master.add_token(action.special_values['token'])
             remember_needs(action.actor, action.special_values['token'], action.special_values['target_tension'])
         else:
-            master.actor.add_token('antagonism')
+            master.add_token('antagonism')
         if result[1] > 0:
             for need in action.special_values['target_statisfy']:
                 getattr(master, need).set_satisfaction(result[1])
