@@ -27,14 +27,13 @@ init python:
     dname['dacha'] = 'негр на плантациях'    
 
     consta_name = {}
-    consta_name[None] = 'обычное телосложение'
-    consta_name['athletic'] = 'атлетичный'
-    consta_name['large'] = 'здоровяк'
-    consta_name['brawny'] = 'коренастый'
-    consta_name['small'] = 'мелкий'   
-    consta_name['lean'] = 'дылда'
-    consta_name['crooked'] = 'сколеозник'
-    consta_name['clumsy'] = 'у меня кость широкая'
+    consta_name['athletic'] = 'Атлетичный'
+    consta_name['large'] = 'Здоровяк'
+    consta_name['brawny'] = 'Коренастый'
+    consta_name['small'] = 'Мелкий'   
+    consta_name['lean'] = 'Дылда'
+    consta_name['crooked'] = 'Сколеозник'
+    consta_name['clumsy'] = 'У меня кость широкая'
     
     dname[''] = ''
     dname[''] = ''   
