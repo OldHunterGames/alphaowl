@@ -769,6 +769,13 @@ class Person(object):
             self.features[i].remove()
             return
 
+
+    def remove_feature_by_slot(self, slot):
+        for f in self.features:
+            if f.slot == slot:
+                f.remove()
+        
+
     def description(self):
         txt = self.firstname + ' "' + self.nickname + '" ' + self.surname
         txt += '\n'
