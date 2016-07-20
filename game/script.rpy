@@ -63,6 +63,7 @@ init python:
     batya.stance(mom).value = 1
     batya.ration['food_type'] = "cousine" 
     game.res_add_consumption('batya_food', 'provision', batya.get_food_consumption, None)
+    batya.accommodation = "appartment"
     batya.schedule.add_action('living_appartment', False)
     game.res_add_consumption("batya_rent", 'money', 25, time=None)
     batya.restrictions.append('alcohol')
@@ -318,10 +319,10 @@ label label_new_day:
         'Кто-то умер. Видимо от голода...'
         jump game_over
     elif len(game.mom_stuff) > 5:
-        'Теперича БОХАТО заживём!/n @ /nМамка победила.'
+        'Теперича БОХАТО заживём!\n @ \nМамка победила.'
         jump win_wealth
     elif not game.studies:
-        'Я думала ты нулёвый, а ты институт закончил!/n @ /nАнтон Сычов подебил.'        
+        'Я думала ты нулёвый, а ты институт закончил!\n @ \nАнтон Сычов подебил.'        
         jump win_study
         
     

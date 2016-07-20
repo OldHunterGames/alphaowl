@@ -165,7 +165,7 @@ label subloc_whore_sabotage:
 label subloc_whore_perform:
     python:
         gain = result*result*20+10
-        game.tenge += gain
+        game.money += gain
         child.skill('sex').get_expirience(result)
         mom.prosperity.satisfaction = result         
         child.moral_action('timid', target = mom)  

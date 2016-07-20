@@ -1,23 +1,20 @@
 #Универсальное меню управления 
 
 label lbl_universal_menu:
-    $ consumption_provision = game.resource_consumption('provision')
-    $ consumption_drugs = game.resource_consumption('drugs')
-    $ money_consumption = game.resource_consumption('money')
     if player == mom:
-        $ txt = 'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs]) \nЖратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя. Урезайте потребление.'
-    else:
-        $ txt = 'Доступные варианты действий зависят от отношения хозяина дома - мамки. При улучшении отношений станет доступно больше вариантов.'
-    
+        $ consumption_provision = game.resource_consumption('provision')
+        $ consumption_drugs = game.resource_consumption('drugs')
+        $ money_consumption = game.resource_consumption('money')
+        jump lbl_altuniversal_menu
+        'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs]) \nЖратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя. Урезайте потребление.'
+
+
     menu:
-        "[txt]"
+        'Доступные варианты действий зависят от отношения хозяина дома - мамки. При улучшении отношений станет доступно больше вариантов.'
         "Взаимодействия с...":
             $ target = renpy.call_screen('sc_choose_character')
             call lbl_info_new(target)
             call lbl_target_menu
-               
-        "Магазин" if player == mom:
-            call lbl_shop         
             
         "Следующая неделя" if game.can_skip_turn():
             jump label_new_day
@@ -25,6 +22,23 @@ label lbl_universal_menu:
     jump lbl_universal_menu
     return
 
+label lbl_altuniversal_menu:
+    menu:
+        'Тенгэ: [game.money] (-[money_consumption]) | Жратва: [game.provision] (-[consumption_provision]) | Вещества: [game.drugs] (-[consumption_drugs]) \nЖратва и вещества будут приобретаться по цене 3 монеты если их не хватает на текущее потребление. Если покрыть потребление невозможно, пропустить ход нельзя. Урезайте потребление.'
+        "Взаимодействия с...":
+            $ target = renpy.call_screen('sc_choose_character')
+            call lbl_info_new(target)
+            call lbl_target_menu
+               
+        "Магазин":
+            call lbl_shop         
+            
+        "Следующая неделя" if game.can_skip_turn():
+            jump label_new_day
+            
+    jump lbl_universal_menu
+    return
+    
 label lbl_target_menu:
     python:
         name = target.name()
@@ -519,7 +533,7 @@ label lbl_activate_ap:
                 'Забить':
                     jump lbl_universal_menu                                        
         'Сдвиг в отношениях (нужны жетоны отношений)' if target != player:
-            if mom.stance(player).value == -1:
+            if mom.stance(child).value == -1 and player == child:
                 jump lbl_free_stance
             menu:
                 'Доступны только те опции для которых с выбранным персонажем есть непотраченные жетоны отношений: antagonism, accordance, contribution, conquer или convention.'
