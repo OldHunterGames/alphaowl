@@ -285,7 +285,6 @@ class Person(object):
         self.skills = []
         self.specialized_skill = None
         self.focused_skill = None
-        self.focus = 0
         self.skills_used = []
         self.factors = []
         self.restrictions = []
@@ -328,7 +327,13 @@ class Person(object):
         val = self.__dict__['modifiers'].get_modified_attribute(key)
         return val
     
-
+    @property
+    def focus(self):
+        try:
+            return self.focused_skill.focus
+        except AttributeError:
+            return 0
+    
     @property
     def job(self):
         job = self.schedule.find_by_slot('job')
@@ -609,7 +614,6 @@ class Person(object):
                 if counted[skill] == maximum:
                     result.append(skill)
             self.skill(choice(result)).set_focus()
-            self.focus = 1
         else:
             self.focused_skill = None
         
