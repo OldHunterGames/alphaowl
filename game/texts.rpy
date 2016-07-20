@@ -26,6 +26,31 @@ init python:
     dname['chat'] = 'социоблядство'
     dname['dacha'] = 'негр на плантациях'    
 
+    consta_name = {}
+    consta_name[None] = 'обычное телосложение'
+    consta_name['athletic'] = 'атлетичный'
+    consta_name['large'] = 'здоровяк'
+    consta_name['brawny'] = 'коренастый'
+    consta_name['small'] = 'мелкий'   
+    consta_name['lean'] = 'дылда'
+    consta_name['crooked'] = 'сколеозник'
+    consta_name['clumsy'] = 'у меня кость широкая'
+    
+    dname[''] = ''
+    dname[''] = ''   
+    dname[''] = ''
+    dname[''] = ''
+    dname[''] = ''
+    dname[''] = ''
+    dname[''] = ''   
+    dname[''] = ''
+    dname[''] = ''
+    dname[''] = ''
+    dname[''] = ''
+    dname[''] = ''       
+
+    dname[''] = ''
+    
     show_quality = ['{b}{color=#ff0000}провально{/color}{/b}',
         '{b}{color=#ff00ff}слабенько{/color}{/b}',
         '{b}{color=#00ffff}удовлетворительно{/color}{/b}',

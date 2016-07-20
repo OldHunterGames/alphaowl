@@ -284,27 +284,53 @@ label label_quiz:
             $ child.stance(mom).value = 0    
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
             $ child.stance(mom).value = -1
-    $ alignment = child.alignment.description
+    $ alignment = child.alignment.description()
     "Твой алаймент: [alignment]"
-    
+    $ target = child
+
     jump lbl_features_quiz
     return
 
 label lbl_features_quiz:
+    python:
+        if target.feature_by_slot('constitution'):
+            constitution = consta_name[target.feature_by_slot('constitution').name]
+        else:
+            constitution = "Нормальное телосложение"
+        
     menu:
         "Ты же у мамы особенный? Чем ты особенный?"
-        "Конечно. Это - норма.":
-            $ child.stance(mom).value = 1       
-        "Ну что делать? Сяду. А то батя ремня всыпет.":
-            $ child.stance(mom).value = 0    
-        "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
-            $ child.stance(mom).value = -1
-        "Достаточно"   
+        "[constitution]":
+            call lbl_choose_constitution
+
+        "Достаточно":   
             jump lbl_player_side_quiz
         
     jump lbl_features_quiz
     return
-    
+
+label lbl_choose_constitution:
+    menu:
+        'Тип телосложения влияет на ловкость и физическую силу персонажа. В демонстрационной модели ловкость нигде не используется, хотя будет отображаться.'
+        'Нормальное телосложение':
+            $ target.remove_feature_by_slot('constitution')
+        'Атлетичный':
+            $ target.add_feature('athletic')
+        'Здоровяк':
+            $ target.add_feature('large')
+        'Коренастый':
+            $ target.add_feature('brawny')
+        'Мелкий':
+            $ target.add_feature('small')
+        'Дылда':
+            $ target.add_feature('lean')
+        'Сколеозник':
+            $ target.add_feature('crooked')
+        'Широкая кость':
+            $ target.add_feature('clumsy')
+        
+    return
+
 label lbl_player_side_quiz:
     menu:
         "Кем ты будешь управлять?"
