@@ -5,7 +5,7 @@ label shd_None_template(character):
 
 label shd_general_accounting(character):
     # Allways active. Calculates minor issues.
-    if player == child:
+    if player != child:
         if salary_timer == 0:
             'BATYA получает зарплату (+250 тенгэ). Следующая зарплата через месяц (4 недели).'
             $ game.money += 250
@@ -47,8 +47,8 @@ label shd_job_chores(action):
         actor = action.actor
         name = actor.name()
         moral = actor.moral_action('lawful') 
-        motivation = game.threshold_skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=player, morality=moral, special_motivators=[], success_threshold=0)        
-        if motivation[1]:
+        motivation = game.threshold_skillcheck(actor, 'sport', difficulty = 0, tense_needs=['amusement'], satisfy_needs=[], beneficiar=mom, morality=moral, special_motivators=[], success_threshold=0)        
+        if motivation[0]:
             renpy.call('subloc_chores_perform')   
         else:
             renpy.call('subloc_chores_sabotage')       
@@ -56,7 +56,9 @@ label shd_job_chores(action):
 
 label subloc_chores_sabotage:
     $ actor.add_condition('sin')
-    "[name] саботирует работу по дому ничего не делает."
+    $ actor.comfort.satisfaction = 1
+    $ actor.independence.satisfaction = 1    
+    "[name] саботирует работу по дому и ничего не делает. Удовлетворена потребность в независимости и комфорте."
 
     return
 
@@ -124,11 +126,11 @@ label subloc_porter_perform:
     python:
         gain = result*result*10+5
         game.money += gain
-        child.skill('sports').get_expirience(result)
+        child.skill('sport').get_expirience(result)
         mom.prosperity.satisfaction = result  
         show = show_quality[result]
         actor.add_condition('merit') 
-    'Сычуля [show] работает грузчиком себя послушным и активным. Угнетены амбиции и вообще работа скучная. \n Заработок (для мамы!): [gain] тенге.'
+    'Сычуля [show] работает грузчиком, чувствуя себя послушным и активным. Угнетены амбиции и вообще работа скучная. \n Заработок (для мамы!): [gain] тенге.'
     return
 
 label shd_job_whore(action):

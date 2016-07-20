@@ -39,13 +39,13 @@ label lbl_target_menu:
             call lbl_activate_ap
         "Бытовые уловия" if target == child:
             call lbl_accommodation
-        "Питание":
+        "Питание" if player == mom or player == target:
             call lbl_food_universal
         "Правила" if target == child:
             call lbl_rules_behavior
-        "Вещества":
+        "Вещества" if player == mom or player == target:
             call lbl_rules_drugs            
-        "Карманные деньги":
+        "Карманные деньги" if player == mom or player == target:
             call lbl_personal_wealth
         "Информация":
             call lbl_info_new(target)
@@ -65,11 +65,11 @@ label lbl_make_shedule:
             call lbl_shedule_major
         "В выходные: [schedule_minor]":
             call lbl_shedule_minor
-        "Общение: [communication]" if player != mom:
+        "Общение: [communication]" if False:
             call lbl_universal_interaction
             
         'Назад':
-            jump lbl_universal_menu    
+            jump lbl_target_menu    
             
     jump lbl_make_shedule
         
@@ -219,14 +219,14 @@ label lbl_first_impression:
         'Мамка относится к Сычуле просто невыносимо. Что будем делать?'
         'Макимальная агрессия и конфликт':
             $ token = 'conquest'
-            $ txt = 'Первое впечатление - враждебное. Нейтральные тенденции мамки изменены на страсть и злобу. Заработан жетон доминирования.'
+            $ stxt = 'Первое впечатление - враждебное. Нейтральные тенденции мамки изменены на страсть и злобу. Заработан жетон доминирования.'
         'Разумный и взвешенный подход':
             $ token = 'convention'
-            $ txt = 'Первое впечатление - рациональное. Нейтральные тенденции мамки изменены на вкрадчивость и порядочность. Заработан жетон сотрудничества.'
+            $ stxt = 'Первое впечатление - рациональное. Нейтральные тенденции мамки изменены на вкрадчивость и порядочность. Заработан жетон сотрудничества.'
         'Любить маму несмотря ни на что':
             $ token = 'contribution'
-            $ txt = 'Первое впечатление - мягкое. Нейтральные тенденции мамки изменены на близость и доброту. Заработан жетон благодарности.' 
-    $ special_values = {'token': token, 'txt': txt}        
+            $ stxt = 'Первое впечатление - мягкое. Нейтральные тенденции мамки изменены на близость и доброту. Заработан жетон благодарности.' 
+    $ special_values = {'token': token, 'txt': stxt}        
     $ target.schedule.add_action('job_impress', special_values=special_values)
             
     jump lbl_make_shedule
@@ -284,7 +284,7 @@ label lbl_free_stance:
                 $ player.ap -= 1
                 "Мамка непреклонна. Надо найти к ней другой подход..."                     
         'Nyet, Molotoff!':
-            jump lbl_shedule_major
+            jump lbl_target_menu
                 
     return
 

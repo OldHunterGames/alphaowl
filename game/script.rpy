@@ -170,7 +170,7 @@ label label_quiz:
            
     menu:
         "Ты мальчик или девочка-внутри?"
-        "(я не человек уже, я разработчик нахуй)":
+        "Антоша Сычов (быстрый старт)":
             python:
                 child.skill('coding').profession()
                 game.set_player(child)
@@ -192,7 +192,7 @@ label label_quiz:
                 child.restrictions.append('friends')
                 child.restrictions.append('pc')
             jump label_new_day
-        "(разработчик, игра за маму)":
+        "Твоя Мамка (быстрый старт)":
             python:
                 child.skill('coding').profession()
                 game.set_player(mom)
