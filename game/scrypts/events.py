@@ -11,6 +11,8 @@ def register_event(location, *args, **kwargs):
             event.tags = kwargs['tags']
         if key == 'unique':
             event.unique = kwargs['unique']
+        if key == 'restrictions':
+            event.restrictions = kwargs['restrictions']
     events_list.append(event)
 
 def get_event(name):
@@ -41,6 +43,7 @@ class Event(object):
         self.name = name
         self.goto = location     # RenPy location to start an event
         self.tags = []              # tags for filtering "gay", "lolicon", "bestiality", "futanari" etc
+        self.restrictions = None
         self.unique = False         # Unique events shown once in a game instance
         self.seen = 0               # Number of times this event seen
         self.skipcheck = False
@@ -54,6 +57,14 @@ class Event(object):
             return False
         self.skipcheck = skipcheck
         self.target = target
+        if self.restrictions == 'player':
+            try:
+                if not target.player_controlled:
+                    return False
+            except AttributeError:
+                return False
+        elif self.restrictions != None and self.restrictions != target.event_type:
+            return False
         result = renpy.call_in_new_context(self.goto, self)
         if result:
             self.seen += 1

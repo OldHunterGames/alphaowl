@@ -131,6 +131,16 @@ init python:
     
 # Игра начинается здесь.
 label start:
+    python:
+        household = game.add_fraction('household', mother)
+        household.add_member(child)
+        household.add_member(batya)
+        society = game.add_fraction('society', erokhin)
+        society.add_member(ashot)
+        society.add_member(pavsykakiy)
+        society.add_member(kohana)
+        society.add_member(eot)
+
     call init_events
     define gray = Solid("#ccc")
     show image gray as bg

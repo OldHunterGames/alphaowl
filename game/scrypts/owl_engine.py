@@ -48,6 +48,8 @@ def get_max_need(target, *args):
 def encolor_text(text, value):
     if value < 0:
         value = 0
+    if value > 6:
+        value = 6
     colors = ['ff0000', 'ff00ff', '00ffff', '0000FF', '00ff00', 'DAA520', '000000']
     return '{b}{color=#%s}%s{/color}{/b}'%(colors[value], text)
 class Engine(object):
@@ -72,7 +74,21 @@ class Engine(object):
         self.evn_skipcheck = True
         self._resources_consumption = []
         self.resources = {'drugs': 0, 'money': 0, 'provision': 0}
+        self.fractions = []
 
+
+    def add_fraction(self, name, owner):
+        f = Fraction(name)
+        f.set_owner(owner)
+        self.fractions.append(f)
+        return f
+
+
+    def get_fraction(self, name):
+        for i in self.fractions:
+            if i.name == name:
+                return i
+        raise Exception("No fraction with name: %s"%(name))
 
     @property
     def player(self):

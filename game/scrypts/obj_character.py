@@ -28,7 +28,31 @@ accommodation_types = {'makeshift bad': {'comfort': -3},
                        'love nest': {'comfort': 5, 'prosperity': 2, 'communication': 2, 'eros': 2}
                        }
 
+class Fraction(object):
+    def __init__(self, name):
+        self.name = name
+        self.owner = None
+        self.members = []
+        self.event_type = 'fraction'
+    def set_owner(self, owner):
+        self.owner = owner
+        self.add_member(owner)
 
+    def add_member(self, person):
+        if person not in self.members:
+            self.members.append(person)
+
+    def remove_member(self, person):
+        for i in self.members:
+            if person == i:
+                self.members.remove(person)
+            if person == self.owner:
+                self.owner = None
+
+    def is_member(self, person):
+        if person in self.members:
+            return True
+        return False
 class Modifiers(object):
     def __init__(self):
         self._names = []
@@ -225,6 +249,7 @@ class Person(object):
 
     def __init__(self, age='adolescent', gender='male'):
         self.player_controlled = False
+        self._event_type = 'person'
         self.firstname = u"Антон"
         self.surname = u"Сычов"
         self.nickname = u"Сычуля"
@@ -232,7 +257,6 @@ class Person(object):
         self.features = []          # gets Feature() objects and their child's. Add new Feature only with self.add_feature()
         self.tokens = []             # Special resources to activate various events
         self.relations_tendency = {'convention': 0, 'conquest': 0, 'contribution': 0}
-
         #obedience, dependecy and respect stats
         self._stance = []
 
@@ -913,6 +937,8 @@ class Person(object):
     def relations(self, person):
         if person==self:
             raise Exception("relations: target and caller is same person")
+        if isinstance(person, Fraction):
+            return self.relations(person.owner)
         if not self.know_person(person):
             relations = self._set_relations(person)
             self._set_stance(person)
@@ -936,6 +962,8 @@ class Person(object):
     def stance(self, person):
         if person==self:
             raise Exception("stance: target and caller is same person")
+        if isinstance(person, Fraction):
+            return self.stance(person.owner)
         elif not self.know_person(person):
             self._set_relations(person)
             stance = self._set_stance(person)
