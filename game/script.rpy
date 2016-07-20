@@ -284,11 +284,28 @@ label label_quiz:
             $ child.stance(mom).value = 0    
         "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
             $ child.stance(mom).value = -1
-
-            
     $ alignment = child.alignment.description
     "Твой алаймент: [alignment]"
+    
+    jump lbl_features_quiz
+    return
 
+label lbl_features_quiz:
+    menu:
+        "Ты же у мамы особенный? Чем ты особенный?"
+        "Конечно. Это - норма.":
+            $ child.stance(mom).value = 1       
+        "Ну что делать? Сяду. А то батя ремня всыпет.":
+            $ child.stance(mom).value = 0    
+        "Я скажу - женщина, пиздуй на кухню и принеси мне сырных подушечек.":
+            $ child.stance(mom).value = -1
+        "Достаточно"   
+            jump lbl_player_side_quiz
+        
+    jump lbl_features_quiz
+    return
+    
+label lbl_player_side_quiz:
     menu:
         "Кем ты будешь управлять?"
         "Собой":
