@@ -84,7 +84,7 @@ init python:
     eot.skill('conversation').talent = True
     eot.skill('conversation').profession()    
     eot.skill('coding').training = True
-    eot.stance(child).value = 0    
+    # eot.stance(child).value = 0    
     eot.firstname = u"Наденька"
     eot.surname = u"Енотова"        
 
@@ -96,7 +96,7 @@ init python:
     erokhin.skill('sports').talent = True
     erokhin.skill('sports').profession()        
     erokhin.skill('conversation').training = True
-    erokhin.stance(child).value = -1
+    # erokhin.stance(child).value = -1
     erokhin.firstname = u"Алекс"
     erokhin.surname = u"Ерохин"     
     
@@ -110,14 +110,14 @@ init python:
     ashot.skill('sex').talent = True
     ashot.skill('sex').profession()     
     ashot.skill('conversation').training = True
-    ashot.stance(child).value = 0     
+    # ashot.stance(child).value = 0     
     ashot.firstname = u"Ашот"
     ashot.surname = u"Мудлаев"     
     
     #СВЯЩЕННИК
     pavsykakiy = Person()
     pavsykakiy.skill('leadership').expert()  
-    pavsykakiy.stance(child).value = 0 
+    # pavsykakiy.stance(child).value = 0 
     pavsykakiy.firstname = u"Павсикакий"
     pavsykakiy.surname = u"Святомудин"      
     
@@ -125,7 +125,7 @@ init python:
     kohana = Person()
     kohana.skill('leadership').profession()
     kohana.spirit = 4
-    kohana.stance(child).value = 0 
+    # kohana.stance(child).value = 0 
     kohana.firstname = u"Кисель"
     kohana.surname = u"Телеведущев"      
 
