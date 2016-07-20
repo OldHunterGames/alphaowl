@@ -527,18 +527,17 @@ screen sc_skillcheck(action):
         else:
             text "Сила: [action.power]"
             text "Интенсивность потребности: [action._compare_to_power]"
-
-label mood_recalc_result(diss_inf=None, satisfy_inf=None, determination=None, anxiety=None, recalc=False, target=None):
-    python:
-        info = None 
-        class InfoStorage(object):
+init python:
+    class InfoStorage(object):
             def __init__(self, diss_inf, satisfy_inf, determination, anxiety, target):
                 self.diss_inf = diss_inf
                 self.satisfy_inf = satisfy_inf
                 self.determination = determination
                 self.anxiety = anxiety
                 self.target = target
-        
+label mood_recalc_result(diss_inf=None, satisfy_inf=None, determination=None, anxiety=None, recalc=False, target=None):
+    python:
+        info = None 
         if recalc and target != None:
             for i in recalc_result:
                 if i.target == target:
