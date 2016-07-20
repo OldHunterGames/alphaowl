@@ -303,11 +303,16 @@ class Person(object):
 
         # Other persons known and relations with them, value[1] = [needed points, current points]
         self._relations = []
-        self.known_characters = []
         self.selfesteem = 0
         self.conditions = []
     
-
+    @property
+    def known_characters(self):
+        l = []
+        for r in self._relations:
+            persons = [p for p in r.persons if p != self]
+            l += persons
+        return l
     def add_modifier(self, name, attributes, time=None):
         self.modifiers.add_item(name, attributes, time)
     
@@ -936,10 +941,6 @@ class Person(object):
         relations = Relations(self, person)
         person._relations.append(relations)
         self._relations.append(relations)
-        if not person.know_person(self):
-            person.known_characters.append(self)
-        if not self.know_person(person):
-            self.known_characters.append(person)
         return relations
 
 
@@ -961,10 +962,6 @@ class Person(object):
         stance = Stance(self, person)
         self._stance.append(stance)
         person._stance.append(stance)
-        if not person.know_person(self):
-            person.known_characters.append(self)
-        if not self.know_person(person):
-            self.known_characters.append(person)
         return stance
 
     
