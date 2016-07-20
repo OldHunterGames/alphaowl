@@ -15,7 +15,8 @@ from schedule import *
 from taboos import init_taboos
 from relations import Relations
 from stance import Stance
-
+class NoneNameObject(object):
+    name = None
 
 accommodation_types = {'makeshift bad': {'comfort': -3},
                        'campfire': {'comfort': -1},
@@ -751,13 +752,13 @@ class Person(object):
         for f in self.features:
             if f.slot == slot:
                 return f
-        return None
+        return NoneNameObject
 
     def feature(self, name):                # finds feature with needed name if exist
         for f in self.features:
             if f.name == name:
                 return f
-        return None
+        return NoneNameObject
 
     def remove_feature(self, feature):       # feature='str' or Fearutere()
         if isinstance(feature, str):
@@ -768,6 +769,13 @@ class Person(object):
             i = self.features.index(feature)
             self.features[i].remove()
             return
+
+
+    def remove_feature_by_slot(self, slot):
+        for f in self.features:
+            if f.slot == slot:
+                f.remove()
+        
 
     def description(self):
         txt = self.firstname + ' "' + self.nickname + '" ' + self.surname
