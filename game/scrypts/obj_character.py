@@ -17,17 +17,6 @@ from relations import Relations
 from stance import Stance
 
 
-accommodation_types = {'makeshift bad': {'comfort': -3},
-                       'campfire': {'comfort': -1},
-                       'chained': {'comfort': -4, 'activity': -4, 'wellness': -3},
-                       'jailed': {'comfort': -3, 'activity': -3, 'wellness': -2},
-                       'confined': {'comfort': -5, 'activity': -5, 'wellness': -4},
-                       'rough mat': {'comfort': -2, 'prosperity': -1, 'wellness': -1},
-                       'cot and blanket': {},
-                       'appartament': {'comfort': 3},
-                       'love nest': {'comfort': 5, 'prosperity': 2, 'communication': 2, 'eros': 2}
-                       }
-
 class Fraction(object):
     def __init__(self, name):
         self.name = name

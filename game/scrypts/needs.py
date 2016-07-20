@@ -57,7 +57,8 @@ class Need(object):
             return 3
         elif self.name in n[1]:
             return 0
-        return self._level + self.owner.count_modifiers(self.name)
+        value = self._level + self.owner.count_modifiers(self.name)
+        return min(3, max(0, value))
 
 
     def reset(self):
