@@ -183,6 +183,7 @@ label label_quiz:
         "Ты мальчик или девочка-внутри?"
         "Антоша Сычов (быстрый старт)":
             python:
+                batya.randomise('male', 'mature')
                 child.skill('coding').profession()
                 game.set_player(child)
                 player = game.player                

@@ -17,6 +17,7 @@ from relations import Relations
 from stance import Stance
 
 persons_list = []
+
 class Fraction(object):
     def __init__(self, name):
         self.name = name
@@ -232,8 +233,6 @@ class Alignment(object):
         return needs, zero_needs, default
 
 
-
-
 class Person(object):
 
     def __init__(self, age='adolescent', gender='male'):
@@ -306,7 +305,94 @@ class Person(object):
         self.selfesteem = 0
         self.conditions = []
         persons_list.append(self)
-    
+
+    def randomise(self, gender='female', age='adolescent'):
+        self.add_feature(gender)
+        self.add_feature(age)
+        self.random_alignment()
+        self.random_skills()
+        self.random_features()
+        return
+
+    def random_alignment(self):
+        # roll activity
+        roll = randint(1, 100)
+        if roll <= 20:
+            self.alignment.activity = "timid"
+        elif roll > 80:
+            self.alignment.activity = "ardent"
+        else:
+            self.alignment.activity = "reasonable"
+
+        # roll orderliness
+        roll = randint(1, 100)
+        if roll <= 20:
+            self.alignment.orderliness = "chaotic"
+        elif roll > 80:
+            self.alignment.orderliness = "lawful"
+        else:
+            self.alignment.orderliness = "conformal"
+
+        # roll morality
+        roll = randint(1, 100)
+        if roll <= 20:
+            self.alignment.morality = "evil"
+        elif roll > 80:
+            self.alignment.morality = "good"
+        else:
+            self.alignment.morality = "selfish"
+
+        return
+
+    def random_skills(self, pro_skill=None, talent_skill=None):
+        skilltree = ('coding', 'sport', 'conversation', 'sex', None)
+        if talent_skill:
+            self.skill(talent_skill).talent = True
+        else:
+            roll = choice(skilltree)
+            if roll:
+                self.skill(roll).talent = True
+
+        if pro_skill:
+            self.skill('pro_skill').profession()
+        else:
+            roll = choice(skilltree)
+            if roll:
+                self.skill(roll).profession()
+        return
+
+    def random_features(self):
+        # constitution
+        const = choice(('athletic', 'brawny',  'large', 'small', 'lean', 'crooked', 'clumsy'))
+        roll = randint(1, 100)
+        if roll > 40:
+            self.add_feature(const)
+
+        # soul
+        soul = choice(('brave', 'shy', 'smart', 'dumb', 'sensitive', 'cool', None))
+        if soul:
+            self.add_feature(soul)
+
+        # needs
+        needstree = {'prosperity_feat': ('greedy', 'generous'),
+                     'nutrition_feat': ('gourmet', 'moderate_eater'),
+                     'wellness_feat': ('low_pain_threshold', 'high_pain_threshold'),
+                     'comfort_feat': ('sybarite', 'ascetic'),
+                     'activity_feat': ('energetic', 'lazy'),
+                     'communication_feat': ('extrovert', 'introvert'),
+                     'amusement_feat': ('curious', 'dull'),
+                     'authority_feat': ('dominant', 'submissive'),
+                     'ambition_feat': ('ambitious', 'modest'),
+                     'eros_feat': ('lewd', 'frigid'), }
+        for need in needstree:
+            roll = randint(1, 100)
+            if roll <= 20:
+                self.add_feature(need[0])
+            elif roll > 80:
+                self.add_feature(need[1])
+
+        return
+
     @property
     def known_characters(self):
         l = []
