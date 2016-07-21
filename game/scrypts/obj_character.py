@@ -640,6 +640,8 @@ class Person(object):
   
 
     def skill(self, skillname):
+        if skillname == None:
+            return
         if skillname in self.skills:
             return skillname
         skill = None
