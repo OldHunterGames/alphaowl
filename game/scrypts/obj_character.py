@@ -16,7 +16,7 @@ from taboos import init_taboos
 from relations import Relations
 from stance import Stance
 
-
+persons_list = []
 class Fraction(object):
     def __init__(self, name):
         self.name = name
@@ -305,6 +305,7 @@ class Person(object):
         self._relations = []
         self.selfesteem = 0
         self.conditions = []
+        persons_list.append(self)
     
     @property
     def known_characters(self):
