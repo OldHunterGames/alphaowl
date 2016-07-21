@@ -387,9 +387,9 @@ class Person(object):
         for need in needstree:
             roll = randint(1, 100)
             if roll <= 20:
-                self.add_feature(need[0])
+                self.add_feature(needstree[need][0])
             elif roll > 80:
-                self.add_feature(need[1])
+                self.add_feature(needstree[need][1])
 
         return
 
